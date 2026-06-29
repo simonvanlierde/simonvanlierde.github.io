@@ -1,0 +1,270 @@
+---
+import { getCollection } from "astro:content";
+import DisassemblyChart from "../components/DisassemblyChart.tsx";
+import ProjectCard from "../components/ProjectCard.astro";
+import stats from "../data/stats.json";
+import Base from "../layouts/Base.astro";
+
+// `stats.json` is refreshed from the RELab /stats endpoint by a scheduled
+// workflow (scripts/fetch-stats.mjs). Until that lands it holds seeded sample
+// figures, flagged via `sample` so the chart can label them as such.
+const { sample: statsAreSample = false, ...statsData } = stats;
+
+const allProjects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+const workProjects = allProjects.filter((p) => p.data.category === "work");
+const personalProjects = allProjects.filter((p) => p.data.category === "personal");
+
+const name = "Simon van Lierde";
+const tagline =
+  "PhD researcher and research software engineer at CML, Leiden University. I build open, reproducible research infrastructure for industrial ecology and the circular economy.";
+
+// Primary links, shown in the hero.
+const links = [
+  {
+    label: "GitHub",
+    href: "https://github.com/simonvanlierde",
+    emoji: "\u{1F4BB}",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/simon-van-lierde/",
+    emoji: "\u{1F4BC}",
+  },
+  {
+    label: "ORCID",
+    href: "https://orcid.org/0009-0006-6953-909X",
+    emoji: "\u{1F194}",
+  },
+  {
+    label: "Leiden profile",
+    href: "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
+    emoji: "\u{1F393}",
+  },
+];
+---
+
+<Base title={`${name} | PhD researcher & Research Software Engineer`} description={tagline}>
+  <header class="container hero">
+    <h1>{name}</h1>
+    <p class="hero__tagline prose">{tagline}</p>
+    <p class="hero__meta prose">
+      Focus areas: industrial ecology, circular economy, and life-cycle
+      assessment. Main stack: Python, FastAPI, TypeScript/React, PostgreSQL, and
+      Docker.
+    </p>
+    <ul class="link-list hero__links">
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href}>
+              <span aria-hidden="true">{l.emoji}</span>
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </header>
+
+  <main id="main">
+    <section class="container" aria-labelledby="work-heading">
+      <h2 id="work-heading">Selected work</h2>
+      <div class="card-grid">
+        <!-- Featured: RELab, spanning the row, with the interactive chart -->
+        <article class="card card--wide relab-card">
+          <h3>Reverse Engineering Lab (RELab)</h3>
+          <div class="relab-card__body">
+            <div class="relab-card__intro">
+              <div class="prose">
+                <p>
+                  Research infrastructure I designed and built end to end: a
+                  FastAPI backend, a PostgreSQL data model built for life-cycle
+                  assessment, and an Expo / React Native frontend. RELab collects
+                  disassembly data on durable goods to close a long-standing
+                  product-data gap in industrial ecology.
+                </p>
+                <p>
+                  In active use as lab infrastructure at CML: every teardown adds
+                  components, materials, and photos to an open catalogue, with
+                  Repair Cafe pilots planned.
+                </p>
+              </div>
+              <ul class="link-list">
+                <li><a href="https://app.cml-relab.org">Live platform</a></li>
+                <li><a href="https://docs.cml-relab.org">Documentation</a></li>
+                <li><a href="https://github.com/CMLPlatform/relab">Source</a></li>
+                <li>
+                  <a href="https://github.com/CMLPlatform/relab-rpi-cam-plugin">
+                    RPI camera plugin
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="relab__chart">
+              <h4>Disassembly over time</h4>
+              <p class="viz__caption">
+                Activity in RELab by month. Switch measures and hover a column
+                for the exact figure.{
+                  statsAreSample
+                    ? " The numbers shown are sample data pending a live connection to the RELab API."
+                    : ""
+                }
+              </p>
+              <DisassemblyChart stats={statsData} isSample={statsAreSample} client:visible />
+            </div>
+          </div>
+        </article>
+
+        {
+          workProjects.map((p) => (
+            <ProjectCard
+              title={p.data.title}
+              description={p.data.description}
+              repo={p.data.repo}
+              demo={p.data.demo}
+              tags={p.data.tags}
+              links={p.data.links}
+            />
+          ))
+        }
+      </div>
+
+      <details class="personal">
+        <summary>
+          <h3>Personal projects ({personalProjects.length})</h3>
+        </summary>
+        <div class="card-grid card-grid--dense">
+          {
+            personalProjects.map((p) => (
+              <ProjectCard
+                title={p.data.title}
+                description={p.data.description}
+                repo={p.data.repo}
+                demo={p.data.demo}
+                tags={p.data.tags}
+                links={p.data.links}
+              />
+            ))
+          }
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="container site-footer">
+    <p>
+      &copy; {new Date().getFullYear()} {name}. Built with Astro. Source on <a href="https://github.com/simonvanlierde/simonvanlierde.github.io">GitHub</a>.
+    </p>
+  </footer>
+</Base>
+
+<style>
+  .hero {
+    padding-block: var(--space-2xl) var(--space-s);
+  }
+
+  /* Tagline and meta share one rem-based measure so they wrap to the same
+     width (a ch-based measure makes the smaller meta text look under-set). */
+  .hero__tagline,
+  .hero__meta {
+    max-width: 56rem;
+  }
+
+  .hero__tagline {
+    margin-top: var(--space-m);
+    font-size: var(--step-1);
+    color: var(--text);
+  }
+
+  .hero__meta {
+    margin-top: var(--space-m);
+    color: var(--text-muted);
+  }
+
+  .hero__links {
+    margin-top: var(--space-l);
+  }
+
+  /* Even spacing between stacked blocks inside the cards. */
+  .relab-card > * + *,
+  .relab-card__intro > * + *,
+  .relab-card__body > * + * {
+    margin-top: var(--space-m);
+  }
+
+  /* Personal projects: collapsed by default, a disclosure that keeps them
+     secondary to the work above. Native <details>, no JS. */
+  .personal {
+    margin-top: var(--space-xl);
+  }
+
+  .personal summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    cursor: pointer;
+    list-style: none; /* drop the default disclosure triangle */
+    color: var(--text-muted);
+  }
+
+  .personal summary::-webkit-details-marker {
+    display: none; /* Safari */
+  }
+
+  /* A small caret that points right when closed, down when open. */
+  .personal summary::before {
+    content: "";
+    width: 0.45em;
+    height: 0.45em;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.15s ease;
+  }
+
+  .personal[open] summary::before {
+    transform: rotate(45deg);
+  }
+
+  .personal summary h3 {
+    color: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .personal summary::before {
+      transition: none;
+    }
+  }
+
+  /* Featured card: intro and chart sit side by side once there is room. */
+  @media (min-width: 48rem) {
+    .relab-card__body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-l);
+      align-items: start;
+    }
+
+    .relab-card__body > * + * {
+      margin-top: 0; /* the grid gap handles spacing now */
+    }
+  }
+
+  .viz__caption {
+    margin-top: var(--space-xs);
+    margin-bottom: var(--space-l);
+    color: var(--text-muted);
+  }
+
+  .site-footer {
+    padding-block: var(--space-l);
+    border-top: var(--border-width) solid var(--border);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  .site-footer a {
+    color: inherit;
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  repo: string;
+  demo?: string;
+  tags?: string[];
+  links?: { label: string; url: string }[];
+}
+
+const { title, description, repo, demo, tags = [], links = [] } = Astro.props;
+---
+
+<article class="card">
+  <h3 class="card__title">
+    <a href={repo}>{title}</a>
+  </h3>
+  <p class="card__desc">{description}</p>
+
+  <p class="card__links">
+    <a href={repo}>Source</a>
+    {demo && <a href={demo}>Live demo</a>}
+    {links.map((l) => <a href={l.url}>{l.label}</a>)}
+  </p>
+
+  {
+    tags.length > 0 && (
+      <ul class="tag-list" aria-label="Technologies">
+        {tags.map((t) => (
+          <li class="tag">{t}</li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  /* The box itself is global (.card); these are ProjectCard's own additions. */
+  .card {
+    transition: border-color 0.15s ease;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+  }
+
+  .card__title {
+    font-size: var(--step-1);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    padding-bottom: var(--space-s);
+    border-bottom: var(--border-width) solid var(--border);
+  }
+
+  .card__title a {
+    text-decoration: none;
+  }
+
+  .card__title a:hover {
+    text-decoration: underline;
+  }
+
+  .card__desc {
+    margin-top: var(--space-s);
+    color: var(--text-muted);
+  }
+
+  .card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-m);
+    margin-top: var(--space-s);
+    font-size: var(--step--1);
+  }
+</style>

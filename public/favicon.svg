@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="duinlab">
+  <style>
+    .bg { fill: #0f766e; }
+    .dune { fill: #ffffff; }
+    .sky { fill: #d7f2ee; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0e1416; }
+      .dune { fill: #5eead4; }
+      .sky { fill: #283337; }
+    }
+  </style>
+  <rect class="bg" width="64" height="64" rx="14" />
+  <!-- sun / accent dot -->
+  <circle class="sky" cx="44" cy="22" r="6" />
+  <!-- dune ridges -->
+  <path class="dune" d="M6 46c8 0 10-9 19-9s11 7 19 7 7-5 14-5v15H6z" opacity="0.55" />
+  <path class="dune" d="M6 52c9 0 12-7 21-7s12 6 21 6 6-3 10-3v9H6z" />
+</svg>
