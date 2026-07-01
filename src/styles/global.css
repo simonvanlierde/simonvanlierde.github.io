@@ -42,8 +42,10 @@
   --focus: #0f766e;
 }
 
+/* Dark palette. Applied when the system prefers dark (unless the user forced
+   light), or when the user explicitly picks dark via the toggle. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #0e1416;
     --surface: #161e21;
     --text: #e7edef;
@@ -54,6 +56,18 @@
     --accent-contrast: #06251f;
     --focus: #5eead4;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0e1416;
+  --surface: #161e21;
+  --text: #e7edef;
+  --text-muted: #9fadb3;
+  --border: #283337;
+  --accent: #5eead4;
+  --accent-strong: #99f6e4;
+  --accent-contrast: #06251f;
+  --focus: #5eead4;
 }
 
 /* ---------------------------------------------------------------------------
@@ -178,6 +192,33 @@ ul {
 .skip-link:focus {
   top: var(--space-s);
   color: var(--accent-contrast);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: 0;
+  font: inherit;
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+}
+
+/* Show the icon for the theme you'd switch TO: moon in light, sun in dark. */
+.theme-toggle__sun {
+  display: none;
+}
+.theme-toggle[aria-pressed="true"] .theme-toggle__moon {
+  display: none;
+}
+.theme-toggle[aria-pressed="true"] .theme-toggle__sun {
+  display: block;
 }
 
 /* ---------------------------------------------------------------------------

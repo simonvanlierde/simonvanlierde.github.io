@@ -30,6 +30,12 @@ const ogImage = new URL("og.png", Astro.site);
     <meta name="theme-color" content="#0e1416" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
 
+    <!-- Apply saved theme before paint to avoid a flash -->
+    <script is:inline>
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    </script>
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -44,5 +50,32 @@ const ogImage = new URL("og.png", Astro.site);
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
+
+    <script is:inline>
+      const btn = document.querySelector(".theme-toggle");
+      const media = matchMedia("(prefers-color-scheme: dark)");
+
+      const isDark = () =>
+        document.documentElement.dataset.theme
+          ? document.documentElement.dataset.theme === "dark"
+          : media.matches;
+
+      // Icons swap via CSS keyed on aria-pressed.
+      const sync = () => btn.setAttribute("aria-pressed", String(isDark()));
+
+      btn.addEventListener("click", () => {
+        const next = isDark() ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem("theme", next);
+        sync();
+      });
+
+      // Follow system changes only while the user hasn't picked a theme.
+      media.addEventListener("change", () => {
+        if (!localStorage.getItem("theme")) sync();
+      });
+
+      sync();
+    </script>
   </body>
 </html>
