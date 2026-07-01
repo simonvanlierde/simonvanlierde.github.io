@@ -1,5 +1,7 @@
 # simonvanlierde.github.io
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Personal website for Simon van Lierde, research software engineer and PhD researcher at CML, Leiden University. A single static page for my work, built with Astro and deployed to GitHub Pages at
 [simonvanlierde.github.io](https://simonvanlierde.github.io).
 
