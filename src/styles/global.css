@@ -30,44 +30,28 @@
   --radius: 4px; /* crisp data-sheet edges */
   --border-width: 1px;
 
-  /* Light palette */
-  --bg: #fbfcfc;
-  --surface: #ffffff;
-  --text: #1a2024;
-  --text-muted: #56636b;
-  --border: #e2e7e9;
-  --accent: #0f766e; /* sea-green; contrast >= 4.7:1 on light bg */
-  --accent-strong: #0b5650;
-  --accent-contrast: #ffffff;
-  --focus: #0f766e;
+  /* Palette. Each token carries both themes; light-dark() picks one against the
+     active color-scheme (set below) — the system preference by default, or the
+     scheme the footer toggle forces. Single source of truth, no media query. */
+  color-scheme: light dark;
+  --bg: light-dark(#fbfcfc, #0e1416);
+  --surface: light-dark(#ffffff, #161e21);
+  --text: light-dark(#1a2024, #e7edef);
+  --text-muted: light-dark(#56636b, #9fadb3);
+  --border: light-dark(#e2e7e9, #283337);
+  --accent: light-dark(#0f766e, #5eead4); /* sea-green >= 4.7:1 on light; lighter teal on dark */
+  --accent-strong: light-dark(#0b5650, #99f6e4);
+  --accent-contrast: light-dark(#ffffff, #06251f);
+  --focus: light-dark(#0f766e, #5eead4);
 }
 
-/* Dark palette. Applied when the system prefers dark (unless the user forced
-   light), or when the user explicitly picks dark via the toggle. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e1416;
-    --surface: #161e21;
-    --text: #e7edef;
-    --text-muted: #9fadb3;
-    --border: #283337;
-    --accent: #5eead4; /* lighter teal for contrast on dark bg */
-    --accent-strong: #99f6e4;
-    --accent-contrast: #06251f;
-    --focus: #5eead4;
-  }
+/* The toggle sets data-theme; forcing color-scheme flips every token above. */
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  --bg: #0e1416;
-  --surface: #161e21;
-  --text: #e7edef;
-  --text-muted: #9fadb3;
-  --border: #283337;
-  --accent: #5eead4;
-  --accent-strong: #99f6e4;
-  --accent-contrast: #06251f;
-  --focus: #5eead4;
+  color-scheme: dark;
 }
 
 /* ---------------------------------------------------------------------------
