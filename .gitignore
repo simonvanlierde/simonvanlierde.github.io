@@ -20,5 +20,3 @@ yarn-error.log*
 # macOS
 .DS_Store
 
-# private agent context (never publish — this is a public repo)
-.claude/context/
