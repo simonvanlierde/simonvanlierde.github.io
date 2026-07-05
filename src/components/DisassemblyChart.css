@@ -88,6 +88,25 @@
   transition: opacity 0.12s ease;
 }
 
+/* Load reveal: bars grow up from the baseline, staggered left to right. Runs
+   once on mount (the island hydrates in the hero, above the fold) and — because
+   each <rect> is keyed by period — does not replay when the measure switches.
+   Motion is opt-in so reduced-motion users get the final state immediately. */
+@media (prefers-reduced-motion: no-preference) {
+  .chart__bar {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    animation: chart-bar-grow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(var(--bar-i, 0) * 45ms);
+  }
+
+  @keyframes chart-bar-grow {
+    from {
+      transform: scaleY(0);
+    }
+  }
+}
+
 .chart__bar[data-active="true"] {
   opacity: 1;
 }

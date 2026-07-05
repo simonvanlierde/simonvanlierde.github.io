@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { type CSSProperties, useId, useState } from "react";
 import "./DisassemblyChart.css";
 import fallback from "../data/stats.json";
 
@@ -156,6 +156,10 @@ export default function DisassemblyChart({
           {series.map((d, i) => (
             <g key={d.period}>
               <rect
+                // Keyed by measure so switching tabs remounts the bar and
+                // replays the grow animation (period alone is stable across
+                // measures, which would suppress the replay).
+                key={`${measure.key}-${d.period}`}
                 className="chart__bar"
                 x={x(i) - barWidth / 2}
                 y={y(d.value)}
@@ -163,6 +167,7 @@ export default function DisassemblyChart({
                 height={PAD.top + INNER_H - y(d.value)}
                 rx="2"
                 data-active={active === i}
+                style={{ "--bar-i": i } as CSSProperties}
               />
               {/* x-axis labels: show every other to avoid crowding */}
               {i % 2 === 0 && (
