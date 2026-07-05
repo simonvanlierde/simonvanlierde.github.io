@@ -301,3 +301,13 @@ main > section:first-of-type {
   border-radius: 2px;
   padding: 0.1em 0.55em;
 }
+
+/* Inline brand/link icons sit at cap height beside the label text. */
+.link-list__icon {
+  display: inline-flex;
+}
+
+.link-list__icon svg {
+  width: 1.05em;
+  height: 1.05em;
+}
