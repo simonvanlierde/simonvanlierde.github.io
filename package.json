@@ -17,7 +17,8 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "astro check",
-    "test": "echo \"(no tests yet)\" && exit 0",
+    "test": "node --test tests/unit/*.test.ts",
+    "test:e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "gen:og": "node scripts/gen-og.mjs",
     "fetch:stats": "node scripts/fetch-stats.mjs"
@@ -32,7 +33,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@biomejs/biome": "^2.5.1",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

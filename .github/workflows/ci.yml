@@ -32,3 +32,27 @@ jobs:
       # pnpm check already typechecks (astro check), so build bare — no redundant re-check.
       - name: Build
         run: pnpm exec astro build
+
+      # axe + e2e run the built site in a real browser (contrast, keyboard, hydration —
+      # things the linter can't see). Cache the browser binary keyed on the resolved
+      # Playwright version so only version bumps re-download it (~100 MB).
+      - name: Resolve Playwright version
+        run: echo "PW_VERSION=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_ENV"
+
+      - name: Cache Playwright browser
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PW_VERSION }}
+
+      - name: Install Playwright (browser on cache miss, OS deps always)
+        run: |
+          if [ "${{ steps.pw-cache.outputs.cache-hit }}" = "true" ]; then
+            pnpm exec playwright install-deps chromium
+          else
+            pnpm exec playwright install --with-deps chromium
+          fi
+
+      - name: Accessibility & e2e tests
+        run: pnpm test:e2e
