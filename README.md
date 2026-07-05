@@ -7,6 +7,9 @@
 Personal website for Simon van Lierde, research software engineer and PhD researcher at CML, Leiden University. A single static page for my work, built with Astro and deployed to GitHub Pages at
 [simonvanlierde.github.io](https://simonvanlierde.github.io).
 
+![The site's landing page: a hero with profile links, a featured RELab card with an interactive disassembly chart, and project cards.](docs/screenshot-light.png#gh-light-mode-only)
+![The site's landing page: a hero with profile links, a featured RELab card with an interactive disassembly chart, and project cards.](docs/screenshot-dark.png#gh-dark-mode-only)
+
 ## Stack
 
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
@@ -25,6 +28,48 @@ pnpm build        # type-check (astro check) and build to dist/
 pnpm preview      # preview the production build locally
 pnpm gen:og       # regenerate public/og.png (the social-card image)
 ```
+
+## Accessibility
+
+Accessibility is checked two ways, both enforced in CI on every pull request.
+
+**Static linting.** [Biome](https://biomejs.dev)'s `recommended` preset (see [biome.json](biome.json))
+enables its `a11y` rule group, which flags source-level issues like missing `alt` text, invalid or
+misused ARIA attributes, non-semantic interactive elements, missing `type` on buttons, and click
+handlers without keyboard equivalents. Runs across the Astro components and the React island.
+
+```sh
+pnpm lint         # biome check . — includes the a11y rules
+```
+
+**Runtime axe audit + e2e.** [Playwright](https://playwright.dev) drives the built page in headless
+Chromium ([playwright.config.ts](playwright.config.ts) — it starts `astro preview` itself). Two suites:
+
+- [tests/a11y.spec.ts](tests/a11y.spec.ts) runs [axe-core](https://github.com/dequelabs/axe-core) via
+  [@axe-core/playwright](https://github.com/dequelabs/axe-core-npm) against the rendered DOM, in both
+  colour schemes and again after interaction (personal-projects disclosure open, chart measure
+  switched). This catches what static linting can't — most notably colour contrast on the resolved
+  light/dark tokens.
+- [tests/e2e.spec.ts](tests/e2e.spec.ts) covers behaviour that doubles as accessibility: the skip link
+  is the first tab stop and targets `#main`, the theme toggle flips and persists across reload, the
+  personal-projects `<details>` expands, and the chart's measure toggles flip `aria-pressed` and update
+  the chart's accessible summary.
+
+```sh
+pnpm build        # tests run against the production build
+pnpm test:e2e     # playwright starts `astro preview` and runs both suites
+```
+
+Both run in CI on every pull request: `pnpm check` (which includes the Biome lint) and a dedicated
+Playwright step (with the browser binary cached across runs), see [ci.yml](.github/workflows/ci.yml).
+A regression in any of them fails the build.
+
+Scope and honesty: the audit asserts on axe **violations**, which cover the subset of WCAG 2 A/AA
+success criteria that are machine-testable, so **no specific conformance level is claimed** — the rest
+(meaningful alt text, logical focus order, and so on) still needs human judgement. axe also reports the
+chart's SVG axis labels as *inconclusive* (it cannot compute the background of an SVG `<text>` element);
+those are not treated as failures, and their contrast against the page background was verified manually
+(~5.9:1 light, ~8:1 dark, both above the 4.5:1 threshold).
 
 ## Project structure
 
