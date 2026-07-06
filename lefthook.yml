@@ -2,10 +2,10 @@ pre-commit:
   commands:
     biome:
       glob: "*.{js,jsx,ts,tsx,mjs,cjs,json,jsonc,astro,css}"
-      run: biome check --write --no-errors-on-unmatched {staged_files}
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
 
 pre-push:
   commands:
     typecheck:
-      run: astro check
+      run: pnpm typecheck
