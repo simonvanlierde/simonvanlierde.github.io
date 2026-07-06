@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { version } from "../../package.json";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ProjectCard from "../components/ProjectCard.astro";
 import stats from "../data/stats.json" with { type: "json" };
@@ -30,6 +31,7 @@ const icons = {
     '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/></svg>',
   leiden:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>',
+  code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>',
 };
 
 const links = [
@@ -54,26 +56,69 @@ const links = [
     icon: icons.leiden,
   },
 ];
-
-// Merged fixes sent back to tools I build on. Hardcoded like `links` above;
-const contributions = [
-  {
-    ref: "fastapi-mail#283",
-    href: "https://github.com/sabuhish/fastapi-mail/pull/283",
-    label: "fastapi-mail pull request 283",
-  },
-  {
-    ref: "sentier_data_tools#2",
-    href: "https://github.com/sentier-dev/sentier_data_tools/pull/2",
-    label: "sentier_data_tools pull request 2",
-  },
-];
 ---
 
 <Base
   title={`${name} | PhD researcher & Research Software Engineer`}
   description={tagline}
 >
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container site-nav__inner">
+      <a class="site-nav__mark" href="#main" aria-label={`${name} — home`}>SVL</a>
+      <div class="site-nav__actions">
+        <ul class="site-nav__links">
+          {
+            links.map((l) => (
+              <li>
+                <a href={l.href} aria-label={l.label} title={l.label}>
+                  <span aria-hidden="true" set:html={l.icon} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <button
+          type="button"
+          class="theme-toggle"
+          aria-label="Toggle dark mode"
+          aria-pressed="false"
+        >
+        <svg
+          class="theme-toggle__moon"
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
+        </svg>
+        <svg
+          class="theme-toggle__sun"
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <path
+            d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+          ></path>
+        </svg>
+      </button>
+      </div>
+    </div>
+  </nav>
+
   <header class="container hero">
     <h1>{name}</h1>
     <p class="hero__tagline prose">{tagline}</p>
@@ -170,6 +215,16 @@ const contributions = [
         }
       </div>
 
+      <p class="prose upstream-note">
+        I also send fixes upstream to tools I build on, mostly in the FastAPI
+        and open-LCA ecosystems, such as <a
+          href="https://github.com/sabuhish/fastapi-mail/pull/283"
+          >fastapi-mail</a
+        > and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2"
+          >sentier_data_tools</a
+        >.
+      </p>
+
       <details class="disclosure personal" open>
         <summary>
           <h3>Personal projects ({personalProjects.length})</h3>
@@ -189,83 +244,154 @@ const contributions = [
           }
         </div>
       </details>
-
-      <details class="disclosure">
-        <summary>
-          <h3>Upstream fixes ({contributions.length})</h3>
-        </summary>
-        <p class="prose upstream__lead">
-          Small fixes I send back to tools I build on, mostly in the FastAPI and
-          open-LCA ecosystems.
-        </p>
-        <ul class="upstream" aria-label="Merged upstream pull requests">
-          {
-            contributions.map((c) => (
-              <li class="upstream__item">
-                <a href={c.href} aria-label={c.label}>
-                  {c.ref}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </details>
-      
     </section>
   </main>
 
   <footer class="container site-footer">
-    <p>
-      &copy; {new Date().getFullYear()}
-      {name}. Source on <a
-        href="https://github.com/simonvanlierde/simonvanlierde.github.io"
-        >GitHub</a
-      >.
+    <p class="site-footer__copyright">
+      &copy; {new Date().getFullYear()}&nbsp;{name}
     </p>
-    <button
-      type="button"
-      class="theme-toggle"
-      aria-label="Toggle dark mode"
-      aria-pressed="false"
+    <a
+      class="site-footer__version"
+      href="https://github.com/simonvanlierde/simonvanlierde.github.io"
+      aria-label={`View source on GitHub (v${version})`}
     >
-      <svg
-        class="theme-toggle__moon"
-        viewBox="0 0 24 24"
-        width="18"
-        height="18"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path>
-      </svg>
-      <svg
-        class="theme-toggle__sun"
-        viewBox="0 0 24 24"
-        width="18"
-        height="18"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <circle cx="12" cy="12" r="4"></circle>
-        <path
-          d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
-        ></path>
-      </svg>
-    </button>
+      <span class="site-footer__version-icon" set:html={icons.code} />
+      v{version}
+    </a>
   </footer>
 </Base>
 
+<script>
+  // Reveal the condensed icon links in the nav once the hero's social links
+  // have scrolled up under the sticky bar. The negative top margin ≈ nav height,
+  // so the swap happens right as the real links slip out of sight.
+  const nav = document.querySelector(".site-nav");
+  const heroLinks = document.querySelector(".hero__links");
+  if (nav && heroLinks) {
+    new IntersectionObserver(
+      ([entry]) => nav.classList.toggle("is-condensed", !entry.isIntersecting),
+      { rootMargin: "-48px 0px 0px 0px" },
+    ).observe(heroLinks);
+  }
+</script>
+
 <style>
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: var(--border-width) solid var(--border);
+  }
+
+  .site-nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-xs);
+  }
+
+  .site-nav__mark {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--step-0);
+    letter-spacing: 0.18em;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .site-nav__mark:hover {
+    color: var(--accent);
+  }
+
+  .site-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+  }
+
+  /* Icon-only copies of the hero social links. Hidden until the real links in
+     the hero scroll out of view, then they cascade in (see the observer below). */
+  .site-nav__links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs, 0.15rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s;
+  }
+
+  .site-nav.is-condensed .site-nav__links {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .site-nav__links a {
+    display: inline-flex;
+    padding: 0.35rem;
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    opacity: 0;
+    transform: translateY(-0.4rem);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      color 0.15s ease;
+  }
+
+  .site-nav.is-condensed .site-nav__links a {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger the entrance so the icons flow in one after another. */
+  .site-nav.is-condensed .site-nav__links li:nth-child(2) a {
+    transition-delay: 0.04s;
+  }
+  .site-nav.is-condensed .site-nav__links li:nth-child(3) a {
+    transition-delay: 0.08s;
+  }
+  .site-nav.is-condensed .site-nav__links li:nth-child(4) a {
+    transition-delay: 0.12s;
+  }
+
+  .site-nav__links a:hover {
+    color: var(--accent);
+  }
+
+  .site-nav__links a :global(svg) {
+    display: block;
+    width: 18px;
+    height: 18px;
+  }
+
+  /* No sticky nav, blur, or motion for users who prefer reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav {
+      position: static;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .site-nav__links,
+    .site-nav__links a {
+      transform: none;
+      transition:
+        opacity 0.2s ease,
+        visibility 0.2s;
+      transition-delay: 0s;
+    }
+  }
+
   .hero {
-    padding-block: var(--space-2xl) var(--space-s);
+    padding-block: var(--space-l) var(--space-s);
   }
 
   /* Tagline and meta share one rem-based measure so they wrap to the same
@@ -298,9 +424,17 @@ const contributions = [
   }
 
   /* Disclosure: a collapsed <details> that keeps secondary content (personal
-     projects, upstream fixes) below the work above. Native, no JS. */
+     projects) below the work above. Native, no JS. */
   .disclosure {
     margin-top: var(--space-xl);
+  }
+
+  /* A quiet one-liner noting upstream contributions, kept as prose so it does
+     not compete with the project cards above. */
+  .upstream-note {
+    margin-top: var(--space-l);
+    color: var(--text-muted);
+    font-size: var(--step--1);
   }
 
   .disclosure summary {
@@ -366,53 +500,45 @@ const contributions = [
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-s);
+    gap: var(--space-m) var(--space-l);
     padding-block: var(--space-l);
     border-top: var(--border-width) solid var(--border);
     font-size: var(--step--1);
     color: var(--text-muted);
   }
 
+  .site-footer__version {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: 0.2em 0.6em;
+    border: var(--border-width) solid var(--border);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .site-footer__version:hover {
+    border-color: currentColor;
+    color: var(--text);
+  }
+
+  .site-footer__version-icon {
+    display: inline-flex;
+  }
+
+  .site-footer__version-icon :global(svg) {
+    width: 0.95em;
+    height: 0.95em;
+  }
+
   .site-footer a {
     color: inherit;
-  }
-
-  /* Upstream fixes: each merged PR is rendered as the GitHub reference it is
-     (repo#nnn, mono) with a leading diff-addition "+" in the accent, echoing
-     what a merged patch looks like. A coda to the work, kept deliberately
-     compact so it does not compete with the project cards above. */
-  .upstream__lead {
-    margin-top: var(--space-s);
-    color: var(--text-muted);
-  }
-
-  .upstream {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-l);
-    margin-top: var(--space-m);
-    list-style: none;
-  }
-
-  .upstream__item a {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.4em;
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  .upstream__item a::before {
-    content: "+";
-    font-weight: 700;
-    color: var(--accent);
-  }
-
-  .upstream__item a:hover {
-    color: var(--accent-strong);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
   }
 </style>
