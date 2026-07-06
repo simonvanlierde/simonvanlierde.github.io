@@ -17,7 +17,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "astro check",
-    "test": "node --test tests/unit/*.test.ts",
+    "test": "node --test",
     "test:e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "gen:og": "node scripts/gen-og.mjs",

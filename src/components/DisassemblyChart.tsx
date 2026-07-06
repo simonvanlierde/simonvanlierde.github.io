@@ -141,10 +141,6 @@ export default function DisassemblyChart({
           {series.map((d, i) => (
             <g key={d.period}>
               <rect
-                // Keyed by measure so switching tabs remounts the bar and
-                // replays the grow animation (period alone is stable across
-                // measures, which would suppress the replay).
-                key={`${measure.key}-${d.period}`}
                 className="chart__bar"
                 x={x(i) - barWidth / 2}
                 y={y(d.value)}
