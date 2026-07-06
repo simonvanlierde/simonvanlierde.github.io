@@ -88,6 +88,38 @@
   transition: opacity 0.12s ease;
 }
 
+/* Motion is opt-in; reduced-motion users get the final state instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Switching measure changes every bar's y/height; ease to the new heights
+     rather than replaying the load reveal. (Keep the hover opacity fade too,
+     since this shorthand replaces the base one.) */
+  .chart__bar {
+    transition:
+      y 0.35s ease,
+      height 0.35s ease,
+      opacity 0.12s ease;
+  }
+
+  /* Load reveal: bars grow up from the baseline, staggered left to right, once
+     on mount. Needs fill-box so scaleY pivots on each bar's own baseline rather
+     than the SVG viewport; where that is unsupported (Safari < 15.4) the reveal
+     is skipped and bars just appear, which is fine. */
+  @supports (transform-box: fill-box) {
+    .chart__bar {
+      transform-box: fill-box;
+      transform-origin: bottom;
+      animation: chart-bar-grow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      animation-delay: calc(var(--bar-i, 0) * 45ms);
+    }
+
+    @keyframes chart-bar-grow {
+      from {
+        transform: scaleY(0);
+      }
+    }
+  }
+}
+
 .chart__bar[data-active="true"] {
   opacity: 1;
 }

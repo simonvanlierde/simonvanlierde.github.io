@@ -32,3 +32,14 @@ jobs:
       # pnpm check already typechecks (astro check), so build bare — no redundant re-check.
       - name: Build
         run: pnpm exec astro build
+
+      # axe + e2e run the built site in a real browser (contrast, keyboard,
+      # hydration — things the linter can't see). Install Chromium fresh each run:
+      # Playwright's own CI guide recommends this, and for a single browser it's a
+      # few seconds. Version-keyed caching saves little here and buys real failure
+      # modes (a poisoned cache never self-heals; new PR branches miss it anyway).
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Accessibility & e2e tests
+        run: pnpm test:e2e
