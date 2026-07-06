@@ -84,6 +84,14 @@ Checked two ways in CI on every pull request (see [ci.yml](.github/workflows/ci.
   interaction, plus behavioural checks ([tests/e2e.spec.ts](tests/e2e.spec.ts)) for the skip link,
   theme-toggle persistence, and the chart's `aria-pressed` toggles.
 
+## Deployment
+
+Pushing to `main` triggers [deploy.yml](.github/workflows/deploy.yml): GitHub Actions builds
+the site and publishes to GitHub Pages, live at
+[simonvanlierde.github.io](https://simonvanlierde.github.io). Pages source must be set to
+**GitHub Actions** (Settings → Pages). A shared `pages` concurrency group keeps deploys and the
+weekly [refresh-data.yml](.github/workflows/refresh-data.yml) refresh from racing.
+
 ## Adding or editing a project
 
 Projects are markdown files under [src/content/projects/](src/content/projects/),
