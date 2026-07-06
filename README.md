@@ -16,6 +16,13 @@ Personal website for Simon van Lierde, research software engineer and PhD resear
 - One React island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive data visualisation; everything else ships as zero-JS HTML
 - A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project cards
 - Plain CSS with design tokens; light and dark via `prefers-color-scheme`
+- Scheduled GitHub Actions refresh for the RELab chart snapshot, with CI and Pages deploy kept separate
+
+See [docs/architecture.md](docs/architecture.md) for the site architecture and data-refresh path.
+
+## Scope and limits
+
+This repository is the portfolio site only. It links to research software and live projects, but it is not the RELab platform source code; that lives in the linked CMLPlatform repositories. The disassembly chart reads a committed JSON snapshot so the static site remains reproducible. At the moment that snapshot is marked as sample data until the scheduled refresh can verify and commit a live RELab API response.
 
 ## Project structure
 
