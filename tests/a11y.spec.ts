@@ -21,13 +21,14 @@ for (const colorScheme of ["light", "dark"] as const) {
   });
 }
 
-// Scan a mutated DOM, not just first paint: reveal the collapsed personal
-// projects and switch the chart to another measure, then re-check. Regressions
-// often hide in the states a static scan of the initial page never reaches.
+// Scan a mutated DOM, not just first paint: reveal the collapsed upstream-fixes
+// disclosure (personal projects ships open, so it is already scanned on load)
+// and switch the chart to another measure, then re-check. Regressions often
+// hide in the states a static scan of the initial page never reaches.
 test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
 
-  await page.locator("details.personal").locator("summary").click();
+  await page.locator("details.disclosure:not(.personal)").locator("summary").click();
 
   const parts = page.getByRole("button", { name: "Parts" });
   await expect(async () => {
