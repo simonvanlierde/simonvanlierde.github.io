@@ -20,10 +20,6 @@ Personal website for Simon van Lierde, research software engineer and PhD resear
 
 See [docs/architecture.md](docs/architecture.md) for the site architecture and data-refresh path.
 
-## Scope and limits
-
-This repository is the portfolio site only. It links to research software and live projects, but it is not the RELab platform source code; that lives in the linked CMLPlatform repositories. The disassembly chart reads a committed JSON snapshot so the static site remains reproducible. At the moment that snapshot is marked as sample data until the scheduled refresh can verify and commit a live RELab API response.
-
 ## Project structure
 
 ```
