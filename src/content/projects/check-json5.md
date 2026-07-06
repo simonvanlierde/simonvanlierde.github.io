@@ -6,5 +6,6 @@ tags:
   - Python
   - pre-commit
   - uv
+category: personal
 order: 3
 ---
