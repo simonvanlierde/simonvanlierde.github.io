@@ -7,6 +7,7 @@
 
 import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import process from "node:process";
 
 const out = resolve(import.meta.dirname, "../src/data/stats.json");
 
@@ -38,6 +39,7 @@ if (!Array.isArray(payload?.series) || payload.series.length === 0) {
 // Every row must carry the fields the chart reads; a shape drift (renamed or
 // dropped field) would otherwise render as silent zeros. Keep the last good snapshot instead.
 const required = ["period", "label", "teardowns", "parts", "mass_kg", "images", "users"];
+// biome-ignore lint/suspicious/noEqualsToNull: == null intentionally matches null and undefined
 if (payload.series.some((row) => required.some((k) => row?.[k] == null))) {
   skip(`a series row is missing one of: ${required.join(", ")}`);
 }

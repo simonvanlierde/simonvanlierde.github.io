@@ -18,7 +18,13 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "a11y": "on",
+      "correctness": "on",
+      "suspicious": "on",
+      "security": {
+        "noSecrets": "off"
+      }
     }
   },
   "javascript": {
@@ -27,6 +33,19 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["scripts/**", "tests/**", "**/*.config.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off"
+          },
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
     {
       "includes": ["**/*.astro", "**/*.svelte", "**/*.vue"],
       "linter": {

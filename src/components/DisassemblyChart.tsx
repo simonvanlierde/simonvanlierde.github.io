@@ -116,6 +116,7 @@ export default function DisassemblyChart({
       </div>
 
       <div className="chart__plot">
+        {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: mouse hover is a visual enhancement; keyboard/SR users get the data table */}
         <svg
           viewBox={`0 0 ${W} ${H}`}
           width="100%"

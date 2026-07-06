@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ProjectCard from "../components/ProjectCard.astro";
-import stats from "../data/stats.json";
+import stats from "../data/stats.json" with { type: "json" };
 import Base from "../layouts/Base.astro";
 
 // `stats.json` is refreshed from the RELab /stats endpoint by a scheduled

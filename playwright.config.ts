@@ -1,3 +1,4 @@
+import process from "node:process";
 import { defineConfig, devices } from "@playwright/test";
 
 // Accessibility gate only: drive the built site in headless Chromium and run
