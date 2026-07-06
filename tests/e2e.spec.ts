@@ -42,10 +42,12 @@ test("theme toggle flips the theme and persists across reload", async ({ page })
   await expect(html).toHaveAttribute("data-theme", "dark");
 });
 
-test("the upstream-fixes disclosure is collapsed then expands", async ({ page }) => {
-  // Personal projects now ships open; upstream fixes is the disclosure that
-  // starts collapsed, so it carries the collapse/expand coverage.
-  const details = page.locator("details.disclosure:not(.personal)");
+test("the personal-projects disclosure collapses then expands", async ({ page }) => {
+  // Personal projects ships open and is now the only disclosure, so it carries
+  // the collapse/expand coverage.
+  const details = page.locator("details.disclosure.personal");
+  await expect(details).toHaveJSProperty("open", true);
+  await details.locator("summary").click();
   await expect(details).toHaveJSProperty("open", false);
   await details.locator("summary").click();
   await expect(details).toHaveJSProperty("open", true);
