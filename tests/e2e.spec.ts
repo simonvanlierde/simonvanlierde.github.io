@@ -49,6 +49,27 @@ test("personal projects disclosure is collapsed then expands", async ({ page }) 
   await expect(details).toHaveJSProperty("open", true);
 });
 
+test("the visually-hidden data table mirrors the plotted series", async ({ page }) => {
+  // The table is the chart's accessible fallback; if it drifts from the bars,
+  // assistive-tech users silently get a different dataset than sighted users.
+  const rows = page.locator("table tbody tr");
+  const bars = page.locator("rect.chart__bar");
+  const rowCount = await rows.count();
+  expect(rowCount).toBeGreaterThan(0);
+  await expect(bars).toHaveCount(rowCount);
+
+  // Caption names the active measure and tracks the toggle.
+  const caption = page.locator("table caption");
+  await expect(caption).toHaveText(/Teardowns/i);
+
+  const parts = page.getByRole("button", { name: "Parts" });
+  await expect(async () => {
+    await parts.click();
+    await expect(parts).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+  }).toPass();
+  await expect(caption).toHaveText(/Parts/i);
+});
+
 test("chart measure toggle updates pressed state and the accessible summary", async ({ page }) => {
   const chart = page.locator('svg[role="img"]');
   await expect(chart).toHaveAttribute("aria-label", /teardowns/i);
