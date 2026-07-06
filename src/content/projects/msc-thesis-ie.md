@@ -1,6 +1,6 @@
 ---
 title: msc-thesis-ie
-description: "My MSc Industrial Ecology thesis (Leiden / TU Delft): a bottom-up model of building cooling demand in The Hague and its life-cycle environmental impacts, built from BAG geospatial data, an hourly heat-balance model, and an LCA layer."
+description: "My MSc Industrial Ecology thesis (Leiden / TU Delft): a bottom-up model of building cooling demand in The Hague and its life-cycle impacts, from BAG geodata, an hourly heat-balance model, and an LCA layer."
 repo: https://github.com/simonvanlierde/msc-thesis-ie
 tags:
   - Python
