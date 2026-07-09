@@ -7,9 +7,6 @@
 Personal website for Simon van Lierde, research software engineer and PhD researcher at CML, Leiden University. A single static page for my work, built with Astro and deployed to GitHub Pages at
 [simonvanlierde.github.io](https://simonvanlierde.github.io).
 
-![The site's landing page: a hero with profile links, a featured RELab card with an interactive disassembly chart, and project cards.](docs/screenshot-light.png#gh-light-mode-only)
-![The site's landing page: a hero with profile links, a featured RELab card with an interactive disassembly chart, and project cards.](docs/screenshot-dark.png#gh-dark-mode-only)
-
 ## Stack
 
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
