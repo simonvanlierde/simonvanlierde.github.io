@@ -34,7 +34,7 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 │   │   ├── DisassemblyChart.css
 │   │   └── chartScale.ts          # axis-scale maths (unit-tested)
 │   ├── content/
-│   │   └── projects/    # one markdown file per project
+│   │   └── projects/              # one markdown file per project
 │   ├── content.config.ts          # content collection + Zod schema
 │   ├── layouts/
 │   │   └── Base.astro             # head, meta, Open Graph
