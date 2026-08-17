@@ -1,13 +1,46 @@
 /* DisassemblyChart island styles. Colours come from global design tokens. */
 
+/* 30rem is the 480-unit viewBox at 1:1. Wider and the SVG scales up, inflating
+   13px axis labels into 19px ones; the plot has one correct size and this is it. */
 .chart {
   margin: 0;
-  max-width: 44rem;
+  max-width: 30rem;
 }
 
 .chart__empty {
   margin: var(--space-l) 0;
   color: var(--text-muted);
+}
+
+/* Headline totals. Numbers wear text tokens, not the series colour: the bars
+   carry identity here, the tiles carry magnitude. */
+.chart__tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  gap: var(--space-s);
+  margin: 0 0 var(--space-m);
+  padding: 0;
+}
+
+.chart__tiles > div {
+  /* dt before dd in source (valid <dl>); number above label on screen. */
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.1rem;
+}
+
+.chart__tiles dt {
+  color: var(--text-muted);
+  font-size: var(--step--1);
+}
+
+.chart__tiles dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
 }
 
 /* Controls: the measure switcher, wrapping on narrow screens */
@@ -31,6 +64,11 @@
 }
 
 .chart__toggle {
+  display: inline-flex;
+  align-items: center;
+  /* Full 44px target: the segments wrap across two rows on a phone, and a
+     mis-tap changes the measure under you without saying so. */
+  min-height: 44px;
   font-family: var(--font-mono);
   font-size: var(--step--1);
   letter-spacing: 0.04em;
@@ -39,6 +77,12 @@
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
+  /* The fill fades on the same clock as the bars it drives. No press-scale:
+     these segments are joined inside an overflow-hidden fieldset, and shrinking
+     one would open a seam against its neighbours. */
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
 }
 
 .chart__toggle:hover {
@@ -72,44 +116,80 @@
 
 .chart__grid text {
   fill: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The zero line the bars stand on: darker and thicker than the gridlines. */
+.chart__axis {
+  stroke: var(--text-muted);
+  stroke-width: 2;
+}
+
+/* The measure's unit, printed once above the axis instead of on every tick. */
+.chart__unit {
+  fill: var(--text-muted);
+  font-size: 11px;
   font-family: var(--font-mono);
 }
 
 .chart__xlabel {
   fill: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
-/* Marks */
+/* The year (or other qualifier) only prints where it changes. It stays quieter
+   through size alone: 0.75 opacity here drops the text to 3.5:1, and small text
+   is the last place to spend contrast. */
+.chart__xlabel-qualifier {
+  font-size: 11px;
+}
+
+/* Marks. A solid fill, never a translucent one: opacity would blend the bar with
+   whatever sits behind it, making its real contrast unknowable. Hover changes
+   the fill step instead. */
 .chart__bar {
-  fill: var(--accent);
-  opacity: 0.85;
-  transition: opacity 0.12s ease;
+  fill: var(--chart-bar);
+  transition: fill var(--dur-fast) ease;
 }
 
 /* Motion is opt-in; reduced-motion users get the final state instantly. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Switching measure changes every bar's y/height; ease to the new heights
-     rather than replaying the load reveal. (Keep the hover opacity fade too,
-     since this shorthand replaces the base one.) */
-  .chart__bar {
-    transition:
-      y 0.35s ease,
-      height 0.35s ease,
-      opacity 0.12s ease;
+  /* Switching measure redraws every bar's path; ease to the new heights rather
+     than replaying the load reveal. `barPath` always emits the same command
+     sequence, so `d` interpolates. Where `transition: d` is unsupported the bars
+     snap to the new measure, which is fine. (Keep the hover fade too, since this
+     shorthand replaces the base one.)
+
+     Keep it short. The gridlines and their tick labels rescale in a single
+     frame (they carry new *numbers*, so there is nothing to interpolate), and
+     for the length of this transition the bars are drawn against an axis that
+     no longer describes them. At 350ms that gap reads as wrong values; at 200ms
+     it reads as the change itself. */
+  @supports (transition-property: d) {
+    .chart__bar {
+      transition:
+        d var(--dur-base) var(--ease-in-out),
+        fill var(--dur-fast) ease;
+    }
   }
 
   /* Load reveal: bars grow up from the baseline, staggered left to right, once
      on mount. Needs fill-box so scaleY pivots on each bar's own baseline rather
      than the SVG viewport; where that is unsupported (Safari < 15.4) the reveal
-     is skipped and bars just appear, which is fine. */
+     is skipped and bars just appear, which is fine.
+
+     Duration and stagger are both sized so twelve bars finish inside ~730ms.
+     Keyframes restart from zero instead of retargeting, so any measure switch
+     during the reveal has a bar morphing its `d` while still scaling up out of
+     the baseline; the shorter the run, the smaller that window. */
   @supports (transform-box: fill-box) {
     .chart__bar {
       transform-box: fill-box;
       transform-origin: bottom;
-      animation: chart-bar-grow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-      animation-delay: calc(var(--bar-i, 0) * 45ms);
+      animation: chart-bar-grow 0.4s var(--ease-out) both;
+      animation-delay: calc(var(--bar-i, 0) * 30ms);
     }
 
     @keyframes chart-bar-grow {
@@ -121,7 +201,7 @@
 }
 
 .chart__bar[data-active="true"] {
-  opacity: 1;
+  fill: var(--chart-bar-strong);
 }
 
 .chart__hit {
@@ -136,7 +216,7 @@
 }
 
 .chart__tooltip circle {
-  fill: var(--accent);
+  fill: var(--chart-bar-strong);
   stroke: var(--surface);
   stroke-width: 2;
 }
@@ -148,18 +228,54 @@
 
 .chart__tip-title {
   fill: var(--bg);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .chart__tip-value {
   fill: var(--bg);
-  font-size: 11px;
-  opacity: 0.85;
+  font-size: 13px;
+}
+
+/* A narrow plot renders the 480-unit viewBox at roughly 0.6, which would put 13px
+   labels back under 8 real pixels. Scale the type up in user units instead, and
+   drop the y-axis text: the tiles above carry magnitude, a tap carries the exact
+   figure, and the gridlines still give the eye a level to read against.
+
+   Keyed to the `chart` container (declared on .relab__chart) rather than the
+   viewport, because a 26rem plot needs this treatment whether it is narrow from
+   being on a phone or from sitting in a half-width column. */
+@container chart (max-width: 26rem) {
+  .chart__grid text,
+  .chart__unit,
+  .chart__xlabel-qualifier {
+    display: none;
+  }
+
+  /* Four tiles don't fit across a phone, and auto-fit strands the fourth on a row
+     of its own. Two by two reads as a block instead of a mistake. */
+  .chart__tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart__xlabel {
+    /* 18, not 19: twelve month labels in 420 user units start colliding above
+       this and the gap between them is doing the separating. */
+    font-size: 18px;
+  }
+
+  .chart__tip-title {
+    font-size: 17px;
+  }
+
+  .chart__tip-value {
+    font-size: 19px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chart__bar {
+  .chart__bar,
+  .chart__toggle {
     transition: none;
   }
 }

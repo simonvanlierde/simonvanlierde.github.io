@@ -1,7 +1,7 @@
 import { type CSSProperties, useId, useState } from "react";
 import "./DisassemblyChart.css";
 import fallback from "../data/stats.json";
-import { buildScale } from "./chartScale";
+import { barPath, buildScale } from "./chartScale";
 
 // Pre-aggregated figures from the RELab /stats endpoint, baked in at build time
 // (see scripts/fetch-stats.mjs). Shape mirrors that endpoint's response.
@@ -18,36 +18,75 @@ type SeriesRow = {
 type StatsPayload = {
   granularity?: string;
   series: SeriesRow[];
+  totals?: Record<string, number>;
 };
 
 type MeasureKey = "teardowns" | "parts" | "mass_kg" | "images" | "users";
 
 // Formatters shared by the chart axis, tooltip, and table.
 const int = (n: number) => Math.round(n).toLocaleString("en");
-const kg = (n: number) => `${n.toLocaleString("en", { maximumFractionDigits: 1 })} kg`;
+const num = (n: number) => n.toLocaleString("en", { maximumFractionDigits: 1 });
+const kg = (n: number) => `${num(n)} kg`;
 
-// The switchable time-series measures. Adding one is a single entry here plus
-// the matching field in the /stats payload — no other code changes. `fractional`
-// marks measures that aren't whole counts, so the axis allows fractional steps.
+// The switchable time-series measures. Adding one takes a single entry here plus
+// the matching field in the /stats payload, and no other code changes.
+// `fractional` marks measures that aren't whole counts, so the axis allows
+// fractional steps. `format` carries the unit (tooltip, table); `tick` omits it,
+// because a unit repeated down every gridline is noise. `unit` prints it once,
+// atop the axis.
 type Measure = {
   key: MeasureKey;
   label: string;
   noun: string;
   format: (n: number) => string;
+  tick?: (n: number) => string;
+  unit?: string;
   fractional?: boolean;
 };
 const MEASURES: Measure[] = [
   { key: "teardowns", label: "Teardowns", noun: "products disassembled", format: int },
   { key: "parts", label: "Parts", noun: "components extracted", format: int },
-  { key: "mass_kg", label: "Mass", noun: "reverse-engineered", format: kg, fractional: true },
+  {
+    key: "mass_kg",
+    label: "Mass",
+    noun: "reverse-engineered",
+    format: kg,
+    tick: num,
+    unit: "kg",
+    fractional: true,
+  },
   { key: "images", label: "Images", noun: "photos catalogued", format: int },
-  { key: "users", label: "Signups", noun: "new lab members", format: int },
+  // "Members", not "Signups": this is a research platform's activity log, not a
+  // growth dashboard, and the noun below is the honest description either way.
+  { key: "users", label: "Members", noun: "new lab members", format: int },
 ];
 
-// SVG coordinate system. The SVG scales fluidly via viewBox.
-const W = 720;
-const H = 260;
-const PAD = { top: 24, right: 16, bottom: 40, left: 56 };
+// Running totals, when the payload carries them. The chart answers "when"; these
+// answer "how much to date", a question no time series can.
+const TILES: { key: string; label: string; format: (n: number) => string }[] = [
+  { key: "products", label: "Products", format: int },
+  { key: "parts", label: "Parts", format: int },
+  { key: "mass_kg", label: "Mass", format: kg },
+  { key: "images", label: "Images", format: int },
+];
+
+// Split "Jul 2025" into a tick ("Jul") and a qualifier ("2025") that only prints
+// when it changes. Every column keeps a label and none collide, so no
+// every-other-column rule is needed: such a rule drops the most recent period
+// without saying so. Purely textual, so "Q1 2025" and a bare "2025" pass through
+// unharmed.
+const splitLabel = (label: string): [string, string] => {
+  const i = label.indexOf(" ");
+  return i === -1 ? [label, ""] : [label.slice(0, i), label.slice(i + 1)];
+};
+
+// SVG coordinate system. The SVG scales fluidly via viewBox, so every user unit
+// here is also a type size: at 720 wide the chart rendered at 0.66 in its column
+// and 12px axis labels came out at 8 real pixels. 480 keeps the widest case near
+// 1:1; narrow screens trade the y-axis away instead (see the CSS).
+const W = 480;
+const H = 240;
+const PAD = { top: 20, right: 12, bottom: 40, left: 48 };
 const INNER_W = W - PAD.left - PAD.right;
 const INNER_H = H - PAD.top - PAD.bottom;
 
@@ -89,6 +128,9 @@ export default function DisassemblyChart({
   const y = (v: number) => PAD.top + INNER_H - (v / yMax) * INNER_H;
   const colW = INNER_W / series.length;
   const barWidth = colW * 0.6;
+  const baseline = PAD.top + INNER_H;
+  const tick = measure.tick ?? measure.format;
+  const totals = stats.totals;
 
   const summary =
     `Chart of ${measure.label.toLowerCase()} in the Reverse Engineering Lab (${measure.noun}): ` +
@@ -98,6 +140,17 @@ export default function DisassemblyChart({
 
   return (
     <figure className="chart">
+      {totals && (
+        <dl className="chart__tiles">
+          {TILES.filter((t) => typeof totals[t.key] === "number").map((t) => (
+            <div key={t.key}>
+              <dt>{t.label}</dt>
+              <dd>{t.format(totals[t.key])}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
       <div className="chart__toolbar">
         <fieldset className="chart__controls">
           <legend className="visually-hidden">Measure</legend>
@@ -116,14 +169,14 @@ export default function DisassemblyChart({
       </div>
 
       <div className="chart__plot">
-        {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: mouse hover is a visual enhancement; keyboard/SR users get the data table */}
+        {/* Pointer hover is a visual enhancement; keyboard/SR users get the data table */}
         <svg
           viewBox={`0 0 ${W} ${H}`}
           width="100%"
           role="img"
           aria-label={summary}
           preserveAspectRatio="xMidYMid meet"
-          onMouseLeave={() => setActive(null)}
+          onPointerLeave={() => setActive(null)}
         >
           {/* Gridlines and y-axis labels */}
           <g className="chart__grid">
@@ -131,43 +184,55 @@ export default function DisassemblyChart({
               <g key={t}>
                 <line x1={PAD.left} x2={W - PAD.right} y1={y(t)} y2={y(t)} />
                 <text x={PAD.left - 8} y={y(t)} dy="0.32em" textAnchor="end">
-                  {measure.format(t)}
+                  {tick(t)}
                 </text>
               </g>
             ))}
           </g>
 
+          {/* The unit, once, rather than repeated down every gridline */}
+          {measure.unit && (
+            <text className="chart__unit" x={PAD.left - 8} y={PAD.top - 10} textAnchor="end">
+              {measure.unit}
+            </text>
+          )}
+
+          {/* Zero baseline: the bars sit on it, so it outweighs the gridlines */}
+          <line className="chart__axis" x1={PAD.left} x2={W - PAD.right} y1={baseline} y2={baseline} />
+
           {/* Bars + x-axis labels + hover targets */}
-          {series.map((d, i) => (
-            <g key={d.period}>
-              <rect
-                className="chart__bar"
-                x={x(i) - barWidth / 2}
-                y={y(d.value)}
-                width={barWidth}
-                height={PAD.top + INNER_H - y(d.value)}
-                rx="2"
-                data-active={active === i}
-                style={{ "--bar-i": i } as CSSProperties}
-              />
-              {/* x-axis labels: show every other to avoid crowding */}
-              {i % 2 === 0 && (
+          {series.map((d, i) => {
+            const [head, tail] = splitLabel(d.label);
+            const showTail = tail !== "" && (i === 0 || tail !== splitLabel(series[i - 1].label)[1]);
+            return (
+              <g key={d.period}>
+                <path
+                  className="chart__bar"
+                  d={barPath(x(i), barWidth, y(d.value), baseline)}
+                  data-active={active === i}
+                  style={{ "--bar-i": i } as CSSProperties}
+                />
                 <text className="chart__xlabel" x={x(i)} y={H - PAD.bottom + 18} textAnchor="middle">
-                  {d.label}
+                  {head}
+                  {showTail && (
+                    <tspan className="chart__xlabel-qualifier" x={x(i)} dy="1.15em">
+                      {tail}
+                    </tspan>
+                  )}
                 </text>
-              )}
-              {/* Transparent hover target spanning the column (mouse enhancement) */}
-              {/* biome-ignore lint/a11y/noStaticElementInteractions: pointer-only tooltip affordance; the same figures are in the accessible table below */}
-              <rect
-                className="chart__hit"
-                x={PAD.left + i * colW}
-                y={PAD.top}
-                width={colW}
-                height={INNER_H}
-                onMouseEnter={() => setActive(i)}
-              />
-            </g>
-          ))}
+                {/* Transparent hover target spanning the column. Pointer events, not
+                    mouse events, so a tap on a touch screen also reveals the tooltip. */}
+                <rect
+                  className="chart__hit"
+                  x={PAD.left + i * colW}
+                  y={PAD.top}
+                  width={colW}
+                  height={INNER_H}
+                  onPointerEnter={() => setActive(i)}
+                />
+              </g>
+            );
+          })}
 
           {/* Tooltip (mouse-driven enhancement; data is in the table below) */}
           {active !== null &&
@@ -183,7 +248,8 @@ export default function DisassemblyChart({
                   <line x1={cx} x2={cx} y1={PAD.top} y2={PAD.top + INNER_H} />
                   <circle cx={cx} cy={cy} r="4" />
                   <g transform={`translate(${tipX}, ${tipY})`}>
-                    <rect x="-58" y="-26" width="116" height="34" rx="6" />
+                    {/* rx matches --radius: the page has two radii, not three. */}
+                    <rect x="-58" y="-26" width="116" height="34" rx="4" />
                     <text x="0" y="-12" textAnchor="middle" className="chart__tip-title">
                       {d.label}
                     </text>
@@ -196,6 +262,13 @@ export default function DisassemblyChart({
             })()}
         </svg>
       </div>
+
+      {/* Pressing a measure button rewrites the chart, its aria-label and the
+          table below, none of which announces itself. The button reports its own
+          pressed state; this reports what the data now says. */}
+      <p className="visually-hidden" aria-live="polite">
+        {`${measure.label}: ${measure.format(total)} across ${series.length} ${periodNoun}s.`}
+      </p>
 
       {/* Accessible data table (visually hidden, read by assistive tech) */}
       <table className="visually-hidden" aria-labelledby={legendId}>
