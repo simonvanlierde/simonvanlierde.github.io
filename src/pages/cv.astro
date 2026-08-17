@@ -1,0 +1,419 @@
+---
+import { formatPeriod } from "../components/cvPeriod.ts";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import { cv, cvPdf as pdf } from "../data/cv.ts";
+import { listablePublications } from "../data/publications.ts";
+import { cvJsonLd } from "../data/schemaOrg.ts";
+import Base from "../layouts/Base.astro";
+
+const {
+  basics,
+  profile,
+  skills,
+  experience,
+  projects,
+  education,
+  professional_development: development,
+  interests,
+  exported,
+} = cv;
+
+// A CV with no date makes the reader guess how stale it is. Day precision is the
+// useful granularity: the export's timestamp is when the file was generated, not
+// a claim about the hour anything changed.
+// Accepted work always lists; unaccepted work only once a preprint DOI exists.
+// See listablePublications for the reasoning and tests/unit for the check.
+const publications = listablePublications(cv.publications);
+
+const exportedLabel = exported
+  ? new Date(exported).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+  : null;
+
+// The email entry drops out entirely when the export withholds it, rather than
+// rendering a dead "mailto:undefined".
+const contact = [
+  { label: basics.location, href: null },
+  ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
+  { label: "GitHub", href: basics.links.github },
+  { label: "LinkedIn", href: basics.links.linkedin },
+];
+---
+
+<Base
+  title={`CV | ${basics.name}`}
+  description={`Curriculum vitae of ${basics.name}: ${basics.headline}.`}
+  jsonLd={cvJsonLd}
+>
+  <nav class="container cv-nav" aria-label="Primary">
+    <a class="cv-nav__back" href="/">
+      <svg
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m12 19-7-7 7-7"></path>
+        <path d="M19 12H5"></path>
+      </svg>
+      Home
+    </a>
+    <ThemeToggle />
+  </nav>
+
+  <header class="container cv-header">
+    {/* The name, not "Curriculum vitae": a print or a screenshot of the top of
+        this page has to carry whose CV it is. The document type is already in
+        the tab title, the download button, and the URL. */}
+    <h1>{basics.name}</h1>
+    <p class="cv-header__headline prose">{basics.headline}</p>
+
+    <ul class="link-list cv-contact">
+      {
+        contact.map((c) => (
+          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span>{c.label}</span>}</li>
+        ))
+      }
+    </ul>
+
+    <a class="cv-download" href={pdf} download>
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <path d="M7 10l5 5 5-5"></path>
+        <path d="M12 15V3"></path>
+      </svg>
+      Download as PDF
+    </a>
+
+    {
+      /* Sits under the download button because it dates both: page and PDF come
+         out of one export run. */
+      exportedLabel && (
+        <p class="cv-updated">
+          Last updated <time datetime={exported}>{exportedLabel}</time>
+        </p>
+      )
+    }
+  </header>
+
+  <main id="main">
+    <section class="container" aria-labelledby="profile-heading">
+      <h2 id="profile-heading">Profile</h2>
+      <p class="prose cv-profile">{profile}</p>
+    </section>
+
+    <section class="container" aria-labelledby="experience-heading">
+      <h2 id="experience-heading">Experience</h2>
+      <div class="cv-entries">
+        {
+          experience.map((job) => (
+            <article class="cv-entry">
+              <p class="cv-entry__period">{formatPeriod(job.start, job.end)}</p>
+              <div class="cv-entry__body">
+                <h3 class="cv-entry__role">{job.role}</h3>
+                <p class="cv-entry__org">{job.organization}</p>
+                {job.highlights.length > 0 && (
+                  <ul class="cv-highlights">
+                    {job.highlights.map((h) => (
+                      <li>{h}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      /* Directly after Experience: it is the section an academic reader looks
+         for first, and burying it under Skills would say something untrue about
+         what this CV is. */
+      publications.length > 0 && (
+        <section class="container" aria-labelledby="publications-heading">
+          <h2 id="publications-heading">Publications</h2>
+          <div class="cv-entries">
+            {publications.map((pub) => (
+              <article class="cv-entry">
+                <p class="cv-entry__period">{pub.year}</p>
+                <div class="cv-entry__body">
+                  <h3 class="cv-entry__role">
+                    {pub.doi ? <a href={`https://doi.org/${pub.doi}`}>{pub.title}</a> : pub.title}
+                  </h3>
+                  <p class="cv-entry__org">{pub.authors.join(", ")}</p>
+                  <p class="cv-publication__venue">
+                    {pub.venue}
+                    {pub.status !== "published" && <span class="tag">{pub.status}</span>}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      /* Optional sections render or they don't. An empty heading over nothing
+         reads as a gap in the person, not a gap in the export. */
+      skills.length > 0 && (
+        <section class="container" aria-labelledby="skills-heading">
+          <h2 id="skills-heading">Skills</h2>
+          <div class="cv-entries">
+            {skills.map((group) => (
+              <div class="cv-entry">
+                <p class="cv-entry__period">{group.group}</p>
+                <ul class="tag-list cv-entry__body" aria-label={group.group}>
+                  {group.items.map((item) => (
+                    <li class="tag">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      projects.length > 0 && (
+        <section class="container" aria-labelledby="projects-heading">
+          <h2 id="projects-heading">Projects</h2>
+          <div class="cv-entries">
+            {projects.map((project) => (
+              <article class="cv-entry">
+                <div class="cv-entry__body cv-entry__body--railless">
+                  <h3 class="cv-entry__role">
+                    <a href={project.url}>{project.name}</a>
+                  </h3>
+                  <p class="cv-entry__org">{project.summary}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="container" aria-labelledby="education-heading">
+      <h2 id="education-heading">Education</h2>
+      <div class="cv-entries">
+        {
+          education.map((school) => (
+            <article class="cv-entry">
+              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
+              <div class="cv-entry__body">
+                <h3 class="cv-entry__role">{school.degree}</h3>
+                <p class="cv-entry__org">{school.institution}</p>
+                {school.details && <p class="cv-entry__detail">{school.details}</p>}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      /* Talks, summer schools, and upstream contributions. This is the section a
+         reading committee looks for and the page had no home for. */
+      development.length > 0 && (
+        <section class="container" aria-labelledby="development-heading">
+          <h2 id="development-heading">Talks and training</h2>
+          <ul class="prose cv-list">
+            {development.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      interests.length > 0 && (
+        <section class="container" aria-labelledby="interests-heading">
+          <h2 id="interests-heading">Interests</h2>
+          <ul class="tag-list cv-interests" aria-labelledby="interests-heading">
+            {interests.map((item) => (
+              <li class="tag">{item}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </main>
+
+  <footer class="container cv-footer">
+    <p>The PDF is generated from the same source as this page.</p>
+    <a href={pdf} download>Download as PDF</a>
+  </footer>
+</Base>
+
+<style>
+  .cv-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-s);
+    border-bottom: var(--border-width) solid var(--border);
+  }
+
+  .cv-nav__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--dur-fast) ease;
+  }
+
+  .cv-nav__back:hover {
+    color: var(--accent);
+  }
+
+  .cv-header {
+    padding-block: var(--space-l) var(--space-m);
+  }
+
+  /* Shared with the landing page's h1: navigating between them morphs the name
+     instead of cross-fading the whole document. */
+  .cv-header h1 {
+    view-transition-name: person-name;
+  }
+
+  /* This page is ~4000px of text in seven sections. Skipping the render work for
+     what is far off-screen is free here: no images to reflow, and the reserved
+     size keeps the scrollbar honest. */
+  :global(main > section) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 400px;
+  }
+
+  .cv-header__headline {
+    margin-top: var(--space-s);
+    font-size: var(--step-1);
+    color: var(--text-muted);
+  }
+
+  .cv-contact {
+    margin-top: var(--space-m);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  /* A filled accent button: the one call to action on the page. */
+  .cv-download {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-l);
+    padding: var(--space-s) var(--space-m); /* clears 44px on a phone */
+    background: var(--accent);
+    color: var(--accent-contrast);
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-fast) ease,
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  /* A download shows nothing on the page itself, and touch has no hover, so the
+     press is the only confirmation the tap landed. */
+  .cv-download:active {
+    transform: scale(0.97);
+  }
+
+  .cv-download:hover {
+    background: var(--accent-strong);
+    color: var(--accent-contrast);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cv-download {
+      transition: none;
+    }
+  }
+
+  .cv-updated {
+    margin-top: var(--space-s);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .cv-updated time {
+    font-family: var(--font-mono);
+  }
+
+  .cv-profile {
+    margin-top: var(--space-m);
+    color: var(--text-muted);
+  }
+
+  /* Venue sits under the byline, with the status only when it isn't "published":
+     a chip on every entry would be noise, and its absence already means accepted. */
+  .cv-publication__venue {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  /* A degree's one-line specialisation, quieter than the institution above it. */
+  .cv-entry__detail {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  /* Talks and training: a plain reading list, not a timeline. It has no periods
+     to put in the rail, so it takes the prose measure instead. */
+  .cv-list {
+    margin-top: var(--space-l);
+    padding-left: 1.1em;
+    color: var(--text-muted);
+  }
+
+  .cv-list li + li {
+    margin-top: var(--space-xs);
+  }
+
+  .cv-interests {
+    margin-top: var(--space-l);
+  }
+
+  .cv-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m) var(--space-l);
+    padding-block: var(--space-l);
+    border-top: var(--border-width) solid var(--border);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+</style>

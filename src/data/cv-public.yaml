@@ -1,0 +1,96 @@
+basics:
+  name: Simon van Lierde
+  headline: Research Software Engineer · Full-Stack Developer for Sustainability Science
+  location: The Hague, Netherlands
+  email: simonvanlierde@gmail.com
+  links:
+    linkedin: https://www.linkedin.com/in/simon-van-lierde/
+    github: https://github.com/simonvanlierde
+    website: https://simonvanlierde.github.io/
+render:
+  contact: [email, location, github, linkedin, website]
+  font: nunito
+profile: >-
+  Full-stack research software engineer with three years of professional experience in software, data, and solution architecture, now halfway through a PhD in Industrial Ecology at CML, Leiden University. I build open-source tools and data infrastructure that turn environmental research into reliable, user-friendly software. As lead developer of ReLab I own the platform end to end, build dashboards and interactive visualizations that carry research to non-specialist audiences, and work FAIR and in the open throughout.
+experience:
+  - organization: CML, Leiden University
+    role: PhD Researcher in Industrial Ecology
+    start: 2024-04
+    end: present
+    highlights:
+      - "Lead developer of ReLab, owning the end-to-end software lifecycle: FastAPI/PostgreSQL backend with OAuth and Alembic migrations, React/TypeScript and Expo front-ends, CI/CD, Cloudflare networking, restic backups, and OWASP ASVS security hardening."
+      - Ran two data-collection workshops (135 participants) and a lab deployment of the platform; the pilot captured 78 products, 1,331 components, and 3,610 images.
+      - Designed and deployed a central observability stack (OpenTelemetry, Grafana, OpenTofu-managed infrastructure) as a shared service for CML research software.
+      - Built a Raspberry Pi camera plugin for automated image capture, with an OpenAPI spec and PyPI releases.
+  - organization: Nationale Milieudatabase (Dutch Environmental Database)
+    role: Data Manager
+    start: 2023-09
+    end: 2024-04
+    highlights:
+      - Managed environmental databases underpinning sustainability calculations for the Dutch construction sector; improved data structure, consistency, and validation, and advised on software implementation.
+      - Aligned the national environmental databases with open data standards (EU LCDN, PEF), collaborating with policymakers, developers, and industry.
+  - organization: Metabolic
+    role: Solution Architect & Product Manager
+    start: 2022-08
+    end: 2023-09
+    highlights:
+      - Shaped the technical design and held product ownership of LCA and sustainability-reporting tools; guided the implementation of LCA, EEIOA, and MFA methodologies across the division's projects.
+      - Product owner and domain expert for automated sustainability-reporting tools (FastAPI, Vue) that replaced static Excel models with dynamic REST APIs and web applications.
+  - organization: Metabolic
+    role: Consultant & Data Analyst, Sustainable Industries
+    start: 2021-02
+    end: 2022-08
+    highlights:
+      - Built Python-based environmental-impact models (LCA, MFA) for sustainability-consulting projects with industry, NGO, and government clients.
+projects:
+  - name: ReLab
+    url: https://github.com/CMLPlatform/relab
+    summary: Open-source platform for product teardown, circular-economy, and computer-vision research.
+  - name: Computer-vision taxonomy visual
+    url: https://simonvanlierde.github.io/cv-ie-taxonomy/
+    summary: Interactive React/SVG exploded-teardown map of a computer-vision taxonomy, prototyped as a companion visual for an upcoming publication.
+  - name: MSc-thesis cooling dashboard
+    url: https://simonvanlierde.github.io/msc-thesis-ie
+    summary: Interactive dashboard for a cooling-demand and LCA model of The Hague, with Nivo (D3-based) charts and MapLibre maps.
+  - name: Public web apps
+    url: https://simonvanlierde.github.io/
+    summary: Maintain a CRediT authorship-statement generator and other open-source web apps, all CI-tested and continuously deployed on GitHub Pages and Cloudflare.
+education:
+  - institution: Leiden University & TU Delft
+    degree: MSc Industrial Ecology
+    start: 2018
+    end: 2023
+    details: Joint degree; specialization in environmental modeling, LCA, and GIS. Thesis used Python geoscripting to model environmental impacts of space cooling in The Hague.
+  - institution: Radboud University
+    degree: BSc Physics & Astronomy
+    start: 2014
+    end: 2018
+    details: Focus on mathematics, theoretical physics, and programming; exchange semester at the National University of Singapore.
+professional_development:
+  - "Conference talks: NWO NAC 2026, Brightcon 2025, and ISIE 2025."
+  - BMVA Computer Vision Summer School (2026)
+  - "HPC Spring School: distributed and GPU computing, Utrecht University (2026)"
+  - "Autumn School on inventory modelling at scale, Départ de Sentier (2025): contributed a merged pull request to sentier.dev's open LCA-data libraries"
+  - PhD Summer School on AI, machine learning and neural networks, Utrecht University (2024)
+skills:
+  - group: Programming
+    items: [Python, TypeScript/JavaScript, SQL]
+  - group: Front-end
+    items: [React, Expo/React Native, Nivo (D3), MapLibre, "accessibility (WCAG AA, axe-core)"]
+  - group: Back-end
+    items: [FastAPI, REST/OpenAPI, OAuth, PostgreSQL, Alembic]
+  - group: DevOps
+    items: [Docker, GitHub Actions, OpenTofu/Terraform (IaC), Cloudflare, Grafana, uv, pnpm, devcontainers]
+  - group: Practices
+    items: [Git/GitHub, pytest, Playwright, PyPI packaging, documentation, reproducible workflows, FAIR and open science, OWASP ASVS]
+  - group: Data science & ML
+    items: [PyTorch, Pandas]
+  - group: Domain modeling
+    items: [LCA, MFA, EEIOA, GIS, circular economy]
+  - group: Languages
+    items: [Dutch (native), English (fluent), French (B1), Chinese (A2)]
+interests:
+  - Climbing
+  - Hiking
+  - Cooking
+exported: "2026-08-17T13:53:06Z"
