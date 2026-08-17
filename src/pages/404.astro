@@ -1,0 +1,42 @@
+---
+// GitHub Pages serves the built 404.html for any unmatched path, so this is the
+// only error state a static site has.
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Page not found | Simon van Lierde"
+  description="That page does not exist on this site."
+>
+  <main id="main" class="container notfound">
+    <h1>That page does not exist</h1>
+    <p class="prose">
+      The link may be out of date, or the address may have a typo in it. Two
+      places worth trying:
+    </p>
+    <ul class="link-list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/cv/">CV</a></li>
+    </ul>
+  </main>
+</Base>
+
+<style>
+  .notfound {
+    /* Roughly centred in the viewport without pinning the text to the middle. */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 70svh;
+    padding-block: var(--space-xl);
+  }
+
+  .notfound p {
+    margin-top: var(--space-m);
+    color: var(--text-muted);
+  }
+
+  .notfound ul {
+    margin-top: var(--space-l);
+  }
+</style>

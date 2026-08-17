@@ -4,9 +4,11 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description: string;
+  /** schema.org JSON-LD for this page. Built in src/data/schemaOrg.ts. */
+  jsonLd?: object;
 }
 
-const { title, description } = Astro.props;
+const { title, description, jsonLd } = Astro.props;
 
 // Astro.site is set in astro.config.mjs (https://simonvanlierde.github.io).
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -27,7 +29,9 @@ const ogImage = new URL("og.png", Astro.site);
     <!-- Icons / theme -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Content set by the theme script below so it tracks the toggle, not just the system pref. -->
-    <meta name="theme-color" content="#0f766e" />
+    {/* Browser chrome only takes a literal colour, so these two mirror --accent
+        (light) and --bg (dark) from global.css by hand. Change them together. */}
+    <meta name="theme-color" content="#12766c" />
     <meta name="color-scheme" content="light dark" />
 
     <!-- Apply saved theme before paint to avoid a flash -->
@@ -46,6 +50,13 @@ const ogImage = new URL("og.png", Astro.site);
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_US" />
 
+    {
+      /* Structured data. Useful for an academic page in particular: it is what
+         lets a publication be read as a publication rather than as a heading. */
+      jsonLd && (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+      )
+    }
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -65,7 +76,7 @@ const ogImage = new URL("og.png", Astro.site);
       // btn is optional: this layout may wrap a page without a toggle.
       const sync = () => {
         const dark = isDark();
-        meta.content = dark ? "#0e1416" : "#0f766e";
+        meta.content = dark ? "#0e1416" : "#12766c";
         btn?.setAttribute("aria-pressed", String(dark));
       };
 
