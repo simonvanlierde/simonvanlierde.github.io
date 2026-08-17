@@ -2,6 +2,7 @@
 title: monitoring
 description: "Centralised observability for CML's research platforms: one host runs Grafana, Loki, Tempo, Prometheus, and an OpenTelemetry Collector, cross-referencing logs, traces, and metrics. Runs on Docker Compose and OpenTofu."
 repo: https://github.com/CMLPlatform/monitoring
+kind: observability stack
 tags:
   - OpenTelemetry
   - Grafana stack

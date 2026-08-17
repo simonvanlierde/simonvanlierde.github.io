@@ -27,22 +27,91 @@
 
   /* Layout */
   --measure: 72ch;
+  /* Two radii, not three. Everything rectangular takes --radius; the pill is
+     reserved for the one small standalone control (the footer version chip). */
   --radius: 4px; /* crisp data-sheet edges */
+  --radius-pill: 999px;
   --border-width: 1px;
 
-  /* Palette. Each token carries both themes; light-dark() picks one against the
-     active color-scheme (set below) — the system preference by default, or the
-     scheme the footer toggle forces. Single source of truth, no media query. */
+  /* Motion. One curve for things entering or settling, one for things morphing
+     in place, and three durations. Everything that moves on this site draws
+     from these; a hand-typed cubic-bezier in a component is a bug. */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-fast: 150ms; /* colour changes, presses */
+  --dur-base: 200ms; /* fades, morphs */
+  --dur-slow: 250ms; /* the disclosure's height */
+
+  /* Palette. Authored in OKLCH, because the first number of every token is then
+     its perceptual lightness and the whole palette can be read as a ladder. Two
+     hues carry the entire site, and each token names both themes: light-dark()
+     picks one against the active color-scheme (set below), either the system
+     preference or the scheme the footer toggle forces. One source, no media query.
+
+     The hexes this replaced were a hand-picked set whose light neutrals drifted
+     across 40 degrees of hue (ink at 237, hairline at 223, ground at 197) while
+     the dark ones sat together near 221, so the two themes were not quite the
+     same family. Every value below is within sRGB, and every pair the site
+     actually renders was contrast-checked against the hexes before the swap:
+     largest change 0.15:1, nothing regressed.
+
+     Lightness ladder, light then dark, mirrored around the middle:
+       ground   99.0 / 18.5      hairline 92.5 / 31.0
+       sheet   100.0 / 23.0      graphite 49.0 / 74.0
+       ink      24.0 / 94.0      accent   51.0 / 85.5 */
+  --hue-neutral: 222; /* ground, sheet, ink, graphite, hairline */
+  --hue-teal: 184; /* the accent, and the chart marks */
+
   color-scheme: light dark;
-  --bg: light-dark(#fbfcfc, #0e1416);
-  --surface: light-dark(#ffffff, #161e21);
-  --text: light-dark(#1a2024, #e7edef);
-  --text-muted: light-dark(#56636b, #9fadb3);
-  --border: light-dark(#e2e7e9, #283337);
-  --accent: light-dark(#0f766e, #5eead4); /* sea-green >= 4.7:1 on light; lighter teal on dark */
-  --accent-strong: light-dark(#0b5650, #99f6e4);
-  --accent-contrast: light-dark(#ffffff, #06251f);
-  --focus: light-dark(#0f766e, #5eead4);
+  --bg: light-dark(oklch(99% 0.002 var(--hue-neutral)), oklch(18.5% 0.01 var(--hue-neutral)));
+  --surface: light-dark(oklch(100% 0 var(--hue-neutral)), oklch(23% 0.013 var(--hue-neutral)));
+  --text: light-dark(oklch(24% 0.012 var(--hue-neutral)), oklch(94% 0.007 var(--hue-neutral)));
+  --text-muted: light-dark(oklch(49% 0.021 var(--hue-neutral)), oklch(74% 0.018 var(--hue-neutral)));
+  --border: light-dark(oklch(92.5% 0.006 var(--hue-neutral)), oklch(31% 0.017 var(--hue-neutral)));
+
+  /* Sea-green: 5.5:1 on light, 11.4:1 on dark, both against --surface. */
+  --accent: light-dark(oklch(51% 0.086 var(--hue-teal)), oklch(85.5% 0.125 var(--hue-teal)));
+
+  /* The hover step runs in opposite directions per theme, darker on light (51 to
+     41) and lighter on dark (85.5 to 91), because emphasis moves away from the
+     ground and the ground is at the other end. That inversion is why this cannot
+     be one derived formula off --accent, and why both steps are written out. */
+  --accent-strong: light-dark(oklch(41% 0.068 var(--hue-teal)), oklch(91% 0.093 var(--hue-teal)));
+  --accent-contrast: light-dark(oklch(100% 0 var(--hue-neutral)), oklch(24% 0.038 var(--hue-teal)));
+
+  /* The ring is the accent. Held as its own token so a future ring colour has a
+     name, but derived rather than restated: two values to keep in sync was one
+     too many. */
+  --focus: var(--accent);
+
+  /* Chart marks. On dark, --accent is tuned for thin text and glares as a large
+     fill, so bars take a step down in lightness (9.1:1 on --surface) and the
+     brighter accent becomes the hover state. Both modes clear the 3:1
+     mark-vs-surface floor. Same hue as the accent: one family, two jobs. */
+  --chart-bar: light-dark(oklch(51% 0.086 var(--hue-teal)), oklch(78.5% 0.133 var(--hue-teal)));
+  --chart-bar-strong: light-dark(oklch(41% 0.068 var(--hue-teal)), oklch(85.5% 0.125 var(--hue-teal)));
+}
+
+/* Wider gamut, same design. The teal values above sit at 83-96% of what sRGB can
+   express at those lightnesses, so on a P3 display the accent is being clipped
+   rather than chosen. A uniform 1.25x chroma lift recovers it: same lightness
+   ladder, same hue, same relationships, just no longer flattened by the container.
+   Every value here lands at 73-88% of the P3 maximum, so nothing clips.
+
+   Lightness is untouched, so contrast barely moves: light loses at most 0.08:1 and
+   dark gains 0.13:1. Each pair still clears its own floor at these chromas, which
+   is the point rather than a coincidence, because this query reports what a display
+   claims it can do and a wrong answer must not cost anyone legibility.
+
+   The neutrals stay where they are. At chroma 0.02 there is nothing to recover, and
+   a more colourful grey is not an upgrade. */
+@media (color-gamut: p3) {
+  :root {
+    --accent: light-dark(oklch(51% 0.107 var(--hue-teal)), oklch(85.5% 0.156 var(--hue-teal)));
+    --accent-strong: light-dark(oklch(41% 0.085 var(--hue-teal)), oklch(91% 0.116 var(--hue-teal)));
+    --chart-bar: light-dark(oklch(51% 0.107 var(--hue-teal)), oklch(78.5% 0.166 var(--hue-teal)));
+    --chart-bar-strong: light-dark(oklch(41% 0.085 var(--hue-teal)), oklch(85.5% 0.156 var(--hue-teal)));
+  }
 }
 
 /* The toggle sets data-theme; forcing color-scheme flips every token above. */
@@ -68,14 +137,23 @@
   margin: 0;
 }
 
+/* No `scroll-behavior: smooth`. The skip link is the only fragment link on the
+   site, so smooth scrolling would only animate a keyboard action: the one place
+   motion always costs more than it gives. */
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
+}
+
+/* Cross-document transitions. / and /cv/ are one document as far as the reader is
+   concerned, and the name carries across both heros (see each page's
+   view-transition-name). Pure CSS: browsers without it just navigate. */
+@view-transition {
+  navigation: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  @view-transition {
+    navigation: none;
   }
 }
 
@@ -143,10 +221,12 @@ ul {
    Accessibility helpers
    --------------------------------------------------------------------------- */
 
+/* No radius of its own: the outline already follows whatever the element's own
+   corners are, so a card keeps its 4px and a chip stays square. Setting one here
+   restyled the element on focus and introduced a third radius. */
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
-  border-radius: 3px;
 }
 
 .visually-hidden {
@@ -181,13 +261,18 @@ ul {
 .theme-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2xs);
-  padding: 0;
+  /* The glyph is 18px; the padding buys a 44px hit area and the matching
+     negative margin keeps the icon optically where it was. */
+  padding: 0.8rem;
+  margin: -0.8rem;
   font: inherit;
   color: var(--text-muted);
   background: none;
   border: 0;
   cursor: pointer;
+  transition: color var(--dur-fast) ease;
 }
 
 .theme-toggle:hover {
@@ -218,9 +303,22 @@ ul {
   max-width: var(--measure);
 }
 
+/* The reset drops every margin, so paragraphs inside a prose block need their
+   break back: without it two paragraphs read as one run-on block. */
+.prose > p + p {
+  margin-top: var(--space-m);
+}
+
 main > section {
   padding-block: var(--space-xl);
   border-top: var(--border-width) solid var(--border);
+}
+
+/* The landing page's nav is sticky, so anything scrolled to by fragment (the
+   skip link's #main, most of all) has to clear it instead of landing under it. */
+#main,
+main > section {
+  scroll-margin-top: 4rem;
 }
 
 main > section:first-of-type {
@@ -246,41 +344,91 @@ main > section:first-of-type {
 }
 
 /* ---------------------------------------------------------------------------
-   Cards / grid
+   Plates
+   The catalogue row that replaced the card grid. A parts list, not a set of
+   boxes: a hairline rule per item, a mono rail naming the item's primary
+   technology, and the body to its right. Same rail-and-body grammar as the CV
+   timeline, so the whole site reads as one document rather than two systems.
    --------------------------------------------------------------------------- */
 
-.card-grid {
-  display: grid;
-  gap: var(--space-m);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.plates {
   margin-top: var(--space-l);
 }
 
-@media (max-width: 38rem) {
-  .card-grid {
-    grid-template-columns: 1fr;
+.plate {
+  display: grid;
+  gap: var(--space-2xs) var(--space-l);
+  padding-block: var(--space-m);
+  border-top: var(--border-width) solid var(--border);
+  transition: border-color var(--dur-fast) ease;
+}
+
+/* The rule is the whole hover affordance: no box to light up, so the item's own
+   edge does the work. */
+.plate:hover {
+  border-top-color: var(--accent);
+}
+
+.plate:last-child {
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+@media (min-width: 40rem) {
+  .plate {
+    grid-template-columns: 11rem minmax(0, 1fr);
   }
 }
 
-/* Shared card box. ProjectCard adds the title/hover treatment on top; the RELab
-   and side-project cards reuse just this box. `--wide` spans the full grid row. */
-.card {
+/* Names the item's primary technology. It is the tag that would otherwise lead
+   the tag list, moved to where it can be scanned down the column. */
+.plate__index {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  padding-top: 0.15em;
+}
+
+.plate__body > * + * {
+  margin-top: var(--space-s);
+}
+
+.plate__title {
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  font-weight: 600;
+}
+
+.plate__title a {
+  text-decoration: none;
+}
+
+.plate__title a:hover {
+  text-decoration: underline;
+}
+
+/* The body column is wider than a comfortable line; the description takes the
+   same measure as every other run of prose on the site rather than its container. */
+.plate__desc {
+  max-width: var(--measure);
+  color: var(--text-muted);
+}
+
+.plate__links {
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: var(--space-m);
-  background: var(--surface);
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius);
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-m);
+  font-size: var(--step--1);
 }
 
-.card--wide {
-  grid-column: 1 / -1;
+/* Clears the 24px minimum target size at this type size. */
+.plate__links a {
+  padding-block: 0.15rem;
 }
 
-/* Denser grid for the lighter personal-project cards. */
-.card-grid--dense {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+@media (prefers-reduced-motion: reduce) {
+  .plate {
+    transition: none;
+  }
 }
 
 .tag-list {
@@ -288,8 +436,6 @@ main > section:first-of-type {
   flex-wrap: wrap;
   gap: var(--space-2xs) var(--space-xs);
   list-style: none;
-  margin-top: auto;
-  padding-top: var(--space-s);
 }
 
 .tag {
@@ -298,7 +444,7 @@ main > section:first-of-type {
   color: var(--text-muted);
   background: var(--bg);
   border: var(--border-width) solid var(--border);
-  border-radius: 2px;
+  border-radius: var(--radius);
   padding: 0.1em 0.55em;
 }
 
@@ -310,4 +456,76 @@ main > section:first-of-type {
 .link-list__icon svg {
   width: 1.05em;
   height: 1.05em;
+}
+
+/* ---------------------------------------------------------------------------
+   CV timeline
+   Shared by the condensed history on the landing page and the full /cv/ page,
+   so both render the same entry shape from the same cv-public.yaml.
+   --------------------------------------------------------------------------- */
+
+.cv-entries {
+  margin-top: var(--space-l);
+  display: grid;
+  gap: var(--space-l);
+}
+
+/* Single column on narrow screens; a left rail for the period (or skill group)
+   once there is room for one. */
+.cv-entry {
+  display: grid;
+  gap: var(--space-2xs) var(--space-l);
+}
+
+@media (min-width: 40rem) {
+  .cv-entry {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+
+  /* Entries with nothing to put in the rail still line up with their siblings. */
+  .cv-entry__body--railless {
+    grid-column: 2;
+  }
+}
+
+.cv-entry__period {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  /* Nudge the rail down onto the role's baseline, not its cap line. */
+  padding-top: 0.15em;
+}
+
+.cv-entry__role {
+  font-size: var(--step-0);
+  font-weight: 650;
+}
+
+.cv-entry__role a {
+  text-decoration: none;
+}
+
+.cv-entry__role a:hover {
+  text-decoration: underline;
+}
+
+.cv-entry__org {
+  margin-top: var(--space-2xs);
+  color: var(--text-muted);
+}
+
+.cv-highlights {
+  margin-top: var(--space-s);
+  padding-left: 1.1em;
+  color: var(--text-muted);
+}
+
+.cv-highlights li + li {
+  margin-top: var(--space-2xs);
+}
+
+/* As a grid item the skill list should sit at the top of its row, beside the
+   group name in the rail, rather than stretching down it. */
+.cv-entry__body.tag-list {
+  align-content: start;
 }

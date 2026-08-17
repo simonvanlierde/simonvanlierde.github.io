@@ -3,73 +3,68 @@ interface Props {
   title: string;
   description: string;
   repo: string;
+  kind?: string;
   demo?: string;
   tags?: string[];
   links?: { label: string; url: string }[];
 }
 
-const { title, description, repo, demo, tags = [], links = [] } = Astro.props;
+const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.props;
+
+// The rail says what the thing is, so the column can be scanned on its own. It
+// falls back to the leading tag, which is then dropped from the tag list: one
+// value in two places on the same row is noise, so it moves rather than repeats.
+const [lead, ...rest] = tags;
+const rail = kind ?? lead;
+const railTags = kind ? tags : rest;
 ---
 
-<article class="card">
-  <h3 class="card__title">
-    <a href={repo}>{title}</a>
-  </h3>
-  <p class="card__desc">{description}</p>
+<article class="plate">
+  <p class="plate__index">{rail}</p>
+  <div class="plate__body">
+    <h3 class="plate__title">
+      <a href={repo}>{title}</a>
+    </h3>
+    <p class="plate__desc">{description}</p>
 
-  <p class="card__links">
-    <a href={repo}>Source</a>
-    {demo && <a href={demo}>Live demo</a>}
-    {links.map((l) => <a href={l.url}>{l.label}</a>)}
-  </p>
+    {
+      /* No "Source" link: the title already links the repo, so a second one would
+         announce every project twice and leave ten links whose whole accessible
+         name is "Source". The links here name their project, which is what a
+         screen reader's link list needs. */
+      (demo || links.length > 0) && (
+        <p class="plate__links">
+          {demo && (
+            <a href={demo} aria-label={`Live demo of ${title}`}>
+              Live demo
+            </a>
+          )}
+          {links.map((l) => (
+            <a href={l.url} aria-label={`${l.label} for ${title}`}>
+              {l.label}
+            </a>
+          ))}
+        </p>
+      )
+    }
 
-  {
-    tags.length > 0 && (
-      <ul class="tag-list" aria-label="Technologies">
-        {tags.map((t) => (
-          <li class="tag">{t}</li>
-        ))}
-      </ul>
-    )
-  }
+    {
+      railTags.length > 0 && (
+        <ul class="tag-list" aria-label="Technologies">
+          {railTags.map((t) => (
+            <li class="tag">{t}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
 </article>
 
 <style>
-  /* The box itself is global (.card); these are ProjectCard's own additions. */
-  .card {
-    transition: border-color 0.15s ease;
-  }
-
-  .card:hover {
-    border-color: var(--accent);
-  }
-
-  .card__title {
-    font-size: var(--step-1);
-    font-family: var(--font-mono);
-    font-weight: 600;
-    padding-bottom: var(--space-s);
-    border-bottom: var(--border-width) solid var(--border);
-  }
-
-  .card__title a {
-    text-decoration: none;
-  }
-
-  .card__title a:hover {
-    text-decoration: underline;
-  }
-
-  .card__desc {
-    margin-top: var(--space-s);
-    color: var(--text-muted);
-  }
-
-  .card__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-m);
-    margin-top: var(--space-s);
-    font-size: var(--step--1);
+  /* The plate row itself is global; this is the one thing the title needs on top
+     of it: an inline-block link so its padding builds a real target box. */
+  .plate__title a {
+    display: inline-block;
+    padding-block: 0.1rem;
   }
 </style>
