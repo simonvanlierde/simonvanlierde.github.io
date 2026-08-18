@@ -717,8 +717,8 @@ main > section.container > h2 {
     grid-template-columns: 11rem minmax(0, 1fr);
   }
 
-  .cv-entry__body--railless {
-    grid-column: 2;
+  .cv-entry--railless {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

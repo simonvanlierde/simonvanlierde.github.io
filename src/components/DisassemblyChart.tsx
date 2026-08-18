@@ -55,9 +55,7 @@ const MEASURES: Measure[] = [
     fractional: true,
   },
   { key: "images", label: "Images", noun: "photos catalogued", format: int },
-  // "Members", not "Signups": this is a research platform's activity log, not a
-  // growth dashboard, and the noun below is the honest description either way.
-  { key: "users", label: "Members", noun: "new lab members", format: int },
+  { key: "users", label: "New members", noun: "new lab members", format: int },
 ];
 
 // Split "Jul 2025" into a tick ("Jul") and a qualifier ("2025") that only prints

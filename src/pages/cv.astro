@@ -208,8 +208,8 @@ const contact = [
           <h2 id="projects-heading">Projects</h2>
           <div class="cv-entries">
             {projects.map((project) => (
-              <article class="cv-entry">
-                <div class="cv-entry__body cv-entry__body--railless">
+              <article class="cv-entry cv-entry--railless">
+                <div class="cv-entry__body">
                   <h3 class="cv-entry__role">
                     <a href={project.url}>{project.name}</a>
                   </h3>
@@ -263,14 +263,11 @@ const contact = [
       )
     }
 
-    <section class="container" aria-labelledby="cv-download-heading">
-      <h2 id="cv-download-heading">Download</h2>
-      <div class="cv-footer-download">
-        <p class="prose">Generated from the same source as this page.</p>
-        {/* The one stamp is in the header; this is a plain link. */}
-        <a class="draft cv-footer-download__link" href={pdf} download>Download as PDF</a>
-      </div>
-    </section>
+    <aside class="container cv-download-utility" aria-label="PDF download">
+      <p class="prose">Generated from the same source as this page.</p>
+      {/* The one stamp is in the header; this is a plain utility link. */}
+      <a class="draft cv-download-utility__link" href={pdf} download>Download as PDF</a>
+    </aside>
   </main>
 
   <TitleBlock
@@ -322,6 +319,7 @@ const contact = [
   @media (min-width: 60rem) {
     .cv-index__list {
       justify-content: space-between;
+      flex-wrap: nowrap;
     }
   }
 
@@ -396,15 +394,20 @@ const contact = [
     margin-top: var(--space-l);
   }
 
-  .cv-footer-download {
-    margin-top: var(--space-l);
+  .cv-download-utility {
+    margin-top: var(--space-m);
+    padding-block: var(--space-s);
+    border-top: var(--border-width) solid var(--border);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-m) var(--space-l);
+    justify-content: space-between;
+    gap: var(--space-s) var(--space-l);
+    color: var(--text-muted);
+    font-size: var(--step--1);
   }
 
-  .cv-footer-download__link {
+  .cv-download-utility__link {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -415,9 +418,38 @@ const contact = [
   /* On paper the PDF is the document; the download controls and the zone
      index are screen affordances, and an entry never breaks across pages. */
   @media print {
+    @page {
+      margin: 12mm 14mm;
+    }
+
+    body {
+      padding: 0;
+    }
+
+    .cv-header {
+      padding-block: 0 0.75rem;
+    }
+
+    main > section {
+      padding-block: 0.75rem 1rem;
+    }
+
+    .cv-entries {
+      margin-top: 0.9rem;
+      gap: 0.9rem;
+    }
+
+    .cv-highlights {
+      margin-top: 0.4rem;
+    }
+
+    .cv-highlights li + li {
+      margin-top: 0.15rem;
+    }
+
     .cv-download,
     .cv-index,
-    .cv-footer-download {
+    .cv-download-utility {
       display: none;
     }
   }
