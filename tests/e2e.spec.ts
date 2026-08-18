@@ -103,6 +103,27 @@ test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
   }
 });
 
+test("the exploded view becomes one compact, touch-sized system on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await expect(page.getByText("Open any numbered part.")).toBeVisible();
+  await expect(page.locator(".exploded__svg--desktop")).toBeHidden();
+  const mobile = page.locator(".exploded__svg--mobile");
+  await expect(mobile).toBeVisible();
+
+  const links = mobile.locator("a.mobile-part");
+  await expect(links).toHaveCount(6);
+  for (let i = 0; i < 6; i += 1) {
+    const box = await links.nth(i).boundingBox();
+    expect(box?.width).toBeGreaterThanOrEqual(44);
+    expect(box?.height).toBeGreaterThanOrEqual(44);
+  }
+
+  await page.setViewportSize({ width: 900, height: 800 });
+  await expect(page.locator(".exploded__svg--desktop")).toBeVisible();
+  await expect(mobile).toBeHidden();
+});
+
 test("an unknown path serves the 404 page with a way back", async ({ page }) => {
   await page.goto("/no-such-page/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("That page does not exist");

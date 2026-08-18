@@ -23,9 +23,10 @@ const parts = [
 const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
 ---
 
-<figure class="exploded" aria-labelledby="exploded-caption">
+<figure class="exploded" aria-labelledby="exploded-caption" aria-describedby="exploded-instruction">
+  <p class="exploded__instruction" id="exploded-instruction">Open any numbered part.</p>
   <svg
-    class="exploded__svg"
+    class="exploded__svg exploded__svg--desktop"
     viewBox="0 0 340 640"
     role="group"
     aria-label="Exploded view of ReLab; each part links to its source, app, or docs"
@@ -192,6 +193,134 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
 
   </svg>
 
+  {/* On a narrow screen, the tall desktop plate becomes a compact six-part
+      assembly map. The shared centreline preserves the system relationship;
+      every numbered cell is one large, explicit link. */}
+  <svg
+    class="exploded__svg exploded__svg--mobile"
+    viewBox="0 0 340 336"
+    role="group"
+    aria-label="Compact exploded view of ReLab; six numbered parts link to the app, source, or docs"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path class="axis" d="M170 8V328 M150 48H190 M150 160H190 M150 272H190" stroke-dasharray="14 5 2 5"></path>
+
+    <a class="mobile-part" href={link("rig").href} aria-label={`${link("rig").name}: ${link("rig").to}`}>
+      <rect class="hit-area" x="0" y="0" width="166" height="108"></rect>
+      <g class="part">
+        <rect x="54" y="22" width="58" height="38"></rect>
+        <circle cx="83" cy="41" r="9"></circle>
+        <circle class="fine" cx="83" cy="41" r="3.5"></circle>
+        <circle class="fine" cx="59" cy="27" r="2"></circle>
+        <circle class="fine" cx="107" cy="55" r="2"></circle>
+      </g>
+      <g class="balloon-mark">
+        <circle cx="18" cy="18" r="10"></circle>
+        <text class="fig-num" x="18" y="21.5" text-anchor="middle">1</text>
+      </g>
+      <text class="mobile-label" x="12" y="91">CAMERA RIG</text>
+      <path class="mobile-underline" d="M12 97H130"></path>
+      <path class="ext" d="M145 93 152 86 M147.5 86H152V90.5"></path>
+    </a>
+
+    <a class="mobile-part" href={link("app").href} aria-label={`${link("app").name}: ${link("app").to}`}>
+      <rect class="hit-area" x="174" y="0" width="166" height="108"></rect>
+      <g class="part">
+        <rect x="236" y="14" width="44" height="58"></rect>
+        <rect class="fine" x="241" y="22" width="34" height="41"></rect>
+        <line class="fine" x1="251" y1="18" x2="265" y2="18"></line>
+        <circle cx="258" cy="43" r="5"></circle>
+      </g>
+      <g class="balloon-mark">
+        <circle cx="192" cy="18" r="10"></circle>
+        <text class="fig-num" x="192" y="21.5" text-anchor="middle">2</text>
+      </g>
+      <text class="mobile-label" x="186" y="91">CAPTURE APP</text>
+      <path class="mobile-underline" d="M186 97H304"></path>
+      <path class="ext" d="M319 93 326 86 M321.5 86H326V90.5"></path>
+    </a>
+
+    <a class="mobile-part" href={link("web").href} aria-label={`${link("web").name}: ${link("web").to}`}>
+      <rect class="hit-area" x="0" y="112" width="166" height="108"></rect>
+      <g class="part">
+        <rect x="43" y="132" width="80" height="51"></rect>
+        <line class="fine" x1="43" y1="143" x2="123" y2="143"></line>
+        <circle class="fine" cx="50" cy="138" r="1.5"></circle>
+        <circle class="fine" cx="56" cy="138" r="1.5"></circle>
+        <line class="fine" x1="51" y1="153" x2="115" y2="153"></line>
+        <line class="fine" x1="51" y1="164" x2="115" y2="164"></line>
+        <line class="fine" x1="73" y1="147" x2="73" y2="176"></line>
+      </g>
+      <g class="balloon-mark">
+        <circle cx="18" cy="130" r="10"></circle>
+        <text class="fig-num" x="18" y="133.5" text-anchor="middle">3</text>
+      </g>
+      <text class="mobile-label" x="12" y="203">WEB APP</text>
+      <path class="mobile-underline" d="M12 209H130"></path>
+      <path class="ext" d="M145 205 152 198 M147.5 198H152V202.5"></path>
+    </a>
+
+    <a class="mobile-part" href={link("api").href} aria-label={`${link("api").name}: ${link("api").to}`}>
+      <rect class="hit-area" x="174" y="112" width="166" height="108"></rect>
+      <g class="part">
+        <rect x="215" y="145" width="86" height="27"></rect>
+        <rect class="fine" x="224" y="153" width="9" height="10"></rect>
+        <rect class="fine" x="239" y="153" width="9" height="10"></rect>
+        <rect class="fine" x="254" y="153" width="9" height="10"></rect>
+        <line class="fine" x1="274" y1="158" x2="286" y2="158"></line>
+        <circle cx="292" cy="158" r="2"></circle>
+      </g>
+      <g class="balloon-mark">
+        <circle cx="192" cy="130" r="10"></circle>
+        <text class="fig-num" x="192" y="133.5" text-anchor="middle">4</text>
+      </g>
+      <text class="mobile-label" x="186" y="203">API</text>
+      <path class="mobile-underline" d="M186 209H304"></path>
+      <path class="ext" d="M319 205 326 198 M321.5 198H326V202.5"></path>
+    </a>
+
+    <a class="mobile-part" href={link("db").href} aria-label={`${link("db").name}: ${link("db").to}`}>
+      <rect class="hit-area" x="0" y="224" width="166" height="108"></rect>
+      <g class="part">
+        <ellipse cx="83" cy="247" rx="28" ry="7"></ellipse>
+        <line x1="55" y1="247" x2="55" y2="285"></line>
+        <line x1="111" y1="247" x2="111" y2="285"></line>
+        <path d="M55 285A28 7 0 0 0 111 285"></path>
+        <path class="fine" d="M55 260A28 7 0 0 0 111 260 M55 273A28 7 0 0 0 111 273"></path>
+      </g>
+      <g class="balloon-mark">
+        <circle cx="18" cy="242" r="10"></circle>
+        <text class="fig-num" x="18" y="245.5" text-anchor="middle">5</text>
+      </g>
+      <text class="mobile-label" x="12" y="315">DATABASE</text>
+      <path class="mobile-underline" d="M12 321H130"></path>
+      <path class="ext" d="M145 317 152 310 M147.5 310H152V314.5"></path>
+    </a>
+
+    <a class="mobile-part" href={link("docs").href} aria-label={`${link("docs").name}: ${link("docs").to}`}>
+      <rect class="hit-area" x="174" y="224" width="166" height="108"></rect>
+      <g class="part">
+        <rect x="228" y="242" width="60" height="48"></rect>
+        <line class="fine" x1="238" y1="242" x2="238" y2="290"></line>
+        <circle class="fine" cx="233" cy="253" r="1.5"></circle>
+        <circle class="fine" cx="233" cy="266" r="1.5"></circle>
+        <circle class="fine" cx="233" cy="279" r="1.5"></circle>
+        <line class="fine" x1="246" y1="255" x2="279" y2="255"></line>
+        <line class="fine" x1="246" y1="266" x2="279" y2="266"></line>
+        <line class="fine" x1="246" y1="277" x2="270" y2="277"></line>
+      </g>
+      <g class="balloon-mark">
+        <circle cx="192" cy="242" r="10"></circle>
+        <text class="fig-num" x="192" y="245.5" text-anchor="middle">6</text>
+      </g>
+      <text class="mobile-label" x="186" y="315">DOCS</text>
+      <path class="mobile-underline" d="M186 321H304"></path>
+      <path class="ext" d="M319 317 326 310 M321.5 310H326V314.5"></path>
+    </a>
+  </svg>
+
   <figcaption id="exploded-caption">
     Fig. 1: <a href="#relab">ReLab</a>, an open research platform for product
     disassembly, drawn exploded. Schematic; each numbered part opens its code,
@@ -217,11 +346,23 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
 </script>
 
 <style>
+  .exploded__instruction {
+    margin: 0 0 var(--space-xs);
+    color: var(--text-muted);
+    font-family: var(--font-draft);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+  }
+
   /* Plate size: the notes carry the proof, the drawing shows the method. */
   .exploded__svg {
     width: 100%;
     height: auto;
     max-width: 20rem;
+  }
+
+  .exploded__svg--mobile {
+    display: none;
   }
 
   /* Linework. A transparent (not none) fill makes the whole part a pointer
@@ -279,6 +420,23 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
     fill: var(--text);
   }
 
+  .hit-area {
+    fill: transparent;
+    stroke: none;
+  }
+
+  .mobile-label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    fill: var(--accent);
+  }
+
+  .mobile-underline {
+    stroke: var(--accent);
+    stroke-width: 1;
+    transition: stroke var(--dur-fast) ease;
+  }
+
   /* The assembled position: the stack closes onto the API, capture end
      coming down, foundation coming up. Balloons and register labels travel
      with their parts, so the settle reads as one drawing. */
@@ -332,6 +490,32 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
   .exploded a:hover .part,
   .exploded a:focus-visible .part {
     stroke: var(--accent);
+  }
+
+  .exploded a:hover .mobile-underline,
+  .exploded a:focus-visible .mobile-underline {
+    stroke: var(--accent-strong);
+  }
+
+  .exploded a:active .part {
+    stroke-width: 2.4;
+  }
+
+  @media (max-width: 40rem) {
+    .exploded__svg--desktop {
+      display: none;
+    }
+
+    .exploded__svg--mobile {
+      display: block;
+      max-width: 19.75rem;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .mobile-label {
+      fill: var(--accent-strong);
+    }
   }
 
   .exploded a:hover text,
