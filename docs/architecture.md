@@ -21,7 +21,8 @@ flowchart LR
 ## Runtime shape
 
 - Astro renders the page statically.
-- Project cards come from the typed content collection under `src/content/projects/`.
+- Project rows (the bill of materials) come from the typed content collection under `src/content/projects/`.
+- Both pages read the CV from `src/data/cv.ts`, which validates the committed `cv-public.yaml` export against a Zod schema; `src/data/schemaOrg.ts` builds the JSON-LD from the same object.
 - The only client-side island is `DisassemblyChart.tsx`, which hydrates when visible so users can switch between RELab measures.
 - The chart also renders a visually hidden table, so the same data is available without depending on SVG inspection.
 

@@ -13,7 +13,7 @@ at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
 - One React island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
   data visualisation; everything else ships as zero-JS HTML
-- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project cards
+- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows (the bill of materials)
 - One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind both the landing page's
   condensed timeline and [/cv/](https://simonvanlierde.github.io/cv/), so the two can't drift
 - Plain CSS with design tokens; light (ink on paper) and dark (blueprint) via
@@ -36,16 +36,24 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 │   └── fetch-stats.mjs  # refreshes the chart's disassembly data
 ├── src/
 │   ├── components/
-│   │   ├── ProjectCard.astro
+│   │   ├── ExplodedView.astro     # Fig. 1, the exploded desk fan (inline SVG)
+│   │   ├── ProjectCard.astro      # one bill-of-materials row
+│   │   ├── SheetNav.astro
+│   │   ├── TitleBlock.astro
+│   │   ├── ThemeToggle.astro
 │   │   ├── DisassemblyChart.tsx   # the one React island
 │   │   ├── DisassemblyChart.css
-│   │   └── chartScale.ts          # axis-scale maths (unit-tested)
+│   │   ├── chartScale.ts          # axis-scale maths (unit-tested)
+│   │   └── cvPeriod.ts            # CV date formatting (unit-tested)
 │   ├── content/
 │   │   └── projects/              # one markdown file per project
 │   ├── content.config.ts          # content collection + Zod schema
 │   ├── data/
 │   │   ├── cv-public.yaml         # exported from a separate private CV repo
-│   │   └── cv.ts                  # Zod schema: the contract between the two repos
+│   │   ├── cv.ts                  # Zod schema: the contract between the two repos
+│   │   ├── publications.ts        # publication schema + listing rule (unit-tested)
+│   │   ├── schemaOrg.ts           # JSON-LD for both pages
+│   │   └── stats.json             # chart data, refreshed by fetch-stats.mjs
 │   ├── layouts/
 │   │   └── Base.astro             # head, meta, Open Graph
 │   ├── pages/
@@ -54,7 +62,7 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 │   │   └── 404.astro
 │   └── styles/
 │       └── global.css             # design tokens + base styles
-├── tests/                         # unit (chart maths) + Playwright axe/e2e
+├── tests/                         # unit (node --test) + Playwright axe/e2e
 └── .github/workflows/             # ci, deploy, refresh-data
 ```
 
@@ -75,11 +83,12 @@ pnpm gen:og       # regenerate public/og.png (the social-card image)
 Both layers run locally and gate every pull request:
 
 ```sh
-pnpm check        # lint + typecheck + unit tests (chart axis-scale maths)
+pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
 
-Unit tests ([tests/unit/](tests/unit/)) cover [chartScale.ts](src/components/chartScale.ts); the
+Unit tests ([tests/unit/](tests/unit/)) cover the chart scale and bar geometry, CV date
+formatting, and the publication listing rule; the
 browser suite ([tests/](tests/)) is the accessibility + behaviour coverage below.
 
 ## Accessibility
@@ -113,5 +122,5 @@ worked and when. That file and the CV PDF are exported from a separate private r
 here, so a clean checkout builds without access to it.
 [src/data/cv.ts](src/data/cv.ts) validates the export against a Zod schema at build time, so a
 broken export fails the build instead of rendering an empty page. Optional sections (publications,
-skills, projects, talks, interests) render only when the export carries them, and an unaccepted
+skills, projects, talks and training, interests) render only when the export carries them, and an unaccepted
 publication stays hidden until it has a preprint DOI to link to.
