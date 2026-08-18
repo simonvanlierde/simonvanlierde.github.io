@@ -26,25 +26,22 @@ const ogImage = new URL("og.png", Astro.site);
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Icons / theme -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Content set by the theme script below so it tracks the toggle, not just the system pref. -->
-    {/* Browser chrome only takes a literal colour, so these two mirror --bg
-        (light paper) and --bg (blueprint dark) from global.css by hand.
-        Change them together. */}
-    <meta name="theme-color" content="#f6f5f0" />
+    {/* Browser chrome only takes a literal colour. The literal is the light
+        paper --bg; the theme script below rewrites it from the computed
+        background once the stylesheet is in, so it always matches --bg. */}
+    <meta name="theme-color" content="#f8f7f3" />
     <meta name="color-scheme" content="light dark" />
 
-    <!-- The drafting lettering carries the first paint of every heading. -->
+    {/* The drafting lettering carries the first paint of every heading. */}
     <link rel="preload" href="/fonts/osifont.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Apply saved theme before paint to avoid a flash -->
+    {/* Apply the saved theme before paint to avoid a flash. */}
     <script is:inline>
       const t = localStorage.getItem("theme");
       if (t) document.documentElement.dataset.theme = t;
     </script>
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -55,31 +52,14 @@ const ogImage = new URL("og.png", Astro.site);
     <meta property="og:locale" content="en_US" />
 
     {
-      /* Structured data. Useful for an academic page in particular: it is what
-         lets a publication be read as a publication rather than as a heading. */
+      /* Structured data: lets a publication be read as a publication rather
+         than as a heading. */
       jsonLd && (
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
       )
     }
   </head>
   <body>
-    <!--
-    impeccable direction contract · seed 097168e5 · candidate 3/7
-    THESIS: The site is one engineering drawing set. Taking products apart is
-    what he does, so the page is drawn the way a product is drawn: exploded
-    view, balloons, bill of materials, title block. Refused: the minimal
-    developer-portfolio text column.
-    OWN-WORLD: Fixed sheet frame; osifont ISO 3098 lettering for display and
-    data; ink-on-paper light, cyanotype-blueprint dark; engineer's blue links;
-    exactly one checker's-red stamp per sheet; hairline rules, zero radii.
-    STORY: An evaluator sees a measured drawing of the work, believes the
-    hybrid span, and reaches the stamp (contact) or Sheet 2 (CV).
-    FIRST VIEWPORT: Name + open-software thesis line left; exploded kettle right with
-    four dated real counts as balloon notes; stamp and sheet nav visible.
-    FORM: ISO technical drawing sheet, ranked 3 of 7, assigned by seed 097168e5.
-    FINISH: unreviewed and undocumented is unfinished; this build ends with
-    the finish review, the verdict, and DESIGN.md.
-    -->
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
 
@@ -97,7 +77,8 @@ const ogImage = new URL("og.png", Astro.site);
       // btn is optional: this layout may wrap a page without a toggle.
       const sync = () => {
         const dark = isDark();
-        meta.content = dark ? "#1c2b4a" : "#f6f5f0";
+        // The chrome colour is whatever --bg resolved to; no literal to drift.
+        meta.content = getComputedStyle(document.body).backgroundColor;
         btn?.setAttribute("aria-pressed", String(dark));
       };
 

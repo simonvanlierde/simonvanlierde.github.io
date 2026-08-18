@@ -1,189 +1,166 @@
 ---
-// The sheet's figure: an exploded view of an electric kettle, drawn as ink
-// linework, with the four real RELab counts as numbered callout notes. Every
-// figure is real and dated; the drawing is authored geometry, not a stock
-// illustration. On load the parts settle apart from the assembled position
-// (reduced motion: the drawing is simply exploded). Below a 34rem container
-// the in-drawing notes hand over to the HTML notes table underneath, so
-// no note ever renders below legible size.
-//
-// Leader mapping is meaningful, not decorative: the whole assembly carries
-// the products count, the handle (the human grip) the participants, the
-// framed body the images, the heating plate the components.
+// The sheet's figure: an exploded view of a desk fan (the same object as the
+// cv-ie-taxonomy demo), drawn as ink linework on a dash-dot axis with part
+// names in a left register. The drawing carries only what a drawing carries:
+// parts, names, one real dimension. The RELab counts live in the hero's
+// general-notes block, not on the parts. On load the parts settle apart from
+// the assembled stack (reduced motion: the drawing is simply exploded).
 
-// Boxed letters, datum-style: circled numerals belong to the bill of
-// materials, so the figure's notes take their own notation.
-const counts = [
-  { ref: "A", label: "Products documented", value: "78", part: "assembly" },
-  { ref: "B", label: "Workshop participants", value: "135", part: "handle" },
-  { ref: "C", label: "Images captured", value: "3 610", part: "body" },
-  { ref: "D", label: "Components catalogued", value: "1 331", part: "plate" },
-];
+// Part names, top to bottom along the axis: the accessible reading of the
+// figure. The SVG labels below mirror this list.
+const parts = ["Front grille", "Blades, 3", "Rear grille", "Motor", "Neck", "Base"];
 ---
 
 <figure class="exploded" aria-labelledby="exploded-caption">
   <svg
     class="exploded__svg"
-    viewBox="0 0 460 620"
+    viewBox="0 0 340 640"
     aria-hidden="true"
     fill="none"
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    <!-- centreline: the classic dash-dot axis every assembly is drawn on -->
-    <line
-      class="axis"
-      x1="180" y1="14" x2="180" y2="606"
-      stroke-dasharray="14 5 2 5"
-    ></line>
+    {/* centreline: the dash-dot axis every assembly is drawn on */}
+    <line class="axis" x1="220" y1="10" x2="220" y2="632" stroke-dasharray="14 5 2 5"></line>
 
-    <!-- ============ PARTS (top to bottom along the axis) ============ -->
-    <g class="part part--lid">
-      <circle cx="180" cy="52" r="8"></circle>
-      <line x1="180" y1="60" x2="180" y2="68"></line>
-      <path d="M120 96 Q180 62 240 96"></path>
-      <ellipse cx="180" cy="97" rx="60" ry="9"></ellipse>
+    {/* ============ PARTS (top to bottom along the axis) ============ */}
+    <g class="part part--front-grille">
+      <circle cx="220" cy="92" r="72"></circle>
+      <circle class="fine" cx="220" cy="92" r="50"></circle>
+      <circle class="fine" cx="220" cy="92" r="27"></circle>
+      <circle cx="220" cy="92" r="9"></circle>
+      <g class="fine">
+        <line x1="220" y1="20" x2="220" y2="83"></line>
+        <line x1="220" y1="101" x2="220" y2="164"></line>
+        <line x1="148" y1="92" x2="211" y2="92"></line>
+        <line x1="229" y1="92" x2="292" y2="92"></line>
+        <line x1="169.1" y1="41.1" x2="213.6" y2="85.6"></line>
+        <line x1="226.4" y1="98.4" x2="270.9" y2="142.9"></line>
+        <line x1="270.9" y1="41.1" x2="226.4" y2="85.6"></line>
+        <line x1="213.6" y1="98.4" x2="169.1" y2="142.9"></line>
+        <line x1="184" y1="29.6" x2="215.5" y2="84.2"></line>
+        <line x1="224.5" y1="99.8" x2="256" y2="154.4"></line>
+        <line x1="256" y1="29.6" x2="224.5" y2="84.2"></line>
+        <line x1="215.5" y1="99.8" x2="184" y2="154.4"></line>
+        <line x1="157.6" y1="56" x2="212.2" y2="87.5"></line>
+        <line x1="227.8" y1="96.5" x2="282.4" y2="128"></line>
+        <line x1="282.4" y1="56" x2="227.8" y2="87.5"></line>
+        <line x1="212.2" y1="96.5" x2="157.6" y2="128"></line>
+      </g>
     </g>
 
-    <g class="part part--body">
-      <ellipse cx="180" cy="168" rx="56" ry="9"></ellipse>
-      <path d="M124 168 L114 330"></path>
-      <path d="M236 168 L246 330"></path>
-      <ellipse cx="180" cy="331" rx="66" ry="10"></ellipse>
-      <!-- spout -->
-      <path d="M126 178 L96 200 L118 214"></path>
-      <!-- handle: the human grip -->
-      <path d="M240 186 Q292 200 284 252 Q278 288 244 296"></path>
-      <path d="M240 200 Q276 210 270 250 Q266 276 242 282"></path>
-      <!-- fill line: a kettle is a measuring vessel too -->
-      <line class="fine" x1="130" y1="252" x2="230" y2="252" stroke-dasharray="6 5"></line>
-      <text class="fig-fine" x="136" y="246">MAX 1.7 L</text>
+    <g class="part part--blades">
+      <circle cx="220" cy="240" r="12"></circle>
+      <path d="M220 240 C232 233 241 221 244 201 C246 184 236 173 224 179 C213 185 208 208 211 229 Z"></path>
+      <path d="M220 240 C213 251 200 258 181 256 C164 254 156 241 165 231 C174 222 197 224 216 232 Z"></path>
+      <path d="M220 240 C227 251 240 258 259 256 C276 254 284 241 275 231 C266 222 243 224 224 232 Z"></path>
     </g>
 
-    <g class="part part--plate">
-      <ellipse cx="180" cy="392" rx="54" ry="9"></ellipse>
-      <path d="M126 392 L126 404"></path>
-      <path d="M234 392 L234 404"></path>
-      <ellipse cx="180" cy="404" rx="54" ry="9"></ellipse>
-      <circle class="fine" cx="180" cy="394" r="17"></circle>
+    <g class="part part--rear-grille">
+      <circle cx="220" cy="358" r="70"></circle>
+      <circle class="fine" cx="220" cy="358" r="40"></circle>
+      <circle cx="220" cy="358" r="14"></circle>
+      <g class="fine">
+        <line x1="220" y1="288" x2="220" y2="344"></line>
+        <line x1="220" y1="372" x2="220" y2="428"></line>
+        <line x1="150" y1="358" x2="206" y2="358"></line>
+        <line x1="234" y1="358" x2="290" y2="358"></line>
+        <line x1="170.5" y1="308.5" x2="210.1" y2="348.1"></line>
+        <line x1="229.9" y1="367.9" x2="269.5" y2="407.5"></line>
+        <line x1="269.5" y1="308.5" x2="229.9" y2="348.1"></line>
+        <line x1="210.1" y1="367.9" x2="170.5" y2="407.5"></line>
+      </g>
+    </g>
+
+    <g class="part part--motor">
+      <rect x="180" y="450" width="80" height="50"></rect>
+      <line class="fine" x1="192" y1="458" x2="192" y2="492"></line>
+      <line class="fine" x1="202" y1="458" x2="202" y2="492"></line>
+      <line class="fine" x1="212" y1="458" x2="212" y2="492"></line>
+      <line class="fine" x1="228" y1="458" x2="228" y2="492"></line>
+      <line class="fine" x1="238" y1="458" x2="238" y2="492"></line>
+      <line class="fine" x1="248" y1="458" x2="248" y2="492"></line>
+      <circle cx="220" cy="475" r="6"></circle>
+    </g>
+
+    <g class="part part--neck">
+      <rect x="211" y="522" width="18" height="60"></rect>
+      <line class="fine" x1="211" y1="540" x2="229" y2="540"></line>
     </g>
 
     <g class="part part--base">
-      <ellipse cx="180" cy="462" rx="74" ry="11"></ellipse>
-      <path d="M106 462 L106 486"></path>
-      <path d="M254 462 L254 486"></path>
-      <ellipse cx="180" cy="486" rx="74" ry="11"></ellipse>
-      <circle cx="180" cy="462" r="6"></circle>
+      <rect x="150" y="600" width="140" height="22"></rect>
+      <line class="fine" x1="160" y1="611" x2="176" y2="611"></line>
+      <line class="fine" x1="264" y1="611" x2="280" y2="611"></line>
+      <line x1="150" y1="622" x2="140" y2="632"></line>
+      <line x1="290" y1="622" x2="300" y2="632"></line>
     </g>
 
-    <g class="part part--cord">
-      <path d="M116 556 Q146 538 176 556 T236 556"></path>
-      <rect x="236" y="548" width="26" height="16"></rect>
-      <line x1="262" y1="552" x2="272" y2="552"></line>
-      <line x1="262" y1="560" x2="272" y2="560"></line>
+    {/* guard diameter: the one dimension a fan is sold by */}
+    <g class="dim">
+      <line x1="148" y1="12" x2="292" y2="12"></line>
+      <line x1="148" y1="7" x2="148" y2="17"></line>
+      <line x1="292" y1="7" x2="292" y2="17"></line>
+      <text class="fig-fine" x="220" y="9" text-anchor="middle">Ø 300</text>
     </g>
 
-    <!-- viewfinder corners: the body is the photographed part -->
-    <g class="part part--body frame-marks fine">
-      <path d="M100 158 L100 146 L112 146"></path>
-      <path d="M260 146 L272 146 L272 158"></path>
-      <path d="M100 330 L100 342 L112 342"></path>
-      <path d="M272 330 L272 342 L260 342"></path>
-    </g>
-
-    <!-- ============ PART NAMES (left register) ============ -->
+    {/* ============ PART NAMES (left register) ============ */}
     <g class="labels">
-      <text class="fig-label" x="14" y="84">LID</text>
-      <line class="fine" x1="52" y1="80" x2="112" y2="88"></line>
-      <text class="fig-label" x="14" y="256">BODY</text>
-      <line class="fine" x1="60" y1="252" x2="112" y2="252"></line>
-      <text class="fig-label" x="14" y="386">HEATING PLATE</text>
-      <line class="fine" x1="14" y1="392" x2="120" y2="396"></line>
-      <text class="fig-label" x="14" y="452">POWER BASE</text>
-      <line class="fine" x1="14" y1="458" x2="100" y2="462"></line>
-      <text class="fig-label" x="14" y="586">CORDSET</text>
-      <line class="fine" x1="14" y1="578" x2="112" y2="560"></line>
+      <g class="label label--front-grille">
+        <text class="fig-label" x="12" y="60">FRONT GRILLE</text>
+        <line class="leader" x1="112" y1="56" x2="160" y2="52"></line>
+      </g>
+      <g class="label label--blades">
+        <text class="fig-label" x="12" y="216">BLADES, 3</text>
+        <line class="leader" x1="88" y1="212" x2="182" y2="232"></line>
+      </g>
+      <g class="label label--rear-grille">
+        <text class="fig-label" x="12" y="330">REAR GRILLE</text>
+        <line class="leader" x1="106" y1="326" x2="160" y2="322"></line>
+      </g>
+      <g class="label label--motor">
+        <text class="fig-label" x="12" y="482">MOTOR</text>
+        <line class="leader" x1="60" y1="478" x2="180" y2="475"></line>
+      </g>
+      <g class="label label--neck">
+        <text class="fig-label" x="12" y="560">NECK</text>
+        <line class="leader" x1="52" y1="556" x2="211" y2="552"></line>
+      </g>
+      <g class="label label--base">
+        <text class="fig-label" x="12" y="618">BASE</text>
+        <line class="leader" x1="52" y1="614" x2="150" y2="611"></line>
+      </g>
     </g>
-
-    <!-- ============ NUMBERED NOTES (right register) ============ -->
-    <g class="callout callout--assembly">
-      <line class="leader" x1="246" y1="86" x2="322" y2="64"></line>
-      <rect class="datum-mark" x="323" y="49" width="26" height="26"></rect>
-      <text class="fig-num" x="336" y="66">A</text>
-      <text class="fig-value" x="356" y="58">78</text>
-      <text class="fig-label" x="356" y="76">PRODUCTS</text>
-    </g>
-
-    <g class="callout callout--handle">
-      <line class="leader" x1="288" y1="226" x2="322" y2="202"></line>
-      <rect class="datum-mark" x="323" y="187" width="26" height="26"></rect>
-      <text class="fig-num" x="336" y="204">B</text>
-      <text class="fig-value" x="356" y="196">135</text>
-      <text class="fig-label" x="356" y="214">PARTICIPANTS</text>
-    </g>
-
-    <g class="callout callout--body">
-      <line class="leader" x1="274" y1="316" x2="322" y2="300"></line>
-      <rect class="datum-mark" x="323" y="285" width="26" height="26"></rect>
-      <text class="fig-num" x="336" y="302">C</text>
-      <text class="fig-value" x="356" y="294">3 610</text>
-      <text class="fig-label" x="356" y="312">IMAGES</text>
-    </g>
-
-    <g class="callout callout--plate">
-      <line class="leader" x1="236" y1="400" x2="322" y2="392"></line>
-      <rect class="datum-mark" x="323" y="377" width="26" height="26"></rect>
-      <text class="fig-num" x="336" y="394">D</text>
-      <text class="fig-value" x="356" y="386">1 331</text>
-      <text class="fig-label" x="356" y="404">COMPONENTS</text>
-    </g>
-
-    <text class="fig-fine" x="446" y="606" text-anchor="end">ALL QUANTITIES AS COUNTED AUG 2026 · CML RELAB</text>
   </svg>
 
-  <!-- The notes, as text: the accessible reading always, the visible one when
-       the drawing is too narrow to carry its own lettering. -->
   <figcaption id="exploded-caption">
-    <span class="exploded__caption-lead">
-      Fig. 1 — Disassembly, an illustrative exploded view. The counts are the
-      Reverse Engineering Lab's real running totals, as counted Aug 2026:
-    </span>
-    <ol class="exploded__notes">
-      {
-        counts.map((c) => (
-          <li>
-            <span class="datum" aria-hidden="true">{c.ref}</span>
-            <span class="exploded__note-value draft">{c.value}</span>
-            <span class="exploded__note-label">{c.label}</span>
-          </li>
-        ))
-      }
-    </ol>
+    Fig. 1: Exploded view of a desk fan, illustrative.
+    <span class="visually-hidden">Parts, top to bottom: {parts.join(", ")}.</span>
   </figcaption>
 </figure>
 
-<script>
-  // Assembled -> exploded on first view. The class is added before first
-  // paint and removed a frame later, so the transition runs from the
-  // assembled position. No JS, or reduced motion: the static exploded view.
-  const fig = document.querySelector(".exploded");
-  if (fig && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    fig.classList.add("is-assembled");
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => fig.classList.remove("is-assembled"));
-    });
+<script is:inline>
+  // Assembled -> exploded on first view. Inline, right after the figure, so
+  // the class is on before the drawing's first paint (a deferred module could
+  // land after it and pop the parts together); removed a frame later, so
+  // the transition runs from the assembled position. No JS, or reduced
+  // motion: the static exploded view.
+  {
+    const fig = document.querySelector(".exploded");
+    if (fig && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      fig.classList.add("is-assembled");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => fig.classList.remove("is-assembled"));
+      });
+    }
   }
 </script>
 
 <style>
-  .exploded {
-    container: figure / inline-size;
-  }
-
   .exploded__svg {
     width: 100%;
     height: auto;
-    max-width: 30rem;
+    max-width: 24rem;
   }
 
   /* Linework */
@@ -201,27 +178,14 @@ const counts = [
     stroke-width: 1;
   }
 
-  .axis {
+  .axis,
+  .leader,
+  .dim {
     stroke: var(--border-strong);
     stroke-width: 1;
   }
 
-  .leader {
-    stroke: var(--border-strong);
-    stroke-width: 1;
-  }
-
-  .datum-mark {
-    stroke: var(--border-strong);
-    stroke-width: 1.5;
-    fill: var(--bg);
-  }
-
-  .labels line {
-    stroke: var(--border);
-  }
-
-  /* Lettering. Sizes are svg units; the drawing caps at 30rem, where one
+  /* Lettering. Sizes are svg units; the drawing caps at 24rem, where one
      unit is just over 1px, so nothing renders below its declared size. */
   text {
     stroke: none;
@@ -234,52 +198,41 @@ const counts = [
     letter-spacing: 0.12em;
   }
 
-  .fig-value {
-    font-size: 25px;
-    fill: var(--text);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .fig-num {
-    font-size: 13px;
-    fill: var(--text);
-    text-anchor: middle;
-    dominant-baseline: middle;
-  }
-
   .fig-fine {
     font-size: 10.5px;
     letter-spacing: 0.08em;
   }
 
-  /* The assembled position: parts gathered onto the body. */
-  .is-assembled .part--lid {
-    translate: 0 68px;
+  /* The assembled position: the front stack closes onto the rear grille,
+     the stand rises to meet the motor. */
+  .is-assembled .part--front-grille {
+    translate: 0 240px;
   }
-  .is-assembled .part--plate {
-    translate: 0 -58px;
+  .is-assembled .part--blades {
+    translate: 0 118px;
+  }
+  .is-assembled .part--motor {
+    translate: 0 -46px;
+  }
+  .is-assembled .part--neck {
+    translate: 0 -66px;
   }
   .is-assembled .part--base {
-    translate: 0 -100px;
-  }
-  .is-assembled .part--cord {
-    translate: 0 -140px;
+    translate: 0 -104px;
   }
 
-  /* Hovering a note lights its part; the note text answers in kind.
+  /* Hovering a part name lights its part; the name answers in kind.
      Progressive: browsers without :has() simply keep the static drawing. */
-  .exploded:has(.callout--assembly:hover) .part,
-  .exploded:has(.callout--handle:hover) .part--body,
-  .exploded:has(.callout--body:hover) .part--body,
-  .exploded:has(.callout--plate:hover) .part--plate {
+  .exploded:has(.label--front-grille:hover) .part--front-grille,
+  .exploded:has(.label--blades:hover) .part--blades,
+  .exploded:has(.label--rear-grille:hover) .part--rear-grille,
+  .exploded:has(.label--motor:hover) .part--motor,
+  .exploded:has(.label--neck:hover) .part--neck,
+  .exploded:has(.label--base:hover) .part--base {
     stroke: var(--accent);
   }
 
-  .callout:hover text {
-    fill: var(--accent);
-  }
-
-  .callout:hover .fig-value {
+  .label:hover text {
     fill: var(--accent);
   }
 
@@ -289,79 +242,10 @@ const counts = [
     }
   }
 
-  /* Caption and notes list */
   figcaption {
     margin-top: var(--space-s);
     font-size: var(--step--1);
     color: var(--text-muted);
     max-width: var(--measure);
-  }
-
-  .exploded__notes {
-    list-style: none;
-    margin-top: var(--space-s);
-    display: grid;
-    gap: var(--space-xs);
-  }
-
-  .exploded__notes li {
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-  }
-
-  .exploded__note-value {
-    min-width: 3.4em;
-    color: var(--text);
-    font-size: var(--step-0);
-  }
-
-  /* Wide: the drawing carries its own notes; the list is for readers of the
-     text alternative only. Narrow: the drawing's right register is hidden and
-     the HTML list becomes the visible notes. */
-  @container figure (min-width: 27rem) {
-    .exploded__caption-lead {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .exploded__notes {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-  }
-
-  @container figure (max-width: 26.999rem) {
-    .callout,
-    .fig-fine,
-    .labels {
-      display: none;
-    }
-
-    /* Without the right-hand note register the kettle would sit in the left
-       two-thirds of its box; enlarge and crop so the axis lands centred. */
-    .exploded {
-      overflow: hidden;
-    }
-
-    .exploded__svg {
-      width: 130%;
-      max-width: none;
-      margin-left: -1%;
-    }
   }
 </style>

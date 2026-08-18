@@ -38,7 +38,6 @@
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--step-1);
-  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--text);
 }
@@ -97,6 +96,11 @@
 .chart__toggle:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: -3px;
+}
+
+/* On the filled segment the accent ring would vanish into the fill. */
+.chart__toggle[aria-pressed="true"]:focus-visible {
+  outline-color: var(--accent-contrast);
 }
 
 .chart__plot {
@@ -223,13 +227,11 @@
 
 .chart__tooltip rect {
   fill: var(--text);
-  opacity: 0.95;
 }
 
 .chart__tip-title {
   fill: var(--bg);
   font-size: 12px;
-  font-weight: 600;
 }
 
 .chart__tip-value {

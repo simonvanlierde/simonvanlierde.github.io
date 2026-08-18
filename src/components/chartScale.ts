@@ -15,14 +15,14 @@ export function buildScale(max: number, integer: boolean): { yMax: number; ticks
   return { yMax, ticks };
 }
 
-export const BAR_RADIUS = 4;
+export const BAR_RADIUS = 0; // a drawing has no rounded corners
 export const ZERO_STUB = 2;
 
-// A bar as a path rather than a rounded <rect>: the data-end is rounded, the
-// base stays square so the mark reads as anchored to the axis. The radius
-// collapses on short bars, and a zero value still draws a `ZERO_STUB`-tall
-// sliver: an empty period must read as "zero", not as "no data". The command sequence
-// is identical for every input, so browsers can interpolate `d` on measure switch.
+// A bar as a path rather than a <rect>: a zero value still draws a
+// `ZERO_STUB`-tall sliver (an empty period must read as "zero", not as "no
+// data"), and the command sequence is identical for every input, so browsers
+// can interpolate `d` on measure switch. BAR_RADIUS is kept in the path so a
+// world with rounded corners can set it without touching the geometry.
 export function barPath(cx: number, width: number, top: number, base: number): string {
   const h = Math.max(base - top, ZERO_STUB);
   const y = base - h;

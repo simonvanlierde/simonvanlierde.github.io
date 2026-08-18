@@ -8,7 +8,7 @@ function commands(d: string) {
   return d.replace(/[^A-Za-z]/g, "");
 }
 
-test("bars are square on the baseline and rounded on the data end", () => {
+test("bars open and close on the baseline, with the arcs at the data end", () => {
   const d = barPath(50, 20, 100, 200);
   // Starts and ends on the baseline (y=200), with no arc there.
   assert.match(d, /^M40,200V/, "opens at the left foot, on the baseline");
@@ -25,13 +25,13 @@ test("a zero value still draws a visible stub, not nothing", () => {
 
 test("the corner radius collapses rather than overflowing a short or narrow bar", () => {
   for (const [w, top, base] of [
-    [20, 197, 200], // shorter than BAR_RADIUS
-    [3, 100, 200], // narrower than 2 x BAR_RADIUS
+    [20, 197, 200], // shorter than any radius
+    [3, 100, 200], // narrower than 2 x any radius
     [20, 100, 200], // roomy: the full radius applies
   ] as const) {
     const d = barPath(50, w, top, base);
     const r = Number(d.match(/a([\d.]+),/)?.[1]);
-    assert.ok(r > 0, `radius stays positive (w=${w})`);
+    assert.ok(r >= 0, `radius is never negative (w=${w})`);
     assert.ok(r <= BAR_RADIUS, `radius never exceeds BAR_RADIUS (w=${w})`);
     assert.ok(r <= w / 2, `radius never exceeds half the width (w=${w})`);
     assert.ok(r <= Math.max(base - top, ZERO_STUB), `radius never exceeds the height (w=${w})`);

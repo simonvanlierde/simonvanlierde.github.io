@@ -248,8 +248,7 @@ export default function DisassemblyChart({
                   <line x1={cx} x2={cx} y1={PAD.top} y2={PAD.top + INNER_H} />
                   <circle cx={cx} cy={cy} r="4" />
                   <g transform={`translate(${tipX}, ${tipY})`}>
-                    {/* rx matches --radius: the page has two radii, not three. */}
-                    <rect x="-58" y="-26" width="116" height="34" rx="4" />
+                    <rect x="-58" y="-26" width="116" height="34" />
                     <text x="0" y="-12" textAnchor="middle" className="chart__tip-title">
                       {d.label}
                     </text>

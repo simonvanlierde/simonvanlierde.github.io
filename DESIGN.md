@@ -104,9 +104,12 @@ Display, labels, and every number are set in osifont, the ISO 3098 technical
 lettering face (vendored, latin-subset, ~10KB); long prose stays on the system
 sans so text reads as text, not as a costume. Colour is never the sole signal.
 
-Every figure is real and dated: the exploded kettle carries the Reverse
-Engineering Lab's actual running counts, the title block carries the real
-package version and export dates. Nothing decorative, nothing invented.
+Every figure is real and dated: the hero's general notes carry the Reverse
+Engineering Lab's actual running counts from the stats export, the title
+block carries the real package version and export dates. The exploded desk
+fan is labelled illustrative and carries no statistics: a drawing shows
+parts, names, and dimensions; the numbers live in the notes. Nothing
+decorative, nothing invented.
 
 **Key Characteristics:**
 
@@ -225,9 +228,12 @@ The spacing scale is six steps: 0.25 / 0.5 / 0.75 / 1.25 / 2 / 3.5rem
 (2xs–xl). Two-column data rows (BOM rows, CV entries) share the same grid:
 an 11rem left rail (balloon + kind, or period) and a fluid body, collapsing
 to one column below 40rem. The title block flips from 2 to 4 columns at
-48rem. The exploded figure is container-queried: below a 27rem container the
-in-drawing note register hides and the HTML notes list becomes visible, so
-no lettering ever renders below legible size.
+48rem. The exploded figure caps at 24rem and needs no container query: its
+only lettering is the left part-name register, legible at every width. (If a
+container query is ever added, remember it can style only the container's
+descendants, never the container itself.) The general-notes block sits in
+the hero text column after the profile links, so on a phone the counts enter
+the first viewport before the drawing does.
 
 The two pages are two sheets of one set: `@view-transition { navigation:
 auto }` morphs the person's name between / and /cv/, disabled under reduced
@@ -259,8 +265,8 @@ Two notation marks are the deliberate exceptions and carry meaning:
 - **The balloon** — a 1.7rem circle, 1.5px `--border-strong` stroke —
   numbers a bill-of-materials position. Circled numerals mean BOM position
   and nothing else.
-- **The datum mark** — the same 1.7rem box, square — carries the figure's
-  boxed note letters (A–D). Square is the figure's notation, circle is the
+- **The datum mark** — the same 1.7rem box, square — carries the general
+  notes' letters (A–D). Square is the notes' notation, circle is the
   list's.
 
 ### Components
@@ -321,17 +327,29 @@ Two notation marks are the deliberate exceptions and carry meaning:
 
 #### Exploded View (signature figure)
 
-- Authored SVG linework of an electric kettle on a dash-dot centreline:
-  `--text` part strokes (1.7), `--text-muted` fine lines (1), part names in
-  a left register, boxed datum notes A–D with real dated counts in a right
-  register. Leader mapping is meaningful (handle → participants, framed
-  body → images, plate → components).
-- **Motion:** on load the parts settle apart from the assembled position —
-  one `translate` transition per part group over `--dur-explode` (700ms)
-  `--ease-out`, run once. Reduced motion or no JS: the drawing is simply
-  exploded, in the same stylesheet.
-- **Hover:** a note lights its part in `--accent` (`:has()`, progressive).
-- Container-queried note handover at 27rem (see Layout).
+- Authored SVG linework of a desk fan (the cv-ie-taxonomy object) on a
+  dash-dot centreline: front grille, blades, rear grille, motor, neck, base;
+  `--text` part strokes (1.7), `--text-muted` fine lines (1), part names
+  with `--border-strong` leaders in a left register, one real dimension
+  (guard Ø). No statistics on the drawing; caption says "illustrative".
+- **Motion:** on load the parts settle apart from the assembled stack — one
+  `translate` transition per part group over `--dur-explode` (700ms)
+  `--ease-out`, run once, class set by an inline script right after the
+  figure so it precedes first paint. Reduced motion or no JS: the drawing is
+  simply exploded, in the same stylesheet.
+- **Hover:** a part name lights its part in `--accent` (`:has()`,
+  progressive).
+
+#### General Notes (hero)
+
+- The sheet's boxed notes: an uppercase "Notes" label on a
+  `--border-strong` rule, then a 2×2 grid of datum-lettered entries (A–D),
+  value at `--step-2` in the drafting hand, uppercase label at `--step--1`,
+  and a footer line "All quantities as counted <month year> · CML RELab".
+- Values come from `stats.json` (`totals`, `as_of`); while the export is
+  still flagged `sample` they fall back to the last hand-counted, dated
+  totals kept in `index.astro`, so the notes always show real figures and
+  never the seeded series. Participants is a hand-kept literal.
 
 #### Chart (island)
 
@@ -377,7 +395,7 @@ as sample or not at all; no invented placeholder ever ships as a figure.
 - **Don't** add a second red element to a sheet; one stamp, everything else
   engineer's blue.
 - **Don't** round a corner (`--radius` is 0px) — the only circle is the BOM
-  balloon, and circled numerals mean BOM position only; figure notes use
+  balloon, and circled numerals mean BOM position only; general notes use
   square datum boxes.
 - **Don't** use shadows, blur, or translucent fills; state answers with
   `--surface`, a fill swap, or a line.

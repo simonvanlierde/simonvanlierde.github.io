@@ -18,7 +18,7 @@ const { title, docType, sheet, dated } = Astro.props;
 ---
 
 <footer class="container">
-  <div class="title-block" aria-label="Document title block">
+  <section class="title-block" aria-label="Document title block">
     <div class="title-block__cell title-block__cell--wide">
       <span class="title-block__label">Title</span>
       <span class="title-block__value">{title}</span>
@@ -44,10 +44,10 @@ const { title, docType, sheet, dated } = Astro.props;
     <div class="title-block__cell">
       <span class="title-block__label">Rev</span>
       <span class="title-block__value">
-        <a href="https://github.com/simonvanlierde/simonvanlierde.github.io" aria-label={`View source on GitHub, version ${version}`}>
+        <a href="https://github.com/simonvanlierde/simonvanlierde.github.io" aria-label={`v${version}, view source on GitHub`}>
           v{version}
         </a>
       </span>
     </div>
-  </div>
+  </section>
 </footer>
