@@ -90,364 +90,265 @@ components:
 
 **Creative North Star: "The Engineering Drawing Set"**
 
-The site is one engineering drawing set. Taking products apart is what the
-author does, so the page is drawn the way a product is drawn: an exploded view
-with balloons and a register, lettered general notes, a parts list, an ISO 7200
-title block, a trim frame around every sheet. The refused
-alternative is the minimal developer-portfolio text column: this site is a
-measured drawing of the work, not an essay about it.
+Taking products apart is what the author does, so the page is drawn the way a
+product is drawn: an exploded view with balloons and a register, lettered
+general notes, a parts list, an ISO 7200 title block, a trim frame around every
+sheet. It is a measured drawing of the work, not a portfolio text column.
 
-One world, two renderings of the same sheet. Light mode is ink linework on
-warm drafting paper; dark mode is the same sheet printed as a cyanotype:
-pale lines on a Prussian-blue ground, roles swapped, nothing redesigned.
-Display, labels, and every number are set in osifont, the ISO 3098 technical
-lettering face (vendored, latin-subset, ~10KB); long prose stays on the system
-sans so text reads as text, not as a costume. Colour is never the sole signal.
+Two renderings of one sheet. Light mode is ink linework on warm drafting paper.
+Dark mode is the same sheet as a cyanotype: pale lines on a Prussian-blue
+ground, roles swapped, nothing redesigned. Colour is never the sole signal.
 
-Every figure is real and dated: the ReLab row's general notes carry the platform's actual running
-counts from the stats export, the title block carries the real package version and export dates. The
-exploded view is ReLab itself taken apart, its six real parts, labelled schematic; it carries no
-statistics: a drawing shows parts and names, the numbers live in the notes. Nothing decorative,
-nothing invented.
+Every figure is real and dated: the general notes carry running counts from the
+stats export, the title block carries the package version and the export dates.
+The exploded view is ReLab taken apart, its six real parts, labelled schematic.
+
+**How to read this document.** The named rules are the binding part: they say
+what makes a page belong to this set, and breaking one is a decision to make
+deliberately. Everything else describes the intent behind the current sheets so
+a new one can be drawn in the same hand. Specific values live in
+`src/styles/global.css` and in the frontmatter above, and they are settings, not
+commitments: a new size, a new part of the figure, a new section, or a whole new
+sheet is welcome as long as the rules still hold. This is a drawing convention
+to design within, not an inventory to preserve.
 
 **Key Characteristics:**
 
 - Ink-on-paper light theme, cyanotype-blueprint dark theme; one `light-dark()` pair per token
 - osifont ISO 3098 drafting lettering for display, labels, and all data figures
-- Hairline rules and zero radii everywhere; the only circle is the figure's item balloon
+- Hairline rules and zero radii; the only circle is the figure's item balloon
 - Exactly one checker's-green stamp (primary action) per sheet
 - A drawn sheet frame around the whole document
-- Motion is drafting behaviour only: the exploded view settles apart once on load
+- Motion is drafting behaviour only, never decoration
 
 ### Colors
 
-Two grounds, one working ink, engineer's blue for the working accents, and
-checker's green for the single stamp; every pair is one `light-dark()` OKLCH
-token, and every text pair clears 4.5:1 on its ground (verified at build
-time). The frontmatter values are the normative source, mirrored from
-`src/styles/global.css`.
+Design in roles, not in hex. Two grounds, one working ink, engineer's blue for
+the working accents, and checker's green for the single stamp. Every pair is one
+`light-dark()` OKLCH token, and every text pair clears 4.5:1 on its ground,
+verified at build time. A new colour is a new role, argued for, or it is one of
+these tokens reused.
 
 #### Primary
 
-- **Engineer's Blue** (`--accent`): links and working accents, the colour an
-  engineer annotates in. On the blueprint side it becomes a pale drafting
-  cyan, because the ground already owns the blue. `--accent-strong` is the
-  hover step; `--accent-contrast` is the text colour on a filled accent
-  surface (selected chart toggle, skip link, ::selection).
+| Token | Role |
+|---|---|
+| `--accent` (Engineer's Blue) | Links and working accents, the colour an engineer annotates in |
+| `--accent-strong` | The hover step |
+| `--accent-contrast` | Text on a filled accent surface |
+
+On the blueprint side the accent becomes a pale drafting cyan, because the
+ground already owns the blue.
 
 #### Secondary
 
-- **Checker's Green** (`--stamp`): the approval-stamp colour, reserved for
-  the one primary action per sheet: the CV on Sheet 1 (a hiring reader wants
-  to read before writing; the address is a plain link beside it), the PDF
-  download on Sheet 2. Green, not red: red on a drawing marks a correction
-  and on a screen reads as an error; green is the checker's approval.
-  Outlined at rest, filled on hover with `--stamp-contrast` text.
+| Token | Role |
+|---|---|
+| `--stamp` (Checker's Green) | The approval stamp: the one primary action per sheet |
+| `--stamp-contrast` | Text on the filled stamp |
+
+The stamp is outlined at rest and fills on hover. Green, not red: red marks a
+correction on a drawing and an error on a screen.
 
 #### Neutral
 
-- **Drafting Paper** (`--bg`): the page ground. Warm near-white paper in
-  light; deep Prussian blue in dark, where it is the cyanotype ground.
-- **Sheet Surface** (`--surface`): the one raised tint, the chart control
-  fieldset. Barely lighter than the ground.
-- **Working Ink** (`--text`): near-black blue ink for text and part linework;
-  near-white on the blueprint.
-- **Faded Ink** (`--text-muted`): secondary text, fine linework, figure
-  labels, chart axes.
-- **Hairline** (`--border`) and **Frame Line** (`--border-strong`): the two
-  rule weights. Hairline separates rows and cells; the strong line draws the
-  sheet frame, section-heading rules, balloons, and datum marks.
+| Token | Role |
+|---|---|
+| `--bg` (Drafting Paper) | The page ground: warm paper in light, the cyanotype ground in dark |
+| `--surface` (Sheet Surface) | The one raised tint, barely lighter than the ground |
+| `--text` (Working Ink) | Text and part linework |
+| `--text-muted` (Faded Ink) | Secondary text, fine linework, figure labels, chart axes |
+| `--border` (Hairline) | Rules between rows and cells |
+| `--border-strong` (Frame Line) | The sheet frame, section-heading rules, balloons, datum marks |
+
+Hairline and Frame Line are the only two rule weights on the set. A third weight
+would need a reason a draughtsman would recognise.
 
 #### Named Rules
 
-**The One Stamp Rule.** Exactly one checker's-green stamp per sheet. The
-stamp marks the checker's approval, the one thing to do next; a second stamp
-on the same sheet demotes both. Every other action is an engineer's-blue
-link.
+**The One Stamp Rule.** Exactly one checker's-green stamp per sheet. It marks
+the one thing to do next; a second stamp demotes both. Every other action is an
+engineer's-blue link.
 
-**The Kept Names Rule.** The CSS custom property names (`--bg`, `--text`, `--accent`,
-`--chart-bar`, ...) are the previous design system's names, kept so every consumer, the React chart
-island included, rethemes without edits. New surfaces consume tokens by these names; never fork a
-parallel palette.
+**The Kept Names Rule.** The custom property names (`--bg`, `--text`,
+`--accent`, `--chart-bar`, and the rest) are the previous design system's, kept
+so every consumer rethemes without edits, the React chart island included.
+Retheme by changing what a name resolves to; never fork a parallel palette.
 
-**The Uniform Chroma Rule.** Wide-gamut displays (`@media (color-gamut: p3)`)
-lift only the chromatic tokens, uniformly (+~20% chroma), never lightness: a
-display that claims P3 and clamps still clears every contrast floor.
+**The Uniform Chroma Rule.** On `@media (color-gamut: p3)` only the chromatic
+tokens lift, uniformly, never lightness. A display that claims P3 and clamps
+still clears every contrast floor.
 
 ### Typography
 
-**Display Font:** osifont (with Segoe UI, system-ui fallback), ISO 3098
-technical lettering, vendored and subset (~10KB), weight 400 only
-**Body Font:** system sans (ui-sans-serif stack)
-**Label/Mono Font:** osifont; `--font-mono` aliases `--font-draft`
+Two faces, one job each. osifont (ISO 3098 technical lettering, vendored and
+subset, weight 400 only) is the drafting hand, with a Segoe UI and system-ui
+fallback. The system sans (`ui-sans-serif` stack) is the reading face.
+`--font-mono` aliases `--font-draft`, so anything asking for mono gets the
+drafting hand.
 
-**Character:** The drafting hand carries everything a draughtsman would
-letter: headings, labels, dates, dimensions, data. Prose stays on the system
-sans so long text reads as text. The pairing is a working document's voice:
-lettered where it is a drawing, typeset where it is reading matter.
+The drafting hand carries what a draughtsman letters: headings, labels, dates,
+dimensions, data. Prose stays on the system sans, so long text reads as text.
 
 #### Hierarchy
 
-- **Display / h1** (400, `--step-3` = clamp(2.1–3.4rem), 1.12): the sheet's
-  one title, uppercase, 0.02em tracking.
-- **Lead** (`.lead`: 400, `--step-2`, 1.3, 0.01em, full ink, max 30rem,
-  balanced): the line under the sheet's name, the same on both sheets: the
-  thesis on Sheet 1, the first part of the headline on Sheet 2.
-- **Tagline** (`.tagline`: `--step-0`, `--text-muted`, prose measure): the
-  sentence under the lead: the positioning on Sheet 1, the rest of the
-  headline on Sheet 2.
-- **Headline / h2** (400, `--step-1` = clamp(1.2–1.45rem), 1.12): zone
-  labels, smaller than the content they label, tracked caps (0.14em) over a
-  2px `--border-strong` rule. A label, not a statement.
-- **Title / h3** (400, `--step-1`, 1.12): part names in the BOM, 0.02em.
-- **Body** (400, `--step-0` = clamp(1–1.1rem), 1.6): prose, max-width
-  `--measure` (38rem).
-- **Label** (400, `--step--1` = clamp(0.83–0.9rem), 0.04–0.14em tracking,
-  usually uppercase): nav links, tags, title-block cells, periods, figure
-  labels.
+Seven roles, on one fluid scale. The steps are tokens, so retuning the scale
+retunes the set.
+
+| Role | Step | Used for |
+|---|---|---|
+| Display / h1 | `--step-3` | The sheet's one title, uppercase, lightly tracked |
+| Lead (`.lead`) | `--step-2` | The line under the sheet's name, in full ink, short measure |
+| Tagline (`.tagline`) | `--step-0` | The muted sentence under the lead |
+| Headline / h2 | `--step-1` | Zone labels, tracked caps over a `--border-strong` rule |
+| Title / h3 | `--step-1` | Part names in the parts list |
+| Body | `--step-0` | Prose, capped at `--measure` |
+| Label | `--step--1` | Nav links, tags, title-block cells, periods, figure labels |
+
+A zone label is set smaller than the content it labels: it is a label, not a
+statement. Weights stay at 400 throughout; hierarchy comes from size, tracking,
+case, and rules.
 
 #### Named Rules
 
-**The Drafting Hand Rule.** Figures and data (counts, dates, versions,
-periods, chart numerals) are always set in osifont with
-`font-variant-numeric: tabular-nums` (the `.draft`, `.tag`, and `time`
-selectors). A number in the body face is prose; a number in the drafting hand
-is data.
+**The Drafting Hand Rule.** Figures and data (counts, dates, versions, periods,
+chart numerals) are always set in osifont with `font-variant-numeric:
+tabular-nums` (the `.draft`, `.tag`, and `time` selectors). A number in the body
+face is prose; a number in the drafting hand is data.
 
-**The Measured Line Rule.** `--measure` is 38rem, in rem, not `72ch`: `ch` measures the zero glyph
-and lands near 91 real characters in a system sans; 38rem lands near 70. Cap prose in rem.
+**The Measured Line Rule.** `--measure` is set in rem, not `ch`: `ch` measures
+the zero glyph and overshoots by about 20 characters in a system sans. Cap prose
+in rem, near 70 characters.
 
 ### Layout
 
-The page is one tall sheet. The body carries `padding: calc(--frame-inset +
---frame-line)` and `body::before` draws the trim frame: a 1.5px
-`--border-strong` border, absolute on the **document**, not viewport-fixed
-(a fixed line would strike through scrolling text). No centring ticks: they
-read as stray marks at the viewport edges. Screen only; print gets the plain
-document. `--frame-inset` is clamp(8px, 1.2vw, 16px).
+The page is one tall sheet, and `body::before` draws the trim frame around the
+document, not the viewport: a fixed line would strike through scrolling text.
+The frame is screen only; print gets the plain document. Every page of the site
+carries this chrome.
 
-Inside the frame: `.container` is `min(100% - 2 * --space-m, 54rem)`,
-centred: an 11rem rail, a 2rem gutter and a 38rem measure with 3rem to
-spare, so rules end where the writing ends and the paper is no wider than
-the drawing. Sections stack with `padding-block: --space-l --space-xl` (2rem
-above, 3.5rem below) and no rule of their own: the h2 zone label's 2px rule
-is the one line per boundary. On Sheet 2 a lettered zone index (datum marks
-A–H linking the sections) sits under the header. Prose is
-capped at `--measure` (38rem).
+One container width governs the sheet, sized so the rail, the gutter, and the
+prose measure fit with room to spare, and so rules end where the writing ends.
+Sections stack on the spacing scale and carry no rule of their own: the zone
+label's rule is the one line per boundary. Content that pairs a short key with a
+body (work rows, CV entries) shares one two-column grid, a fixed left rail and a
+fluid body, collapsing to one column on narrow screens. New sections should join
+that grid rather than invent a second one.
 
-The spacing scale is six steps: 0.25 / 0.5 / 0.75 / 1.25 / 2 / 3.5rem
-(2xs–xl). Two-column data rows (work rows, CV entries) share the same grid:
-an 11rem left rail (kind, or period) and a fluid body, collapsing
-to one column below 40rem. The title block is the full container width:
-four cells (title, document, sheet, dated) over a contact cell spanning three
-and the site revision (two columns below 40rem, the wide cells taking a row
-each). The exploded figure caps at 20rem, plate size beside the hero text,
-and needs no container query: its only lettering is the left part-name
-register, legible at every width. (If a container query is ever added,
-remember it can style only the container's descendants, never the container
-itself.) The general notes sit in the ReLab row of the parts list, under its
-links, so everything about the platform is read in one place; the hero
-carries the person, the one stamp, and the figure.
+Below the reading width, a layout may re-compose rather than merely stack: the
+exploded figure becomes a compact assembly map so all its parts stay visible as
+one system. Re-composing is encouraged where stacking would cost the reader the
+whole picture.
 
-The two pages are two sheets of one set, and navigating between them is a
-plain page load: no cross-document view transition (a morphing name on every
-switch was a distraction, not continuity). In-page jumps (the zone index,
-Fig. 1's caption to the ReLab row) scroll smoothly, `auto` under reduced
-motion.
+Moving between sheets is a plain page load, with no cross-document view
+transition: a morphing name on every switch was a distraction, not continuity.
+In-page jumps scroll smoothly, `auto` under reduced motion.
 
 ### Elevation & Depth
 
-No shadows, anywhere. A drawing has no depth to fake: hierarchy is carried by
-line weight (hairline vs. 1.5–2px strong rules), by the two-step ground
-(`--bg` vs. the barely-lighter `--surface` on hover and control chrome), and
-by lettering size. The sticky sheet nav separates itself with a solid `--bg`
-ground and a hairline rule (nothing may show through the chrome of the
-sheet), never with a shadow or blur.
+No shadows, anywhere. Hierarchy is carried by line weight, by the two-step
+ground (`--bg` against the barely-lighter `--surface`), and by lettering size.
+Chrome that floats over the sheet, such as the sticky nav, separates itself with
+a solid ground and a rule, never with a shadow or blur.
 
 #### Named Rules
 
-**The Flat Sheet Rule.** No `box-shadow`, no `backdrop-filter`, no
-translucent surfaces. State is answered with a surface tint (`--surface`), a
-fill swap, or a line: the devices a drawing has.
+**The Flat Sheet Rule.** No `box-shadow`, no `backdrop-filter`, no translucent
+surfaces. State is answered with a surface tint, a fill swap, or a line: the
+devices a drawing has.
 
 ### Shapes
 
-Zero radii: `--radius` and `--radius-pill` are both 0px, because a drawing
-has no rounded corners. Everything is rectilinear and rule-drawn: 1px
-hairlines, 1.5–2px strong lines, no fills except the paper itself.
+Zero radii: `--radius` and `--radius-pill` are both 0px. Everything is
+rectilinear and rule-drawn, with no fills except the paper itself. Two notation
+marks are the deliberate exceptions, and they are notation, not decoration:
 
-Two notation marks are the deliberate exceptions and carry meaning:
+- **The balloon**, a circle with a `--border-strong` stroke, numbers an item on
+  a figure and is keyed to that figure's register. Circled numerals mean a
+  figure item and nothing else.
+- **The datum mark**, a square box, carries lettered references: the general
+  notes (A–D) and the zone index.
 
-- **The balloon**, a circle with a `--border-strong` stroke, numbers an
-  item on the figure, keyed to the figure's register. Circled numerals mean
-  a figure item and nothing else; the work list carries no numbers.
-- **The datum mark**, a 1.7rem box, square, carries the general notes'
-  letters (A–D) and the CV's zone index. Square is the notes' notation,
-  circle is the drawing's.
+A future figure may add balloons and a register of its own. Nothing else earns a
+circle.
 
 ### Components
 
-#### Stamp (primary action)
+A component belongs to this set when it is drawn rather than styled: rules and
+lettering carry it, it consumes tokens by their kept names, it answers state
+with a tint, a fill swap, or a line, and it needs no colour to be understood.
+Build a new one against the rules above; the sheets today carry these.
 
-- **Character:** the checker's approval stamp: outlined, uppercase, green.
-- **Shape:** sharp rectangle (0px), 2px solid `--stamp` border.
-- **Rest:** transparent ground, `--stamp` text, osifont, 0.08em tracking,
-  uppercase, `--space-s --space-m` padding.
-- **Hover:** fills `--stamp`, text flips to `--stamp-contrast`.
-- **Active:** `scale(0.97)`; all transitions removed under reduced motion.
-- **Cardinality:** one per sheet (see The One Stamp Rule). No secondary
-  button exists; every other action is a link.
+| Component | What governs it |
+|---|---|
+| Stamp | The One Stamp Rule: one per sheet, outlined then filled, no secondary button exists |
+| Links | Engineer's blue and underlined; utility links drop the underline at rest and answer hover with colour |
+| Balloon / datum | Notation marks only, `--border-strong` stroke on a `--bg` fill, drafting hand with tabular numerals |
+| Tags | Read-only spec callouts, hairline and transparent, never interactive filters |
+| Work row | A parts-list row, not a card: a top rule, no background, no hover tint, the part name as the target |
+| Sheet nav | Sticky, solid ground, hairline rule; current sheet marked with `aria-current="page"` and ink, not colour alone |
+| Title block | ISO 7200 provenance, and the one place the profile links live |
+| Exploded view | The signature figure; see below |
+| General notes | Datum-lettered running totals, sitting with the platform they describe |
+| Chart island | Kept token names only, solid bars, drafting numerals, controls in a ruled fieldset |
 
-#### Links
+Every interactive target buys a 44px hit area with padding plus negative margin,
+so the glyph stays optically in place.
 
-- Engineer's blue (`--accent`), 1px underline at 0.18em offset; hover
-  deepens to `--accent-strong`. Utility links (nav, title block) drop the
-  underline at rest and answer hover with colour or underline. All small
-  targets buy their 44px hit area with padding + negative margin so the
-  glyph stays optically in place.
+#### The signature figure
 
-#### Balloon / Datum
+The exploded view is authored SVG linework of a real system taken apart on a
+dash-dot centreline, in flat front elevation, with part strokes heavier than
+fine lines. Each part carries a balloon on a short leader, and a register keys
+the numbers to part names. Part and label are one link to the real thing, named
+for assistive tech, with a drawn arrow in the register so a row reads as a link
+before hover; hover and focus answer in ink, not in a box, so the whole
+silhouette is the target. The drawing carries no statistics and no dimensions,
+and the caption says "schematic".
 
-- Notation marks (circle on the figure / 1.7rem square in HTML), 1.5px
-  `--border-strong` stroke, `--bg` fill, osifont with tabular numerals. See
-  Shapes for which is which.
-
-#### Tags (chips)
-
-- Hairline-bordered, transparent, `--text-muted` osifont at `--step--1`,
-  0.1em/0.55em padding. Read-only spec callouts, not interactive filters.
-
-#### Work Row (cards)
-
-- A parts-list row, not a card: hairline top rule, no background, no hover
-  tint. Grid: 11rem rail (uppercase kind) and body (title,
-  description, links, tags). The part name is the target (44px bought with
-  padding + negative margin), underlined at rest so it reads as a link
-  before hover; the row's prose stays selectable. Hover turns the title
-  engineer's blue.
-
-#### Navigation (sheet header)
-
-- Sticky, solid `--bg`, hairline bottom rule. osifont at `--step--1`,
-  uppercase, 0.08em tracking: SVL wordmark left (0.18em tracking), sheet
-  links + theme toggle right. Current sheet: `aria-current="page"`,
-  `--text` colour, underlined. Hover answers in `--accent`.
-
-#### Title Block (footer)
-
-- ISO 7200: a `--border-strong` bordered grid the full width of the
-  container (four cells over contact + site rev), hairline internal rules
-  drawn by a 1px `--border` grid gap. Each cell is a tiny uppercase
-  `--text-muted` label over an uppercase value. Carries real provenance:
-  title, document type, sheet index ("1 OF 2"), dated/drawn-by, and "Site
-  rev", the package version linking the repo. No scale cell: nothing on a
-  web page is drawn to scale.
-- **Contact cell:** the one place the profile links live, on both sheets:
-  the address (in `--accent`, the way in), GitHub, LinkedIn, ORCID, Leiden
-  profile, as text in the drafting hand, sentence case. Each sheet's header
-  repeats only the address beside its stamp (the first-viewport action);
-  nothing else about contact is said twice.
-
-#### Exploded View (signature figure)
-
-- Authored SVG linework of ReLab, the lab's own platform, taken apart on a
-  dash-dot centreline, capture end at the top: camera rig (RPi board and
-  module), capture app (phone), web app (browser window), API (rack unit),
-  database (cylinder), docs (bound sheet), all in flat front elevation;
-  `--text` part strokes (1.7), `--text-muted` fine lines (1). Each part
-  carries a balloon (①–⑥, `--border-strong` circle, `--bg` fill) on a
-  short leader; the left register keys the numbers to part names, so the
-  figure has the drawing half of the balloon convention. Every part is one
-  the CV export and the ReLab row already state. No statistics and no
-  dimension on the drawing; caption says "schematic".
-- **Motion:** on load the parts settle apart from the assembled stack: one
-  `translate` transition per part group over `--dur-explode` (700ms)
-  `--ease-out`, run once, class set by an inline script right after the
-  figure so it precedes first paint. Reduced motion or no JS: the drawing is
-  exploded from the start, in the same stylesheet.
-- **Links:** each part and its register label are one SVG `<a>` to the
-  real thing (plugin repo, live app, docs, source), named "Part: destination"
-  for assistive tech, opening in the same tab like every other link on the
-  set. The register's last column is a drawn arrow out in the link colour
-  (`--accent`, 1.4 stroke) so each row reads as a link off the sheet before
-  hover; the caption says so too. Hover or focus lights part and label in
-  `--accent` and the arrow in `--accent-strong` (nudging 1px out; not under
-  reduced motion); the
-  part's fill is `transparent`, so the whole silhouette is the target, and
-  the ring is the ink change, not a box. Balloons, labels and arrows travel
-  with their parts during the settle.
-- **Caption:** "Fig. 1: ReLab, drawn exploded. Schematic; each part opens
-  its code, app, or docs.", the name linking the ReLab row. Every figure on
-  the set captions the same way: one global `figcaption` style, under the
-  figure, "Fig. N:" first (Fig. 2 is the chart's caption prop).
-
-#### General Notes (ReLab row)
-
-- The sheet's boxed notes, in the ReLab row after its links (max
-  `--measure`): an uppercase "Notes · running totals" h4 in the drafting
-  hand on a `--border-strong` rule, then a 2×2 grid of datum-lettered
-  entries (A–D), value at `--step-3` in the drafting hand, uppercase label
-  at `--step--1`, and a footer line "As counted <month year>." The row's
-  title and links already name and link the platform, so the notes do not.
-- Values come from `stats.json` (`totals`, `as_of`); while the export is
-  still flagged `sample` they fall back to the last hand-counted, dated
-  totals kept in `index.astro`, so the notes always show real figures and
-  never the seeded series. Participants is a hand-kept literal. The chart
-  below them ships only on real data; the dev server may draw the seeded
-  series, labelled sample, for preview.
-
-#### Chart (island)
-
-- Consumes the kept token names only (`--chart-bar`, `--font-mono`,
-  `--surface`, ...): solid engineer's-blue bars (never translucent: opacity
-  would make real contrast unknowable), `--text-muted` 2px zero line,
-  hairline grid, osifont tabular numerals. Segmented toggle: joined
-  44px-tall segments in a hairline fieldset; selected segment fills
-  `--accent`; on a narrow plot the strip scrolls sideways as one control
-  (thin scrollbar) rather than wrapping into two rows. Load reveal: bars
-  grow from the baseline, 30ms stagger,
-  finished inside ~730ms; measure switches ease `d` over `--dur-base`;
-  reduced motion gets final states instantly.
+Captions are global: under the figure, "Fig. N:" first, one style for every
+figure on the set. A second figure inherits all of this.
 
 #### Named Rules
 
 **The Drafting Motion Rule.** Motion is drafting-derived behaviour, never
-decoration: parts settle apart, bars grow from their baseline, fills swap on
-the `--dur-fast`/`--dur-base` clock (150/200ms) with `--ease-out`. Every
-animation is answered by a `prefers-reduced-motion` block in the same file
-that declares it.
+decoration: parts settle apart from an assembled stack, bars grow from their
+baseline, fills swap on the `--dur-fast`/`--dur-base` clock. Reveal motion runs
+once, on load. Every animation is answered by a `prefers-reduced-motion` block
+in the file that declares it, and the reduced state is the finished state, never
+a missing one.
 
-**The Real Figures Rule.** Every number on the sheet is a real, dated count
-or version, inherited product truth. Data flagged as sample renders labeled
-as sample or not at all; no invented placeholder ever ships as a figure.
+**The Real Figures Rule.** Every number on the sheet is a real, dated count or
+version, inherited product truth. Counts come from the stats export
+(`stats.json`); while that export is flagged `sample`, the sheet falls back to
+the last dated counts the platform itself reported, kept in `index.astro`. Data
+flagged as sample renders labelled as sample or not at all. No invented
+placeholder ever ships as a figure.
 
 ### Do's and Don'ts
 
 #### Do
 
-- **Do** consume the kept token names (`--bg`, `--text`, `--accent`,
-  `--chart-bar`...) for every new surface; both themes come free.
-- **Do** set every figure, date, and label in osifont with
+- **Do** consume the kept token names for every new surface; both themes come
+  free.
+- **Do** set every figure, date, and label in the drafting hand with
   `font-variant-numeric: tabular-nums` (`.draft` / `.tag` / `time`).
-- **Do** draw hierarchy with the two rule weights (1px hairline,
-  1.5–2px `--border-strong`) and the zone-label h2 (tracked caps on a 2px
-  rule).
-- **Do** buy 44px hit targets with padding + negative margin so glyphs stay
-  optically in place.
+- **Do** draw hierarchy with the two rule weights and the zone-label h2.
+- **Do** buy 44px hit targets with padding plus negative margin.
 - **Do** keep the sheet chrome on every page, the 404 included: frame, sheet
   nav, title block. A wrong URL is still a sheet of the set.
+- **Do** add sheets, sections, figures, and components. The set is meant to
+  grow; the rules are what keep a new one legible beside the old ones.
 
 #### Don't
 
 - **Don't** add a second stamp to a sheet; one stamp, everything else
   engineer's blue.
-- **Don't** round a corner (`--radius` is 0px): the only circle is the
-  figure's item balloon, and circled numerals mean a figure item only;
-  general notes and the zone index use square datum boxes.
+- **Don't** round a corner (`--radius` is 0px); the only circle is a figure's
+  item balloon.
 - **Don't** use shadows, blur, or translucent fills; state answers with
   `--surface`, a fill swap, or a line.
-- **Don't** hardcode a colour: every colour is a `light-dark()` token, and
-  the two theme-color metas in Base.astro mirror `--bg` by hand; change
-  them together.
-- **Don't** letter prose in osifont; long text stays on the system sans, and
-  `--measure` stays 38rem in rem, not ch.
+- **Don't** hardcode a colour: every colour is a `light-dark()` token, and the
+  two theme-color metas in Base.astro mirror `--bg` by hand; change them
+  together.
+- **Don't** letter prose in osifont, and don't cap the measure in `ch`.
