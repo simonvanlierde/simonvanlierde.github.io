@@ -81,16 +81,14 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
   ${relab}
   <g font-family="${draft}">
     <text x="80" y="200" font-size="84" letter-spacing="4" fill="${ink}">SIMON VAN LIERDE</text>
-    <text x="82" y="272" font-size="34" fill="${ink}">PhD researcher and</text>
-    <text x="82" y="316" font-size="34" fill="${ink}">research software engineer</text>
-    <text x="82" y="392" font-size="26" letter-spacing="2" fill="${muted}">OPEN RESEARCH INFRASTRUCTURE</text>
-    <text x="82" y="428" font-size="26" letter-spacing="2" fill="${muted}">FOR SUSTAINABILITY SCIENCE</text>
-    <text x="82" y="464" font-size="26" letter-spacing="2" fill="${muted}">CML, LEIDEN UNIVERSITY</text>
-    <text x="82" y="540" font-size="28" letter-spacing="2" fill="${accent}">SIMONVANLIERDE.GITHUB.IO</text>
+    <text x="82" y="274" font-size="30" fill="${ink}">PhD researcher and research software engineer</text>
+    <text x="82" y="366" font-size="22" letter-spacing="1.2" fill="${muted}">OPEN RESEARCH INFRASTRUCTURE FOR SUSTAINABILITY SCIENCE</text>
+    <text x="82" y="408" font-size="18" letter-spacing="2.4" fill="${muted}">CML · LEIDEN UNIVERSITY</text>
+    <text x="82" y="492" font-size="28" letter-spacing="2" fill="${accent}">SIMONVANLIERDE.GITHUB.IO</text>
   </g>
   <g font-family="${draft}">
-    <rect x="80" y="48" width="236" height="44" fill="none" stroke="${stamp}" stroke-width="3"/>
-    <text x="98" y="77" font-size="22" letter-spacing="3" fill="${stamp}">PORTFOLIO · CV</text>
+    <rect x="80" y="48" width="165" height="44" fill="none" stroke="${stamp}" stroke-width="3"/>
+    <text x="98" y="77" font-size="22" letter-spacing="3" fill="${stamp}">PORTFOLIO</text>
   </g>
 </svg>`;
 
