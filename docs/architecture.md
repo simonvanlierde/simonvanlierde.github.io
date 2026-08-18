@@ -36,7 +36,7 @@ If the API is unavailable, blocked, or returns an unexpected shape, the script e
 
 Pull requests run `pnpm check`, a production Astro build, and Playwright tests with axe accessibility scans. Merges to `main` deploy through GitHub Pages. The refresh workflow shares the same Pages concurrency group as the normal deploy workflow so deployments queue instead of racing.
 
-## Deliberate non-goals
+## Non-goals
 
 - No backend for the portfolio site.
 - No runtime database; research datasets and platform data live in their own repositories/services.

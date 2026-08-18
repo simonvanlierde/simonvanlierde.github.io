@@ -165,9 +165,8 @@ on a drawing to mark the checker's approval; a second red element on the same
 sheet demotes both. Every other action is an engineer's-blue link.
 
 **The Kept Names Rule.** The CSS custom property names (`--bg`, `--text`,
-`--accent`, `--chart-bar`, ...) were deliberately kept from the previous
-design system so every consumer, the React chart island included, rethemes
-without edits. New surfaces consume tokens by these names; never fork a
+`--accent`, `--chart-bar`, ...) are the previous design system's names, kept
+so every consumer, the React chart island included, rethemes without edits. New surfaces consume tokens by these names; never fork a
 parallel palette.
 
 **The Uniform Chroma Rule.** Wide-gamut displays (`@media (color-gamut: p3)`)
@@ -208,8 +207,7 @@ periods, chart numerals) are always set in osifont with
 selectors). A number in the body face is prose; a number in the drafting hand
 is data.
 
-**The Measured Line Rule.** `--measure` is 38rem, deliberately in rem, not
-`72ch`: `ch` measures the zero glyph and lands near 91 real characters in a
+**The Measured Line Rule.** `--measure` is 38rem, in rem, not `72ch`: `ch` measures the zero glyph and lands near 91 real characters in a
 system sans; 38rem lands near 70. Cap prose in rem.
 
 ### Layout
@@ -260,7 +258,7 @@ sheet), never with a shadow or blur.
 
 **The Flat Sheet Rule.** No `box-shadow`, no `backdrop-filter`, no
 translucent surfaces. State is answered with a surface tint (`--surface`), a
-fill swap, or a line: the devices a drawing actually has.
+fill swap, or a line: the devices a drawing has.
 
 ### Shapes
 
@@ -287,8 +285,8 @@ Two notation marks are the deliberate exceptions and carry meaning:
   uppercase, `--space-s --space-m` padding.
 - **Hover:** fills `--stamp`, text flips to `--stamp-contrast`.
 - **Active:** `scale(0.97)`; all transitions removed under reduced motion.
-- **Cardinality:** one per sheet (see The One Stamp Rule). There is no
-  secondary button; every other action is a link.
+- **Cardinality:** one per sheet (see The One Stamp Rule). No secondary
+  button exists; every other action is a link.
 
 #### Links
 
@@ -351,10 +349,12 @@ Two notation marks are the deliberate exceptions and carry meaning:
   `--ease-out`, run once, class set by an inline script right after the
   figure so it precedes first paint. Reduced motion or no JS: the drawing is
   exploded from the start, in the same stylesheet.
-- **Hover:** a part name lights its part in `--accent`, and a part (its
-  fill is `transparent`, so the whole silhouette is the target) lights its
-  name (`:has()`, progressive). Balloons travel with their parts during
-  the settle.
+- **Links:** each part and its register label are one SVG `<a>` to the
+  real thing (plugin repo, live app, docs, source), named "Part: destination"
+  for assistive tech. Hover or focus lights part and label in `--accent`;
+  the part's fill is `transparent`, so the whole silhouette is the target,
+  and the ring is the ink change, not a box. Balloons and labels travel
+  with their parts during the settle.
 
 #### General Notes (hero)
 

@@ -10,31 +10,18 @@ import { personJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import Base from "../layouts/Base.astro";
 
-// Only the basics and the export date are read here: the history lives on
-// /cv/ alone, and this sheet points at it instead of restating it.
+// The history lives on /cv/; this sheet reads only the basics and the date.
 const { basics, exported } = cv;
 
-// `stats.json` is refreshed from the RELab /stats endpoint by a scheduled
-// workflow (scripts/fetch-stats.mjs). Until that lands it holds seeded sample
-// figures, flagged via `sample`; sample data never ships to a visitor, so the
-// chart block is absent until the figures are real.
-// `sample` is typed as optional by hand: the committed snapshot carries it,
-// the first live export deletes it, and the build must survive both.
+// stats.json is refreshed by scripts/fetch-stats.mjs; until live data lands
+// it is a seeded sample. `sample` is optional by hand: the first live export
+// deletes the key. Sample data never ships; the dev server may draw it.
 const { sample: statsAreSample = false, ...statsData } = stats as typeof stats & { sample?: boolean };
-// The chart ships only on real data, but the dev server may draw the seeded
-// series (labelled "sample data" by the chart itself) so the figure can be
-// previewed before the live endpoint is wired up. `astro build` never sets
-// DEV, so a production page cannot show sample figures.
 const showChart = !statsAreSample || import.meta.env.DEV;
 
-// General notes: the RELab running counts, drawn as the boxed A-D notes a
-// sheet carries at its edge, here in the hero and framed as one project's
-// figures. Live figures come from the same payload as the chart, so the two
-// can never disagree. While the payload is still flagged
-// as sample the notes fall back to the last hand-counted totals below, which
-// are real and dated, unlike the seeded series the chart would draw.
-// NOTE: update `fallback` when a newer count is known; it stops mattering
-// the moment fetch-stats.mjs writes live data.
+// General notes: RELab's running counts. Live figures share the chart's
+// payload; while it is sample, the last hand-counted, dated totals stand in.
+// NOTE: update `fallback` when a newer count is known.
 const fallback = { as_of: "2026-08-01", products: 78, parts: 1331, images: 3610 };
 const counts = statsAreSample ? fallback : { as_of: statsData.as_of, ...statsData.totals };
 const fmt = (n: number) => n.toLocaleString("en-US").replace(/,/g, "\u2009");
@@ -43,8 +30,7 @@ const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
   year: "numeric",
   timeZone: "UTC",
 });
-// NOTE: workshop participants has no field in the /stats payload; the count
-// is from the two teardown workshops (Aug 2026) and is updated by hand.
+// NOTE: not in the /stats payload; counted at the two workshops, kept by hand.
 const participants = 135;
 const notes = [
   { ref: "A", label: "Products documented", value: fmt(counts.products) },
@@ -57,23 +43,18 @@ const allProjects = (await getCollection("projects")).sort((a, b) => a.data.orde
 const workProjects = allProjects.filter((p) => p.data.category === "work");
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
 
-const name = "Simon van Lierde";
+const name = basics.name;
 
-// The thesis line carries the career-wide identity, not the current PhD
-// project: open software and open data for sustainability research. RELab
-// stays where it belongs, as position 1 in the bill of materials, and the
-// exploded figure illustrates the wider method rather than one platform.
+// The thesis line is the career-wide claim, not the current project.
 const question = "Open software and open data for sustainability research.";
 
 const tagline =
   "PhD researcher and research software engineer at CML, Leiden University. I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
 
-// Profile links, drawn as a notes list in the hero. Exactly one stamp (the
-// primary action) per sheet: the CV, which is what a hiring reader wants
-// before writing an email; the address sits beside it as a plain link.
+// One stamp per sheet: the CV. The address is a plain link beside it.
 const profiles = [
-  { label: "GitHub", href: "https://github.com/simonvanlierde" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/simon-van-lierde/" },
+  { label: "GitHub", href: basics.links.github },
+  { label: "LinkedIn", href: basics.links.linkedin },
   { label: "ORCID", href: "https://orcid.org/0009-0006-6953-909X" },
   {
     label: "Leiden profile",
@@ -89,9 +70,7 @@ const profiles = [
 >
   <SheetNav current="index" />
 
-  {/* The skip link lands here: everything but the sheet nav is content,
-      the name and the stamp included. A div, not <main>: a header inside
-      <main> would lose its banner role. */}
+  {/* Skip target. A div, not <main>: a header inside <main> loses its banner role. */}
   <div id="main">
   <header class="container hero">
     <div class="hero__grid">
@@ -105,8 +84,6 @@ const profiles = [
             Curriculum vitae<span class="visually-hidden">, sheet 2</span>
           </a>
           {
-            /* The address is the visible link text, so it can be read and
-               copied by anyone without a configured mail client. */
             basics.email && (
               <a class="hero__email draft" href={`mailto:${basics.email}`}>
                 {basics.email}
@@ -129,10 +106,8 @@ const profiles = [
           <h2 id="notes-heading" class="notes__heading">
             Notes<span class="notes__heading-aside"> · RELab, running totals</span>
           </h2>
-          {/* The counts belong to one project, not the person: say so before
-              the numbers, and point at the drawing and the list. */}
           <p class="notes__lead draft">
-            The Reverse Engineering Lab is one of the projects listed below; Fig. 1 draws its parts.
+            One of the projects below; Fig. 1 draws its parts.
           </p>
           <ol class="notes__list">
             {
@@ -178,10 +153,7 @@ const profiles = [
                 durable goods to close a long-standing product-data gap in
                 industrial ecology.
               </p>
-              <p>
-                In active use at CML, including two teardown workshops; the
-                notes above carry its running totals, Fig. 1 its parts.
-              </p>
+              <p>In active use at CML, including two teardown workshops.</p>
             </div>
             <ul class="bom-row__links link-list">
               <li><a href="https://app.cml-relab.org">Live platform</a></li>
@@ -194,17 +166,10 @@ const profiles = [
             </ul>
 
             {
-              /* Sample figures stay off the page entirely. A page arguing for
-                 reproducible research cannot show a fabricated series next to
-                 real counts. The chart returns on its own the first time
-                 fetch-stats.mjs writes live data (`sample` drops out). */
               showChart && (
                 <div class="relab__chart">
                   <h4 class="draft">Fig. 2: Disassembly over time</h4>
-                  <p class="viz__caption">
-                    Activity in RELab by month. Switch measures; tap or hover a
-                    column for the exact figure.
-                  </p>
+                  <p class="viz__caption">Activity in RELab by month.</p>
                   <DisassemblyChart stats={statsData} isSample={statsAreSample} client:visible />
                 </div>
               )
@@ -256,13 +221,8 @@ const profiles = [
     <section class="container closing" aria-labelledby="contact-heading">
       <h2 id="contact-heading">Contact</h2>
       <div class="closing__body">
-        <p class="prose">
-          For collaboration, roles, or questions about RELab and the tooling
-          behind it, write to me, or read the CV first.
-        </p>
+        <p class="prose">Collaboration, roles, or questions about RELab and the tooling behind it:</p>
         {
-          /* The sheet's one stamp is in the hero; the closing repeats the
-             address and the CV as plain working links, not a second stamp. */
           <p class="closing__row draft">
             {basics.email && <a href={`mailto:${basics.email}`}>{basics.email}</a>}
             <a href="/cv/">Sheet 2: CV</a>
@@ -297,8 +257,7 @@ const profiles = [
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
     }
 
-    /* The figure is a plate beside the text and the notes: the words say
-       who, the notes prove one project, the drawing shows its parts. */
+    /* The plate sits beside the text and notes. */
     .hero__figure {
       justify-self: end;
       width: 100%;
@@ -341,9 +300,7 @@ const profiles = [
     color: var(--text-muted);
     letter-spacing: 0.03em;
     overflow-wrap: anywhere;
-    /* Buys the 44px target; the negative margin keeps the row on the stamp's
-       midline. */
-    padding-block: 0.65rem;
+    padding-block: 0.65rem; /* 44px target */
     margin-block: -0.65rem;
   }
 
@@ -356,9 +313,7 @@ const profiles = [
     font-size: var(--step--1);
   }
 
-  /* General notes: a sheet's boxed notes, here one project's running
-     counts, in the hero so the proof is in the first viewport, and framed
-     as RELab's, not the person's. */
+  /* General notes: one project's running counts, in the first viewport. */
   .notes {
     margin-top: var(--space-l);
     max-width: 36rem;
@@ -418,8 +373,6 @@ const profiles = [
     color: var(--text-muted);
   }
 
-  /* A provenance line, lettered but not shouted: sentence case reads as a
-     sentence, and the lab name links to the platform that produced the counts. */
   .notes__foot {
     margin-top: var(--space-s);
     font-size: var(--step--1);
@@ -468,8 +421,6 @@ const profiles = [
     font-size: var(--step--1);
   }
 
-  /* Disclosure: a collapsed <details> keeping secondary content below the
-     work above. Native, no JS. */
   .disclosure {
     margin-top: var(--space-xl);
   }

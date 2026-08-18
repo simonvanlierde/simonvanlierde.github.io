@@ -37,7 +37,7 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 ├── src/
 │   ├── components/
 │   │   ├── ExplodedView.astro     # Fig. 1, RELab taken apart (inline SVG)
-│   │   ├── ProjectCard.astro      # one bill-of-materials row
+│   │   ├── ProjectCard.astro      # one parts-list row
 │   │   ├── SheetNav.astro
 │   │   ├── TitleBlock.astro
 │   │   ├── ThemeToggle.astro
@@ -117,10 +117,11 @@ Projects are markdown files under [src/content/projects/](src/content/projects/)
 the schema in [src/content.config.ts](src/content.config.ts).
 
 [/cv/](https://simonvanlierde.github.io/cv/) renders from
-[src/data/cv-public.yaml](src/data/cv-public.yaml); the landing page reads only the contact details
-from it and points at the CV rather than restating it. That file and the CV PDF are exported from a
-separate private repo and committed here, so a clean checkout builds without access to it.
+[src/data/cv-public.yaml](src/data/cv-public.yaml). The landing page reads only the contact details
+from it and links to the CV. That file and the CV PDF are exported from a separate private repo and
+committed here, so a clean checkout builds without access to it.
+
 [src/data/cv.ts](src/data/cv.ts) validates the export against a Zod schema at build time, so a
 broken export fails the build instead of rendering an empty page. Optional sections (publications,
-skills, projects, talks and training, interests) render only when the export carries them, and an unaccepted
-publication stays hidden until it has a preprint DOI to link to.
+skills, projects, talks and training, interests) render only when the export carries them. An
+unaccepted publication stays hidden until it has a preprint DOI to link to.

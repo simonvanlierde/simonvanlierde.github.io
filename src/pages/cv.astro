@@ -19,9 +19,7 @@ const {
   exported,
 } = cv;
 
-// A CV with no date makes the reader guess how stale it is. Day precision is
-// the useful granularity. Accepted work always lists; unaccepted work only
-// once a preprint DOI exists (see listablePublications and tests/unit).
+// Accepted work always lists; unaccepted work only once it has a DOI.
 const publications = listablePublications(cv.publications);
 
 const exportedLabel = exported
@@ -71,12 +69,9 @@ const contact = [
 >
   <SheetNav current="cv" />
 
-  {/* The skip link lands here, not on <main>: the h1, the download stamp and
-      the contact list are content, only the sheet nav is chrome to bypass. */}
+  {/* Skip target: only the sheet nav is chrome. */}
   <header class="container cv-header" id="main">
-    {/* The name, not "Curriculum vitae": a print or a screenshot of the top of
-        this page has to carry whose CV it is. The document type is already in
-        the tab title, the download button, and the title block. */}
+    {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
     <h1>{basics.name}</h1>
     <p class="cv-header__headline prose">
       {
@@ -122,8 +117,6 @@ const contact = [
     </a>
 
     {
-      /* Sits under the download button because it dates both: page and PDF
-         come out of one export run. */
       exportedLabel && (
         <p class="cv-updated">
           Last updated <time datetime={exported}>{exportedLabel}</time>
@@ -132,8 +125,7 @@ const contact = [
     }
   </header>
 
-  {/* Zone index: the sheet's sections, lettered like general notes, so the
-      reader can jump. It sits between header and main, chrome-adjacent. */}
+  {/* Zone index: lettered sections, so a reader can jump. */}
   <nav class="container cv-index" aria-label="Sections">
     <ol class="cv-index__list">
       {
@@ -182,8 +174,7 @@ const contact = [
     </section>
 
     {
-      /* Directly after Experience: it is the section an academic reader looks
-         for first. */
+      /* After Experience: what an academic reader looks for first. */
       publications.length > 0 && (
         <section class="container" aria-labelledby="publications-heading">
           <h2 id="publications-heading">Publications</h2>
@@ -247,14 +238,12 @@ const contact = [
     }
 
     {
-      /* Optional sections render or they don't. An empty heading over nothing
-         reads as a gap in the person, not a gap in the export. */
+      /* Optional sections: an empty heading would read as a gap in the person. */
       skills.length > 0 && (
         <section class="container" aria-labelledby="skills-heading">
           <h2 id="skills-heading">Skills</h2>
           <div class="cv-entries">
-            {/* One line per group, not a wall of chips: a CV's skills are
-                read, not filtered. */}
+            {/* One line per group: skills are read, not filtered. */}
             {skills.map((group) => (
               <div class="cv-entry">
                 <p class="cv-entry__period">{group.group}</p>
@@ -267,8 +256,7 @@ const contact = [
     }
 
     {
-      /* Talks, summer schools, and upstream contributions: the section a
-         reading committee looks for. */
+      /* Talks, schools, upstream contributions. */
       development.length > 0 && (
         <section class="container" aria-labelledby="development-heading">
           <h2 id="development-heading">Talks and training</h2>
@@ -293,9 +281,8 @@ const contact = [
     <section class="container" aria-labelledby="cv-download-heading">
       <h2 id="cv-download-heading">Download</h2>
       <div class="cv-footer-download">
-        <p class="prose">The PDF is generated from the same source as this page.</p>
-        {/* The sheet's one stamp is the header's download; this repeat is a
-            plain working link. */}
+        <p class="prose">Generated from the same source as this page.</p>
+        {/* The one stamp is in the header; this is a plain link. */}
         <a class="draft cv-footer-download__link" href={pdf} download>Download as PDF</a>
       </div>
     </section>

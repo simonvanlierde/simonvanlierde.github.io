@@ -41,14 +41,17 @@ for (const width of [320, 390, 900, 1200]) {
 
 test("hero profile links point at the right destinations", async ({ page }) => {
   const banner = page.getByRole("banner");
+  // GitHub and LinkedIn come from the export; ORCID and the Leiden page have
+  // no export field yet and are kept by hand on the page and here.
   const expected: Record<string, string> = {
-    GitHub: "https://github.com/simonvanlierde",
-    LinkedIn: "https://www.linkedin.com/in/simon-van-lierde/",
+    GitHub: cv.basics.links.github,
+    LinkedIn: cv.basics.links.linkedin,
     ORCID: "https://orcid.org/0009-0006-6953-909X",
     "Leiden profile": "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
   };
   for (const [name, href] of Object.entries(expected)) {
-    await expect(banner.getByRole("link", { name })).toHaveAttribute("href", href);
+    // exact: the figure's part links also mention GitHub in their names
+    await expect(banner.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
   }
 });
 
