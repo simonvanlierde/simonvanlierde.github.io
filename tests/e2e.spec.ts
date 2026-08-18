@@ -11,7 +11,7 @@ const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
 // figures next to real counts would be worse than no chart. So the chart specs
 // below skip themselves while `sample` is set and come back automatically the
 // first time scripts/fetch-stats.mjs writes live data.
-const statsAreSample = stats.sample === true;
+const statsAreSample = (stats as { sample?: boolean }).sample === true;
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");

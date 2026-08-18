@@ -72,7 +72,9 @@ test("no axe violations after interaction", async ({ page }) => {
 
   // The blueprint rendering is a full second palette; scan it as well.
   await page.locator(".theme-toggle").click();
-  await expect(page.locator(".theme-toggle")).toHaveAttribute("aria-pressed", /true|false/);
+  // A fresh context starts light, so the click must land on "true"; anything
+  // else means the toggle is broken and axe would scan the light palette twice.
+  await expect(page.locator(".theme-toggle")).toHaveAttribute("aria-pressed", "true");
 
   await expectNoViolations(page);
 });

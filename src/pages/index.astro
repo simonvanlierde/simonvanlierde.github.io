@@ -18,7 +18,9 @@ const { basics, exported } = cv;
 // workflow (scripts/fetch-stats.mjs). Until that lands it holds seeded sample
 // figures, flagged via `sample`; sample data never ships to a visitor, so the
 // chart block is absent until the figures are real.
-const { sample: statsAreSample = false, ...statsData } = stats;
+// `sample` is typed as optional by hand: the committed snapshot carries it,
+// the first live export deletes it, and the build must survive both.
+const { sample: statsAreSample = false, ...statsData } = stats as typeof stats & { sample?: boolean };
 // The chart ships only on real data, but the dev server may draw the seeded
 // series (labelled "sample data" by the chart itself) so the figure can be
 // previewed before the live endpoint is wired up. `astro build` never sets

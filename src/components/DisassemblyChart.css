@@ -12,36 +12,6 @@
   color: var(--text-muted);
 }
 
-/* Headline totals. Numbers wear text tokens, not the series colour: the bars
-   carry identity here, the tiles carry magnitude. */
-.chart__tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
-  gap: var(--space-s);
-  margin: 0 0 var(--space-m);
-  padding: 0;
-}
-
-.chart__tiles > div {
-  /* dt before dd in source (valid <dl>); number above label on screen. */
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 0.1rem;
-}
-
-.chart__tiles dt {
-  color: var(--text-muted);
-  font-size: var(--step--1);
-}
-
-.chart__tiles dd {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: var(--step-1);
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-
 /* Controls: the measure switcher, wrapping on narrow screens */
 .chart__toolbar {
   display: flex;
@@ -241,7 +211,7 @@
 
 /* A narrow plot renders the 480-unit viewBox at roughly 0.6, which would put 13px
    labels back under 8 real pixels. Scale the type up in user units instead, and
-   drop the y-axis text: the tiles above carry magnitude, a tap carries the exact
+   drop the y-axis text: the notes above carry magnitude, a tap carries the exact
    figure, and the gridlines still give the eye a level to read against.
 
    Keyed to the `chart` container (declared on .relab__chart) rather than the
@@ -252,12 +222,6 @@
   .chart__unit,
   .chart__xlabel-qualifier {
     display: none;
-  }
-
-  /* Four tiles don't fit across a phone, and auto-fit strands the fourth on a row
-     of its own. Two by two reads as a block instead of a mistake. */
-  .chart__tiles {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .chart__xlabel {

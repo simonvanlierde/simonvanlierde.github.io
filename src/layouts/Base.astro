@@ -55,7 +55,11 @@ const ogImage = new URL("og.png", Astro.site);
       /* Structured data: lets a publication be read as a publication rather
          than as a heading. */
       jsonLd && (
-        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(jsonLd).replace(/</g, "\\u003c")}
+          is:inline
+        />
       )
     }
   </head>

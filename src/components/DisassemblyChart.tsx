@@ -1,6 +1,6 @@
 import { type CSSProperties, useId, useState } from "react";
 import "./DisassemblyChart.css";
-import fallback from "../data/stats.json";
+import fallback from "../data/stats.json" with { type: "json" };
 import { barPath, buildScale } from "./chartScale";
 
 // Pre-aggregated figures from the RELab /stats endpoint, baked in at build time
@@ -18,7 +18,6 @@ type SeriesRow = {
 type StatsPayload = {
   granularity?: string;
   series: SeriesRow[];
-  totals?: Record<string, number>;
 };
 
 type MeasureKey = "teardowns" | "parts" | "mass_kg" | "images" | "users";
@@ -59,15 +58,6 @@ const MEASURES: Measure[] = [
   // "Members", not "Signups": this is a research platform's activity log, not a
   // growth dashboard, and the noun below is the honest description either way.
   { key: "users", label: "Members", noun: "new lab members", format: int },
-];
-
-// Running totals, when the payload carries them. The chart answers "when"; these
-// answer "how much to date", a question no time series can.
-const TILES: { key: string; label: string; format: (n: number) => string }[] = [
-  { key: "products", label: "Products", format: int },
-  { key: "parts", label: "Parts", format: int },
-  { key: "mass_kg", label: "Mass", format: kg },
-  { key: "images", label: "Images", format: int },
 ];
 
 // Split "Jul 2025" into a tick ("Jul") and a qualifier ("2025") that only prints
@@ -130,7 +120,6 @@ export default function DisassemblyChart({
   const barWidth = colW * 0.6;
   const baseline = PAD.top + INNER_H;
   const tick = measure.tick ?? measure.format;
-  const totals = stats.totals;
 
   const summary =
     `Chart of ${measure.label.toLowerCase()} in the Reverse Engineering Lab (${measure.noun}): ` +
@@ -140,17 +129,8 @@ export default function DisassemblyChart({
 
   return (
     <figure className="chart">
-      {totals && (
-        <dl className="chart__tiles">
-          {TILES.filter((t) => typeof totals[t.key] === "number").map((t) => (
-            <div key={t.key}>
-              <dt>{t.label}</dt>
-              <dd>{t.format(totals[t.key])}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-
+      {/* No running-total tiles here: the RELab row's general notes carry
+          them, from the same payload. The chart answers "when". */}
       <div className="chart__toolbar">
         <fieldset className="chart__controls">
           <legend className="visually-hidden">Measure</legend>
@@ -176,7 +156,12 @@ export default function DisassemblyChart({
           role="img"
           aria-label={summary}
           preserveAspectRatio="xMidYMid meet"
-          onPointerLeave={() => setActive(null)}
+          onPointerLeave={(e) => {
+            // A touch pointer fires pointerleave on finger lift; the tooltip
+            // would flash and vanish. Only a mouse leaving clears it; a tap
+            // elsewhere replaces it.
+            if (e.pointerType === "mouse") setActive(null);
+          }}
         >
           {/* Gridlines and y-axis labels */}
           <g className="chart__grid">

@@ -20,6 +20,7 @@
     "rules": {
       "preset": "recommended",
       "a11y": "on",
+      "correctness": "on",
       "suspicious": "on",
       "security": {
         "noSecrets": "off"
@@ -32,6 +33,16 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useQwikValidLexicalScope": "off"
+          }
+        }
+      }
+    },
     {
       "includes": ["scripts/**", "tests/**", "**/*.config.ts"],
       "linter": {

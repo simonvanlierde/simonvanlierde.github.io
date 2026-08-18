@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
+import { formatPeriod } from "../src/components/cvPeriod.ts";
 import { listablePublications, PublicationSchema } from "../src/data/publications.ts";
 
 // Read the export directly rather than restating its contents here: these tests
@@ -79,9 +80,12 @@ test("contact details render only what the export publishes", async ({ page }) =
 });
 
 test("experience entries carry a role, an organisation, and a formatted period", async ({ page }) => {
-  const current = page.locator(".cv-entry").filter({ hasText: "PhD Researcher in Industrial Ecology" });
-  await expect(current.locator(".cv-entry__period")).toHaveText("Apr 2024 – Present");
-  await expect(current.locator(".cv-entry__org")).toContainText("Leiden University");
+  // The first exported job, whatever it is: the page must render it as the
+  // export says, formatted the way the site formats every period.
+  const [job] = cv.experience;
+  const current = page.locator(".cv-entry").filter({ hasText: job.role });
+  await expect(current.locator(".cv-entry__period")).toHaveText(formatPeriod(job.start, job.end));
+  await expect(current.locator(".cv-entry__org")).toContainText(job.organization);
 });
 
 // The page and the PDF are exported together; a stale or missing export would
