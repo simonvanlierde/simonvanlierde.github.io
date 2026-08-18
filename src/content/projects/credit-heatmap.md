@@ -1,6 +1,6 @@
 ---
 title: credit-heatmap
-description: "Build CRediT author-contribution statements on the edge: drag roles into a matrix and export to JATS4R XML, CSV, JSON, or Markdown for journal submission."
+description: "Build journal-ready CRediT author-contribution statements by arranging roles in a matrix, then export them as JATS4R XML, CSV, JSON, or Markdown. Runs on the edge."
 repo: https://github.com/simonvanlierde/credit-heatmap
 demo: https://credit.duinlab.nl
 kind: web app
