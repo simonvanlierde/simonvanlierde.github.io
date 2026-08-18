@@ -66,11 +66,11 @@ test("the personal-projects disclosure expands then collapses", async ({ page })
   await expect(details).toHaveJSProperty("open", false);
 });
 
-test("the hero has exactly one primary action", async ({ page }) => {
-  // Every other hero link is a way to look Simon up. This is the one that asks
-  // for something back, and the composition depends on there being only one:
-  // mailto when the export publishes an address, the CV when it doesn't.
-  const primary = page.locator(".hero__links-primary a");
+test("the hero has exactly one stamp", async ({ page }) => {
+  // Every other hero link is a way to look Simon up. The stamp is the one that
+  // asks for something back, and the sheet grammar allows exactly one in the
+  // header: mailto when the export publishes an address, the CV when it doesn't.
+  const primary = page.locator("header .stamp");
   await expect(primary).toHaveCount(1);
   await expect(primary).toHaveAttribute("href", cv.basics.email ? `mailto:${cv.basics.email}` : "/cv/");
 });
@@ -78,7 +78,7 @@ test("the hero has exactly one primary action", async ({ page }) => {
 test("an unknown path serves the 404 page with a way back", async ({ page }) => {
   await page.goto("/no-such-page/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("That page does not exist");
-  await expect(page.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
+  await expect(page.getByRole("link", { name: "Sheet 1: index of work" })).toHaveAttribute("href", "/");
 });
 
 if (statsAreSample) {

@@ -102,7 +102,10 @@ test("the homepage links to the CV, and the CV links back", async ({ page }) => 
   await page.getByRole("link", { name: "Home" }).click();
   await expect(page).toHaveURL(/\/$/);
 
-  await page.getByRole("banner").getByRole("link", { name: "CV" }).click();
+  await page
+    .getByRole("navigation")
+    .getByRole("link", { name: /Sheet 2/ })
+    .click();
   await expect(page).toHaveURL(/\/cv\/$/);
 });
 

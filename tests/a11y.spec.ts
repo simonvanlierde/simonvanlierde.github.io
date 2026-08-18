@@ -44,9 +44,8 @@ for (const colorScheme of ["light", "dark"] as const) {
 
 // Scan a mutated DOM, not just first paint: open the personal-projects
 // disclosure, switch the chart measure when a chart is rendered at all, and
-// scroll so the sticky nav condenses (its icon links only enter the a11y tree
-// once shown), then re-check. Regressions often hide in the states a static scan
-// of the initial page never reaches.
+// flip the theme so the blueprint rendering is scanned too, then re-check.
+// Regressions often hide in the states a static scan never reaches.
 test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
 
@@ -71,8 +70,9 @@ test("no axe violations after interaction", async ({ page }) => {
     );
   }
 
-  await page.mouse.wheel(0, 2000);
-  await expect(page.locator(".site-nav")).toHaveClass(/is-condensed/);
+  // The blueprint rendering is a full second palette; scan it as well.
+  await page.locator(".theme-toggle").click();
+  await expect(page.locator(".theme-toggle")).toHaveAttribute("aria-pressed", /true|false/);
 
   await expectNoViolations(page);
 });

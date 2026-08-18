@@ -16,7 +16,9 @@ at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 - A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project cards
 - One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind both the landing page's
   condensed timeline and [/cv/](https://simonvanlierde.github.io/cv/), so the two can't drift
-- Plain CSS with design tokens; light and dark via `prefers-color-scheme`
+- Plain CSS with design tokens; light (ink on paper) and dark (blueprint) via
+  `prefers-color-scheme` plus a toggle; display and data lettering in a vendored
+  [osifont](https://github.com/hikikomori82/osifont) subset (ISO 3098, LGPL+FE)
 - Scheduled GitHub Actions refresh for the RELab chart snapshot, with CI and Pages deploy kept
   separate
 

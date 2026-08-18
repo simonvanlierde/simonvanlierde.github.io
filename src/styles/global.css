@@ -1,20 +1,37 @@
 /* ---------------------------------------------------------------------------
-   Design tokens
-   Light theme is the default; dark theme via prefers-color-scheme.
-   One accent colour (a muted sea-green, in keeping with "duinlab" / dune).
+   THE ENGINEERING DRAWING SHEET
+   One visual world, two renderings of the same sheet:
+     light = ink linework on drafting paper
+     dark  = blueprint (cyanotype: pale lines on Prussian-blue ground)
+   Display and label voice: osifont (ISO 3098 technical lettering, vendored,
+   subset, ~10KB). Body prose: system sans. Colour is never the sole signal.
+   Token NAMES are kept from the previous system (--bg, --text, --accent,
+   --chart-bar...) so every consumer, the chart island included, rethemes
+   without edits; the VALUES are the new world.
    --------------------------------------------------------------------------- */
 
+@font-face {
+  font-family: "osifont";
+  src: url("/fonts/osifont.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  /* Type. Native system stacks; no webfonts. Mono is used only for data labels. */
+  /* Type. Drafting lettering carries display, labels, and data; prose stays
+     on the system sans so long text reads as text, not as a costume. */
+  --font-draft: "osifont", "Segoe UI", system-ui, sans-serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  /* Kept name: the chart and data labels resolve through this. */
+  --font-mono: var(--font-draft);
 
   /* Fluid type scale */
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
   --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
   --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  --step-3: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --step-3: clamp(2.1rem, 1.6rem + 2.4vw, 3.4rem);
 
   /* Spacing */
   --space-2xs: 0.25rem;
@@ -23,98 +40,69 @@
   --space-m: 1.25rem;
   --space-l: 2rem;
   --space-xl: 3.5rem;
-  --space-2xl: 5.5rem;
 
-  /* Layout */
-  --measure: 72ch;
-  /* Two radii, not three. Everything rectangular takes --radius; the pill is
-     reserved for the one small standalone control (the footer version chip). */
-  --radius: 4px; /* crisp data-sheet edges */
-  --radius-pill: 999px;
+  /* Layout. 72ch measures the zero glyph and lands near 91 real characters in
+     a system sans; 38rem lands near 70. The rem value is the cap. */
+  --measure: 38rem;
+  --radius: 0px; /* a drawing has no rounded corners */
+  --radius-pill: 0px;
   --border-width: 1px;
 
-  /* Motion. One curve for things entering or settling, one for things morphing
-     in place, and three durations. Everything that moves on this site draws
-     from these; a hand-typed cubic-bezier in a component is a bug. */
+  /* The fixed sheet frame (trim margin + frame line) */
+  --frame-inset: clamp(8px, 1.2vw, 16px);
+  --frame-line: 1.5px;
+
+  /* Motion: drafting behaviour, not decoration. */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --dur-fast: 150ms; /* colour changes, presses */
-  --dur-base: 200ms; /* fades, morphs */
-  --dur-slow: 250ms; /* the disclosure's height */
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-slow: 250ms;
+  --dur-explode: 700ms; /* the exploded view settling apart */
 
-  /* Palette. Authored in OKLCH, because the first number of every token is then
-     its perceptual lightness and the whole palette can be read as a ladder. Two
-     hues carry the entire site, and each token names both themes: light-dark()
-     picks one against the active color-scheme (set below), either the system
-     preference or the scheme the footer toggle forces. One source, no media query.
-
-     The hexes this replaced were a hand-picked set whose light neutrals drifted
-     across 40 degrees of hue (ink at 237, hairline at 223, ground at 197) while
-     the dark ones sat together near 221, so the two themes were not quite the
-     same family. Every value below is within sRGB, and every pair the site
-     actually renders was contrast-checked against the hexes before the swap:
-     largest change 0.15:1, nothing regressed.
-
-     Lightness ladder, light then dark, mirrored around the middle:
-       ground   99.0 / 18.5      hairline 92.5 / 31.0
-       sheet   100.0 / 23.0      graphite 49.0 / 74.0
-       ink      24.0 / 94.0      accent   51.0 / 85.5 */
-  --hue-neutral: 222; /* ground, sheet, ink, graphite, hairline */
-  --hue-teal: 184; /* the accent, and the chart marks */
-
+  /* Palette. Two grounds, one working ink, engineer's blue, checker's red.
+     Light: warm drafting paper, near-black blue ink, Prussian-blue accents.
+     Dark: the same sheet printed as a cyanotype, ground and line swap roles.
+     Every text pair clears 4.5:1 on its ground; verified at build time. */
   color-scheme: light dark;
-  --bg: light-dark(oklch(99% 0.002 var(--hue-neutral)), oklch(18.5% 0.01 var(--hue-neutral)));
-  --surface: light-dark(oklch(100% 0 var(--hue-neutral)), oklch(23% 0.013 var(--hue-neutral)));
-  --text: light-dark(oklch(24% 0.012 var(--hue-neutral)), oklch(94% 0.007 var(--hue-neutral)));
-  --text-muted: light-dark(oklch(49% 0.021 var(--hue-neutral)), oklch(74% 0.018 var(--hue-neutral)));
-  --border: light-dark(oklch(92.5% 0.006 var(--hue-neutral)), oklch(31% 0.017 var(--hue-neutral)));
 
-  /* Sea-green: 5.5:1 on light, 11.4:1 on dark, both against --surface. */
-  --accent: light-dark(oklch(51% 0.086 var(--hue-teal)), oklch(85.5% 0.125 var(--hue-teal)));
+  --bg: light-dark(oklch(97.5% 0.005 95), oklch(27% 0.05 262));
+  --surface: light-dark(oklch(99.2% 0.003 95), oklch(30.5% 0.055 262));
+  --text: light-dark(oklch(23% 0.015 255), oklch(96.5% 0.008 240));
+  --text-muted: light-dark(oklch(43% 0.02 255), oklch(85% 0.03 240));
+  --border: light-dark(oklch(80% 0.012 255), oklch(45% 0.05 258));
+  --border-strong: light-dark(oklch(32% 0.02 255), oklch(90% 0.02 240));
 
-  /* The hover step runs in opposite directions per theme, darker on light (51 to
-     41) and lighter on dark (85.5 to 91), because emphasis moves away from the
-     ground and the ground is at the other end. That inversion is why this cannot
-     be one derived formula off --accent, and why both steps are written out. */
-  --accent-strong: light-dark(oklch(41% 0.068 var(--hue-teal)), oklch(91% 0.093 var(--hue-teal)));
-  --accent-contrast: light-dark(oklch(100% 0 var(--hue-neutral)), oklch(24% 0.038 var(--hue-teal)));
+  /* Engineer's blue: links and working accents. Pale drafting cyan on the
+     blueprint side, where the ground already owns the blue. */
+  --accent: light-dark(oklch(42% 0.13 262), oklch(88% 0.055 225));
+  --accent-strong: light-dark(oklch(34% 0.11 262), oklch(94% 0.035 225));
+  --accent-contrast: light-dark(oklch(98% 0.003 95), oklch(25% 0.05 262));
 
-  /* The ring is the accent. Held as its own token so a future ring colour has a
-     name, but derived rather than restated: two values to keep in sync was one
-     too many. */
+  /* Checker's red: the one stamp. Exactly one primary action per sheet. */
+  --stamp: light-dark(oklch(47% 0.15 25), oklch(82% 0.1 25));
+  --stamp-contrast: light-dark(oklch(98.5% 0.003 95), oklch(23% 0.05 262));
+
   --focus: var(--accent);
 
-  /* Chart marks. On dark, --accent is tuned for thin text and glares as a large
-     fill, so bars take a step down in lightness (9.1:1 on --surface) and the
-     brighter accent becomes the hover state. Both modes clear the 3:1
-     mark-vs-surface floor. Same hue as the accent: one family, two jobs. */
-  --chart-bar: light-dark(oklch(51% 0.086 var(--hue-teal)), oklch(78.5% 0.133 var(--hue-teal)));
-  --chart-bar-strong: light-dark(oklch(41% 0.068 var(--hue-teal)), oklch(85.5% 0.125 var(--hue-teal)));
+  /* Chart marks (kept names). Solid engineer's blue bars on paper; pale
+     cyanotype lines on blueprint. Both clear 3:1 against --surface. */
+  --chart-bar: light-dark(oklch(42% 0.13 262), oklch(80% 0.07 225));
+  --chart-bar-strong: light-dark(oklch(34% 0.11 262), oklch(88% 0.055 225));
 }
 
-/* Wider gamut, same design. The teal values above sit at 83-96% of what sRGB can
-   express at those lightnesses, so on a P3 display the accent is being clipped
-   rather than chosen. A uniform 1.25x chroma lift recovers it: same lightness
-   ladder, same hue, same relationships, just no longer flattened by the container.
-   Every value here lands at 73-88% of the P3 maximum, so nothing clips.
-
-   Lightness is untouched, so contrast barely moves: light loses at most 0.08:1 and
-   dark gains 0.13:1. Each pair still clears its own floor at these chromas, which
-   is the point rather than a coincidence, because this query reports what a display
-   claims it can do and a wrong answer must not cost anyone legibility.
-
-   The neutrals stay where they are. At chroma 0.02 there is nothing to recover, and
-   a more colourful grey is not an upgrade. */
+/* Wide gamut: lift only the chromatic tokens, uniformly, never lightness.
+   A display that claims P3 and clamps still clears every contrast floor. */
 @media (color-gamut: p3) {
   :root {
-    --accent: light-dark(oklch(51% 0.107 var(--hue-teal)), oklch(85.5% 0.156 var(--hue-teal)));
-    --accent-strong: light-dark(oklch(41% 0.085 var(--hue-teal)), oklch(91% 0.116 var(--hue-teal)));
-    --chart-bar: light-dark(oklch(51% 0.107 var(--hue-teal)), oklch(78.5% 0.166 var(--hue-teal)));
-    --chart-bar-strong: light-dark(oklch(41% 0.085 var(--hue-teal)), oklch(85.5% 0.156 var(--hue-teal)));
+    --accent: light-dark(oklch(42% 0.155 262), oklch(88% 0.066 225));
+    --accent-strong: light-dark(oklch(34% 0.132 262), oklch(94% 0.042 225));
+    --stamp: light-dark(oklch(47% 0.18 25), oklch(82% 0.12 25));
+    --chart-bar: light-dark(oklch(42% 0.155 262), oklch(80% 0.084 225));
+    --chart-bar-strong: light-dark(oklch(34% 0.132 262), oklch(88% 0.066 225));
   }
 }
 
-/* The toggle sets data-theme; forcing color-scheme flips every token above. */
 :root[data-theme="light"] {
   color-scheme: light;
 }
@@ -137,16 +125,12 @@
   margin: 0;
 }
 
-/* No `scroll-behavior: smooth`. The skip link is the only fragment link on the
-   site, so smooth scrolling would only animate a keyboard action: the one place
-   motion always costs more than it gives. */
 html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Cross-document transitions. / and /cv/ are one document as far as the reader is
-   concerned, and the name carries across both heros (see each page's
-   view-transition-name). Pure CSS: browsers without it just navigate. */
+/* Cross-document transitions: / and /cv/ are two sheets of one drawing set;
+   the person's name morphs between them. Browsers without it just navigate. */
 @view-transition {
   navigation: auto;
 }
@@ -158,6 +142,7 @@ html {
 }
 
 body {
+  position: relative; /* the sheet frame is drawn on the document, not the viewport */
   font-family: var(--font-sans);
   font-size: var(--step-0);
   line-height: 1.6;
@@ -165,27 +150,77 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Content lives inside the sheet frame. */
+  padding: calc(var(--frame-inset) + var(--frame-line));
+}
+
+/* The sheet frame: a trim border around the whole document, with centring
+   ticks at the sheet's midpoints, like the frame every drawing is plotted
+   inside. Drawn on the document, not the viewport: the page is one tall
+   sheet, and a viewport-fixed line would cross moving text like a strike.
+   Screen-only: print gets the plain document. */
+@media screen {
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--frame-line) solid var(--border-strong);
+    pointer-events: none;
+    z-index: 90;
+  }
+
+  /* Centring ticks: four small marks at the sheet's edge midpoints. */
+  body::after {
+    content: "";
+    position: absolute;
+    inset: calc(-1 * var(--frame-inset));
+    pointer-events: none;
+    z-index: 90;
+    background:
+      linear-gradient(var(--border-strong), var(--border-strong)) top center / var(--frame-line)
+      calc(var(--frame-inset) + 6px) no-repeat,
+      linear-gradient(var(--border-strong), var(--border-strong)) bottom center / var(--frame-line)
+      calc(var(--frame-inset) + 6px) no-repeat,
+      linear-gradient(var(--border-strong), var(--border-strong)) left center / calc(var(--frame-inset) + 6px)
+      var(--frame-line) no-repeat,
+      linear-gradient(var(--border-strong), var(--border-strong)) right center / calc(var(--frame-inset) + 6px)
+      var(--frame-line) no-repeat;
+  }
+}
+
+/* Selection and caret belong to the world too. */
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
 
 h1,
 h2,
 h3 {
-  line-height: 1.15;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-family: var(--font-draft);
+  line-height: 1.12;
+  font-weight: 400;
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--step-3);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
+/* Section headings are zone labels: smaller than the content they label,
+   tracked caps over a heavy rule. A label, not a statement. */
 h2 {
-  font-size: var(--step-2);
+  font-size: var(--step-1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
 }
 
 h3 {
   font-size: var(--step-1);
+  letter-spacing: 0.02em;
 }
 
 p {
@@ -195,7 +230,7 @@ p {
 a {
   color: var(--accent);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.15em;
+  text-underline-offset: 0.18em;
 }
 
 a:hover {
@@ -209,21 +244,26 @@ svg {
 }
 
 code {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
+  font-family: var(--font-draft);
+  font-size: 0.95em;
 }
 
 ul {
   padding: 0;
 }
 
+/* Figures and data are set in the drafting hand with even numerals. */
+.draft,
+.tag,
+time {
+  font-family: var(--font-draft);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------------------------------------------------------------------------
    Accessibility helpers
    --------------------------------------------------------------------------- */
 
-/* No radius of its own: the outline already follows whatever the element's own
-   corners are, so a card keeps its 4px and a chip stays square. Setting one here
-   restyled the element on focus and introduced a third radius. */
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
@@ -243,18 +283,18 @@ ul {
 
 .skip-link {
   position: absolute;
-  left: var(--space-s);
+  left: var(--space-m);
   top: -100%;
   z-index: 100;
   padding: var(--space-xs) var(--space-m);
   background: var(--accent);
   color: var(--accent-contrast);
-  border-radius: var(--radius);
+  font-family: var(--font-draft);
   text-decoration: none;
 }
 
 .skip-link:focus {
-  top: var(--space-s);
+  top: var(--space-m);
   color: var(--accent-contrast);
 }
 
@@ -263,10 +303,10 @@ ul {
   align-items: center;
   justify-content: center;
   gap: var(--space-2xs);
-  /* The glyph is 18px; the padding buys a 44px hit area and the matching
-     negative margin keeps the icon optically where it was. */
-  padding: 0.8rem;
-  margin: -0.8rem;
+  /* 18px glyph + 0.85rem padding clears 44px; negative margin keeps the
+     glyph optically in place. */
+  padding: 0.85rem;
+  margin: -0.85rem;
   font: inherit;
   color: var(--text-muted);
   background: none;
@@ -279,7 +319,6 @@ ul {
   color: var(--accent);
 }
 
-/* Show the icon for the theme you'd switch TO: moon in light, sun in dark. */
 .theme-toggle__sun {
   display: none;
 }
@@ -303,8 +342,6 @@ ul {
   max-width: var(--measure);
 }
 
-/* The reset drops every margin, so paragraphs inside a prose block need their
-   break back: without it two paragraphs read as one run-on block. */
 .prose > p + p {
   margin-top: var(--space-m);
 }
@@ -314,8 +351,6 @@ main > section {
   border-top: var(--border-width) solid var(--border);
 }
 
-/* The landing page's nav is sticky, so anything scrolled to by fragment (the
-   skip link's #main, most of all) has to clear it instead of landing under it. */
 #main,
 main > section {
   scroll-margin-top: 4rem;
@@ -326,8 +361,117 @@ main > section:first-of-type {
   padding-top: var(--space-l);
 }
 
+/* Section heading rule: the zone label sits on its own heavy rule. */
+main > section > .container > h2,
+main > section.container > h2 {
+  padding-bottom: var(--space-xs);
+  border-bottom: 2px solid var(--border-strong);
+}
+
 /* ---------------------------------------------------------------------------
-   Link lists (the only place we allow emoji)
+   Sheet header (shared chrome, both pages)
+   --------------------------------------------------------------------------- */
+
+.sheet-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  /* Solid: nothing may show through the chrome of the sheet. */
+  background: var(--bg);
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+.sheet-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  padding-block: var(--space-xs);
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+}
+
+.sheet-nav__mark {
+  color: var(--text);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  /* Padding + negative margin buys the 44px target without moving the mark. */
+  padding: 0.7rem 0.5rem;
+  margin: -0.7rem -0.5rem;
+  transition: color var(--dur-fast) ease;
+}
+
+.sheet-nav__mark:hover {
+  color: var(--accent);
+}
+
+.sheet-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.sheet-nav__link {
+  color: var(--text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: 0.7rem 0.35rem;
+  margin: -0.7rem -0.35rem;
+  transition: color var(--dur-fast) ease;
+}
+
+.sheet-nav__link:hover {
+  color: var(--accent);
+}
+
+.sheet-nav__link[aria-current="page"] {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* ---------------------------------------------------------------------------
+   Stamp: the one primary action per sheet, in checker's red
+   --------------------------------------------------------------------------- */
+
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-m);
+  border: 2px solid var(--stamp);
+  color: var(--stamp);
+  background: transparent;
+  font-family: var(--font-draft);
+  font-size: var(--step-0);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.stamp:hover {
+  background: var(--stamp);
+  color: var(--stamp-contrast);
+}
+
+.stamp:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Link lists
    --------------------------------------------------------------------------- */
 
 .link-list {
@@ -341,94 +485,139 @@ main > section:first-of-type {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
+  padding-block: 0.35rem;
+}
+
+.link-list__icon {
+  display: inline-flex;
+}
+
+.link-list__icon svg {
+  width: 1.05em;
+  height: 1.05em;
 }
 
 /* ---------------------------------------------------------------------------
-   Plates
-   The catalogue row that replaced the card grid. A parts list, not a set of
-   boxes: a hairline rule per item, a mono rail naming the item's primary
-   technology, and the body to its right. Same rail-and-body grammar as the CV
-   timeline, so the whole site reads as one document rather than two systems.
+   Bill of materials (the work list)
+   A parts-list table: position balloon, part, spec. The row is the target.
    --------------------------------------------------------------------------- */
 
-.plates {
+.bom {
   margin-top: var(--space-l);
 }
 
-.plate {
+.bom-row {
+  position: relative;
   display: grid;
   gap: var(--space-2xs) var(--space-l);
   padding-block: var(--space-m);
   border-top: var(--border-width) solid var(--border);
-  transition: border-color var(--dur-fast) ease;
+  transition: background-color var(--dur-fast) ease;
 }
 
-/* The rule is the whole hover affordance: no box to light up, so the item's own
-   edge does the work. */
-.plate:hover {
-  border-top-color: var(--accent);
-}
-
-.plate:last-child {
+.bom-row:last-child {
   border-bottom: var(--border-width) solid var(--border);
 }
 
-@media (min-width: 40rem) {
-  .plate {
-    grid-template-columns: 11rem minmax(0, 1fr);
-  }
+/* The whole row is one target: the title link stretches over it, and the row
+   answers with a surface change, not a 1px rule. */
+.bom-row:hover {
+  background: var(--surface);
 }
 
-/* Names the item's primary technology. It is the tag that would otherwise lead
-   the tag list, moved to where it can be scanned down the column. */
-.plate__index {
-  font-family: var(--font-mono);
+.bom-row__pos {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-s);
+  font-family: var(--font-draft);
   font-size: var(--step--1);
   color: var(--text-muted);
+  letter-spacing: 0.06em;
   padding-top: 0.15em;
 }
 
-.plate__body > * + * {
+/* The position balloon: the same device that numbers the exploded view. */
+.balloon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  flex: none;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 50%;
+  font-family: var(--font-draft);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* Datum mark: the figure's boxed-letter note reference. Square, where the
+   balloon is the BOM's circle. */
+.datum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  flex: none;
+  border: 1.5px solid var(--border-strong);
+  font-family: var(--font-draft);
+  font-size: 0.8rem;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.bom-row__kind {
+  padding-top: 0.3em; /* onto the balloon's midline */
+  text-transform: uppercase;
+}
+
+.bom-row__body > * + * {
   margin-top: var(--space-s);
 }
 
-.plate__title {
-  font-family: var(--font-mono);
+.bom-row__title {
+  font-family: var(--font-draft);
   font-size: var(--step-1);
-  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
-.plate__title a {
+.bom-row__title a {
   text-decoration: none;
+  color: var(--text);
 }
 
-.plate__title a:hover {
+.bom-row__title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.bom-row:hover .bom-row__title a {
+  color: var(--accent);
   text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
-/* The body column is wider than a comfortable line; the description takes the
-   same measure as every other run of prose on the site rather than its container. */
-.plate__desc {
+.bom-row__desc {
   max-width: var(--measure);
   color: var(--text-muted);
 }
 
-.plate__links {
+.bom-row__links {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs) var(--space-m);
   font-size: var(--step--1);
+  width: fit-content;
 }
 
-/* Clears the 24px minimum target size at this type size. */
-.plate__links a {
-  padding-block: 0.15rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .plate {
-    transition: none;
-  }
+.bom-row__links a {
+  padding-block: 0.35rem;
 }
 
 .tag-list {
@@ -440,28 +629,27 @@ main > section:first-of-type {
 
 .tag {
   font-size: var(--step--1);
-  font-family: var(--font-mono);
   color: var(--text-muted);
-  background: var(--bg);
+  background: transparent;
   border: var(--border-width) solid var(--border);
-  border-radius: var(--radius);
   padding: 0.1em 0.55em;
+  letter-spacing: 0.04em;
 }
 
-/* Inline brand/link icons sit at cap height beside the label text. */
-.link-list__icon {
-  display: inline-flex;
+@media (min-width: 40rem) {
+  .bom-row {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
 }
 
-.link-list__icon svg {
-  width: 1.05em;
-  height: 1.05em;
+@media (prefers-reduced-motion: reduce) {
+  .bom-row {
+    transition: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
-   CV timeline
-   Shared by the condensed history on the landing page and the full /cv/ page,
-   so both render the same entry shape from the same cv-public.yaml.
+   CV timeline (shared: condensed on /, full on /cv/)
    --------------------------------------------------------------------------- */
 
 .cv-entries {
@@ -470,8 +658,6 @@ main > section:first-of-type {
   gap: var(--space-l);
 }
 
-/* Single column on narrow screens; a left rail for the period (or skill group)
-   once there is room for one. */
 .cv-entry {
   display: grid;
   gap: var(--space-2xs) var(--space-l);
@@ -482,23 +668,27 @@ main > section:first-of-type {
     grid-template-columns: 11rem minmax(0, 1fr);
   }
 
-  /* Entries with nothing to put in the rail still line up with their siblings. */
   .cv-entry__body--railless {
     grid-column: 2;
   }
 }
 
 .cv-entry__period {
-  font-family: var(--font-mono);
+  font-family: var(--font-draft);
   font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
   color: var(--text-muted);
-  /* Nudge the rail down onto the role's baseline, not its cap line. */
+  letter-spacing: 0.04em;
   padding-top: 0.15em;
+  text-transform: uppercase;
 }
 
 .cv-entry__role {
+  font-family: var(--font-sans);
   font-size: var(--step-0);
   font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .cv-entry__role a {
@@ -512,20 +702,91 @@ main > section:first-of-type {
 .cv-entry__org {
   margin-top: var(--space-2xs);
   color: var(--text-muted);
+  max-width: var(--measure);
 }
 
 .cv-highlights {
   margin-top: var(--space-s);
   padding-left: 1.1em;
   color: var(--text-muted);
+  max-width: var(--measure);
 }
 
 .cv-highlights li + li {
   margin-top: var(--space-2xs);
 }
 
-/* As a grid item the skill list should sit at the top of its row, beside the
-   group name in the rail, rather than stretching down it. */
 .cv-entry__body.tag-list {
   align-content: start;
+}
+
+/* ---------------------------------------------------------------------------
+   Title block (ISO 7200): the document's own footer, on every sheet.
+   Real provenance only: version, export dates, sheet index.
+   --------------------------------------------------------------------------- */
+
+.title-block {
+  margin-top: var(--space-xl);
+  border: var(--border-width) solid var(--border-strong);
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
+  letter-spacing: 0.05em;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.title-block__cell {
+  padding: var(--space-xs) var(--space-s);
+  border-top: var(--border-width) solid var(--border);
+  min-width: 0;
+}
+
+.title-block__cell:nth-child(-n + 2) {
+  border-top: 0;
+}
+
+.title-block__cell--wide {
+  grid-column: 1 / -1;
+}
+
+.title-block__label {
+  display: block;
+  font-size: 0.72em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.15em;
+}
+
+.title-block__value {
+  color: var(--text);
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.title-block__value a {
+  color: inherit;
+  text-decoration: none;
+  padding-block: 0.3rem;
+}
+
+.title-block__value a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+@media (min-width: 48rem) {
+  .title-block {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-left: auto;
+    max-width: 44rem;
+  }
+
+  .title-block__cell:nth-child(-n + 4) {
+    border-top: 0;
+  }
+
+  .title-block__cell + .title-block__cell {
+    border-left: var(--border-width) solid var(--border);
+  }
 }

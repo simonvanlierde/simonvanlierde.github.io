@@ -1,6 +1,10 @@
 ---
-// GitHub Pages serves the built 404.html for any unmatched path, so this is the
-// only error state a static site has.
+// GitHub Pages serves the built 404.html for any unmatched path, so this is
+// the only error state a static site has. It is still a sheet of the same
+// drawing set: frame, nav, title block, so a wrong URL never looks like a
+// broken host.
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
 import Base from "../layouts/Base.astro";
 ---
 
@@ -8,26 +12,29 @@ import Base from "../layouts/Base.astro";
   title="Page not found | Simon van Lierde"
   description="That page does not exist on this site."
 >
+  <SheetNav />
+
   <main id="main" class="container notfound">
     <h1>That page does not exist</h1>
     <p class="prose">
-      The link may be out of date, or the address may have a typo in it. Two
-      places worth trying:
+      The link may be out of date, or the address may have a typo in it. This
+      drawing set has two sheets:
     </p>
-    <ul class="link-list">
-      <li><a href="/">Home</a></li>
-      <li><a href="/cv/">CV</a></li>
-    </ul>
+    <p class="notfound__row">
+      <a class="stamp" href="/">Sheet 1: index of work</a>
+      <a href="/cv/">Sheet 2: CV</a>
+    </p>
   </main>
+
+  <TitleBlock title="Simon van Lierde" docType="Page not found" sheet="— OF 2" />
 </Base>
 
 <style>
   .notfound {
-    /* Roughly centred in the viewport without pinning the text to the middle. */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 70svh;
+    min-height: 60svh;
     padding-block: var(--space-xl);
   }
 
@@ -36,7 +43,11 @@ import Base from "../layouts/Base.astro";
     color: var(--text-muted);
   }
 
-  .notfound ul {
+  .notfound__row {
     margin-top: var(--space-l);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-m) var(--space-l);
   }
 </style>

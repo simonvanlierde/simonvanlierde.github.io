@@ -1,6 +1,7 @@
 ---
 import { formatPeriod } from "../components/cvPeriod.ts";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
 import { cv, cvPdf as pdf } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
@@ -18,11 +19,9 @@ const {
   exported,
 } = cv;
 
-// A CV with no date makes the reader guess how stale it is. Day precision is the
-// useful granularity: the export's timestamp is when the file was generated, not
-// a claim about the hour anything changed.
-// Accepted work always lists; unaccepted work only once a preprint DOI exists.
-// See listablePublications for the reasoning and tests/unit for the check.
+// A CV with no date makes the reader guess how stale it is. Day precision is
+// the useful granularity. Accepted work always lists; unaccepted work only
+// once a preprint DOI exists (see listablePublications and tests/unit).
 const publications = listablePublications(cv.publications);
 
 const exportedLabel = exported
@@ -33,8 +32,8 @@ const exportedLabel = exported
     })
   : null;
 
-// The email entry drops out entirely when the export withholds it, rather than
-// rendering a dead "mailto:undefined".
+// The email entry drops out entirely when the export withholds it, rather
+// than rendering a dead "mailto:undefined".
 const contact = [
   { label: basics.location, href: null },
   ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
@@ -48,43 +47,24 @@ const contact = [
   description={`Curriculum vitae of ${basics.name}: ${basics.headline}.`}
   jsonLd={cvJsonLd}
 >
-  <nav class="container cv-nav" aria-label="Primary">
-    <a class="cv-nav__back" href="/">
-      <svg
-        viewBox="0 0 24 24"
-        width="16"
-        height="16"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="m12 19-7-7 7-7"></path>
-        <path d="M19 12H5"></path>
-      </svg>
-      Home
-    </a>
-    <ThemeToggle />
-  </nav>
+  <SheetNav current="cv" />
 
   <header class="container cv-header">
     {/* The name, not "Curriculum vitae": a print or a screenshot of the top of
         this page has to carry whose CV it is. The document type is already in
-        the tab title, the download button, and the URL. */}
+        the tab title, the download button, and the title block. */}
     <h1>{basics.name}</h1>
     <p class="cv-header__headline prose">{basics.headline}</p>
 
     <ul class="link-list cv-contact">
       {
         contact.map((c) => (
-          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span>{c.label}</span>}</li>
+          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft">{c.label}</span>}</li>
         ))
       }
     </ul>
 
-    <a class="cv-download" href={pdf} download>
+    <a class="stamp cv-download" href={pdf} download>
       <svg
         viewBox="0 0 24 24"
         width="18"
@@ -104,8 +84,8 @@ const contact = [
     </a>
 
     {
-      /* Sits under the download button because it dates both: page and PDF come
-         out of one export run. */
+      /* Sits under the download button because it dates both: page and PDF
+         come out of one export run. */
       exportedLabel && (
         <p class="cv-updated">
           Last updated <time datetime={exported}>{exportedLabel}</time>
@@ -146,8 +126,7 @@ const contact = [
 
     {
       /* Directly after Experience: it is the section an academic reader looks
-         for first, and burying it under Skills would say something untrue about
-         what this CV is. */
+         for first. */
       publications.length > 0 && (
         <section class="container" aria-labelledby="publications-heading">
           <h2 id="publications-heading">Publications</h2>
@@ -233,8 +212,8 @@ const contact = [
     </section>
 
     {
-      /* Talks, summer schools, and upstream contributions. This is the section a
-         reading committee looks for and the page had no home for. */
+      /* Talks, summer schools, and upstream contributions: the section a
+         reading committee looks for. */
       development.length > 0 && (
         <section class="container" aria-labelledby="development-heading">
           <h2 id="development-heading">Talks and training</h2>
@@ -259,60 +238,43 @@ const contact = [
         </section>
       )
     }
+
+    <section class="container" aria-labelledby="cv-download-heading">
+      <h2 id="cv-download-heading">Download</h2>
+      <div class="cv-footer-download">
+        <p class="prose">The PDF is generated from the same source as this page.</p>
+        {/* The sheet's one stamp is the header's download; this repeat is a
+            plain working link. */}
+        <a class="draft" href={pdf} download>Download as PDF</a>
+      </div>
+    </section>
   </main>
 
-  <footer class="container cv-footer">
-    <p>The PDF is generated from the same source as this page.</p>
-    <a href={pdf} download>Download as PDF</a>
-  </footer>
+  <TitleBlock
+    title={basics.name}
+    docType="Curriculum vitae"
+    sheet="2 OF 2"
+    dated={exported?.slice(0, 10)}
+  />
 </Base>
 
 <style>
-  .cv-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-block: var(--space-s);
-    border-bottom: var(--border-width) solid var(--border);
-  }
-
-  .cv-nav__back {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color var(--dur-fast) ease;
-  }
-
-  .cv-nav__back:hover {
-    color: var(--accent);
-  }
-
   .cv-header {
     padding-block: var(--space-l) var(--space-m);
   }
 
-  /* Shared with the landing page's h1: navigating between them morphs the name
-     instead of cross-fading the whole document. */
+  /* Shared with the landing page's h1: navigating between sheets morphs the
+     name instead of cross-fading the whole document. */
   .cv-header h1 {
     view-transition-name: person-name;
   }
 
-  /* This page is ~4000px of text in seven sections. Skipping the render work for
-     what is far off-screen is free here: no images to reflow, and the reserved
-     size keeps the scrollbar honest. */
-  :global(main > section) {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 400px;
-  }
-
+  /* The headline in full ink over the muted contact row: the CV's opening
+     two blocks must not read as one grey mass. */
   .cv-header__headline {
     margin-top: var(--space-s);
     font-size: var(--step-1);
-    color: var(--text-muted);
+    color: var(--text);
   }
 
   .cv-contact {
@@ -321,38 +283,8 @@ const contact = [
     color: var(--text-muted);
   }
 
-  /* A filled accent button: the one call to action on the page. */
   .cv-download {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
     margin-top: var(--space-l);
-    padding: var(--space-s) var(--space-m); /* clears 44px on a phone */
-    background: var(--accent);
-    color: var(--accent-contrast);
-    border-radius: var(--radius);
-    font-weight: 600;
-    text-decoration: none;
-    transition:
-      background-color var(--dur-fast) ease,
-      transform var(--dur-fast) var(--ease-out);
-  }
-
-  /* A download shows nothing on the page itself, and touch has no hover, so the
-     press is the only confirmation the tap landed. */
-  .cv-download:active {
-    transform: scale(0.97);
-  }
-
-  .cv-download:hover {
-    background: var(--accent-strong);
-    color: var(--accent-contrast);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .cv-download {
-      transition: none;
-    }
   }
 
   .cv-updated {
@@ -361,17 +293,13 @@ const contact = [
     font-size: var(--step--1);
   }
 
-  .cv-updated time {
-    font-family: var(--font-mono);
-  }
-
   .cv-profile {
     margin-top: var(--space-m);
     color: var(--text-muted);
   }
 
-  /* Venue sits under the byline, with the status only when it isn't "published":
-     a chip on every entry would be noise, and its absence already means accepted. */
+  /* Venue sits under the byline, with the status chip only when it isn't
+     "published": absence already means accepted. */
   .cv-publication__venue {
     display: flex;
     flex-wrap: wrap;
@@ -382,15 +310,13 @@ const contact = [
     font-size: var(--step--1);
   }
 
-  /* A degree's one-line specialisation, quieter than the institution above it. */
   .cv-entry__detail {
     margin-top: var(--space-2xs);
     color: var(--text-muted);
     font-size: var(--step--1);
+    max-width: var(--measure);
   }
 
-  /* Talks and training: a plain reading list, not a timeline. It has no periods
-     to put in the rail, so it takes the prose measure instead. */
   .cv-list {
     margin-top: var(--space-l);
     padding-left: 1.1em;
@@ -405,15 +331,11 @@ const contact = [
     margin-top: var(--space-l);
   }
 
-  .cv-footer {
+  .cv-footer-download {
+    margin-top: var(--space-l);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-m) var(--space-l);
-    padding-block: var(--space-l);
-    border-top: var(--border-width) solid var(--border);
-    font-size: var(--step--1);
-    color: var(--text-muted);
   }
 </style>
