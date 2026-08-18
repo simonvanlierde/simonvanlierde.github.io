@@ -1,6 +1,6 @@
 ---
-name: Simon van Lierde — Engineering Drawing Set
-description: A personal site drawn as one ISO technical drawing set — exploded view, balloons, bill of materials, title block.
+name: Simon van Lierde, Engineering Drawing Set
+description: "A personal site drawn as one ISO technical drawing set: exploded view, balloons, bill of materials, title block."
 colors:
   drafting-paper: "light-dark(oklch(97.5% 0.005 95), oklch(27% 0.05 262))"
   sheet-surface: "light-dark(oklch(99.2% 0.003 95), oklch(30.5% 0.055 262))"
@@ -98,7 +98,7 @@ alternative is the minimal developer-portfolio text column: this site is a
 measured drawing of the work, not an essay about it.
 
 One world, two renderings of the same sheet. Light mode is ink linework on
-warm drafting paper; dark mode is the same sheet printed as a cyanotype —
+warm drafting paper; dark mode is the same sheet printed as a cyanotype:
 pale lines on a Prussian-blue ground, roles swapped, nothing redesigned.
 Display, labels, and every number are set in osifont, the ISO 3098 technical
 lettering face (vendored, latin-subset, ~10KB); long prose stays on the system
@@ -130,7 +130,7 @@ time). The frontmatter values are the normative source, mirrored from
 
 #### Primary
 
-- **Engineer's Blue** (`--accent`): links and working accents — the colour an
+- **Engineer's Blue** (`--accent`): links and working accents, the colour an
   engineer annotates in. On the blueprint side it becomes a pale drafting
   cyan, because the ground already owns the blue. `--accent-strong` is the
   hover step; `--accent-contrast` is the text colour on a filled accent
@@ -148,7 +148,7 @@ time). The frontmatter values are the normative source, mirrored from
 
 - **Drafting Paper** (`--bg`): the page ground. Warm near-white paper in
   light; deep Prussian blue in dark, where it is the cyanotype ground.
-- **Sheet Surface** (`--surface`): the one raised tint — the chart control
+- **Sheet Surface** (`--surface`): the one raised tint, the chart control
   fieldset. Barely lighter than the ground.
 - **Working Ink** (`--text`): near-black blue ink for text and part linework;
   near-white on the blueprint.
@@ -166,24 +166,24 @@ sheet demotes both. Every other action is an engineer's-blue link.
 
 **The Kept Names Rule.** The CSS custom property names (`--bg`, `--text`,
 `--accent`, `--chart-bar`, ...) were deliberately kept from the previous
-design system so every consumer — the React chart island included — rethemes
+design system so every consumer, the React chart island included, rethemes
 without edits. New surfaces consume tokens by these names; never fork a
 parallel palette.
 
 **The Uniform Chroma Rule.** Wide-gamut displays (`@media (color-gamut: p3)`)
-lift only the chromatic tokens, uniformly (+~20% chroma), never lightness — a
+lift only the chromatic tokens, uniformly (+~20% chroma), never lightness: a
 display that claims P3 and clamps still clears every contrast floor.
 
 ### Typography
 
-**Display Font:** osifont (with Segoe UI, system-ui fallback) — ISO 3098
+**Display Font:** osifont (with Segoe UI, system-ui fallback), ISO 3098
 technical lettering, vendored and subset (~10KB), weight 400 only
 **Body Font:** system sans (ui-sans-serif stack)
-**Label/Mono Font:** osifont — `--font-mono` aliases `--font-draft`
+**Label/Mono Font:** osifont; `--font-mono` aliases `--font-draft`
 
 **Character:** The drafting hand carries everything a draughtsman would
 letter: headings, labels, dates, dimensions, data. Prose stays on the system
-sans so long text reads as text. The pairing is a working document's voice —
+sans so long text reads as text. The pairing is a working document's voice:
 lettered where it is a drawing, typeset where it is reading matter.
 
 #### Hierarchy
@@ -191,7 +191,7 @@ lettered where it is a drawing, typeset where it is reading matter.
 - **Display / h1** (400, `--step-3` = clamp(2.1–3.4rem), 1.12): the sheet's
   one title, uppercase, 0.02em tracking.
 - **Headline / h2** (400, `--step-1` = clamp(1.2–1.45rem), 1.12): zone
-  labels — smaller than the content they label, tracked caps (0.14em) over a
+  labels, smaller than the content they label, tracked caps (0.14em) over a
   2px `--border-strong` rule. A label, not a statement.
 - **Title / h3** (400, `--step-1`, 1.12): part names in the BOM, 0.02em.
 - **Body** (400, `--step-0` = clamp(1–1.1rem), 1.6): prose, max-width
@@ -202,8 +202,8 @@ lettered where it is a drawing, typeset where it is reading matter.
 
 #### Named Rules
 
-**The Drafting Hand Rule.** Figures and data — counts, dates, versions,
-periods, chart numerals — are always set in osifont with
+**The Drafting Hand Rule.** Figures and data (counts, dates, versions,
+periods, chart numerals) are always set in osifont with
 `font-variant-numeric: tabular-nums` (the `.draft`, `.tag`, and `time`
 selectors). A number in the body face is prose; a number in the drafting hand
 is data.
@@ -217,7 +217,7 @@ system sans; 38rem lands near 70. Cap prose in rem.
 The page is one tall sheet. The body carries `padding: calc(--frame-inset +
 --frame-line)` and two pseudo-elements draw the trim frame: a 1.5px
 `--border-strong` border on `body::before` (absolute on the **document**, not
-viewport-fixed — a fixed line would strike through scrolling text) plus four
+viewport-fixed: a fixed line would strike through scrolling text) plus four
 centring ticks at the edge midpoints on `body::after`. Screen only; print
 gets the plain document. `--frame-inset` is clamp(8px, 1.2vw, 16px).
 
@@ -251,27 +251,27 @@ No shadows, anywhere. A drawing has no depth to fake: hierarchy is carried by
 line weight (hairline vs. 1.5–2px strong rules), by the two-step ground
 (`--bg` vs. the barely-lighter `--surface` on hover and control chrome), and
 by lettering size. The sticky sheet nav separates itself with a solid `--bg`
-ground and a hairline rule — nothing may show through the chrome of the
-sheet — never with a shadow or blur.
+ground and a hairline rule (nothing may show through the chrome of the
+sheet), never with a shadow or blur.
 
 #### Named Rules
 
 **The Flat Sheet Rule.** No `box-shadow`, no `backdrop-filter`, no
 translucent surfaces. State is answered with a surface tint (`--surface`), a
-fill swap, or a line — the devices a drawing actually has.
+fill swap, or a line: the devices a drawing actually has.
 
 ### Shapes
 
 Zero radii: `--radius` and `--radius-pill` are both 0px, because a drawing
-has no rounded corners. Everything is rectilinear and rule-drawn — 1px
+has no rounded corners. Everything is rectilinear and rule-drawn: 1px
 hairlines, 1.5–2px strong lines, no fills except the paper itself.
 
 Two notation marks are the deliberate exceptions and carry meaning:
 
-- **The balloon** — a 1.7rem circle, 1.5px `--border-strong` stroke —
+- **The balloon**, a 1.7rem circle with a 1.5px `--border-strong` stroke,
   numbers a bill-of-materials position. Circled numerals mean BOM position
   and nothing else.
-- **The datum mark** — the same 1.7rem box, square — carries the general
+- **The datum mark**, the same 1.7rem box but square, carries the general
   notes' letters (A–D). Square is the notes' notation, circle is the
   list's.
 
@@ -279,14 +279,14 @@ Two notation marks are the deliberate exceptions and carry meaning:
 
 #### Stamp (primary action)
 
-- **Character:** the checker's approval stamp — outlined, uppercase, red.
+- **Character:** the checker's approval stamp: outlined, uppercase, red.
 - **Shape:** sharp rectangle (0px), 2px solid `--stamp` border.
 - **Rest:** transparent ground, `--stamp` text, osifont, 0.08em tracking,
   uppercase, `--space-s --space-m` padding.
 - **Hover:** fills `--stamp`, text flips to `--stamp-contrast`.
 - **Active:** `scale(0.97)`; all transitions removed under reduced motion.
 - **Cardinality:** one per sheet (see The One Stamp Rule). There is no
-  secondary button — every other action is a link.
+  secondary button; every other action is a link.
 
 #### Links
 
@@ -344,11 +344,11 @@ Two notation marks are the deliberate exceptions and carry meaning:
   figure has the drawing half of the balloon convention. Every part is one
   the CV export and the RELab row already state. No statistics and no
   dimension on the drawing; caption says "schematic".
-- **Motion:** on load the parts settle apart from the assembled stack — one
+- **Motion:** on load the parts settle apart from the assembled stack: one
   `translate` transition per part group over `--dur-explode` (700ms)
   `--ease-out`, run once, class set by an inline script right after the
   figure so it precedes first paint. Reduced motion or no JS: the drawing is
-  simply exploded, in the same stylesheet.
+  exploded from the start, in the same stylesheet.
 - **Hover:** a part name lights its part in `--accent`, and a part (its
   fill is `transparent`, so the whole silhouette is the target) lights its
   name (`:has()`, progressive). Balloons travel with their parts during
@@ -372,7 +372,7 @@ Two notation marks are the deliberate exceptions and carry meaning:
 #### Chart (island)
 
 - Consumes the kept token names only (`--chart-bar`, `--font-mono`,
-  `--surface`, ...): solid engineer's-blue bars (never translucent — opacity
+  `--surface`, ...): solid engineer's-blue bars (never translucent: opacity
   would make real contrast unknowable), `--text-muted` 2px zero line,
   hairline grid, osifont tabular numerals. Segmented toggle: joined
   44px-tall segments in a hairline fieldset; selected segment fills
@@ -389,7 +389,7 @@ animation is answered by a `prefers-reduced-motion` block in the same file
 that declares it.
 
 **The Real Figures Rule.** Every number on the sheet is a real, dated count
-or version — inherited product truth. Data flagged as sample renders labeled
+or version, inherited product truth. Data flagged as sample renders labeled
 as sample or not at all; no invented placeholder ever ships as a figure.
 
 ### Do's and Don'ts
@@ -412,13 +412,13 @@ as sample or not at all; no invented placeholder ever ships as a figure.
 
 - **Don't** add a second red element to a sheet; one stamp, everything else
   engineer's blue.
-- **Don't** round a corner (`--radius` is 0px) — the only circle is the BOM
+- **Don't** round a corner (`--radius` is 0px): the only circle is the BOM
   balloon, and circled numerals mean BOM position only; general notes use
   square datum boxes.
 - **Don't** use shadows, blur, or translucent fills; state answers with
   `--surface`, a fill swap, or a line.
 - **Don't** hardcode a colour: every colour is a `light-dark()` token, and
-  the two theme-color metas in Base.astro mirror `--bg` by hand — change
+  the two theme-color metas in Base.astro mirror `--bg` by hand; change
   them together.
 - **Don't** letter prose in osifont; long text stays on the system sans, and
   `--measure` stays 38rem in rem, not ch.
