@@ -1,6 +1,6 @@
 ---
 name: Simon van Lierde, Engineering Drawing Set
-description: "A personal site drawn as one ISO technical drawing set: exploded view, balloons, bill of materials, title block."
+description: "A personal site drawn as one ISO technical drawing set: exploded view with balloons, general notes, parts list, title block."
 colors:
   drafting-paper: "light-dark(oklch(97.5% 0.005 95), oklch(27% 0.05 262))"
   sheet-surface: "light-dark(oklch(99.2% 0.003 95), oklch(30.5% 0.055 262))"
@@ -92,7 +92,7 @@ components:
 
 The site is one engineering drawing set. Taking products apart is what the
 author does, so the page is drawn the way a product is drawn: an exploded view
-with lettered notes, a bill of materials with position balloons, an ISO 7200
+with balloons and a register, lettered general notes, a parts list, an ISO 7200
 title block, a trim frame with centring ticks around every sheet. The refused
 alternative is the minimal developer-portfolio text column: this site is a
 measured drawing of the work, not an essay about it.
@@ -115,7 +115,7 @@ the notes. Nothing decorative, nothing invented.
 
 - Ink-on-paper light theme, cyanotype-blueprint dark theme; one `light-dark()` pair per token
 - osifont ISO 3098 drafting lettering for display, labels, and all data figures
-- Hairline rules and zero radii everywhere; the only circle is the BOM position balloon
+- Hairline rules and zero radii everywhere; the only circle is the figure's item balloon
 - Exactly one checker's-red stamp (primary action) per sheet
 - A drawn sheet frame with centring ticks around the whole document
 - Motion is drafting behaviour only: the exploded view settles apart once on load
@@ -221,25 +221,27 @@ viewport-fixed: a fixed line would strike through scrolling text) plus four
 centring ticks at the edge midpoints on `body::after`. Screen only; print
 gets the plain document. `--frame-inset` is clamp(8px, 1.2vw, 16px).
 
-Inside the frame: `.container` is `min(100% - 2 * --space-m, 64rem)`,
-centred. Sections stack with `padding-block: --space-l --space-xl` (2rem
+Inside the frame: `.container` is `min(100% - 2 * --space-m, 54rem)`,
+centred: an 11rem rail, a 2rem gutter and a 38rem measure with 3rem to
+spare, so rules end where the writing ends and the paper is no wider than
+the drawing. Sections stack with `padding-block: --space-l --space-xl` (2rem
 above, 3.5rem below) and no rule of their own: the h2 zone label's 2px rule
 is the one line per boundary. On Sheet 2 a lettered zone index (datum marks
 A–H linking the sections) sits under the header. Prose is
 capped at `--measure` (38rem).
 
 The spacing scale is six steps: 0.25 / 0.5 / 0.75 / 1.25 / 2 / 3.5rem
-(2xs–xl). Two-column data rows (BOM rows, CV entries) share the same grid:
-an 11rem left rail (balloon + kind, or period) and a fluid body, collapsing
+(2xs–xl). Two-column data rows (work rows, CV entries) share the same grid:
+an 11rem left rail (kind, or period) and a fluid body, collapsing
 to one column below 40rem. The title block is two wide cells over a row of
 three (two columns below 40rem, the last cell on its own row). The exploded
 figure caps at 20rem, plate size beside the notes, and needs no container query: its
 only lettering is the left part-name register, legible at every width. (If a
 container query is ever added, remember it can style only the container's
 descendants, never the container itself.) The general-notes block sits in
-RELab's own row of the bill of materials, between its description and its
-links, so the quantities read with the part they describe; the hero is the
-person and the plate.
+the hero text column after the profile links, framed as one project's
+figures (a lead line names RELab as one of the projects below), so the proof
+is in the first viewport on every width.
 
 The two pages are two sheets of one set: `@view-transition { navigation:
 auto }` morphs the person's name between / and /cv/, disabled under reduced
@@ -268,12 +270,12 @@ hairlines, 1.5–2px strong lines, no fills except the paper itself.
 
 Two notation marks are the deliberate exceptions and carry meaning:
 
-- **The balloon**, a 1.7rem circle with a 1.5px `--border-strong` stroke,
-  numbers a bill-of-materials position. Circled numerals mean BOM position
-  and nothing else.
-- **The datum mark**, the same 1.7rem box but square, carries the general
-  notes' letters (A–D). Square is the notes' notation, circle is the
-  list's.
+- **The balloon**, a circle with a `--border-strong` stroke, numbers an
+  item on the figure, keyed to the figure's register. Circled numerals mean
+  a figure item and nothing else; the work list carries no numbers.
+- **The datum mark**, a 1.7rem box, square, carries the general notes'
+  letters (A–D) and the CV's zone index. Square is the notes' notation,
+  circle is the drawing's.
 
 ### Components
 
@@ -298,19 +300,19 @@ Two notation marks are the deliberate exceptions and carry meaning:
 
 #### Balloon / Datum
 
-- 1.7rem notation marks (circle / square), 1.5px `--border-strong` stroke,
-  `--bg` fill, osifont at 0.8rem with tabular numerals. See Shapes for which
-  is which.
+- Notation marks (circle on the figure / 1.7rem square in HTML), 1.5px
+  `--border-strong` stroke, `--bg` fill, osifont with tabular numerals. See
+  Shapes for which is which.
 
 #### Tags (chips)
 
 - Hairline-bordered, transparent, `--text-muted` osifont at `--step--1`,
   0.1em/0.55em padding. Read-only spec callouts, not interactive filters.
 
-#### BOM Row (cards)
+#### Work Row (cards)
 
 - A parts-list row, not a card: hairline top rule, no background, no hover
-  tint. Grid: 11rem rail (balloon + uppercase kind) and body (title,
+  tint. Grid: 11rem rail (uppercase kind) and body (title,
   description, links, tags). The part name is the target (44px bought with
   padding + negative margin), underlined at rest so it reads as a link
   before hover; the row's prose stays selectable. Hover turns the title
@@ -354,14 +356,15 @@ Two notation marks are the deliberate exceptions and carry meaning:
   name (`:has()`, progressive). Balloons travel with their parts during
   the settle.
 
-#### General Notes (RELab row)
+#### General Notes (hero)
 
-- The sheet's boxed notes, set inside RELab's BOM row (max 36rem): an
-  uppercase "Notes · Running totals" h4 in the drafting hand on a
-  `--border-strong` rule, then a 2×2 grid of datum-lettered entries (A–D),
-  value at `--step-2` in the drafting hand, uppercase label at `--step--1`,
-  and a sentence-case footer line "All quantities as counted <month year> ·
-  CML RELab", the lab name linking the live platform.
+- The sheet's boxed notes, in the hero text column (max 36rem): an
+  uppercase "Notes · RELab, running totals" h2 in the drafting hand on a
+  `--border-strong` rule, a lead line naming RELab as one of the projects
+  below and pointing at Fig. 1, then a 2×2 grid of datum-lettered entries
+  (A–D), value at `--step-3` in the drafting hand, uppercase label at
+  `--step--1`, and a sentence-case footer line "All quantities as counted
+  <month year> · CML RELab", the lab name linking the live platform.
 - Values come from `stats.json` (`totals`, `as_of`); while the export is
   still flagged `sample` they fall back to the last hand-counted, dated
   totals kept in `index.astro`, so the notes always show real figures and
@@ -412,9 +415,9 @@ as sample or not at all; no invented placeholder ever ships as a figure.
 
 - **Don't** add a second red element to a sheet; one stamp, everything else
   engineer's blue.
-- **Don't** round a corner (`--radius` is 0px): the only circle is the BOM
-  balloon, and circled numerals mean BOM position only; general notes use
-  square datum boxes.
+- **Don't** round a corner (`--radius` is 0px): the only circle is the
+  figure's item balloon, and circled numerals mean a figure item only;
+  general notes and the zone index use square datum boxes.
 - **Don't** use shadows, blur, or translucent fills; state answers with
   `--surface`, a fill swap, or a line.
 - **Don't** hardcode a colour: every colour is a `light-dark()` token, and

@@ -28,9 +28,9 @@ const { sample: statsAreSample = false, ...statsData } = stats as typeof stats &
 const showChart = !statsAreSample || import.meta.env.DEV;
 
 // General notes: the RELab running counts, drawn as the boxed A-D notes a
-// sheet carries beside a part, here inside RELab's own row of the bill of
-// materials. Live figures come from the same payload as the chart, so the
-// two can never disagree. While the payload is still flagged
+// sheet carries at its edge, here in the hero and framed as one project's
+// figures. Live figures come from the same payload as the chart, so the two
+// can never disagree. While the payload is still flagged
 // as sample the notes fall back to the last hand-counted totals below, which
 // are real and dated, unlike the seeded series the chart would draw.
 // NOTE: update `fallback` when a newer count is known; it stops mattering
@@ -125,6 +125,32 @@ const profiles = [
           }
         </ul>
 
+        <section class="notes" aria-labelledby="notes-heading">
+          <h2 id="notes-heading" class="notes__heading">
+            Notes<span class="notes__heading-aside"> · RELab, running totals</span>
+          </h2>
+          {/* The counts belong to one project, not the person: say so before
+              the numbers, and point at the drawing and the list. */}
+          <p class="notes__lead draft">
+            The Reverse Engineering Lab is one of the projects listed below; Fig. 1 draws its parts.
+          </p>
+          <ol class="notes__list">
+            {
+              notes.map((n) => (
+                <li>
+                  <span class="datum" aria-hidden="true">
+                    {n.ref}
+                  </span>
+                  <span class="notes__value draft">{n.value}</span>
+                  <span class="notes__label">{n.label}</span>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="notes__foot draft">
+            All quantities as counted {asOfLabel} ·&nbsp;<a href="https://app.cml-relab.org">CML&nbsp;RELab</a>
+          </p>
+        </section>
       </div>
 
       <div class="hero__figure">
@@ -135,14 +161,11 @@ const profiles = [
 
   <main>
     <section class="container" aria-labelledby="work-heading">
-      <h2 id="work-heading">Selected work <span class="h2__aside">Bill of materials</span></h2>
+      <h2 id="work-heading">Selected work</h2>
       <div class="bom">
-        {/* Position 1: RELab, the platform, with the chart when data is live */}
+        {/* RELab first: the platform, with the chart when data is live */}
         <article class="bom-row relab-row">
-          <p class="bom-row__pos">
-            <span class="balloon" aria-hidden="true">1</span>
-            <span class="bom-row__kind">Research platform</span>
-          </p>
+          <p class="bom-row__pos">Research platform</p>
           <div class="bom-row__body">
             <h3 class="bom-row__title relab-row__title">
               <a href="https://github.com/CMLPlatform/relab">Reverse Engineering Lab (RELab)</a>
@@ -156,31 +179,10 @@ const profiles = [
                 industrial ecology.
               </p>
               <p>
-                In active use at CML, including two teardown workshops. Fig. 1
-                shows its parts.
+                In active use at CML, including two teardown workshops; the
+                notes above carry its running totals, Fig. 1 its parts.
               </p>
             </div>
-            <section class="notes" aria-labelledby="notes-heading">
-              <h4 id="notes-heading" class="notes__heading">
-                Notes<span class="notes__heading-aside"> · Running totals</span>
-              </h4>
-              <ol class="notes__list">
-                {
-                  notes.map((n) => (
-                    <li>
-                      <span class="datum" aria-hidden="true">
-                        {n.ref}
-                      </span>
-                      <span class="notes__value draft">{n.value}</span>
-                      <span class="notes__label">{n.label}</span>
-                    </li>
-                  ))
-                }
-              </ol>
-              <p class="notes__foot draft">
-                All quantities as counted {asOfLabel} ·&nbsp;<a href="https://app.cml-relab.org">CML&nbsp;RELab</a>
-              </p>
-            </section>
             <ul class="bom-row__links link-list">
               <li><a href="https://app.cml-relab.org">Live platform</a></li>
               <li><a href="https://docs.cml-relab.org">Documentation</a></li>
@@ -200,7 +202,7 @@ const profiles = [
                 <div class="relab__chart">
                   <h4 class="draft">Fig. 2: Disassembly over time</h4>
                   <p class="viz__caption">
-                    Activity in RELab by month. Switch measures and hover a
+                    Activity in RELab by month. Switch measures; tap or hover a
                     column for the exact figure.
                   </p>
                   <DisassemblyChart stats={statsData} isSample={statsAreSample} client:visible />
@@ -211,9 +213,8 @@ const profiles = [
         </article>
 
         {
-          workProjects.map((p, i) => (
+          workProjects.map((p) => (
             <ProjectCard
-              pos={i + 2}
               title={p.data.title}
               description={p.data.description}
               repo={p.data.repo}
@@ -236,9 +237,8 @@ const profiles = [
         </summary>
         <div class="bom">
           {
-            personalProjects.map((p, i) => (
+            personalProjects.map((p) => (
               <ProjectCard
-                pos={workProjects.length + 2 + i}
                 title={p.data.title}
                 description={p.data.description}
                 repo={p.data.repo}
@@ -258,14 +258,14 @@ const profiles = [
       <div class="closing__body">
         <p class="prose">
           For collaboration, roles, or questions about RELab and the tooling
-          behind it:
+          behind it, write to me, or read the CV first.
         </p>
         {
           /* The sheet's one stamp is in the hero; the closing repeats the
              address and the CV as plain working links, not a second stamp. */
           <p class="closing__row draft">
             {basics.email && <a href={`mailto:${basics.email}`}>{basics.email}</a>}
-            <a href="/cv/">Sheet 2: curriculum vitae</a>
+            <a href="/cv/">Sheet 2: CV</a>
           </p>
         }
       </div>
@@ -297,8 +297,8 @@ const profiles = [
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
     }
 
-    /* The figure is a plate beside the text: the drawing shows the method,
-       the words say who; the quantities live down in RELab's own row. */
+    /* The figure is a plate beside the text and the notes: the words say
+       who, the notes prove one project, the drawing shows its parts. */
     .hero__figure {
       justify-self: end;
       width: 100%;
@@ -356,12 +356,20 @@ const profiles = [
     font-size: var(--step--1);
   }
 
-  /* General notes: a sheet's boxed notes, here the lab's running counts,
-     set in RELab's own row so the quantities sit with the part they
-     describe. */
+  /* General notes: a sheet's boxed notes, here one project's running
+     counts, in the hero so the proof is in the first viewport, and framed
+     as RELab's, not the person's. */
   .notes {
+    margin-top: var(--space-l);
     max-width: 36rem;
-    margin-block: var(--space-m);
+  }
+
+  .notes__lead {
+    margin-top: var(--space-xs);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    max-width: 30rem;
   }
 
   .notes__heading {
@@ -396,7 +404,7 @@ const profiles = [
   }
 
   .notes__value {
-    font-size: var(--step-2);
+    font-size: var(--step-3);
     line-height: 1.05;
     color: var(--text);
   }
@@ -422,15 +430,6 @@ const profiles = [
   .notes__foot a {
     padding-block: 0.65rem;
     margin-block: -0.65rem;
-  }
-
-  /* The zone label's aside: the drawing's name for the list, in a quieter
-     ink, so the plain name leads and the metaphor follows. */
-  .h2__aside {
-    display: inline-block;
-    margin-inline-start: 0.6em;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
   }
 
   /* Lead row: the platform's title outranks the repo slugs below it. */

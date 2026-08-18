@@ -380,8 +380,11 @@ time {
    Layout
    --------------------------------------------------------------------------- */
 
+/* The sheet is as wide as its content: an 11rem rail, a 2rem gutter and a
+   38rem measure, with 3rem to spare for tags and the hero's plate. Rules end
+   where the writing ends; the paper is not wider than the drawing. */
 .container {
-  width: min(100% - 2 * var(--space-m), 64rem);
+  width: min(100% - 2 * var(--space-m), 54rem);
   margin-inline: auto;
 }
 
@@ -559,8 +562,9 @@ main > section.container > h2 {
 }
 
 /* ---------------------------------------------------------------------------
-   Bill of materials (the work list)
-   A parts-list table: position balloon, part, spec. The row is the target.
+   Selected work (the parts list)
+   A parts-list table: kind in the rail, part name, spec. The name is the
+   target. Circled numerals live on Fig. 1 only, where they balloon parts.
    --------------------------------------------------------------------------- */
 
 .bom {
@@ -578,36 +582,18 @@ main > section.container > h2 {
   border-bottom: var(--border-width) solid var(--border);
 }
 
+/* The rail: what the part is, in the drafting hand, on the title's midline. */
 .bom-row__pos {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-s);
   font-family: var(--font-draft);
   font-size: var(--step--1);
   color: var(--text-muted);
   letter-spacing: 0.06em;
-  padding-top: 0.15em;
-}
-
-/* The position balloon: the same device that numbers the exploded view. */
-.balloon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.7rem;
-  height: 1.7rem;
-  flex: none;
-  border: 1.5px solid var(--border-strong);
-  border-radius: 50%;
-  font-family: var(--font-draft);
-  font-size: 0.8rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-  background: var(--bg);
+  text-transform: uppercase;
+  padding-top: 0.45em;
 }
 
 /* Datum mark: the figure's boxed-letter note reference. Square, where the
-   balloon is the BOM's circle. */
+   figure balloon is the circle. */
 .datum {
   display: inline-flex;
   align-items: center;
@@ -620,11 +606,6 @@ main > section.container > h2 {
   font-size: 0.8rem;
   color: var(--text);
   background: var(--bg);
-}
-
-.bom-row__kind {
-  padding-top: 0.3em; /* onto the balloon's midline */
-  text-transform: uppercase;
 }
 
 .bom-row__body > * + * {

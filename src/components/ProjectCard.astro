@@ -1,10 +1,7 @@
 ---
-// One row of the bill of materials: position balloon, kind, part, spec.
-// The whole row is a click target (the title link stretches over it);
-// secondary links sit above the stretched link.
+// One row of the parts list: kind in the rail, part name (the one target,
+// linking the repo), spec, links, tags. The row's prose stays selectable.
 interface Props {
-  /** Position number in the bill of materials. */
-  pos: number;
   title: string;
   description: string;
   repo: string;
@@ -14,7 +11,7 @@ interface Props {
   links?: { label: string; url: string }[];
 }
 
-const { pos, title, description, repo, kind, demo, tags = [], links = [] } = Astro.props;
+const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.props;
 
 // The kind cell says what the thing is, so the column can be scanned on its
 // own. It falls back to the leading tag, which is then dropped from the tag
@@ -25,10 +22,7 @@ const railTags = kind ? tags : rest;
 ---
 
 <article class="bom-row">
-  <p class="bom-row__pos">
-    <span class="balloon" aria-hidden="true">{pos}</span>
-    <span class="bom-row__kind">{rail}</span>
-  </p>
+  <p class="bom-row__pos">{rail}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
       <a href={repo}>{title}</a>

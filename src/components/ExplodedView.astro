@@ -175,7 +175,8 @@ const parts = ["Camera rig", "Capture app", "Web app", "API", "Database", "Docs"
   </svg>
 
   <figcaption id="exploded-caption">
-    Fig. 1: Exploded view of RELab, the lab's platform. Schematic.
+    Fig. 1: RELab, the disassembly-data platform I build at CML and one of the
+    projects listed below, drawn exploded. Schematic.
     <span class="visually-hidden">Parts, top to bottom: {parts.join(", ")}.</span>
   </figcaption>
 </figure>
@@ -228,7 +229,7 @@ const parts = ["Camera rig", "Capture app", "Web app", "API", "Database", "Docs"
     stroke-width: 1;
   }
 
-  /* The balloon: the BOM's own notation, drawn on the figure. Its stroke
+  /* The balloon: a drawing's item mark, keyed to the register. Its stroke
      stays the strong rule; only the numeral answers hover. */
   .balloon-mark circle {
     stroke: var(--border-strong);
@@ -261,20 +262,29 @@ const parts = ["Camera rig", "Capture app", "Web app", "API", "Database", "Docs"
   }
 
   /* The assembled position: the stack closes onto the API, capture end
-     coming down, foundation coming up. Balloons travel with their parts. */
-  .is-assembled .part--rig {
+     coming down, foundation coming up. Balloons and register labels travel
+     with their parts, so the settle reads as one drawing. */
+  .label {
+    transition: translate var(--dur-explode) var(--ease-out);
+  }
+  .is-assembled .part--rig,
+  .is-assembled .label--rig {
     translate: 0 92px;
   }
-  .is-assembled .part--app {
+  .is-assembled .part--app,
+  .is-assembled .label--app {
     translate: 0 56px;
   }
-  .is-assembled .part--web {
+  .is-assembled .part--web,
+  .is-assembled .label--web {
     translate: 0 30px;
   }
-  .is-assembled .part--db {
+  .is-assembled .part--db,
+  .is-assembled .label--db {
     translate: 0 -28px;
   }
-  .is-assembled .part--docs {
+  .is-assembled .part--docs,
+  .is-assembled .label--docs {
     translate: 0 -56px;
   }
 
@@ -306,6 +316,10 @@ const parts = ["Camera rig", "Capture app", "Web app", "API", "Database", "Docs"
   @media (prefers-reduced-motion: reduce) {
     .part {
       transition: stroke var(--dur-fast) ease;
+    }
+
+    .label {
+      transition: none;
     }
   }
 

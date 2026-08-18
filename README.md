@@ -13,7 +13,7 @@ at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
 - One React island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
   data visualisation; everything else ships as zero-JS HTML
-- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows (the bill of materials)
+- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows (the parts list)
 - One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind
   [/cv/](https://simonvanlierde.github.io/cv/) and the landing page's contact details
 - Plain CSS with design tokens; light (ink on paper) and dark (blueprint) via
