@@ -12,53 +12,77 @@
   color: var(--text-muted);
 }
 
-/* Controls: the measure switcher, wrapping on narrow screens */
-/* On a phone the five segments overrun the plot's width; the strip scrolls
-   sideways as one control rather than wrapping into two broken rows. */
-.chart__toolbar {
-  display: flex;
-  gap: var(--space-s);
-  margin: 0 0 var(--space-m);
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.chart__controls {
-  display: inline-flex;
-  flex: none;
-  gap: 0;
-  padding: 0;
-  margin: 0;
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  overflow: hidden;
-}
-
-.chart__toggle {
-  display: inline-flex;
-  align-items: center;
-  /* Full 44px target: a mis-tap changes the measure under you without
-     saying so. */
-  min-height: 44px;
-  white-space: nowrap;
+.chart__sample {
+  margin: 0 0 var(--space-s);
+  color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: var(--step--1);
   letter-spacing: 0.04em;
-  padding: 0.4em 1em;
+}
+
+/* Three core measures stay immediately available. The remaining two sit in a
+   second ruled row on request, preserving the complete dataset without making
+   every visit begin with five equal choices. */
+.chart__controls {
+  display: grid;
+  width: 100%;
+  gap: var(--border-width);
+  padding: 0;
+  margin: 0 0 var(--space-m);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--border);
+}
+
+.chart__controls-row {
+  display: grid;
+  min-width: 0;
+  gap: var(--border-width);
+  background: var(--border);
+}
+
+.chart__controls-row--primary {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.chart__controls-row--secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.chart__controls-row[hidden] {
+  display: none;
+}
+
+.chart__toggle,
+.chart__more {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  /* Full 44px target: a mis-tap changes the measure under you without
+     saying so. */
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+  padding: 0.5em 0.7em;
   border: 0;
-  background: transparent;
+  border-radius: 0;
+  background: var(--surface);
   color: var(--text-muted);
   cursor: pointer;
   /* The fill fades on the same clock as the bars it drives. No press-scale:
-     these segments are joined inside an overflow-hidden fieldset, and shrinking
-     one would open a seam against its neighbours. */
+     these segments share one ruled fieldset, and shrinking one would open a
+     seam against its neighbours. */
   transition:
     background-color var(--dur-fast) ease,
     color var(--dur-fast) ease;
 }
 
-.chart__toggle:hover {
+.chart__toggle:hover,
+.chart__more:hover {
   color: var(--text);
 }
 
@@ -67,7 +91,8 @@
   color: var(--accent-contrast);
 }
 
-.chart__toggle:focus-visible {
+.chart__toggle:focus-visible,
+.chart__more:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: -3px;
 }
@@ -75,6 +100,26 @@
 /* On the filled segment the accent ring would vanish into the fill. */
 .chart__toggle[aria-pressed="true"]:focus-visible {
   outline-color: var(--accent-contrast);
+}
+
+.chart__more {
+  flex-direction: column;
+  gap: 0.1em;
+}
+
+.chart__more[data-secondary-active="true"] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.chart__more[data-secondary-active="true"]:focus-visible {
+  outline-color: var(--accent-contrast);
+}
+
+.chart__more-current {
+  font-size: 0.78em;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
 }
 
 .chart__plot {
@@ -222,6 +267,10 @@
    viewport, because a 26rem plot needs this treatment whether it is narrow from
    being on a phone or from sitting in a half-width column. */
 @container chart (max-width: 26rem) {
+  .chart__controls-row--primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .chart__grid text,
   .chart__unit,
   .chart__xlabel-qualifier {
@@ -245,7 +294,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .chart__bar,
-  .chart__toggle {
+  .chart__toggle,
+  .chart__more {
     transition: none;
   }
 }

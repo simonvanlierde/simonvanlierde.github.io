@@ -57,6 +57,9 @@ const MEASURES: Measure[] = [
   { key: "images", label: "Images", noun: "photos catalogued", format: int },
   { key: "users", label: "New members", noun: "new lab members", format: int },
 ];
+const PRIMARY_MEASURE_KEYS: MeasureKey[] = ["teardowns", "parts", "mass_kg"];
+const primaryMeasures = MEASURES.filter((measure) => PRIMARY_MEASURE_KEYS.includes(measure.key));
+const secondaryMeasures = MEASURES.filter((measure) => !PRIMARY_MEASURE_KEYS.includes(measure.key));
 
 // Split "Jul 2025" into a tick ("Jul") and a qualifier ("2025") that only prints
 // when it changes. Every column keeps a label and none collide, so no
@@ -90,7 +93,9 @@ export default function DisassemblyChart({
 }) {
   const [measureKey, setMeasureKey] = useState<MeasureKey>("teardowns");
   const [active, setActive] = useState<number | null>(null);
+  const [showAllMeasures, setShowAllMeasures] = useState(false);
   const legendId = useId();
+  const secondaryControlsId = useId();
 
   const measure = MEASURES.find((m) => m.key === measureKey) ?? MEASURES[0];
   const periodNoun = stats.granularity ?? "month";
@@ -128,26 +133,58 @@ export default function DisassemblyChart({
     `${series[series.length - 1]?.label}. Full figures are in the table below.` +
     (isSample ? " Sample data." : "");
 
+  const secondaryMeasureActive = secondaryMeasures.some((m) => m.key === measure.key);
+  const measureButton = (m: Measure) => (
+    <button
+      type="button"
+      className="chart__toggle"
+      key={m.key}
+      aria-pressed={measure.key === m.key}
+      onClick={() => setMeasureKey(m.key)}
+    >
+      {m.label}
+    </button>
+  );
+
   return (
     <figure className="chart">
       {/* No running-total tiles here: the ReLab row's general notes carry
           them, from the same payload. The chart answers "when". */}
-      <div className="chart__toolbar">
-        <fieldset className="chart__controls">
-          <legend className="visually-hidden">Measure</legend>
-          {MEASURES.map((m) => (
-            <button
-              type="button"
-              className="chart__toggle"
-              key={m.key}
-              aria-pressed={measure.key === m.key}
-              onClick={() => setMeasureKey(m.key)}
-            >
-              {m.label}
-            </button>
-          ))}
-        </fieldset>
-      </div>
+      {isSample && <p className="chart__sample">Sample data for interface preview, not current ReLab activity.</p>}
+
+      <fieldset className="chart__controls">
+        <legend className="visually-hidden">Measure</legend>
+        <div className="chart__controls-row chart__controls-row--primary">
+          {primaryMeasures.map(measureButton)}
+          <button
+            type="button"
+            className="chart__more"
+            aria-expanded={showAllMeasures}
+            aria-controls={secondaryControlsId}
+            aria-label={
+              !showAllMeasures && secondaryMeasureActive
+                ? `${measure.label} selected. Show more measures`
+                : showAllMeasures
+                  ? "Show fewer measures"
+                  : "Show more measures"
+            }
+            data-secondary-active={!showAllMeasures && secondaryMeasureActive}
+            onClick={() => setShowAllMeasures((shown) => !shown)}
+          >
+            {!showAllMeasures && secondaryMeasureActive && (
+              <span className="chart__more-current">{measure.label} selected</span>
+            )}
+            <span>{showAllMeasures ? "Less" : "More"}</span>
+          </button>
+        </div>
+        <div
+          className="chart__controls-row chart__controls-row--secondary"
+          id={secondaryControlsId}
+          hidden={!showAllMeasures}
+        >
+          {secondaryMeasures.map(measureButton)}
+        </div>
+      </fieldset>
 
       <div className="chart__plot">
         {/* Pointer hover is a visual enhancement; keyboard/SR users get the data table */}

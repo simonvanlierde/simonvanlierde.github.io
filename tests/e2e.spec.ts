@@ -176,4 +176,20 @@ if (statsAreSample) {
     // and the table both change off-screen with nothing announcing it.
     await expect(page.locator("[aria-live=polite]")).toHaveText(/^Parts: /);
   });
+
+  test("secondary chart measures use progressive disclosure", async ({ page }) => {
+    const more = page.getByRole("button", { name: "Show more measures" });
+    await expect(more).toHaveAttribute("aria-expanded", "false");
+    await expect(page.getByRole("button", { name: "Images" })).toBeHidden();
+
+    await more.click();
+    await expect(more).toHaveAttribute("aria-expanded", "true");
+    const images = page.getByRole("button", { name: "Images" });
+    await expect(images).toBeVisible();
+    await images.click();
+    await expect(images).toHaveAttribute("aria-pressed", "true");
+
+    await page.getByRole("button", { name: "Show fewer measures" }).click();
+    await expect(page.getByRole("button", { name: /Images selected\. Show more measures/ })).toBeVisible();
+  });
 }
