@@ -4,12 +4,14 @@ import { z } from "zod";
 // `just public-export`; never hand-edit it here. The schema below is the
 // contract between the two repos: a build fails loudly if an export drops or
 // renames a field, rather than silently rendering an empty section.
+import { CV_DATE } from "../components/cvPeriod.ts";
 import raw from "./cv-public.yaml?raw";
 import { PublicationSchema } from "./publications.ts";
 
 // YAML types a bare `2018` as a number, while `2024-04` and `present` arrive as
-// strings. Normalise to string so formatPeriod only has one input type.
-const CvDate = z.union([z.string(), z.number()]).transform(String);
+// strings. Normalise to string so formatPeriod only has one input type, then
+// check the shape: `2024-13` would otherwise render as "undefined 2024".
+const CvDate = z.union([z.string(), z.number()]).transform(String).pipe(z.string().regex(CV_DATE));
 
 // Required vs optional splits the schema. The spine of a CV (who, what they do,
 // where they worked, what they studied) must be present or the build fails

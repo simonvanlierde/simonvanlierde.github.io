@@ -1,6 +1,9 @@
 // Date helpers for the CV page. `cv-public.yaml` writes dates as `YYYY-MM`,
 // bare `YYYY`, or the literal `present`; each renders differently.
 
+/** The only date shapes the export may write; anything else fails the build in cv.ts. */
+export const CV_DATE = /^(present|\d{4}(-(0[1-9]|1[0-2]))?)$/;
+
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** `2024-04` -> `Apr 2024`; `2018` -> `2018`; `present` -> `Present`. */

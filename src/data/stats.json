@@ -1,5 +1,6 @@
 {
   "sample": true,
+  "as_of": "2026-08-18",
   "granularity": "month",
   "series": [
     {

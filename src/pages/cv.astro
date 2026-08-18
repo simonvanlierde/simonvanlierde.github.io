@@ -29,6 +29,9 @@ const exportedLabel = exported
       day: "numeric",
       month: "long",
       year: "numeric",
+      // The title block prints the same stamp as `exported.slice(0, 10)` (UTC);
+      // a local-zone build near midnight would otherwise disagree by a day.
+      timeZone: "UTC",
     })
   : null;
 
@@ -49,7 +52,9 @@ const contact = [
 >
   <SheetNav current="cv" />
 
-  <header class="container cv-header">
+  {/* The skip link lands here, not on <main>: the h1, the download stamp and
+      the contact list are content, only the sheet nav is chrome to bypass. */}
+  <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or a screenshot of the top of
         this page has to carry whose CV it is. The document type is already in
         the tab title, the download button, and the title block. */}
@@ -94,7 +99,7 @@ const contact = [
     }
   </header>
 
-  <main id="main">
+  <main>
     <section class="container" aria-labelledby="profile-heading">
       <h2 id="profile-heading">Profile</h2>
       <p class="prose cv-profile">{profile}</p>

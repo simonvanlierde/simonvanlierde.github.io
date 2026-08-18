@@ -52,7 +52,12 @@ test("the page is dated from the export, machine-readably", async ({ page }) => 
     // exact exported instant so the date is not just a rendered string.
     await expect(stamp).toHaveAttribute("datetime", cv.exported);
     await expect(stamp).toHaveText(
-      new Date(cv.exported).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }),
+      new Date(cv.exported).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      }),
     );
   } else {
     await expect(stamp).toHaveCount(0);
@@ -108,6 +113,26 @@ test("the homepage links to the CV, and the CV links back", async ({ page }) => 
     .click();
   await expect(page).toHaveURL(/\/cv\/$/);
 });
+
+// The structured data has no on-page symptom, so a leak (an email the page
+// withholds, a publication the reader is not shown) would ship unnoticed. Parse
+// the script and hold it to the same gates as the visible page.
+for (const path of ["/", "/cv/"]) {
+  test(`structured data on ${path} claims only what the page shows`, async ({ page }) => {
+    await page.goto(path);
+    const raw = await page.locator('script[type="application/ld+json"]').textContent();
+    const data = JSON.parse(raw ?? "null");
+    expect(data?.["@context"]).toBe("https://schema.org");
+
+    const nodes: Record<string, unknown>[] = data["@graph"] ?? [data];
+    const person = nodes.find((n) => n["@type"] === "Person");
+    expect(person?.name).toBe(cv.basics.name);
+    expect(person?.email).toBe(cv.basics.email ? `mailto:${cv.basics.email}` : undefined);
+
+    const articles = nodes.filter((n) => n["@type"] === "ScholarlyArticle").map((n) => n.headline);
+    expect(articles).toEqual(path === "/cv/" ? publications.map((pub) => pub.title) : []);
+  });
+}
 
 // Both pages render their history from the same cv-public.yaml. If the homepage
 // ever grows a hand-copied timeline, these two lists drift and this test fails.

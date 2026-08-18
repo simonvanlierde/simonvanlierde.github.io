@@ -23,6 +23,22 @@ test("renders the page shell: title, main landmark, single h1", async ({ page })
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Simon van Lierde");
 });
 
+// The drawn sheet frame and the exploded view both reach outside their boxes at
+// small widths; a page must never grow a horizontal scrollbar because of them.
+for (const width of [320, 390, 900, 1200]) {
+  test(`no page scrolls sideways at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    for (const path of ["/", "/cv/", "/no-such-page/"]) {
+      await page.goto(path);
+      const [scrollWidth, clientWidth] = await page.evaluate(() => [
+        document.documentElement.scrollWidth,
+        document.documentElement.clientWidth,
+      ]);
+      expect(scrollWidth, `${path} at ${width}px`).toBeLessThanOrEqual(clientWidth);
+    }
+  });
+}
+
 test("hero profile links point at the right destinations", async ({ page }) => {
   const banner = page.getByRole("banner");
   const expected: Record<string, string> = {
@@ -36,11 +52,14 @@ test("hero profile links point at the right destinations", async ({ page }) => {
   }
 });
 
-test("skip link is the first tab stop and targets main", async ({ page }) => {
+test("skip link is the first tab stop and lands before the h1", async ({ page }) => {
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Skip to content" });
   await expect(skip).toBeFocused();
   await expect(skip).toHaveAttribute("href", "#main");
+  // Only the sheet nav is chrome; the h1 and the primary stamp are content and
+  // must sit inside the skip target, not before it.
+  await expect(page.locator("#main").getByRole("heading", { level: 1 })).toHaveCount(1);
 });
 
 test("theme toggle flips the theme and persists across reload", async ({ page }) => {

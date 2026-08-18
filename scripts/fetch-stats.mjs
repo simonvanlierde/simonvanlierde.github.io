@@ -44,8 +44,19 @@ if (payload.series.some((row) => required.some((k) => row?.[k] == null))) {
   skip(`a series row is missing one of: ${required.join(", ")}`);
 }
 
+// The hero notes print the running totals as counted figures, so they must
+// be present and numeric, not silently absent.
+const totals = ["products", "parts", "images"];
+if (totals.some((k) => typeof payload.totals?.[k] !== "number")) {
+  skip(`totals is missing one of: ${totals.join(", ")}`);
+}
+
 // Drop the sample flag — these are real figures now.
 delete payload.sample;
+
+// When the figures were counted. The API does not date its own response, so
+// the fetch date stands in; ISO YYYY-MM-DD in UTC, same as the CV export stamp.
+payload.as_of = new Date().toISOString().slice(0, 10);
 
 await writeFile(out, `${JSON.stringify(payload, null, 2)}\n`);
 console.log(`fetch-stats: wrote ${payload.series.length} rows to src/data/stats.json`);
