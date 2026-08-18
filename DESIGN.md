@@ -106,10 +106,10 @@ sans so text reads as text, not as a costume. Colour is never the sole signal.
 
 Every figure is real and dated: the hero's general notes carry the Reverse
 Engineering Lab's actual running counts from the stats export, the title
-block carries the real package version and export dates. The exploded desk
-fan is labelled illustrative and carries no statistics: a drawing shows
-parts, names, and dimensions; the numbers live in the notes. Nothing
-decorative, nothing invented.
+block carries the real package version and export dates. The exploded view
+is RELab itself taken apart, its six real parts, labelled schematic; it
+carries no statistics: a drawing shows parts and names, the numbers live in
+the notes. Nothing decorative, nothing invented.
 
 **Key Characteristics:**
 
@@ -139,15 +139,17 @@ time). The frontmatter values are the normative source, mirrored from
 #### Secondary
 
 - **Checker's Red** (`--stamp`): the approval-stamp colour, reserved for the
-  one primary action per sheet (mailto on Sheet 1, the CV stamp elsewhere).
+  one primary action per sheet: the CV on Sheet 1 (a hiring reader wants to
+  read before writing; the address is a plain link beside it), the PDF
+  download on Sheet 2.
   Outlined at rest, filled on hover with `--stamp-contrast` text.
 
 #### Neutral
 
 - **Drafting Paper** (`--bg`): the page ground. Warm near-white paper in
   light; deep Prussian blue in dark, where it is the cyanotype ground.
-- **Sheet Surface** (`--surface`): the one raised tint — BOM row hover and
-  the chart control fieldset. Barely lighter than the ground.
+- **Sheet Surface** (`--surface`): the one raised tint — the chart control
+  fieldset. Barely lighter than the ground.
 - **Working Ink** (`--text`): near-black blue ink for text and part linework;
   near-white on the blueprint.
 - **Faded Ink** (`--text-muted`): secondary text, fine linework, figure
@@ -227,13 +229,15 @@ capped at `--measure` (38rem).
 The spacing scale is six steps: 0.25 / 0.5 / 0.75 / 1.25 / 2 / 3.5rem
 (2xs–xl). Two-column data rows (BOM rows, CV entries) share the same grid:
 an 11rem left rail (balloon + kind, or period) and a fluid body, collapsing
-to one column below 40rem. The title block flips from 2 to 4 columns at
-48rem. The exploded figure caps at 24rem and needs no container query: its
+to one column below 40rem. The title block is two wide cells over a row of
+three (two columns below 40rem, the last cell on its own row). The exploded
+figure caps at 20rem, plate size beside the notes, and needs no container query: its
 only lettering is the left part-name register, legible at every width. (If a
 container query is ever added, remember it can style only the container's
 descendants, never the container itself.) The general-notes block sits in
-the hero text column after the profile links, so on a phone the counts enter
-the first viewport before the drawing does.
+RELab's own row of the bill of materials, between its description and its
+links, so the quantities read with the part they describe; the hero is the
+person and the plate.
 
 The two pages are two sheets of one set: `@view-transition { navigation:
 auto }` morphs the person's name between / and /cv/, disabled under reduced
@@ -303,12 +307,11 @@ Two notation marks are the deliberate exceptions and carry meaning:
 
 #### BOM Row (cards)
 
-- A parts-list row, not a card: hairline top rule, no background at rest,
-  full-row hover tint to `--surface`. Grid: 11rem rail (balloon + uppercase
-  kind) and body (title, description, links, tags). The title link
-  stretches over the whole row (`::after` inset 0); secondary links sit
-  above it on their own z-index. Hover turns the title engineer's blue and
-  underlines it.
+- A parts-list row, not a card: hairline top rule, no background, no hover
+  tint. Grid: 11rem rail (balloon + uppercase kind) and body (title,
+  description, links, tags). The part name is the target (44px bought with
+  padding + negative margin); the row's prose stays selectable. Hover turns
+  the title engineer's blue and underlines it.
 
 #### Navigation (sheet header)
 
@@ -319,37 +322,49 @@ Two notation marks are the deliberate exceptions and carry meaning:
 
 #### Title Block (footer)
 
-- ISO 7200: a `--border-strong` bordered grid (2 cols, 4 at 48rem, then
-  right-aligned at max 44rem), hairline internal rules. Each cell is a tiny
-  uppercase `--text-muted` label over an uppercase value. Carries real
-  provenance only: title, document type, sheet index ("1 OF 2"), scale 1:1,
-  dated/drawn-by, and the package version linking the repo.
+- ISO 7200: a `--border-strong` bordered grid (two wide cells over three;
+  right-aligned at max 44rem from 48rem), hairline internal rules. Each
+  cell is a tiny uppercase `--text-muted` label over an uppercase value.
+  Carries real provenance only: title, document type, sheet index ("1 OF
+  2"), dated/drawn-by, and "Site rev", the package version linking the
+  repo. No scale cell: nothing on a web page is drawn to scale.
 
 #### Exploded View (signature figure)
 
-- Authored SVG linework of a desk fan (the cv-ie-taxonomy object) on a
-  dash-dot centreline: front grille, blades, rear grille, motor, neck, base;
-  `--text` part strokes (1.7), `--text-muted` fine lines (1), part names
-  with `--border-strong` leaders in a left register, one real dimension
-  (guard Ø). No statistics on the drawing; caption says "illustrative".
+- Authored SVG linework of RELab, the lab's own platform, taken apart on a
+  dash-dot centreline, capture end at the top: camera rig (RPi board and
+  module), capture app (phone), web app (browser window), API (rack unit),
+  database (cylinder), docs (bound sheet), all in flat front elevation;
+  `--text` part strokes (1.7), `--text-muted` fine lines (1). Each part
+  carries a balloon (①–⑥, `--border-strong` circle, `--bg` fill) on a
+  short leader; the left register keys the numbers to part names, so the
+  figure has the drawing half of the balloon convention. Every part is one
+  the CV export and the RELab row already state. No statistics and no
+  dimension on the drawing; caption says "schematic".
 - **Motion:** on load the parts settle apart from the assembled stack — one
   `translate` transition per part group over `--dur-explode` (700ms)
   `--ease-out`, run once, class set by an inline script right after the
   figure so it precedes first paint. Reduced motion or no JS: the drawing is
   simply exploded, in the same stylesheet.
-- **Hover:** a part name lights its part in `--accent` (`:has()`,
-  progressive).
+- **Hover:** a part name lights its part in `--accent`, and a part (its
+  fill is `transparent`, so the whole silhouette is the target) lights its
+  name (`:has()`, progressive). Balloons travel with their parts during
+  the settle.
 
-#### General Notes (hero)
+#### General Notes (RELab row)
 
-- The sheet's boxed notes: an uppercase "Notes" label on a
+- The sheet's boxed notes, set inside RELab's BOM row (max 36rem): an
+  uppercase "Notes · Running totals" h4 in the drafting hand on a
   `--border-strong` rule, then a 2×2 grid of datum-lettered entries (A–D),
   value at `--step-2` in the drafting hand, uppercase label at `--step--1`,
-  and a footer line "All quantities as counted <month year> · CML RELab".
+  and a sentence-case footer line "All quantities as counted <month year> ·
+  CML RELab", the lab name linking the live platform.
 - Values come from `stats.json` (`totals`, `as_of`); while the export is
   still flagged `sample` they fall back to the last hand-counted, dated
   totals kept in `index.astro`, so the notes always show real figures and
-  never the seeded series. Participants is a hand-kept literal.
+  never the seeded series. Participants is a hand-kept literal. The chart
+  below them ships only on real data; the dev server may draw the seeded
+  series, labelled sample, for preview.
 
 #### Chart (island)
 

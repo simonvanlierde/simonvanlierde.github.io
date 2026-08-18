@@ -1,14 +1,18 @@
 ---
-// The sheet's figure: an exploded view of a desk fan (the same object as the
-// cv-ie-taxonomy demo), drawn as ink linework on a dash-dot axis with part
-// names in a left register. The drawing carries only what a drawing carries:
-// parts, names, one real dimension. The RELab counts live in the hero's
-// general-notes block, not on the parts. On load the parts settle apart from
-// the assembled stack (reduced motion: the drawing is simply exploded).
+// The sheet's figure: RELab, the lab's own platform, drawn taken apart, the
+// way the lab takes products apart. Six parts on a dash-dot axis, capture
+// end at the top, foundation at the bottom, all in flat front elevation:
+// camera rig, capture app, web app, API, database, docs. Each part carries a
+// balloon; the left register keys the balloons to part names, so the figure
+// has the drawing half of the balloon convention. Every part is something
+// the CV export and the RELab row already state; nothing here is invented,
+// and the RELab counts live in the hero's general notes, not on the parts.
+// On load the parts settle apart from the assembled stack (reduced motion:
+// the drawing is simply exploded).
 
 // Part names, top to bottom along the axis: the accessible reading of the
-// figure. The SVG labels below mirror this list.
-const parts = ["Front grille", "Blades, 3", "Rear grille", "Motor", "Neck", "Base"];
+// figure. The SVG register below mirrors this list.
+const parts = ["Camera rig", "Capture app", "Web app", "API", "Database", "Docs"];
 ---
 
 <figure class="exploded" aria-labelledby="exploded-caption">
@@ -24,117 +28,154 @@ const parts = ["Front grille", "Blades, 3", "Rear grille", "Motor", "Neck", "Bas
     <line class="axis" x1="220" y1="10" x2="220" y2="632" stroke-dasharray="14 5 2 5"></line>
 
     {/* ============ PARTS (top to bottom along the axis) ============ */}
-    <g class="part part--front-grille">
-      <circle cx="220" cy="92" r="72"></circle>
-      <circle class="fine" cx="220" cy="92" r="50"></circle>
-      <circle class="fine" cx="220" cy="92" r="27"></circle>
-      <circle cx="220" cy="92" r="9"></circle>
+    {/* 1 Camera rig: the Raspberry Pi board with its camera module */}
+    <g class="part part--rig">
+      <rect x="170" y="40" width="100" height="64"></rect>
       <g class="fine">
-        <line x1="220" y1="20" x2="220" y2="83"></line>
-        <line x1="220" y1="101" x2="220" y2="164"></line>
-        <line x1="148" y1="92" x2="211" y2="92"></line>
-        <line x1="229" y1="92" x2="292" y2="92"></line>
-        <line x1="169.1" y1="41.1" x2="213.6" y2="85.6"></line>
-        <line x1="226.4" y1="98.4" x2="270.9" y2="142.9"></line>
-        <line x1="270.9" y1="41.1" x2="226.4" y2="85.6"></line>
-        <line x1="213.6" y1="98.4" x2="169.1" y2="142.9"></line>
-        <line x1="184" y1="29.6" x2="215.5" y2="84.2"></line>
-        <line x1="224.5" y1="99.8" x2="256" y2="154.4"></line>
-        <line x1="256" y1="29.6" x2="224.5" y2="84.2"></line>
-        <line x1="215.5" y1="99.8" x2="184" y2="154.4"></line>
-        <line x1="157.6" y1="56" x2="212.2" y2="87.5"></line>
-        <line x1="227.8" y1="96.5" x2="282.4" y2="128"></line>
-        <line x1="282.4" y1="56" x2="227.8" y2="87.5"></line>
-        <line x1="212.2" y1="96.5" x2="157.6" y2="128"></line>
+        <circle cx="177" cy="47" r="2.5"></circle>
+        <circle cx="263" cy="47" r="2.5"></circle>
+        <circle cx="177" cy="97" r="2.5"></circle>
+        <circle cx="263" cy="97" r="2.5"></circle>
+        <line x1="186" y1="44" x2="254" y2="44"></line>
+        <line x1="186" y1="48" x2="254" y2="48"></line>
+      </g>
+      <rect x="202" y="56" width="36" height="36"></rect>
+      <circle cx="220" cy="74" r="10"></circle>
+      <circle class="fine" cx="220" cy="74" r="4"></circle>
+      <g class="balloon-mark">
+        <line class="leader" x1="270" y1="72" x2="304" y2="72"></line>
+        <circle cx="314" cy="72" r="9.5"></circle>
+        <text class="fig-num" x="314" y="75.5" text-anchor="middle">1</text>
       </g>
     </g>
 
-    <g class="part part--blades">
-      <circle cx="220" cy="240" r="12"></circle>
-      <path d="M220 240 C232 233 241 221 244 201 C246 184 236 173 224 179 C213 185 208 208 211 229 Z"></path>
-      <path d="M220 240 C213 251 200 258 181 256 C164 254 156 241 165 231 C174 222 197 224 216 232 Z"></path>
-      <path d="M220 240 C227 251 240 258 259 256 C276 254 284 241 275 231 C266 222 243 224 224 232 Z"></path>
-    </g>
-
-    <g class="part part--rear-grille">
-      <circle cx="220" cy="358" r="70"></circle>
-      <circle class="fine" cx="220" cy="358" r="40"></circle>
-      <circle cx="220" cy="358" r="14"></circle>
+    {/* 2 Capture app: the phone, viewfinder open */}
+    <g class="part part--app">
+      <rect x="186" y="140" width="68" height="124"></rect>
       <g class="fine">
-        <line x1="220" y1="288" x2="220" y2="344"></line>
-        <line x1="220" y1="372" x2="220" y2="428"></line>
-        <line x1="150" y1="358" x2="206" y2="358"></line>
-        <line x1="234" y1="358" x2="290" y2="358"></line>
-        <line x1="170.5" y1="308.5" x2="210.1" y2="348.1"></line>
-        <line x1="229.9" y1="367.9" x2="269.5" y2="407.5"></line>
-        <line x1="269.5" y1="308.5" x2="229.9" y2="348.1"></line>
-        <line x1="210.1" y1="367.9" x2="170.5" y2="407.5"></line>
+        <rect x="192" y="152" width="56" height="100"></rect>
+        <line x1="210" y1="146" x2="230" y2="146"></line>
+        <line x1="210" y1="258" x2="230" y2="258"></line>
+      </g>
+      <g class="fine">
+        <polyline points="200,170 200,162 208,162"></polyline>
+        <polyline points="232,162 240,162 240,170"></polyline>
+        <polyline points="200,234 200,242 208,242"></polyline>
+        <polyline points="232,242 240,242 240,234"></polyline>
+      </g>
+      <circle cx="220" cy="202" r="7"></circle>
+      <g class="balloon-mark">
+        <line class="leader" x1="254" y1="202" x2="304" y2="202"></line>
+        <circle cx="314" cy="202" r="9.5"></circle>
+        <text class="fig-num" x="314" y="205.5" text-anchor="middle">2</text>
       </g>
     </g>
 
-    <g class="part part--motor">
-      <rect x="180" y="450" width="80" height="50"></rect>
-      <line class="fine" x1="192" y1="458" x2="192" y2="492"></line>
-      <line class="fine" x1="202" y1="458" x2="202" y2="492"></line>
-      <line class="fine" x1="212" y1="458" x2="212" y2="492"></line>
-      <line class="fine" x1="228" y1="458" x2="228" y2="492"></line>
-      <line class="fine" x1="238" y1="458" x2="238" y2="492"></line>
-      <line class="fine" x1="248" y1="458" x2="248" y2="492"></line>
-      <circle cx="220" cy="475" r="6"></circle>
+    {/* 3 Web app: a browser window over a table */}
+    <g class="part part--web">
+      <rect x="150" y="290" width="140" height="92"></rect>
+      <g class="fine">
+        <line x1="150" y1="306" x2="290" y2="306"></line>
+        <circle cx="160" cy="298" r="2.5"></circle>
+        <circle cx="169" cy="298" r="2.5"></circle>
+        <circle cx="178" cy="298" r="2.5"></circle>
+        <line x1="160" y1="322" x2="280" y2="322"></line>
+        <line x1="160" y1="338" x2="280" y2="338"></line>
+        <line x1="160" y1="354" x2="280" y2="354"></line>
+        <line x1="160" y1="370" x2="280" y2="370"></line>
+        <line x1="196" y1="314" x2="196" y2="374"></line>
+      </g>
+      <g class="balloon-mark">
+        <line class="leader" x1="290" y1="336" x2="304" y2="336"></line>
+        <circle cx="314" cy="336" r="9.5"></circle>
+        <text class="fig-num" x="314" y="339.5" text-anchor="middle">3</text>
+      </g>
     </g>
 
-    <g class="part part--neck">
-      <rect x="211" y="522" width="18" height="60"></rect>
-      <line class="fine" x1="211" y1="540" x2="229" y2="540"></line>
+    {/* 4 API: one rack unit */}
+    <g class="part part--api">
+      <rect x="160" y="412" width="120" height="36"></rect>
+      <g class="fine">
+        <rect x="170" y="424" width="12" height="12"></rect>
+        <rect x="188" y="424" width="12" height="12"></rect>
+        <rect x="206" y="424" width="12" height="12"></rect>
+        <line x1="236" y1="430" x2="256" y2="430"></line>
+      </g>
+      <circle cx="268" cy="430" r="3"></circle>
+      <g class="balloon-mark">
+        <line class="leader" x1="280" y1="430" x2="304" y2="430"></line>
+        <circle cx="314" cy="430" r="9.5"></circle>
+        <text class="fig-num" x="314" y="433.5" text-anchor="middle">4</text>
+      </g>
     </g>
 
-    <g class="part part--base">
-      <rect x="150" y="600" width="140" height="22"></rect>
-      <line class="fine" x1="160" y1="611" x2="176" y2="611"></line>
-      <line class="fine" x1="264" y1="611" x2="280" y2="611"></line>
-      <line x1="150" y1="622" x2="140" y2="632"></line>
-      <line x1="290" y1="622" x2="300" y2="632"></line>
+    {/* 5 Database: the cylinder */}
+    <g class="part part--db">
+      <ellipse cx="220" cy="486" rx="42" ry="10"></ellipse>
+      <line x1="178" y1="486" x2="178" y2="540"></line>
+      <line x1="262" y1="486" x2="262" y2="540"></line>
+      <path d="M178 540 A42 10 0 0 0 262 540"></path>
+      <g class="fine">
+        <path d="M178 504 A42 10 0 0 0 262 504"></path>
+        <path d="M178 522 A42 10 0 0 0 262 522"></path>
+      </g>
+      <g class="balloon-mark">
+        <line class="leader" x1="262" y1="513" x2="304" y2="513"></line>
+        <circle cx="314" cy="513" r="9.5"></circle>
+        <text class="fig-num" x="314" y="516.5" text-anchor="middle">5</text>
+      </g>
     </g>
 
-    {/* guard diameter: the one dimension a fan is sold by */}
-    <g class="dim">
-      <line x1="148" y1="12" x2="292" y2="12"></line>
-      <line x1="148" y1="7" x2="148" y2="17"></line>
-      <line x1="292" y1="7" x2="292" y2="17"></line>
-      <text class="fig-fine" x="220" y="9" text-anchor="middle">Ø 300</text>
+    {/* 6 Docs: a bound sheet */}
+    <g class="part part--docs">
+      <rect x="180" y="578" width="80" height="56"></rect>
+      <g class="fine">
+        <line x1="192" y1="578" x2="192" y2="634"></line>
+        <circle cx="186" cy="590" r="1.8"></circle>
+        <circle cx="186" cy="606" r="1.8"></circle>
+        <circle cx="186" cy="622" r="1.8"></circle>
+        <line x1="202" y1="592" x2="250" y2="592"></line>
+        <line x1="202" y1="604" x2="250" y2="604"></line>
+        <line x1="202" y1="616" x2="236" y2="616"></line>
+      </g>
+      <g class="balloon-mark">
+        <line class="leader" x1="260" y1="606" x2="304" y2="606"></line>
+        <circle cx="314" cy="606" r="9.5"></circle>
+        <text class="fig-num" x="314" y="609.5" text-anchor="middle">6</text>
+      </g>
     </g>
 
-    {/* ============ PART NAMES (left register) ============ */}
+    {/* ============ REGISTER (left): the balloons keyed to part names ============ */}
     <g class="labels">
-      <g class="label label--front-grille">
-        <text class="fig-label" x="12" y="60">FRONT GRILLE</text>
-        <line class="leader" x1="112" y1="56" x2="160" y2="52"></line>
+      <g class="label label--rig">
+        <text class="fig-num" x="12" y="76">1</text>
+        <text class="fig-label" x="30" y="76">CAMERA RIG</text>
       </g>
-      <g class="label label--blades">
-        <text class="fig-label" x="12" y="216">BLADES, 3</text>
-        <line class="leader" x1="88" y1="212" x2="182" y2="232"></line>
+      <g class="label label--app">
+        <text class="fig-num" x="12" y="206">2</text>
+        <text class="fig-label" x="30" y="206">CAPTURE APP</text>
       </g>
-      <g class="label label--rear-grille">
-        <text class="fig-label" x="12" y="330">REAR GRILLE</text>
-        <line class="leader" x1="106" y1="326" x2="160" y2="322"></line>
+      <g class="label label--web">
+        <text class="fig-num" x="12" y="340">3</text>
+        <text class="fig-label" x="30" y="340">WEB APP</text>
       </g>
-      <g class="label label--motor">
-        <text class="fig-label" x="12" y="482">MOTOR</text>
-        <line class="leader" x1="60" y1="478" x2="180" y2="475"></line>
+      <g class="label label--api">
+        <text class="fig-num" x="12" y="434">4</text>
+        <text class="fig-label" x="30" y="434">API</text>
       </g>
-      <g class="label label--neck">
-        <text class="fig-label" x="12" y="560">NECK</text>
-        <line class="leader" x1="52" y1="556" x2="211" y2="552"></line>
+      <g class="label label--db">
+        <text class="fig-num" x="12" y="517">5</text>
+        <text class="fig-label" x="30" y="517">DATABASE</text>
       </g>
-      <g class="label label--base">
-        <text class="fig-label" x="12" y="618">BASE</text>
-        <line class="leader" x1="52" y1="614" x2="150" y2="611"></line>
+      <g class="label label--docs">
+        <text class="fig-num" x="12" y="610">6</text>
+        <text class="fig-label" x="30" y="610">DOCS</text>
       </g>
     </g>
   </svg>
 
   <figcaption id="exploded-caption">
-    Fig. 1: Exploded view of a desk fan, illustrative.
+    Fig. 1: Exploded view of RELab, the lab's platform. Schematic.
     <span class="visually-hidden">Parts, top to bottom: {parts.join(", ")}.</span>
   </figcaption>
 </figure>
@@ -157,14 +198,17 @@ const parts = ["Front grille", "Blades, 3", "Rear grille", "Motor", "Neck", "Bas
 </script>
 
 <style>
+  /* Plate size: the notes carry the proof, the drawing shows the method. */
   .exploded__svg {
     width: 100%;
     height: auto;
-    max-width: 24rem;
+    max-width: 20rem;
   }
 
-  /* Linework */
+  /* Linework. A transparent (not none) fill makes the whole part a pointer
+     target, so hovering inside a part lights it, not only its stroke. */
   .part {
+    fill: transparent;
     stroke: var(--text);
     stroke-width: 1.7;
     transition:
@@ -179,66 +223,89 @@ const parts = ["Front grille", "Blades, 3", "Rear grille", "Motor", "Neck", "Bas
   }
 
   .axis,
-  .leader,
-  .dim {
+  .leader {
     stroke: var(--border-strong);
     stroke-width: 1;
   }
 
-  /* Lettering. Sizes are svg units; the drawing caps at 24rem, where one
-     unit is just over 1px, so nothing renders below its declared size. */
+  /* The balloon: the BOM's own notation, drawn on the figure. Its stroke
+     stays the strong rule; only the numeral answers hover. */
+  .balloon-mark circle {
+    stroke: var(--border-strong);
+    stroke-width: 1.5;
+    fill: var(--bg);
+  }
+
+  .balloon-mark text {
+    fill: var(--text);
+  }
+
+  /* Lettering. Sizes are svg units; the drawing caps at 20rem, where one
+     unit is 0.94px, so 13 units letters at just over 12px. */
   text {
     stroke: none;
     fill: var(--text-muted);
     font-family: var(--font-draft);
+    transition: fill var(--dur-fast) ease;
   }
 
   .fig-label {
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 0.12em;
   }
 
-  .fig-fine {
-    font-size: 10.5px;
-    letter-spacing: 0.08em;
+  .fig-num {
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    fill: var(--text);
   }
 
-  /* The assembled position: the front stack closes onto the rear grille,
-     the stand rises to meet the motor. */
-  .is-assembled .part--front-grille {
-    translate: 0 240px;
+  /* The assembled position: the stack closes onto the API, capture end
+     coming down, foundation coming up. Balloons travel with their parts. */
+  .is-assembled .part--rig {
+    translate: 0 92px;
   }
-  .is-assembled .part--blades {
-    translate: 0 118px;
+  .is-assembled .part--app {
+    translate: 0 56px;
   }
-  .is-assembled .part--motor {
-    translate: 0 -46px;
+  .is-assembled .part--web {
+    translate: 0 30px;
   }
-  .is-assembled .part--neck {
-    translate: 0 -66px;
+  .is-assembled .part--db {
+    translate: 0 -28px;
   }
-  .is-assembled .part--base {
-    translate: 0 -104px;
+  .is-assembled .part--docs {
+    translate: 0 -56px;
   }
 
-  /* Hovering a part name lights its part; the name answers in kind.
-     Progressive: browsers without :has() simply keep the static drawing. */
-  .exploded:has(.label--front-grille:hover) .part--front-grille,
-  .exploded:has(.label--blades:hover) .part--blades,
-  .exploded:has(.label--rear-grille:hover) .part--rear-grille,
-  .exploded:has(.label--motor:hover) .part--motor,
-  .exploded:has(.label--neck:hover) .part--neck,
-  .exploded:has(.label--base:hover) .part--base {
+  /* Hovering a part name lights its part, and hovering a part lights its
+     name: the two registers answer each other. Progressive: browsers
+     without :has() keep the one-way part hover. */
+  .part:hover,
+  .exploded:has(.label--rig:hover) .part--rig,
+  .exploded:has(.label--app:hover) .part--app,
+  .exploded:has(.label--web:hover) .part--web,
+  .exploded:has(.label--api:hover) .part--api,
+  .exploded:has(.label--db:hover) .part--db,
+  .exploded:has(.label--docs:hover) .part--docs {
     stroke: var(--accent);
   }
 
-  .label:hover text {
+  .label:hover text,
+  .exploded:has(.part--rig:hover) .label--rig text,
+  .exploded:has(.part--app:hover) .label--app text,
+  .exploded:has(.part--web:hover) .label--web text,
+  .exploded:has(.part--api:hover) .label--api text,
+  .exploded:has(.part--db:hover) .label--db text,
+  .exploded:has(.part--docs:hover) .label--docs text {
     fill: var(--accent);
   }
 
+  /* Reduced motion drops the settle; the 150ms ink change on hover is
+     feedback, not movement, and stays. */
   @media (prefers-reduced-motion: reduce) {
     .part {
-      transition: none;
+      transition: stroke var(--dur-fast) ease;
     }
   }
 

@@ -134,16 +134,12 @@ for (const path of ["/", "/cv/"]) {
   });
 }
 
-// Both pages render their history from the same cv-public.yaml. If the homepage
-// ever grows a hand-copied timeline, these two lists drift and this test fails.
-test("the homepage timeline matches the CV, minus the highlights", async ({ page }) => {
-  const roles = page.locator("#experience-heading ~ .cv-entries .cv-entry__role");
-  const cvRoles = await roles.allTextContents();
+// The history lives on /cv/ alone. If the homepage ever grows a copy of the
+// timeline, that copy is a second source of truth and this test fails.
+test("the homepage does not restate the CV timeline", async ({ page }) => {
+  await expect(page.locator(".cv-entry")).not.toHaveCount(0);
 
   await page.goto("/");
-  const homeRoles = page.locator("#experience-heading ~ .cv-entries .cv-entry__role");
-  expect(await homeRoles.allTextContents()).toEqual(cvRoles);
-
-  // The condensed timeline drops the bullet points that /cv/ carries.
-  await expect(page.locator(".cv-highlights")).toHaveCount(0);
+  await expect(page.locator(".cv-entry")).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 2, name: /Experience|Education/ })).toHaveCount(0);
 });

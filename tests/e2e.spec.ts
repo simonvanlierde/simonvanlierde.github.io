@@ -85,13 +85,20 @@ test("the personal-projects disclosure expands then collapses", async ({ page })
   await expect(details).toHaveJSProperty("open", false);
 });
 
-test("the hero has exactly one stamp", async ({ page }) => {
-  // Every other hero link is a way to look Simon up. The stamp is the one that
-  // asks for something back, and the sheet grammar allows exactly one in the
-  // header: mailto when the export publishes an address, the CV when it doesn't.
+test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
+  // The sheet grammar allows one stamp in the header, and it is the CV: a
+  // hiring reader wants to read before writing. The address, when the export
+  // publishes one, sits beside it as a plain link whose text is the address.
   const primary = page.locator("header .stamp");
   await expect(primary).toHaveCount(1);
-  await expect(primary).toHaveAttribute("href", cv.basics.email ? `mailto:${cv.basics.email}` : "/cv/");
+  await expect(primary).toHaveAttribute("href", "/cv/");
+  const email = page.locator("header a[href^='mailto:']");
+  if (cv.basics.email) {
+    await expect(email).toHaveAttribute("href", `mailto:${cv.basics.email}`);
+    await expect(email).toHaveText(cv.basics.email);
+  } else {
+    await expect(email).toHaveCount(0);
+  }
 });
 
 test("an unknown path serves the 404 page with a way back", async ({ page }) => {

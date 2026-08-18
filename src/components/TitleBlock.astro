@@ -1,7 +1,8 @@
 ---
 // ISO 7200 title block: the document's own footer, one per sheet. Carries
 // real provenance only: who, what, which sheet, when it was generated, and
-// the site version linking the source. Nothing decorative, nothing invented.
+// the site version linking the source. Nothing decorative, nothing invented:
+// there is no scale cell because nothing on a web page is drawn to scale.
 import { version } from "../../package.json";
 
 interface Props {
@@ -32,19 +33,17 @@ const { title, docType, sheet, dated } = Astro.props;
       <span class="title-block__value">{sheet}</span>
     </div>
     <div class="title-block__cell">
-      <span class="title-block__label">Scale</span>
-      <span class="title-block__value">1:1</span>
-    </div>
-    <div class="title-block__cell">
       <span class="title-block__label">{dated ? "Dated" : "Drawn by"}</span>
       <span class="title-block__value">
         {dated ? <time datetime={dated}>{dated}</time> : "SVL"}
       </span>
     </div>
     <div class="title-block__cell">
-      <span class="title-block__label">Rev</span>
+      {/* "Site rev", not "Rev": on the CV sheet a bare revision number reads
+          as the CV's own version. */}
+      <span class="title-block__label">Site rev</span>
       <span class="title-block__value">
-        <a href="https://github.com/simonvanlierde/simonvanlierde.github.io" aria-label={`v${version}, view source on GitHub`}>
+        <a href="https://github.com/simonvanlierde/simonvanlierde.github.io" aria-label={`Site version ${version}, view source on GitHub`}>
           v{version}
         </a>
       </span>

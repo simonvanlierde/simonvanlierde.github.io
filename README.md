@@ -14,8 +14,8 @@ at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 - One React island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
   data visualisation; everything else ships as zero-JS HTML
 - A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows (the bill of materials)
-- One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind both the landing page's
-  condensed timeline and [/cv/](https://simonvanlierde.github.io/cv/), so the two can't drift
+- One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind
+  [/cv/](https://simonvanlierde.github.io/cv/) and the landing page's contact details
 - Plain CSS with design tokens; light (ink on paper) and dark (blueprint) via
   `prefers-color-scheme` plus a toggle; display and data lettering in a vendored
   [osifont](https://github.com/hikikomori82/osifont) subset (ISO 3098, LGPL+FE)
@@ -36,7 +36,7 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 │   └── fetch-stats.mjs  # refreshes the chart's disassembly data
 ├── src/
 │   ├── components/
-│   │   ├── ExplodedView.astro     # Fig. 1, the exploded desk fan (inline SVG)
+│   │   ├── ExplodedView.astro     # Fig. 1, RELab taken apart (inline SVG)
 │   │   ├── ProjectCard.astro      # one bill-of-materials row
 │   │   ├── SheetNav.astro
 │   │   ├── TitleBlock.astro
@@ -116,10 +116,10 @@ weekly [refresh-data.yml](.github/workflows/refresh-data.yml) refresh from racin
 Projects are markdown files under [src/content/projects/](src/content/projects/), validated against
 the schema in [src/content.config.ts](src/content.config.ts).
 
-[/cv/](https://simonvanlierde.github.io/cv/) and the landing page's condensed timeline both render
-from [src/data/cv-public.yaml](src/data/cv-public.yaml), so they cannot disagree about where I
-worked and when. That file and the CV PDF are exported from a separate private repo and committed
-here, so a clean checkout builds without access to it.
+[/cv/](https://simonvanlierde.github.io/cv/) renders from
+[src/data/cv-public.yaml](src/data/cv-public.yaml); the landing page reads only the contact details
+from it and points at the CV rather than restating it. That file and the CV PDF are exported from a
+separate private repo and committed here, so a clean checkout builds without access to it.
 [src/data/cv.ts](src/data/cv.ts) validates the export against a Zod schema at build time, so a
 broken export fails the build instead of rendering an empty page. Optional sections (publications,
 skills, projects, talks and training, interests) render only when the export carries them, and an unaccepted
