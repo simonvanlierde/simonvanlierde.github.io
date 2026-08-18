@@ -15,9 +15,11 @@ interface Props {
   sheet: string; // e.g. "1 OF 2"
   /** ISO date the sheet's data was last generated, if known. */
   dated?: string;
+  /** Optional context that turns the final contact cell into a clear invitation. */
+  contactPurpose?: string;
 }
 
-const { title, docType, sheet, dated } = Astro.props;
+const { title, docType, sheet, dated, contactPurpose } = Astro.props;
 const datedLabel = dated
   ? new Date(dated).toLocaleDateString("en-GB", {
       day: "numeric",
@@ -63,7 +65,8 @@ const contact = [
       </span>
     </div>
     <div class="title-block__cell title-block__cell--contact">
-      <span class="title-block__label" id="contact-label">Contact</span>
+      <span class="title-block__label" id="contact-label">Contact Simon</span>
+      {contactPurpose && <p class="title-block__contact-purpose">{contactPurpose}</p>}
       <ul class="title-block__value title-block__contact" aria-labelledby="contact-label">
         {
           contact.map((c) => (

@@ -845,6 +845,14 @@ main > section.container > h2 {
   text-decoration: underline;
 }
 
+.title-block__contact-purpose {
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
 /* The contact cell: one row of links, the address in the accent so it reads
    as the way in; the profiles in ink like the other cell values. */
 .title-block__contact {
@@ -855,6 +863,12 @@ main > section.container > h2 {
   text-transform: none;
 }
 
+.title-block__contact-purpose + .title-block__contact {
+  margin-top: var(--space-2xs);
+}
+
 .title-block__contact a[href^="mailto:"] {
   color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }

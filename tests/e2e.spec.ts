@@ -124,6 +124,17 @@ test("the exploded view becomes one compact, touch-sized system on mobile", asyn
   await expect(mobile).toBeHidden();
 });
 
+test("the title block ends with a clear collaboration path", async ({ page }) => {
+  const footer = page.getByRole("contentinfo");
+  await expect(footer.getByText("Research and software collaboration")).toBeVisible();
+  if (cv.basics.email) {
+    await expect(footer.getByRole("link", { name: cv.basics.email, exact: true })).toHaveAttribute(
+      "href",
+      `mailto:${cv.basics.email}`,
+    );
+  }
+});
+
 test("an unknown path serves the 404 page with a way back", async ({ page }) => {
   await page.goto("/no-such-page/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("That page does not exist");
