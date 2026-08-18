@@ -1,15 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SVL">
-  <!-- A sheet: paper ground, trim frame with centring ticks, and a datum mark. -->
+  <!-- A sheet: paper ground, trim frame, initials as the datum. -->
   <style>
     .paper { fill: #f8f7f3; }
     .ink { stroke: #2b3440; fill: none; }
+    .mark { fill: #2b3440; }
     @media (prefers-color-scheme: dark) {
       .paper { fill: #19263f; }
       .ink { stroke: #e6ecf5; }
+      .mark { fill: #e6ecf5; }
     }
   </style>
   <rect class="paper" width="64" height="64" />
   <rect class="ink" x="5" y="5" width="54" height="54" stroke-width="3" />
-  <path class="ink" stroke-width="3" d="M32 5v8M32 51v8M5 32h8M51 32h8" />
-  <line class="ink" stroke-width="2" stroke-dasharray="7 3 2 3" x1="32" y1="17" x2="32" y2="47" />
+  <text class="mark" x="33" y="34" text-anchor="middle" dominant-baseline="central" font-family="osifont, 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="400" letter-spacing="0.18em">SVL</text>
 </svg>
