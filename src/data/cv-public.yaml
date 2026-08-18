@@ -2,12 +2,13 @@ basics:
   name: Simon van Lierde
   headline: PhD Researcher and Research Software Engineer · Open research infrastructure for sustainability science
   location: The Hague, Netherlands
+  email: simonvanlierde@gmail.com
   links:
     linkedin: https://www.linkedin.com/in/simon-van-lierde/
     github: https://github.com/simonvanlierde
     website: https://simonvanlierde.github.io/
 render:
-  contact: [location, github, linkedin, website]
+  contact: [email, location, github, linkedin, website]
   font: nunito
 profile: >-
   Full-stack research software engineer with three years of professional experience in software, data, and solution architecture, now halfway through a PhD in Industrial Ecology at CML, Leiden University. I build open-source tools and data infrastructure that turn environmental research into reliable, user-friendly software. As lead developer of ReLab I own the platform end to end, build dashboards and interactive visualizations that carry research to non-specialist audiences, and work FAIR and in the open throughout.
@@ -92,3 +93,4 @@ interests:
   - Climbing
   - Hiking
   - Cooking
+exported: "2026-08-18T16:39:24Z"
