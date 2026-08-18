@@ -15,7 +15,7 @@ const bg = "#f8f7f3"; // --bg        oklch(97.5% 0.005 95)
 const ink = "#181d24"; // --text      oklch(23% 0.015 255)
 const muted = "#49515b"; // --text-muted oklch(43% 0.02 255)
 const accent = "#234993"; // --accent  oklch(42% 0.13 262)
-const stamp = "#9e2c2c"; // --stamp   oklch(47% 0.15 25)
+const stamp = "#15632f"; // --stamp   oklch(44% 0.11 150)
 const frame = "#2c333d"; // --border-strong oklch(32% 0.02 255)
 
 const draft = "'osifont', 'DIN Alternate', 'Bahnschrift', 'Segoe UI', Roboto, Helvetica, sans-serif";

@@ -39,10 +39,10 @@ for (const width of [320, 390, 900, 1200]) {
   });
 }
 
-test("hero profile links point at the right destinations", async ({ page }) => {
-  const banner = page.getByRole("banner");
+test("the title block's contact links point at the right destinations", async ({ page }) => {
+  const footer = page.getByRole("contentinfo");
   // GitHub and LinkedIn come from the export; ORCID and the Leiden page have
-  // no export field yet and are kept by hand on the page and here.
+  // no export field yet and are kept by hand in the title block and here.
   const expected: Record<string, string> = {
     GitHub: cv.basics.links.github,
     LinkedIn: cv.basics.links.linkedin,
@@ -50,8 +50,7 @@ test("hero profile links point at the right destinations", async ({ page }) => {
     "Leiden profile": "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
   };
   for (const [name, href] of Object.entries(expected)) {
-    // exact: the figure's part links also mention GitHub in their names
-    await expect(banner.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
+    await expect(footer.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
   }
 });
 

@@ -59,7 +59,7 @@
   --dur-slow: 250ms;
   --dur-explode: 700ms; /* the exploded view settling apart */
 
-  /* Palette. Two grounds, one working ink, engineer's blue, checker's red.
+  /* Palette. Two grounds, one working ink, engineer's blue, checker's green.
      Light: warm drafting paper, near-black blue ink, Prussian-blue accents.
      Dark: the same sheet printed as a cyanotype, ground and line swap roles.
      Every text pair clears 4.5:1 on its ground; verified at build time. */
@@ -78,8 +78,10 @@
   --accent-strong: light-dark(oklch(34% 0.11 262), oklch(94% 0.035 225));
   --accent-contrast: light-dark(oklch(98% 0.003 95), oklch(25% 0.05 262));
 
-  /* Checker's red: the one stamp. Exactly one primary action per sheet. */
-  --stamp: light-dark(oklch(47% 0.15 25), oklch(82% 0.1 25));
+  /* Checker's green: the one approval stamp, exactly one primary action per
+     sheet. Green, not red: red on a drawing marks a correction, and on a
+     screen it reads as an error. */
+  --stamp: light-dark(oklch(44% 0.11 150), oklch(82% 0.1 150));
   --stamp-contrast: light-dark(oklch(98.5% 0.003 95), oklch(23% 0.05 262));
 
   --focus: var(--accent);
@@ -96,7 +98,7 @@
   :root {
     --accent: light-dark(oklch(42% 0.155 262), oklch(88% 0.066 225));
     --accent-strong: light-dark(oklch(34% 0.132 262), oklch(94% 0.042 225));
-    --stamp: light-dark(oklch(47% 0.18 25), oklch(82% 0.12 25));
+    --stamp: light-dark(oklch(44% 0.13 150), oklch(82% 0.12 150));
     --chart-bar: light-dark(oklch(42% 0.155 262), oklch(80% 0.084 225));
     --chart-bar-strong: light-dark(oklch(34% 0.132 262), oklch(88% 0.066 225));
   }
@@ -128,17 +130,14 @@ html {
   -webkit-text-size-adjust: 100%;
   /* The scrollbar is a rule on the sheet's edge, in the sheet's ink. */
   scrollbar-color: var(--border) transparent;
-}
-
-/* Cross-document transitions: / and /cv/ are two sheets of one drawing set;
-   the person's name morphs between them. Browsers without it just navigate. */
-@view-transition {
-  navigation: auto;
+  /* In-page jumps (the CV's zone index, a caption pointing at its row) travel
+     rather than cut, so the reader keeps their place on the sheet. */
+  scroll-behavior: smooth;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  @view-transition {
-    navigation: none;
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -155,11 +154,10 @@ body {
   padding: calc(var(--frame-inset) + var(--frame-line));
 }
 
-/* The sheet frame: a trim border around the whole document, with centring
-   ticks at the sheet's midpoints, like the frame every drawing is plotted
-   inside. Drawn on the document, not the viewport: the page is one tall
-   sheet, and a viewport-fixed line would cross moving text like a strike.
-   Screen-only: print gets the plain document. */
+/* The sheet frame: a trim border around the whole document, like the frame
+   every drawing is plotted inside. Drawn on the document, not the viewport:
+   the page is one tall sheet, and a viewport-fixed line would cross moving
+   text like a strike. Screen-only: print gets the plain document. */
 @media screen {
   body::before {
     content: "";
@@ -168,26 +166,6 @@ body {
     border: var(--frame-line) solid var(--border-strong);
     pointer-events: none;
     z-index: 90;
-  }
-
-  /* Centring ticks: four small marks at the sheet's edge midpoints, drawn
-     inward from the frame line. Anything drawn outside the body would become
-     scrollable overflow on the right and bottom edges. */
-  body::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 90;
-    background:
-      linear-gradient(var(--border-strong), var(--border-strong)) top center / var(--frame-line)
-      calc(var(--frame-inset) + 6px) no-repeat,
-      linear-gradient(var(--border-strong), var(--border-strong)) bottom center / var(--frame-line)
-      calc(var(--frame-inset) + 6px) no-repeat,
-      linear-gradient(var(--border-strong), var(--border-strong)) left center / calc(var(--frame-inset) + 6px)
-      var(--frame-line) no-repeat,
-      linear-gradient(var(--border-strong), var(--border-strong)) right center / calc(var(--frame-inset) + 6px)
-      var(--frame-line) no-repeat;
   }
 }
 
@@ -250,6 +228,36 @@ h3 {
 
 p {
   text-wrap: pretty;
+}
+
+/* The line under a sheet's name: the thesis on Sheet 1, the headline on
+   Sheet 2. Same voice on both, so the two headers read as one set. */
+.lead {
+  max-width: 30rem;
+  margin-top: var(--space-m);
+  font-family: var(--font-draft);
+  font-size: var(--step-2);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+/* The muted sentence under the lead: the tagline on Sheet 1, the rest of the
+   headline on Sheet 2. */
+.tagline {
+  margin-top: var(--space-m);
+  font-size: var(--step-0);
+  color: var(--text-muted);
+}
+
+/* Figure captions: one style for every figure on the set, under the figure,
+   "Fig. N:" first. */
+figcaption {
+  margin-top: var(--space-s);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  max-width: var(--measure);
 }
 
 a {
@@ -404,6 +412,7 @@ main > section {
 }
 
 #main,
+#relab,
 main > section,
 main > section > h2,
 main > section > .container > h2 {
@@ -508,7 +517,7 @@ main > section.container > h2 {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-s) var(--space-m);
+  padding: var(--space-m) var(--space-l);
   border: 2px solid var(--stamp);
   color: var(--stamp);
   background: transparent;
@@ -764,57 +773,51 @@ main > section.container > h2 {
 }
 
 /* ---------------------------------------------------------------------------
-   Title block (ISO 7200): the document's own footer, on every sheet.
-   Real provenance only: version, export dates, sheet index.
+   Title block (ISO 7200): the document's own footer, on every sheet, the full
+   width of the container. Real provenance (title, document, sheet, date,
+   site version) and, once per sheet, how to reach the author.
    --------------------------------------------------------------------------- */
 
 .title-block {
   margin-top: var(--space-xl);
-  /* Clears the sheet's bottom centring tick, which reaches --frame-inset +
-     6px in from the trim line. */
   margin-bottom: var(--space-s);
   border: var(--border-width) solid var(--border-strong);
   font-family: var(--font-draft);
   font-size: var(--step--1);
   letter-spacing: 0.05em;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Hairlines between cells: the grid's gap shows the border colour through. */
+  gap: var(--border-width);
+  background: var(--border);
 }
 
 .title-block__cell {
   padding: var(--space-xs) var(--space-s);
   min-width: 0;
+  background: var(--bg);
 }
 
-/* Rules: a hairline above every row but the first, and between the cells
-   of the bottom row. */
-.title-block__cell + .title-block__cell {
-  border-top: var(--border-width) solid var(--border);
+/* Contact spans the row but the last cell. */
+.title-block__cell--contact {
+  grid-column: 1 / -2;
 }
 
-.title-block__cell--wide {
-  grid-column: 1 / -1;
-}
-
-.title-block__cell:not(.title-block__cell--wide) + .title-block__cell:not(.title-block__cell--wide) {
-  border-left: var(--border-width) solid var(--border);
-}
-
-/* Narrow sheets: two columns, the last cell on its own row. */
+/* Narrow sheets: two columns; the wide cells take a row each. */
 @media (max-width: 39.99rem) {
   .title-block {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .title-block__cell--contact,
   .title-block__cell:last-child {
     grid-column: 1 / -1;
-    border-left: 0;
   }
 }
 
 .title-block__label {
   display: block;
-  font-size: 0.72em;
+  font-size: 0.8em; /* stays above the 10px floor at every step */
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -842,9 +845,16 @@ main > section.container > h2 {
   text-decoration: underline;
 }
 
-@media (min-width: 48rem) {
-  .title-block {
-    margin-left: auto;
-    max-width: 44rem;
-  }
+/* The contact cell: one row of links, the address in the accent so it reads
+   as the way in; the profiles in ink like the other cell values. */
+.title-block__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-m);
+  list-style: none;
+  text-transform: none;
+}
+
+.title-block__contact a[href^="mailto:"] {
+  color: var(--accent);
 }

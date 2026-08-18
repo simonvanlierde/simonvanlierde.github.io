@@ -3,7 +3,7 @@ import "./DisassemblyChart.css";
 import fallback from "../data/stats.json" with { type: "json" };
 import { barPath, buildScale } from "./chartScale";
 
-// Pre-aggregated figures from the RELab /stats endpoint, baked in at build time
+// Pre-aggregated figures from the ReLab /stats endpoint, baked in at build time
 // (see scripts/fetch-stats.mjs). Shape mirrors that endpoint's response.
 type SeriesRow = {
   period: string;
@@ -83,9 +83,12 @@ const INNER_H = H - PAD.top - PAD.bottom;
 export default function DisassemblyChart({
   stats = fallback as StatsPayload,
   isSample = false,
+  caption,
 }: {
   stats?: StatsPayload;
   isSample?: boolean;
+  /** Figure caption, set under the plot in the set's caption style. */
+  caption?: string;
 }) {
   const [measureKey, setMeasureKey] = useState<MeasureKey>("teardowns");
   const [active, setActive] = useState<number | null>(null);
@@ -122,14 +125,14 @@ export default function DisassemblyChart({
   const tick = measure.tick ?? measure.format;
 
   const summary =
-    `Chart of ${measure.label.toLowerCase()} in the Reverse Engineering Lab (${measure.noun}): ` +
+    `Chart of ${measure.label.toLowerCase()} in ReLab (${measure.noun}): ` +
     `${measure.format(total)} across ${series.length} ${periodNoun}s, from ${series[0]?.label} to ` +
     `${series[series.length - 1]?.label}. Full figures are in the table below.` +
     (isSample ? " Sample data." : "");
 
   return (
     <figure className="chart">
-      {/* No running-total tiles here: the RELab row's general notes carry
+      {/* No running-total tiles here: the ReLab row's general notes carry
           them, from the same payload. The chart answers "when". */}
       <div className="chart__toolbar">
         <fieldset className="chart__controls">
@@ -275,6 +278,8 @@ export default function DisassemblyChart({
           ))}
         </tbody>
       </table>
+
+      {caption && <figcaption>{caption}</figcaption>}
     </figure>
   );
 }

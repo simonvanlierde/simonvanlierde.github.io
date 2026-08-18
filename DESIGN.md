@@ -11,7 +11,7 @@ colors:
   engineers-blue: "light-dark(oklch(42% 0.13 262), oklch(88% 0.055 225))"
   engineers-blue-deep: "light-dark(oklch(34% 0.11 262), oklch(94% 0.035 225))"
   on-accent: "light-dark(oklch(98% 0.003 95), oklch(25% 0.05 262))"
-  checkers-red: "light-dark(oklch(47% 0.15 25), oklch(82% 0.1 25))"
+  checkers-green: "light-dark(oklch(44% 0.11 150), oklch(82% 0.1 150))"
   on-stamp: "light-dark(oklch(98.5% 0.003 95), oklch(23% 0.05 262))"
   chart-bar: "light-dark(oklch(42% 0.13 262), oklch(80% 0.07 225))"
   chart-bar-strong: "light-dark(oklch(34% 0.11 262), oklch(88% 0.055 225))"
@@ -58,12 +58,12 @@ spacing:
   xl: "3.5rem"
 components:
   stamp:
-    textColor: "{colors.checkers-red}"
+    textColor: "{colors.checkers-green}"
     typography: "{typography.label}"
     rounded: "{rounded.none}"
     padding: "0.75rem 1.25rem"
   stamp-hover:
-    backgroundColor: "{colors.checkers-red}"
+    backgroundColor: "{colors.checkers-green}"
     textColor: "{colors.on-stamp}"
   balloon:
     backgroundColor: "{colors.drafting-paper}"
@@ -93,7 +93,7 @@ components:
 The site is one engineering drawing set. Taking products apart is what the
 author does, so the page is drawn the way a product is drawn: an exploded view
 with balloons and a register, lettered general notes, a parts list, an ISO 7200
-title block, a trim frame with centring ticks around every sheet. The refused
+title block, a trim frame around every sheet. The refused
 alternative is the minimal developer-portfolio text column: this site is a
 measured drawing of the work, not an essay about it.
 
@@ -104,26 +104,25 @@ Display, labels, and every number are set in osifont, the ISO 3098 technical
 lettering face (vendored, latin-subset, ~10KB); long prose stays on the system
 sans so text reads as text, not as a costume. Colour is never the sole signal.
 
-Every figure is real and dated: the hero's general notes carry the Reverse
-Engineering Lab's actual running counts from the stats export, the title
-block carries the real package version and export dates. The exploded view
-is RELab itself taken apart, its six real parts, labelled schematic; it
-carries no statistics: a drawing shows parts and names, the numbers live in
-the notes. Nothing decorative, nothing invented.
+Every figure is real and dated: the ReLab row's general notes carry the platform's actual running
+counts from the stats export, the title block carries the real package version and export dates. The
+exploded view is ReLab itself taken apart, its six real parts, labelled schematic; it carries no
+statistics: a drawing shows parts and names, the numbers live in the notes. Nothing decorative,
+nothing invented.
 
 **Key Characteristics:**
 
 - Ink-on-paper light theme, cyanotype-blueprint dark theme; one `light-dark()` pair per token
 - osifont ISO 3098 drafting lettering for display, labels, and all data figures
 - Hairline rules and zero radii everywhere; the only circle is the figure's item balloon
-- Exactly one checker's-red stamp (primary action) per sheet
-- A drawn sheet frame with centring ticks around the whole document
+- Exactly one checker's-green stamp (primary action) per sheet
+- A drawn sheet frame around the whole document
 - Motion is drafting behaviour only: the exploded view settles apart once on load
 
 ### Colors
 
 Two grounds, one working ink, engineer's blue for the working accents, and
-checker's red for the single stamp; every pair is one `light-dark()` OKLCH
+checker's green for the single stamp; every pair is one `light-dark()` OKLCH
 token, and every text pair clears 4.5:1 on its ground (verified at build
 time). The frontmatter values are the normative source, mirrored from
 `src/styles/global.css`.
@@ -138,10 +137,11 @@ time). The frontmatter values are the normative source, mirrored from
 
 #### Secondary
 
-- **Checker's Red** (`--stamp`): the approval-stamp colour, reserved for the
-  one primary action per sheet: the CV on Sheet 1 (a hiring reader wants to
-  read before writing; the address is a plain link beside it), the PDF
-  download on Sheet 2.
+- **Checker's Green** (`--stamp`): the approval-stamp colour, reserved for
+  the one primary action per sheet: the CV on Sheet 1 (a hiring reader wants
+  to read before writing; the address is a plain link beside it), the PDF
+  download on Sheet 2. Green, not red: red on a drawing marks a correction
+  and on a screen reads as an error; green is the checker's approval.
   Outlined at rest, filled on hover with `--stamp-contrast` text.
 
 #### Neutral
@@ -160,13 +160,14 @@ time). The frontmatter values are the normative source, mirrored from
 
 #### Named Rules
 
-**The One Stamp Rule.** Exactly one checker's-red stamp per sheet. Red exists
-on a drawing to mark the checker's approval; a second red element on the same
-sheet demotes both. Every other action is an engineer's-blue link.
+**The One Stamp Rule.** Exactly one checker's-green stamp per sheet. The
+stamp marks the checker's approval, the one thing to do next; a second stamp
+on the same sheet demotes both. Every other action is an engineer's-blue
+link.
 
-**The Kept Names Rule.** The CSS custom property names (`--bg`, `--text`,
-`--accent`, `--chart-bar`, ...) are the previous design system's names, kept
-so every consumer, the React chart island included, rethemes without edits. New surfaces consume tokens by these names; never fork a
+**The Kept Names Rule.** The CSS custom property names (`--bg`, `--text`, `--accent`,
+`--chart-bar`, ...) are the previous design system's names, kept so every consumer, the React chart
+island included, rethemes without edits. New surfaces consume tokens by these names; never fork a
 parallel palette.
 
 **The Uniform Chroma Rule.** Wide-gamut displays (`@media (color-gamut: p3)`)
@@ -189,6 +190,12 @@ lettered where it is a drawing, typeset where it is reading matter.
 
 - **Display / h1** (400, `--step-3` = clamp(2.1–3.4rem), 1.12): the sheet's
   one title, uppercase, 0.02em tracking.
+- **Lead** (`.lead`: 400, `--step-2`, 1.3, 0.01em, full ink, max 30rem,
+  balanced): the line under the sheet's name, the same on both sheets: the
+  thesis on Sheet 1, the first part of the headline on Sheet 2.
+- **Tagline** (`.tagline`: `--step-0`, `--text-muted`, prose measure): the
+  sentence under the lead: the positioning on Sheet 1, the rest of the
+  headline on Sheet 2.
 - **Headline / h2** (400, `--step-1` = clamp(1.2–1.45rem), 1.12): zone
   labels, smaller than the content they label, tracked caps (0.14em) over a
   2px `--border-strong` rule. A label, not a statement.
@@ -207,17 +214,17 @@ periods, chart numerals) are always set in osifont with
 selectors). A number in the body face is prose; a number in the drafting hand
 is data.
 
-**The Measured Line Rule.** `--measure` is 38rem, in rem, not `72ch`: `ch` measures the zero glyph and lands near 91 real characters in a
-system sans; 38rem lands near 70. Cap prose in rem.
+**The Measured Line Rule.** `--measure` is 38rem, in rem, not `72ch`: `ch` measures the zero glyph
+and lands near 91 real characters in a system sans; 38rem lands near 70. Cap prose in rem.
 
 ### Layout
 
 The page is one tall sheet. The body carries `padding: calc(--frame-inset +
---frame-line)` and two pseudo-elements draw the trim frame: a 1.5px
-`--border-strong` border on `body::before` (absolute on the **document**, not
-viewport-fixed: a fixed line would strike through scrolling text) plus four
-centring ticks at the edge midpoints on `body::after`. Screen only; print
-gets the plain document. `--frame-inset` is clamp(8px, 1.2vw, 16px).
+--frame-line)` and `body::before` draws the trim frame: a 1.5px
+`--border-strong` border, absolute on the **document**, not viewport-fixed
+(a fixed line would strike through scrolling text). No centring ticks: they
+read as stray marks at the viewport edges. Screen only; print gets the plain
+document. `--frame-inset` is clamp(8px, 1.2vw, 16px).
 
 Inside the frame: `.container` is `min(100% - 2 * --space-m, 54rem)`,
 centred: an 11rem rail, a 2rem gutter and a 38rem measure with 3rem to
@@ -231,18 +238,21 @@ capped at `--measure` (38rem).
 The spacing scale is six steps: 0.25 / 0.5 / 0.75 / 1.25 / 2 / 3.5rem
 (2xs–xl). Two-column data rows (work rows, CV entries) share the same grid:
 an 11rem left rail (kind, or period) and a fluid body, collapsing
-to one column below 40rem. The title block is two wide cells over a row of
-three (two columns below 40rem, the last cell on its own row). The exploded
-figure caps at 20rem, plate size beside the notes, and needs no container query: its
-only lettering is the left part-name register, legible at every width. (If a
-container query is ever added, remember it can style only the container's
-descendants, never the container itself.) The general-notes block sits in
-the hero text column after the profile links, framed as one project's
-figures (a lead line names RELab as one of the projects below), so the proof
-is in the first viewport on every width.
+to one column below 40rem. The title block is the full container width:
+four cells (title, document, sheet, dated) over a contact cell spanning three
+and the site revision (two columns below 40rem, the wide cells taking a row
+each). The exploded figure caps at 20rem, plate size beside the hero text,
+and needs no container query: its only lettering is the left part-name
+register, legible at every width. (If a container query is ever added,
+remember it can style only the container's descendants, never the container
+itself.) The general notes sit in the ReLab row of the parts list, under its
+links, so everything about the platform is read in one place; the hero
+carries the person, the one stamp, and the figure.
 
-The two pages are two sheets of one set: `@view-transition { navigation:
-auto }` morphs the person's name between / and /cv/, disabled under reduced
+The two pages are two sheets of one set, and navigating between them is a
+plain page load: no cross-document view transition (a morphing name on every
+switch was a distraction, not continuity). In-page jumps (the zone index,
+Fig. 1's caption to the ReLab row) scroll smoothly, `auto` under reduced
 motion.
 
 ### Elevation & Depth
@@ -279,7 +289,7 @@ Two notation marks are the deliberate exceptions and carry meaning:
 
 #### Stamp (primary action)
 
-- **Character:** the checker's approval stamp: outlined, uppercase, red.
+- **Character:** the checker's approval stamp: outlined, uppercase, green.
 - **Shape:** sharp rectangle (0px), 2px solid `--stamp` border.
 - **Rest:** transparent ground, `--stamp` text, osifont, 0.08em tracking,
   uppercase, `--space-s --space-m` padding.
@@ -325,16 +335,22 @@ Two notation marks are the deliberate exceptions and carry meaning:
 
 #### Title Block (footer)
 
-- ISO 7200: a `--border-strong` bordered grid (two wide cells over three;
-  right-aligned at max 44rem from 48rem), hairline internal rules. Each
-  cell is a tiny uppercase `--text-muted` label over an uppercase value.
-  Carries real provenance only: title, document type, sheet index ("1 OF
-  2"), dated/drawn-by, and "Site rev", the package version linking the
-  repo. No scale cell: nothing on a web page is drawn to scale.
+- ISO 7200: a `--border-strong` bordered grid the full width of the
+  container (four cells over contact + site rev), hairline internal rules
+  drawn by a 1px `--border` grid gap. Each cell is a tiny uppercase
+  `--text-muted` label over an uppercase value. Carries real provenance:
+  title, document type, sheet index ("1 OF 2"), dated/drawn-by, and "Site
+  rev", the package version linking the repo. No scale cell: nothing on a
+  web page is drawn to scale.
+- **Contact cell:** the one place the profile links live, on both sheets:
+  the address (in `--accent`, the way in), GitHub, LinkedIn, ORCID, Leiden
+  profile, as text in the drafting hand, sentence case. Each sheet's header
+  repeats only the address beside its stamp (the first-viewport action);
+  nothing else about contact is said twice.
 
 #### Exploded View (signature figure)
 
-- Authored SVG linework of RELab, the lab's own platform, taken apart on a
+- Authored SVG linework of ReLab, the lab's own platform, taken apart on a
   dash-dot centreline, capture end at the top: camera rig (RPi board and
   module), capture app (phone), web app (browser window), API (rack unit),
   database (cylinder), docs (bound sheet), all in flat front elevation;
@@ -342,7 +358,7 @@ Two notation marks are the deliberate exceptions and carry meaning:
   carries a balloon (①–⑥, `--border-strong` circle, `--bg` fill) on a
   short leader; the left register keys the numbers to part names, so the
   figure has the drawing half of the balloon convention. Every part is one
-  the CV export and the RELab row already state. No statistics and no
+  the CV export and the ReLab row already state. No statistics and no
   dimension on the drawing; caption says "schematic".
 - **Motion:** on load the parts settle apart from the assembled stack: one
   `translate` transition per part group over `--dur-explode` (700ms)
@@ -351,20 +367,28 @@ Two notation marks are the deliberate exceptions and carry meaning:
   exploded from the start, in the same stylesheet.
 - **Links:** each part and its register label are one SVG `<a>` to the
   real thing (plugin repo, live app, docs, source), named "Part: destination"
-  for assistive tech. Hover or focus lights part and label in `--accent`;
-  the part's fill is `transparent`, so the whole silhouette is the target,
-  and the ring is the ink change, not a box. Balloons and labels travel
+  for assistive tech, opening in the same tab like every other link on the
+  set. The register's last column is a drawn arrow out in the link colour
+  (`--accent`, 1.4 stroke) so each row reads as a link off the sheet before
+  hover; the caption says so too. Hover or focus lights part and label in
+  `--accent` and the arrow in `--accent-strong` (nudging 1px out; not under
+  reduced motion); the
+  part's fill is `transparent`, so the whole silhouette is the target, and
+  the ring is the ink change, not a box. Balloons, labels and arrows travel
   with their parts during the settle.
+- **Caption:** "Fig. 1: ReLab, drawn exploded. Schematic; each part opens
+  its code, app, or docs.", the name linking the ReLab row. Every figure on
+  the set captions the same way: one global `figcaption` style, under the
+  figure, "Fig. N:" first (Fig. 2 is the chart's caption prop).
 
-#### General Notes (hero)
+#### General Notes (ReLab row)
 
-- The sheet's boxed notes, in the hero text column (max 36rem): an
-  uppercase "Notes · RELab, running totals" h2 in the drafting hand on a
-  `--border-strong` rule, a lead line naming RELab as one of the projects
-  below and pointing at Fig. 1, then a 2×2 grid of datum-lettered entries
-  (A–D), value at `--step-3` in the drafting hand, uppercase label at
-  `--step--1`, and a sentence-case footer line "All quantities as counted
-  <month year> · CML RELab", the lab name linking the live platform.
+- The sheet's boxed notes, in the ReLab row after its links (max
+  `--measure`): an uppercase "Notes · running totals" h4 in the drafting
+  hand on a `--border-strong` rule, then a 2×2 grid of datum-lettered
+  entries (A–D), value at `--step-3` in the drafting hand, uppercase label
+  at `--step--1`, and a footer line "As counted <month year>." The row's
+  title and links already name and link the platform, so the notes do not.
 - Values come from `stats.json` (`totals`, `as_of`); while the export is
   still flagged `sample` they fall back to the last hand-counted, dated
   totals kept in `index.astro`, so the notes always show real figures and
@@ -379,7 +403,9 @@ Two notation marks are the deliberate exceptions and carry meaning:
   would make real contrast unknowable), `--text-muted` 2px zero line,
   hairline grid, osifont tabular numerals. Segmented toggle: joined
   44px-tall segments in a hairline fieldset; selected segment fills
-  `--accent`. Load reveal: bars grow from the baseline, 30ms stagger,
+  `--accent`; on a narrow plot the strip scrolls sideways as one control
+  (thin scrollbar) rather than wrapping into two rows. Load reveal: bars
+  grow from the baseline, 30ms stagger,
   finished inside ~730ms; measure switches ease `d` over `--dur-base`;
   reduced motion gets final states instantly.
 
@@ -413,7 +439,7 @@ as sample or not at all; no invented placeholder ever ships as a figure.
 
 #### Don't
 
-- **Don't** add a second red element to a sheet; one stamp, everything else
+- **Don't** add a second stamp to a sheet; one stamp, everything else
   engineer's blue.
 - **Don't** round a corner (`--radius` is 0px): the only circle is the
   figure's item balloon, and circled numerals mean a figure item only;

@@ -13,16 +13,19 @@
 }
 
 /* Controls: the measure switcher, wrapping on narrow screens */
+/* On a phone the five segments overrun the plot's width; the strip scrolls
+   sideways as one control rather than wrapping into two broken rows. */
 .chart__toolbar {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-s);
   margin: 0 0 var(--space-m);
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .chart__controls {
   display: inline-flex;
-  flex-wrap: wrap;
+  flex: none;
   gap: 0;
   padding: 0;
   margin: 0;
@@ -35,9 +38,10 @@
 .chart__toggle {
   display: inline-flex;
   align-items: center;
-  /* Full 44px target: the segments wrap across two rows on a phone, and a
-     mis-tap changes the measure under you without saying so. */
+  /* Full 44px target: a mis-tap changes the measure under you without
+     saying so. */
   min-height: 44px;
+  white-space: nowrap;
   font-family: var(--font-mono);
   font-size: var(--step--1);
   letter-spacing: 0.04em;

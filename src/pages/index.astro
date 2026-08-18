@@ -19,7 +19,7 @@ const { basics, exported } = cv;
 const { sample: statsAreSample = false, ...statsData } = stats as typeof stats & { sample?: boolean };
 const showChart = !statsAreSample || import.meta.env.DEV;
 
-// General notes: RELab's running counts. Live figures share the chart's
+// General notes: ReLab's running counts. Live figures share the chart's
 // payload; while it is sample, the last hand-counted, dated totals stand in.
 // NOTE: update `fallback` when a newer count is known.
 const fallback = { as_of: "2026-08-01", products: 78, parts: 1331, images: 3610 };
@@ -45,22 +45,15 @@ const personalProjects = allProjects.filter((p) => p.data.category === "personal
 
 const name = basics.name;
 
-// The thesis line is the career-wide claim, not the current project.
-const question = "Open software and open data for sustainability research.";
+// The lead is who, the same words the CV's headline leads with; the tagline
+// is what and where.
+const lead = "PhD researcher and research software engineer";
 
 const tagline =
-  "PhD researcher and research software engineer at CML, Leiden University. I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
+  "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
 
-// One stamp per sheet: the CV. The address is a plain link beside it.
-const profiles = [
-  { label: "GitHub", href: basics.links.github },
-  { label: "LinkedIn", href: basics.links.linkedin },
-  { label: "ORCID", href: "https://orcid.org/0009-0006-6953-909X" },
-  {
-    label: "Leiden profile",
-    href: "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
-  },
-];
+// One stamp per sheet: the CV. The address is a plain link beside it; the
+// profile links live once, in the title block, on both sheets.
 ---
 
 <Base
@@ -76,8 +69,8 @@ const profiles = [
     <div class="hero__grid">
       <div class="hero__intro">
         <h1>{name}</h1>
-        <p class="hero__question">{question}</p>
-        <p class="hero__tagline prose">{tagline}</p>
+        <p class="lead">{lead}</p>
+        <p class="tagline prose">{tagline}</p>
 
         <div class="hero__actions">
           <a class="stamp" href="/cv/">
@@ -91,41 +84,6 @@ const profiles = [
             )
           }
         </div>
-
-        <ul class="link-list hero__profiles" aria-label="Profiles">
-          {
-            profiles.map((l) => (
-              <li>
-                <a href={l.href}>{l.label}</a>
-              </li>
-            ))
-          }
-        </ul>
-
-        <section class="notes" aria-labelledby="notes-heading">
-          <h2 id="notes-heading" class="notes__heading">
-            Notes<span class="notes__heading-aside"> · RELab, running totals</span>
-          </h2>
-          <p class="notes__lead draft">
-            One of the projects below; Fig. 1 draws its parts.
-          </p>
-          <ol class="notes__list">
-            {
-              notes.map((n) => (
-                <li>
-                  <span class="datum" aria-hidden="true">
-                    {n.ref}
-                  </span>
-                  <span class="notes__value draft">{n.value}</span>
-                  <span class="notes__label">{n.label}</span>
-                </li>
-              ))
-            }
-          </ol>
-          <p class="notes__foot draft">
-            All quantities as counted {asOfLabel} ·&nbsp;<a href="https://app.cml-relab.org">CML&nbsp;RELab</a>
-          </p>
-        </section>
       </div>
 
       <div class="hero__figure">
@@ -138,18 +96,18 @@ const profiles = [
     <section class="container" aria-labelledby="work-heading">
       <h2 id="work-heading">Selected work</h2>
       <div class="bom">
-        {/* RELab first: the platform, with the chart when data is live */}
-        <article class="bom-row relab-row">
+        {/* ReLab first: the platform, with the chart when data is live */}
+        <article class="bom-row relab-row" id="relab">
           <p class="bom-row__pos">Research platform</p>
           <div class="bom-row__body">
             <h3 class="bom-row__title relab-row__title">
-              <a href="https://github.com/CMLPlatform/relab">Reverse Engineering Lab (RELab)</a>
+              <a href="https://github.com/CMLPlatform/relab">ReLab</a>
             </h3>
             <div class="relab-row__intro prose">
               <p>
                 Research infrastructure I designed and built: a FastAPI backend,
                 a PostgreSQL data model for life-cycle assessment, and an Expo /
-                React Native frontend. RELab collects disassembly data on
+                React Native frontend. ReLab collects disassembly data on
                 durable goods to close a long-standing product-data gap in
                 industrial ecology.
               </p>
@@ -160,17 +118,40 @@ const profiles = [
               <li><a href="https://docs.cml-relab.org">Documentation</a></li>
               <li>
                 <a href="https://github.com/CMLPlatform/relab-rpi-cam-plugin">
-                  RPI camera plugin
+                  RPi camera plugin
                 </a>
               </li>
             </ul>
 
+            <section class="notes" aria-labelledby="notes-heading">
+              <h4 id="notes-heading" class="notes__heading">
+                Notes<span class="notes__heading-aside"> · running totals</span>
+              </h4>
+              <ol class="notes__list">
+                {
+                  notes.map((n) => (
+                    <li>
+                      <span class="datum" aria-hidden="true">
+                        {n.ref}
+                      </span>
+                      <span class="notes__value draft">{n.value}</span>
+                      <span class="notes__label">{n.label}</span>
+                    </li>
+                  ))
+                }
+              </ol>
+              <p class="notes__foot draft">As counted {asOfLabel}.</p>
+            </section>
+
             {
               showChart && (
                 <div class="relab__chart">
-                  <h4 class="draft">Fig. 2: Disassembly over time</h4>
-                  <p class="viz__caption">Activity in RELab by month.</p>
-                  <DisassemblyChart stats={statsData} isSample={statsAreSample} client:visible />
+                  <DisassemblyChart
+                    stats={statsData}
+                    isSample={statsAreSample}
+                    caption="Fig. 2: ReLab activity by month."
+                    client:visible
+                  />
                 </div>
               )
             }
@@ -218,18 +199,6 @@ const profiles = [
       </details>
     </section>
 
-    <section class="container closing" aria-labelledby="contact-heading">
-      <h2 id="contact-heading">Contact</h2>
-      <div class="closing__body">
-        <p class="prose">Collaboration, roles, or questions about RELab and the tooling behind it:</p>
-        {
-          <p class="closing__row draft">
-            {basics.email && <a href={`mailto:${basics.email}`}>{basics.email}</a>}
-            <a href="/cv/">Sheet 2: CV</a>
-          </p>
-        }
-      </div>
-    </section>
   </main>
   </div>
 
@@ -248,44 +217,22 @@ const profiles = [
 
   .hero__grid {
     display: grid;
-    gap: var(--space-xl) var(--space-l);
+    gap: var(--space-l);
     align-items: start;
   }
 
   @media (min-width: 60rem) {
+    /* The text block sits opposite the plate's middle, so the stamp is not
+       left over a band of empty paper while the drawing runs to the fold. */
     .hero__grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+      align-items: center;
     }
 
-    /* The plate sits beside the text and notes. */
     .hero__figure {
       justify-self: end;
       width: 100%;
     }
-  }
-
-  .hero h1 {
-    /* Shared with the CV page's h1, so the name morphs between the two sheets
-       rather than cross-fading with the rest of the document. */
-    view-transition-name: person-name;
-  }
-
-  /* The question is the page's thesis: full ink, one step below the name. */
-  .hero__question {
-    max-width: 30rem;
-    margin-top: var(--space-m);
-    font-family: var(--font-draft);
-    font-size: var(--step-2);
-    line-height: 1.3;
-    letter-spacing: 0.01em;
-    text-wrap: balance;
-    color: var(--text);
-  }
-
-  .hero__tagline {
-    margin-top: var(--space-m);
-    font-size: var(--step-0);
-    color: var(--text-muted);
   }
 
   .hero__actions {
@@ -308,23 +255,13 @@ const profiles = [
     color: var(--accent-strong);
   }
 
-  .hero__profiles {
-    margin-top: var(--space-m);
-    font-size: var(--step--1);
-  }
-
-  /* General notes: one project's running counts, in the first viewport. */
+  /* General notes: the platform's running counts, a boxed note block in its
+     row, so the row reads text, notes, figure. */
   .notes {
     margin-top: var(--space-l);
-    max-width: 36rem;
-  }
-
-  .notes__lead {
-    margin-top: var(--space-xs);
-    font-size: var(--step--1);
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    max-width: 30rem;
+    max-width: var(--measure);
+    padding: var(--space-s) var(--space-m) var(--space-m);
+    border: var(--border-width) solid var(--border-strong);
   }
 
   .notes__heading {
@@ -380,11 +317,6 @@ const profiles = [
     color: var(--text-muted);
   }
 
-  .notes__foot a {
-    padding-block: 0.65rem;
-    margin-block: -0.65rem;
-  }
-
   /* Lead row: the platform's title outranks the repo slugs below it. */
   .relab-row__title {
     font-size: var(--step-2);
@@ -400,19 +332,7 @@ const profiles = [
     container: chart / inline-size;
     width: 100%;
     max-width: 30rem;
-  }
-
-  .relab__chart h4 {
-    font-size: var(--step-0);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .viz__caption {
-    margin-top: var(--space-xs);
-    margin-bottom: var(--space-l);
-    color: var(--text-muted);
-    max-width: var(--measure);
+    margin-top: var(--space-l);
   }
 
   .upstream-note {
@@ -488,23 +408,5 @@ const profiles = [
     .disclosure summary::before {
       transition: none;
     }
-  }
-
-  .closing__body {
-    margin-top: var(--space-l);
-  }
-
-  .closing__row {
-    margin-top: var(--space-m);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-m);
-  }
-
-  .closing__row a {
-    padding-block: 0.65rem;
-    margin-block: -0.65rem;
-    overflow-wrap: anywhere;
   }
 </style>

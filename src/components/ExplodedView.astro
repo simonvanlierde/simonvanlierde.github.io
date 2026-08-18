@@ -1,5 +1,5 @@
 ---
-// The sheet's figure: RELab, the lab's own platform, drawn taken apart, the
+// The sheet's figure: ReLab, the lab's own platform, drawn taken apart, the
 // way the lab takes products apart. Six parts on a dash-dot axis, capture end
 // at the top, foundation at the bottom, in flat front elevation. Each part
 // carries a balloon keyed to the left register, and each part is a link to
@@ -14,11 +14,11 @@ const parts = [
     href: "https://github.com/CMLPlatform/relab-rpi-cam-plugin",
     to: "RPi camera plugin on GitHub",
   },
-  { id: "app", name: "Capture app", href: repo, to: "RELab source on GitHub" },
+  { id: "app", name: "Capture app", href: repo, to: "ReLab source on GitHub" },
   { id: "web", name: "Web app", href: "https://app.cml-relab.org", to: "the live platform" },
-  { id: "api", name: "API", href: repo, to: "RELab source on GitHub" },
-  { id: "db", name: "Database", href: repo, to: "RELab source on GitHub" },
-  { id: "docs", name: "Docs", href: "https://docs.cml-relab.org", to: "RELab documentation" },
+  { id: "api", name: "API", href: repo, to: "ReLab source on GitHub" },
+  { id: "db", name: "Database", href: repo, to: "ReLab source on GitHub" },
+  { id: "docs", name: "Docs", href: "https://docs.cml-relab.org", to: "ReLab documentation" },
 ];
 const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
 ---
@@ -28,7 +28,7 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
     class="exploded__svg"
     viewBox="0 0 340 640"
     role="group"
-    aria-label="Exploded view of RELab; each part links to its source, app, or docs"
+    aria-label="Exploded view of ReLab; each part links to its source, app, or docs"
     fill="none"
     stroke-linecap="round"
     stroke-linejoin="round"
@@ -61,6 +61,7 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
       <g class="label label--rig">
           <text class="fig-num" x="12" y="76">1</text>
           <text class="fig-label" x="30" y="76">CAMERA RIG</text>
+          <path class="ext" d="M133 75 140 68 M135.5 68 H140 V72.5"></path>
       </g>
     </a>
 
@@ -89,6 +90,7 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
       <g class="label label--app">
           <text class="fig-num" x="12" y="206">2</text>
           <text class="fig-label" x="30" y="206">CAPTURE APP</text>
+          <path class="ext" d="M133 205 140 198 M135.5 198 H140 V202.5"></path>
       </g>
     </a>
 
@@ -116,6 +118,7 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
       <g class="label label--web">
           <text class="fig-num" x="12" y="340">3</text>
           <text class="fig-label" x="30" y="340">WEB APP</text>
+          <path class="ext" d="M133 339 140 332 M135.5 332 H140 V336.5"></path>
       </g>
     </a>
 
@@ -139,6 +142,7 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
       <g class="label label--api">
           <text class="fig-num" x="12" y="434">4</text>
           <text class="fig-label" x="30" y="434">API</text>
+          <path class="ext" d="M133 433 140 426 M135.5 426 H140 V430.5"></path>
       </g>
     </a>
 
@@ -162,6 +166,7 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
       <g class="label label--db">
           <text class="fig-num" x="12" y="517">5</text>
           <text class="fig-label" x="30" y="517">DATABASE</text>
+          <path class="ext" d="M133 516 140 509 M135.5 509 H140 V513.5"></path>
       </g>
     </a>
 
@@ -187,14 +192,15 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
       <g class="label label--docs">
           <text class="fig-num" x="12" y="610">6</text>
           <text class="fig-label" x="30" y="610">DOCS</text>
+          <path class="ext" d="M133 609 140 602 M135.5 602 H140 V606.5"></path>
       </g>
     </a>
 
   </svg>
 
   <figcaption id="exploded-caption">
-    Fig. 1: RELab, the disassembly-data platform I build at CML and one of the
-    projects listed below, drawn exploded. Schematic.
+    Fig. 1: <a href="#relab">ReLab</a>, drawn exploded. Schematic; each part
+    opens its code, app, or docs.
   </figcaption>
 </figure>
 
@@ -305,10 +311,27 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
     translate: 0 -56px;
   }
 
+  /* The register's last column: an arrow out, drawn, in the link colour at
+     rest, so every row reads as a link off the sheet before anyone hovers. */
+  .ext {
+    stroke: var(--accent);
+    stroke-width: 1.4;
+    transition:
+      stroke var(--dur-fast) ease,
+      translate var(--dur-fast) var(--ease-out);
+  }
+
   /* Each part and its register label are one link. Hover or focus lights
      both; the ring is the ink change, not a box around a drawing. */
   .exploded a {
     outline: none;
+    cursor: pointer;
+  }
+
+  .exploded a:hover .ext,
+  .exploded a:focus-visible .ext {
+    stroke: var(--accent-strong);
+    translate: 1px -1px;
   }
 
   .exploded a:hover .part,
@@ -328,15 +351,14 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
       transition: stroke var(--dur-fast) ease;
     }
 
-    .label {
+    .label,
+    .ext {
       transition: none;
     }
-  }
 
-  figcaption {
-    margin-top: var(--space-s);
-    font-size: var(--step--1);
-    color: var(--text-muted);
-    max-width: var(--measure);
+    .exploded a:hover .ext,
+    .exploded a:focus-visible .ext {
+      translate: none;
+    }
   }
 </style>

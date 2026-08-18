@@ -33,11 +33,9 @@ const exportedLabel = exported
     })
   : null;
 
-// The email entry drops out entirely when the export withholds it, rather
-// than rendering a dead "mailto:undefined".
-// The headline's separators stay with the word before them, so a narrow
-// screen never opens a line with an interpunct.
-const headlineParts = basics.headline.split(" · ");
+// The headline splits at its interpunct the way the landing page's header
+// does: the first part is the lead, the rest the muted line under it.
+const [headlineLead, ...headlineRest] = basics.headline.split(" · ");
 
 // The sheet's zone index: one datum letter per section that renders, in
 // reading order, so a hurried reader can be sent to "C" instead of scrolling.
@@ -54,11 +52,11 @@ const sections = [
   .filter((s) => s.show)
   .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
 
+// Location and address only: the profile links live once, in the title
+// block, on both sheets.
 const contact = [
   { label: basics.location, href: null },
   ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
-  { label: "GitHub", href: basics.links.github },
-  { label: "LinkedIn", href: basics.links.linkedin },
 ];
 ---
 
@@ -73,21 +71,8 @@ const contact = [
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
     <h1>{basics.name}</h1>
-    <p class="cv-header__headline prose">
-      {
-        headlineParts.map((part, i) => {
-          if (i === headlineParts.length - 1) return part;
-          const words = part.split(" ");
-          const last = words.pop();
-          return (
-            <>
-              {words.length > 0 && `${words.join(" ")} `}
-              <span class="cv-header__nowrap">{last} ·</span>{" "}
-            </>
-          );
-        })
-      }
-    </p>
+    <p class="lead">{headlineLead}</p>
+    {headlineRest.length > 0 && <p class="tagline prose">{headlineRest.join(" · ")}</p>}
 
     <ul class="link-list cv-contact">
       {
@@ -301,24 +286,6 @@ const contact = [
     padding-block: var(--space-l) var(--space-m);
   }
 
-  /* Shared with the landing page's h1: navigating between sheets morphs the
-     name instead of cross-fading the whole document. */
-  .cv-header h1 {
-    view-transition-name: person-name;
-  }
-
-  /* The headline in full ink over the muted contact row: the CV's opening
-     two blocks must not read as one grey mass. */
-  .cv-header__headline {
-    margin-top: var(--space-s);
-    font-size: var(--step-1);
-    color: var(--text);
-  }
-
-  .cv-header__nowrap {
-    white-space: nowrap;
-  }
-
   .cv-contact {
     margin-top: var(--space-m);
     font-size: var(--step--1);
@@ -334,7 +301,8 @@ const contact = [
     margin: -0.3rem -0.25rem;
   }
 
-  /* Zone index: lettered datum marks, one row that wraps. */
+  /* Zone index: lettered datum marks, one row on a desktop sheet (tracked
+     and gapped so the seven fit the container), wrapping below that. */
   .cv-index {
     margin-top: var(--space-m);
   }
@@ -344,17 +312,23 @@ const contact = [
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-m);
+    gap: var(--space-2xs) var(--space-s);
     font-family: var(--font-draft);
     font-size: var(--step--1);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+  }
+
+  @media (min-width: 60rem) {
+    .cv-index__list {
+      justify-content: space-between;
+    }
   }
 
   .cv-index__list a {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 0.4rem;
     min-height: 44px;
     color: var(--text-muted);
     text-decoration: none;
