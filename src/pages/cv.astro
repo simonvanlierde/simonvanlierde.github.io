@@ -37,6 +37,25 @@ const exportedLabel = exported
 
 // The email entry drops out entirely when the export withholds it, rather
 // than rendering a dead "mailto:undefined".
+// The headline's separators stay with the word before them, so a narrow
+// screen never opens a line with an interpunct.
+const headlineParts = basics.headline.split(" · ");
+
+// The sheet's zone index: one datum letter per section that renders, in
+// reading order, so a hurried reader can be sent to "C" instead of scrolling.
+const sections = [
+  { id: "profile-heading", label: "Profile", show: true },
+  { id: "experience-heading", label: "Experience", show: true },
+  { id: "publications-heading", label: "Publications", show: publications.length > 0 },
+  { id: "education-heading", label: "Education", show: true },
+  { id: "projects-heading", label: "Projects", show: projects.length > 0 },
+  { id: "skills-heading", label: "Skills", show: skills.length > 0 },
+  { id: "development-heading", label: "Talks and training", show: development.length > 0 },
+  { id: "interests-heading", label: "Interests", show: interests.length > 0 },
+]
+  .filter((s) => s.show)
+  .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
+
 const contact = [
   { label: basics.location, href: null },
   ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
@@ -59,12 +78,26 @@ const contact = [
         this page has to carry whose CV it is. The document type is already in
         the tab title, the download button, and the title block. */}
     <h1>{basics.name}</h1>
-    <p class="cv-header__headline prose">{basics.headline}</p>
+    <p class="cv-header__headline prose">
+      {
+        headlineParts.map((part, i) => {
+          if (i === headlineParts.length - 1) return part;
+          const words = part.split(" ");
+          const last = words.pop();
+          return (
+            <>
+              {words.length > 0 && `${words.join(" ")} `}
+              <span class="cv-header__nowrap">{last} ·</span>{" "}
+            </>
+          );
+        })
+      }
+    </p>
 
     <ul class="link-list cv-contact">
       {
         contact.map((c) => (
-          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft">{c.label}</span>}</li>
+          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft cv-contact__plain">{c.label}</span>}</li>
         ))
       }
     </ul>
@@ -98,6 +131,25 @@ const contact = [
       )
     }
   </header>
+
+  {/* Zone index: the sheet's sections, lettered like general notes, so the
+      reader can jump. It sits between header and main, chrome-adjacent. */}
+  <nav class="container cv-index" aria-label="Sections">
+    <ol class="cv-index__list">
+      {
+        sections.map((sec) => (
+          <li>
+            <a href={`#${sec.id}`}>
+              <span class="datum" aria-hidden="true">
+                {sec.ref}
+              </span>
+              {sec.label}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
 
   <main>
     <section class="container" aria-labelledby="profile-heading">
@@ -156,27 +208,23 @@ const contact = [
       )
     }
 
-    {
-      /* Optional sections render or they don't. An empty heading over nothing
-         reads as a gap in the person, not a gap in the export. */
-      skills.length > 0 && (
-        <section class="container" aria-labelledby="skills-heading">
-          <h2 id="skills-heading">Skills</h2>
-          <div class="cv-entries">
-            {skills.map((group) => (
-              <div class="cv-entry">
-                <p class="cv-entry__period">{group.group}</p>
-                <ul class="tag-list cv-entry__body" aria-label={group.group}>
-                  {group.items.map((item) => (
-                    <li class="tag">{item}</li>
-                  ))}
-                </ul>
+    <section class="container" aria-labelledby="education-heading">
+      <h2 id="education-heading">Education</h2>
+      <div class="cv-entries">
+        {
+          education.map((school) => (
+            <article class="cv-entry">
+              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
+              <div class="cv-entry__body">
+                <h3 class="cv-entry__role">{school.degree}</h3>
+                <p class="cv-entry__org">{school.institution}</p>
+                {school.details && <p class="cv-entry__detail">{school.details}</p>}
               </div>
-            ))}
-          </div>
-        </section>
-      )
-    }
+            </article>
+          ))
+        }
+      </div>
+    </section>
 
     {
       projects.length > 0 && (
@@ -198,23 +246,25 @@ const contact = [
       )
     }
 
-    <section class="container" aria-labelledby="education-heading">
-      <h2 id="education-heading">Education</h2>
-      <div class="cv-entries">
-        {
-          education.map((school) => (
-            <article class="cv-entry">
-              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
-              <div class="cv-entry__body">
-                <h3 class="cv-entry__role">{school.degree}</h3>
-                <p class="cv-entry__org">{school.institution}</p>
-                {school.details && <p class="cv-entry__detail">{school.details}</p>}
+    {
+      /* Optional sections render or they don't. An empty heading over nothing
+         reads as a gap in the person, not a gap in the export. */
+      skills.length > 0 && (
+        <section class="container" aria-labelledby="skills-heading">
+          <h2 id="skills-heading">Skills</h2>
+          <div class="cv-entries">
+            {/* One line per group, not a wall of chips: a CV's skills are
+                read, not filtered. */}
+            {skills.map((group) => (
+              <div class="cv-entry">
+                <p class="cv-entry__period">{group.group}</p>
+                <p class="cv-entry__body cv-skills">{group.items.join(", ")}</p>
               </div>
-            </article>
-          ))
-        }
-      </div>
-    </section>
+            ))}
+          </div>
+        </section>
+      )
+    }
 
     {
       /* Talks, summer schools, and upstream contributions: the section a
@@ -235,11 +285,7 @@ const contact = [
       interests.length > 0 && (
         <section class="container" aria-labelledby="interests-heading">
           <h2 id="interests-heading">Interests</h2>
-          <ul class="tag-list cv-interests" aria-labelledby="interests-heading">
-            {interests.map((item) => (
-              <li class="tag">{item}</li>
-            ))}
-          </ul>
+          <p class="prose cv-interests">{interests.join(", ")}</p>
         </section>
       )
     }
@@ -250,7 +296,7 @@ const contact = [
         <p class="prose">The PDF is generated from the same source as this page.</p>
         {/* The sheet's one stamp is the header's download; this repeat is a
             plain working link. */}
-        <a class="draft" href={pdf} download>Download as PDF</a>
+        <a class="draft cv-footer-download__link" href={pdf} download>Download as PDF</a>
       </div>
     </section>
   </main>
@@ -282,10 +328,60 @@ const contact = [
     color: var(--text);
   }
 
+  .cv-header__nowrap {
+    white-space: nowrap;
+  }
+
   .cv-contact {
     margin-top: var(--space-m);
     font-size: var(--step--1);
     color: var(--text-muted);
+  }
+
+  /* The plain location shares the links' box so the row sits on one baseline. */
+  .cv-contact__plain {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.65rem 0.25rem;
+    margin: -0.3rem -0.25rem;
+  }
+
+  /* Zone index: lettered datum marks, one row that wraps. */
+  .cv-index {
+    margin-top: var(--space-m);
+  }
+
+  .cv-index__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    font-family: var(--font-draft);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cv-index__list a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: 44px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding-inline: 0.25rem;
+    margin-inline: -0.25rem;
+  }
+
+  .cv-index__list a:hover {
+    color: var(--accent);
+  }
+
+  .cv-index__list a:hover .datum {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .cv-download {
@@ -298,9 +394,13 @@ const contact = [
     font-size: var(--step--1);
   }
 
+  /* The profile is the CV's argument, in full ink. */
   .cv-profile {
     margin-top: var(--space-m);
-    color: var(--text-muted);
+  }
+
+  .cv-skills {
+    max-width: var(--measure);
   }
 
   /* Venue sits under the byline, with the status chip only when it isn't
@@ -325,7 +425,6 @@ const contact = [
   .cv-list {
     margin-top: var(--space-l);
     padding-left: 1.1em;
-    color: var(--text-muted);
   }
 
   .cv-list li + li {
@@ -342,5 +441,23 @@ const contact = [
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-m) var(--space-l);
+  }
+
+  .cv-footer-download__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-block: 0.65rem;
+    margin-block: -0.65rem;
+  }
+
+  /* On paper the PDF is the document; the download controls and the zone
+     index are screen affordances, and an entry never breaks across pages. */
+  @media print {
+    .cv-download,
+    .cv-index,
+    .cv-footer-download {
+      display: none;
+    }
   }
 </style>

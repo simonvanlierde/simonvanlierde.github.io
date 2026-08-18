@@ -222,8 +222,10 @@ centring ticks at the edge midpoints on `body::after`. Screen only; print
 gets the plain document. `--frame-inset` is clamp(8px, 1.2vw, 16px).
 
 Inside the frame: `.container` is `min(100% - 2 * --space-m, 64rem)`,
-centred. Sections stack with `padding-block: --space-xl` (3.5rem) and a
-hairline top rule; the h2 zone label sits on its own 2px rule. Prose is
+centred. Sections stack with `padding-block: --space-l --space-xl` (2rem
+above, 3.5rem below) and no rule of their own: the h2 zone label's 2px rule
+is the one line per boundary. On Sheet 2 a lettered zone index (datum marks
+A–H linking the sections) sits under the header. Prose is
 capped at `--measure` (38rem).
 
 The spacing scale is six steps: 0.25 / 0.5 / 0.75 / 1.25 / 2 / 3.5rem

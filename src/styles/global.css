@@ -198,8 +198,18 @@ body {
   }
 
   .sheet-nav,
-  .skip-link {
+  .skip-link,
+  .theme-toggle {
     display: none;
+  }
+
+  main > section {
+    padding-block: var(--space-m) var(--space-l);
+  }
+
+  .cv-entry,
+  .bom-row {
+    break-inside: avoid;
   }
 }
 
@@ -383,19 +393,18 @@ time {
   margin-top: var(--space-m);
 }
 
+/* One rule per boundary: the zone label's own 2px rule divides sections, so
+   there is no hairline above them; more air below a zone than above its
+   successor's label. */
 main > section {
-  padding-block: var(--space-xl);
-  border-top: var(--border-width) solid var(--border);
+  padding-block: var(--space-l) var(--space-xl);
 }
 
 #main,
-main > section {
+main > section,
+main > section > h2,
+main > section > .container > h2 {
   scroll-margin-top: 4rem;
-}
-
-main > section:first-of-type {
-  border-top: 0;
-  padding-top: var(--space-l);
 }
 
 /* Section heading rule: the zone label sits on its own heavy rule. */
@@ -679,9 +688,9 @@ main > section.container > h2 {
   font-size: var(--step--1);
   color: var(--text-muted);
   background: transparent;
-  /* The hairline is the chip's only boundary, so it takes the strong line
-     to clear 3:1 (WCAG 1.4.11). */
-  border: var(--border-width) solid var(--border-strong);
+  /* Read-only spec callouts, not controls: a hairline is enough, and it
+     keeps them below the section rules in weight. */
+  border: var(--border-width) solid var(--border);
   padding: 0.1em 0.55em;
   letter-spacing: 0.04em;
 }
@@ -741,12 +750,14 @@ main > section.container > h2 {
   text-transform: none;
 }
 
+/* A linked role or project name is underlined at rest: colour alone must not
+   be the only sign that a title opens somewhere. */
 .cv-entry__role a {
-  text-decoration: none;
+  text-underline-offset: 0.18em;
 }
 
 .cv-entry__role a:hover {
-  text-decoration: underline;
+  color: var(--accent-strong);
 }
 
 .cv-entry__org {
@@ -755,10 +766,11 @@ main > section.container > h2 {
   max-width: var(--measure);
 }
 
+/* The highlights are the evidence, in full ink; only the rail and the
+   organisation line are muted. */
 .cv-highlights {
   margin-top: var(--space-s);
   padding-left: 1.1em;
-  color: var(--text-muted);
   max-width: var(--measure);
 }
 

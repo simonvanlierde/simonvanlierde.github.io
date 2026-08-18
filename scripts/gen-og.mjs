@@ -1,6 +1,6 @@
 // Generates public/og.png (the 1200x630 social-share card) from an inline SVG
 // via sharp. Mirrors the site's identity: the engineering drawing sheet, in
-// its ink-on-paper rendering, with the exploded-kettle figure and the sheet
+// its ink-on-paper rendering, with the exploded RELab figure and the sheet
 // frame. Run with `pnpm gen:og` whenever the look or copy changes.
 //
 // osifont renders only if installed on the generating machine; the fallback
@@ -10,43 +10,75 @@ import sharp from "sharp";
 const W = 1200;
 const H = 630;
 
-// Pulled from the light palette in src/styles/global.css.
-const bg = "#f6f5f0";
-const ink = "#25292e";
-const muted = "#5c646d";
-const accent = "#2c53a5"; // engineer's blue
-const stamp = "#a83a32"; // checker's red
-const frame = "#3d434a";
+// The light palette from src/styles/global.css, resolved to sRGB.
+const bg = "#f8f7f3"; // --bg        oklch(97.5% 0.005 95)
+const ink = "#181d24"; // --text      oklch(23% 0.015 255)
+const muted = "#49515b"; // --text-muted oklch(43% 0.02 255)
+const accent = "#234993"; // --accent  oklch(42% 0.13 262)
+const stamp = "#9e2c2c"; // --stamp   oklch(47% 0.15 25)
+const frame = "#2c333d"; // --border-strong oklch(32% 0.02 255)
 
 const draft = "'osifont', 'DIN Alternate', 'Bahnschrift', 'Segoe UI', Roboto, Helvetica, sans-serif";
 
-// A compact echo of the site's exploded kettle: lid, body, plate, base.
-const kettle = `
-  <g stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="985" y1="60" x2="985" y2="560" stroke="${frame}" stroke-width="1.5" stroke-dasharray="18 7 3 7"/>
-    <circle cx="985" cy="88" r="9"/>
-    <path d="M918 132 Q985 96 1052 132"/>
-    <ellipse cx="985" cy="133" rx="67" ry="10"/>
-    <ellipse cx="985" cy="205" rx="62" ry="10"/>
-    <path d="M923 205 L912 385"/>
-    <path d="M1047 205 L1058 385"/>
-    <ellipse cx="985" cy="386" rx="73" ry="11"/>
-    <path d="M925 216 L892 240 L917 256"/>
-    <path d="M1051 225 Q1108 240 1099 297 Q1092 336 1055 345"/>
-    <ellipse cx="985" cy="452" rx="60" ry="10"/>
-    <path d="M925 452 L925 466"/>
-    <path d="M1045 452 L1045 466"/>
-    <ellipse cx="985" cy="466" rx="60" ry="10"/>
-    <ellipse cx="985" cy="525" rx="80" ry="12"/>
-    <path d="M905 525 L905 551"/>
-    <path d="M1065 525 L1065 551"/>
-    <ellipse cx="985" cy="551" rx="80" ry="12"/>
+// A compact echo of the site's Fig. 1: RELab taken apart on its axis, six
+// parts, capture end at the top: camera rig, capture app, web app, API,
+// database, docs. Balloons on the right, as on the sheet.
+const X = 985;
+const balloon = (y, n) =>
+  `<line x1="${X + 70}" y1="${y}" x2="${X + 108}" y2="${y}" stroke="${frame}" stroke-width="1.5"/>
+   <circle cx="${X + 120}" cy="${y}" r="12" fill="${bg}" stroke="${frame}" stroke-width="2"/>
+   <text x="${X + 120}" y="${y + 5}" font-family="${draft}" font-size="15" text-anchor="middle" fill="${ink}" stroke="none">${n}</text>`;
+const relab = `
+  <g stroke="${ink}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="${X}" y1="48" x2="${X}" y2="590" stroke="${frame}" stroke-width="1.5" stroke-dasharray="18 7 3 7"/>
+    <!-- 1 camera rig -->
+    <rect x="${X - 60}" y="60" width="120" height="70"/>
+    <rect x="${X - 20}" y="78" width="40" height="40"/>
+    <circle cx="${X}" cy="98" r="11"/>
+    <g stroke="${muted}" stroke-width="1.5">
+      <circle cx="${X - 52}" cy="68" r="2.5"/><circle cx="${X + 52}" cy="68" r="2.5"/>
+      <circle cx="${X - 52}" cy="122" r="2.5"/><circle cx="${X + 52}" cy="122" r="2.5"/>
+    </g>
+    ${balloon(95, 1)}
+    <!-- 2 capture app -->
+    <rect x="${X - 34}" y="156" width="68" height="112"/>
+    <rect x="${X - 27}" y="168" width="54" height="88" stroke="${muted}" stroke-width="1.5"/>
+    <circle cx="${X}" cy="212" r="7"/>
+    ${balloon(212, 2)}
+    <!-- 3 web app -->
+    <rect x="${X - 70}" y="292" width="140" height="84"/>
+    <g stroke="${muted}" stroke-width="1.5">
+      <line x1="${X - 70}" y1="308" x2="${X + 70}" y2="308"/>
+      <line x1="${X - 58}" y1="326" x2="${X + 58}" y2="326"/>
+      <line x1="${X - 58}" y1="344" x2="${X + 58}" y2="344"/>
+      <line x1="${X - 58}" y1="362" x2="${X + 58}" y2="362"/>
+    </g>
+    ${balloon(334, 3)}
+    <!-- 4 api -->
+    <rect x="${X - 60}" y="400" width="120" height="34"/>
+    <circle cx="${X + 46}" cy="417" r="3"/>
+    ${balloon(417, 4)}
+    <!-- 5 database -->
+    <ellipse cx="${X}" cy="462" rx="42" ry="10"/>
+    <line x1="${X - 42}" y1="462" x2="${X - 42}" y2="512"/>
+    <line x1="${X + 42}" y1="462" x2="${X + 42}" y2="512"/>
+    <path d="M${X - 42} 512 A42 10 0 0 0 ${X + 42} 512"/>
+    <path d="M${X - 42} 487 A42 10 0 0 0 ${X + 42} 487" stroke="${muted}" stroke-width="1.5"/>
+    ${balloon(487, 5)}
+    <!-- 6 docs -->
+    <rect x="${X - 40}" y="536" width="80" height="52"/>
+    <g stroke="${muted}" stroke-width="1.5">
+      <line x1="${X - 28}" y1="536" x2="${X - 28}" y2="588"/>
+      <line x1="${X - 18}" y1="552" x2="${X + 30}" y2="552"/>
+      <line x1="${X - 18}" y1="564" x2="${X + 30}" y2="564"/>
+    </g>
+    ${balloon(562, 6)}
   </g>`;
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <rect width="${W}" height="${H}" fill="${bg}"/>
   <rect x="18" y="18" width="${W - 36}" height="${H - 36}" fill="none" stroke="${frame}" stroke-width="3"/>
-  ${kettle}
+  ${relab}
   <g font-family="${draft}">
     <text x="80" y="200" font-size="84" letter-spacing="4" fill="${ink}">SIMON VAN LIERDE</text>
     <text x="82" y="272" font-size="34" fill="${muted}">Open software and open data</text>
@@ -56,8 +88,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
     <text x="82" y="540" font-size="28" letter-spacing="2" fill="${accent}">SIMONVANLIERDE.GITHUB.IO</text>
   </g>
   <g font-family="${draft}">
-    <rect x="820" y="44" width="118" height="44" fill="none" stroke="${stamp}" stroke-width="3"/>
-    <text x="838" y="73" font-size="22" letter-spacing="3" fill="${stamp}">SHEET 1</text>
+    <rect x="80" y="48" width="118" height="44" fill="none" stroke="${stamp}" stroke-width="3"/>
+    <text x="98" y="77" font-size="22" letter-spacing="3" fill="${stamp}">SHEET 1</text>
   </g>
 </svg>`;
 
