@@ -312,8 +312,9 @@ Two notation marks are the deliberate exceptions and carry meaning:
 - A parts-list row, not a card: hairline top rule, no background, no hover
   tint. Grid: 11rem rail (balloon + uppercase kind) and body (title,
   description, links, tags). The part name is the target (44px bought with
-  padding + negative margin); the row's prose stays selectable. Hover turns
-  the title engineer's blue and underlines it.
+  padding + negative margin), underlined at rest so it reads as a link
+  before hover; the row's prose stays selectable. Hover turns the title
+  engineer's blue.
 
 #### Navigation (sheet header)
 

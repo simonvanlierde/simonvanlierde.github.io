@@ -639,12 +639,14 @@ main > section.container > h2 {
 }
 
 /* The part name is the target (the row's prose stays selectable and
-   copyable): ink at rest, engineer's blue and underlined on hover, with the
-   44px target bought by padding + negative margin. */
+   copyable): ink and underlined at rest, so it reads as a path to the repo
+   before hover; engineer's blue on hover; the 44px target bought by padding
+   + negative margin. */
 .bom-row__title a {
   display: inline-block;
-  text-decoration: none;
   color: var(--text);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
   padding: 0.7rem 0.3rem;
   margin: -0.7rem -0.3rem;
   transition: color var(--dur-fast) ease;
@@ -652,8 +654,6 @@ main > section.container > h2 {
 
 .bom-row__title a:hover {
   color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
 }
 
 .bom-row__desc {
