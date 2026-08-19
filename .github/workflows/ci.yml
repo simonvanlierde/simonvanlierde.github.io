@@ -35,11 +35,16 @@ jobs:
 
       # axe + e2e run the built site in a real browser (contrast, keyboard,
       # hydration — things the linter can't see). Install Chromium fresh each run:
-      # Playwright's own CI guide recommends this, and for a single browser it's a
-      # few seconds. Version-keyed caching saves little here and buys real failure
-      # modes (a poisoned cache never self-heals; new PR branches miss it anyway).
+      # the headless shell is ~115 MB and downloads in seconds, so version-keyed
+      # caching saves little and buys real failure modes (a poisoned cache never
+      # self-heals; new PR branches miss it anyway).
+      #
+      # No --with-deps: the ubuntu-latest image already ships every shared library
+      # Chromium needs, so the flag only spent ~150s on apt-get update plus CJK,
+      # Thai and Cyrillic font packages this Latin-only site never renders. If a
+      # future runner image drops a library, add the flag back.
       - name: Install Playwright Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install chromium
 
       - name: Accessibility & e2e tests
         run: pnpm test:e2e
