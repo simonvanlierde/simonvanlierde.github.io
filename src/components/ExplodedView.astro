@@ -35,159 +35,159 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
     stroke-linejoin="round"
   >
     {/* centreline: the dash-dot axis every assembly is drawn on */}
-    <line class="axis" x1="220" y1="10" x2="220" y2="632" stroke-dasharray="14 5 2 5"></line>
+    <line class="axis" x1="220" y1="8" x2="220" y2="478" stroke-dasharray="14 5 2 5"></line>
 
     {/* ============ PARTS (top to bottom along the axis) ============ */}
     {/* 1 Camera rig: the Raspberry Pi board with its camera module */}
     <a href={link("rig").href} aria-label={`${link("rig").name}: ${link("rig").to}`}>
       <g class="part part--rig">
-        <rect x="170" y="40" width="100" height="64"></rect>
+        <rect x="170" y="16" width="100" height="56"></rect>
         <g class="fine">
-          <circle cx="177" cy="47" r="2.5"></circle>
-          <circle cx="263" cy="47" r="2.5"></circle>
-          <circle cx="177" cy="97" r="2.5"></circle>
-          <circle cx="263" cy="97" r="2.5"></circle>
-          <line x1="186" y1="44" x2="254" y2="44"></line>
-          <line x1="186" y1="48" x2="254" y2="48"></line>
+          <circle cx="177" cy="23" r="2.5"></circle>
+          <circle cx="263" cy="23" r="2.5"></circle>
+          <circle cx="177" cy="65" r="2.5"></circle>
+          <circle cx="263" cy="65" r="2.5"></circle>
+          <line x1="186" y1="20" x2="254" y2="20"></line>
+          <line x1="186" y1="24" x2="254" y2="24"></line>
         </g>
-        <rect x="202" y="56" width="36" height="36"></rect>
-        <circle cx="220" cy="74" r="10"></circle>
-        <circle class="fine" cx="220" cy="74" r="4"></circle>
+        <rect x="202" y="26" width="36" height="36"></rect>
+        <circle cx="220" cy="44" r="10"></circle>
+        <circle class="fine" cx="220" cy="44" r="4"></circle>
         <g class="balloon-mark">
-          <line class="leader" x1="270" y1="72" x2="304" y2="72"></line>
-          <circle cx="314" cy="72" r="9.5"></circle>
-          <text class="fig-num" x="314" y="75.5" text-anchor="middle">1</text>
+          <line class="leader" x1="270" y1="44" x2="304" y2="44"></line>
+          <circle cx="314" cy="44" r="9.5"></circle>
+          <text class="fig-num" x="314" y="47.5" text-anchor="middle">1</text>
         </g>
       </g>
       <g class="label label--rig">
-          <text class="fig-label" x="12" y="76">CAMERA RIG</text>
-          <path class="ext" d="M133 75 140 68 M135.5 68 H140 V72.5"></path>
+          <text class="fig-label" x="12" y="48">CAMERA RIG</text>
+          <path class="ext" d="M133 47 140 40 M135.5 40 H140 V44.5"></path>
       </g>
     </a>
 
     {/* 2 Capture app: the phone, viewfinder open */}
     <a href={link("app").href} aria-label={`${link("app").name}: ${link("app").to}`}>
       <g class="part part--app">
-        <rect x="186" y="140" width="68" height="124"></rect>
+        <rect x="186" y="90" width="68" height="96"></rect>
         <g class="fine">
-          <rect x="192" y="152" width="56" height="100"></rect>
-          <line x1="210" y1="146" x2="230" y2="146"></line>
-          <line x1="210" y1="258" x2="230" y2="258"></line>
+          <rect x="192" y="100" width="56" height="76"></rect>
+          <line x1="210" y1="96" x2="230" y2="96"></line>
+          <line x1="210" y1="180" x2="230" y2="180"></line>
         </g>
         <g class="fine">
-          <polyline points="200,170 200,162 208,162"></polyline>
-          <polyline points="232,162 240,162 240,170"></polyline>
-          <polyline points="200,234 200,242 208,242"></polyline>
-          <polyline points="232,242 240,242 240,234"></polyline>
+          <polyline points="200,118 200,110 208,110"></polyline>
+          <polyline points="232,110 240,110 240,118"></polyline>
+          <polyline points="200,158 200,166 208,166"></polyline>
+          <polyline points="232,166 240,166 240,158"></polyline>
         </g>
-        <circle cx="220" cy="202" r="7"></circle>
+        <circle cx="220" cy="138" r="7"></circle>
         <g class="balloon-mark">
-          <line class="leader" x1="254" y1="202" x2="304" y2="202"></line>
-          <circle cx="314" cy="202" r="9.5"></circle>
-          <text class="fig-num" x="314" y="205.5" text-anchor="middle">2</text>
+          <line class="leader" x1="254" y1="138" x2="304" y2="138"></line>
+          <circle cx="314" cy="138" r="9.5"></circle>
+          <text class="fig-num" x="314" y="141.5" text-anchor="middle">2</text>
         </g>
       </g>
       <g class="label label--app">
-          <text class="fig-label" x="12" y="206">CAPTURE APP</text>
-          <path class="ext" d="M133 205 140 198 M135.5 198 H140 V202.5"></path>
+          <text class="fig-label" x="12" y="142">CAPTURE APP</text>
+          <path class="ext" d="M133 141 140 134 M135.5 134 H140 V138.5"></path>
       </g>
     </a>
 
     {/* 3 Web app: a browser window over a table */}
     <a href={link("web").href} aria-label={`${link("web").name}: ${link("web").to}`}>
       <g class="part part--web">
-        <rect x="150" y="290" width="140" height="92"></rect>
+        <rect x="150" y="204" width="140" height="72"></rect>
         <g class="fine">
-          <line x1="150" y1="306" x2="290" y2="306"></line>
-          <circle cx="160" cy="298" r="2.5"></circle>
-          <circle cx="169" cy="298" r="2.5"></circle>
-          <circle cx="178" cy="298" r="2.5"></circle>
-          <line x1="160" y1="322" x2="280" y2="322"></line>
-          <line x1="160" y1="338" x2="280" y2="338"></line>
-          <line x1="160" y1="354" x2="280" y2="354"></line>
-          <line x1="160" y1="370" x2="280" y2="370"></line>
-          <line x1="196" y1="314" x2="196" y2="374"></line>
+          <line x1="150" y1="218" x2="290" y2="218"></line>
+          <circle cx="160" cy="211" r="2.5"></circle>
+          <circle cx="169" cy="211" r="2.5"></circle>
+          <circle cx="178" cy="211" r="2.5"></circle>
+          <line x1="160" y1="232" x2="280" y2="232"></line>
+          <line x1="160" y1="244" x2="280" y2="244"></line>
+          <line x1="160" y1="256" x2="280" y2="256"></line>
+          <line x1="160" y1="268" x2="280" y2="268"></line>
+          <line x1="196" y1="226" x2="196" y2="272"></line>
         </g>
         <g class="balloon-mark">
-          <line class="leader" x1="290" y1="336" x2="304" y2="336"></line>
-          <circle cx="314" cy="336" r="9.5"></circle>
-          <text class="fig-num" x="314" y="339.5" text-anchor="middle">3</text>
+          <line class="leader" x1="290" y1="240" x2="304" y2="240"></line>
+          <circle cx="314" cy="240" r="9.5"></circle>
+          <text class="fig-num" x="314" y="243.5" text-anchor="middle">3</text>
         </g>
       </g>
       <g class="label label--web">
-          <text class="fig-label" x="12" y="340">WEB APP</text>
-          <path class="ext" d="M133 339 140 332 M135.5 332 H140 V336.5"></path>
+          <text class="fig-label" x="12" y="244">WEB APP</text>
+          <path class="ext" d="M133 243 140 236 M135.5 236 H140 V240.5"></path>
       </g>
     </a>
 
     {/* 4 API: one rack unit */}
     <a href={link("api").href} aria-label={`${link("api").name}: ${link("api").to}`}>
       <g class="part part--api">
-        <rect x="160" y="412" width="120" height="36"></rect>
+        <rect x="160" y="294" width="120" height="36"></rect>
         <g class="fine">
-          <rect x="170" y="424" width="12" height="12"></rect>
-          <rect x="188" y="424" width="12" height="12"></rect>
-          <rect x="206" y="424" width="12" height="12"></rect>
-          <line x1="236" y1="430" x2="256" y2="430"></line>
+          <rect x="170" y="306" width="12" height="12"></rect>
+          <rect x="188" y="306" width="12" height="12"></rect>
+          <rect x="206" y="306" width="12" height="12"></rect>
+          <line x1="236" y1="312" x2="256" y2="312"></line>
         </g>
-        <circle cx="268" cy="430" r="3"></circle>
+        <circle cx="268" cy="312" r="3"></circle>
         <g class="balloon-mark">
-          <line class="leader" x1="280" y1="430" x2="304" y2="430"></line>
-          <circle cx="314" cy="430" r="9.5"></circle>
-          <text class="fig-num" x="314" y="433.5" text-anchor="middle">4</text>
+          <line class="leader" x1="280" y1="312" x2="304" y2="312"></line>
+          <circle cx="314" cy="312" r="9.5"></circle>
+          <text class="fig-num" x="314" y="315.5" text-anchor="middle">4</text>
         </g>
       </g>
       <g class="label label--api">
-          <text class="fig-label" x="12" y="434">API</text>
-          <path class="ext" d="M133 433 140 426 M135.5 426 H140 V430.5"></path>
+          <text class="fig-label" x="12" y="316">API</text>
+          <path class="ext" d="M133 315 140 308 M135.5 308 H140 V312.5"></path>
       </g>
     </a>
 
     {/* 5 Database: the cylinder */}
     <a href={link("db").href} aria-label={`${link("db").name}: ${link("db").to}`}>
       <g class="part part--db">
-        <ellipse cx="220" cy="486" rx="42" ry="10"></ellipse>
-        <line x1="178" y1="486" x2="178" y2="540"></line>
-        <line x1="262" y1="486" x2="262" y2="540"></line>
-        <path d="M178 540 A42 10 0 0 0 262 540"></path>
+        <ellipse cx="220" cy="358" rx="42" ry="10"></ellipse>
+        <line x1="178" y1="358" x2="178" y2="394"></line>
+        <line x1="262" y1="358" x2="262" y2="394"></line>
+        <path d="M178 394 A42 10 0 0 0 262 394"></path>
         <g class="fine">
-          <path d="M178 504 A42 10 0 0 0 262 504"></path>
-          <path d="M178 522 A42 10 0 0 0 262 522"></path>
+          <path d="M178 370 A42 10 0 0 0 262 370"></path>
+          <path d="M178 382 A42 10 0 0 0 262 382"></path>
         </g>
         <g class="balloon-mark">
-          <line class="leader" x1="262" y1="513" x2="304" y2="513"></line>
-          <circle cx="314" cy="513" r="9.5"></circle>
-          <text class="fig-num" x="314" y="516.5" text-anchor="middle">5</text>
+          <line class="leader" x1="262" y1="376" x2="304" y2="376"></line>
+          <circle cx="314" cy="376" r="9.5"></circle>
+          <text class="fig-num" x="314" y="379.5" text-anchor="middle">5</text>
         </g>
       </g>
       <g class="label label--db">
-          <text class="fig-label" x="12" y="517">DATABASE</text>
-          <path class="ext" d="M133 516 140 509 M135.5 509 H140 V513.5"></path>
+          <text class="fig-label" x="12" y="380">DATABASE</text>
+          <path class="ext" d="M133 379 140 372 M135.5 372 H140 V376.5"></path>
       </g>
     </a>
 
     {/* 6 Docs: a bound sheet */}
     <a href={link("docs").href} aria-label={`${link("docs").name}: ${link("docs").to}`}>
       <g class="part part--docs">
-        <rect x="180" y="578" width="80" height="56"></rect>
+        <rect x="180" y="422" width="80" height="48"></rect>
         <g class="fine">
-          <line x1="192" y1="578" x2="192" y2="634"></line>
-          <circle cx="186" cy="590" r="1.8"></circle>
-          <circle cx="186" cy="606" r="1.8"></circle>
-          <circle cx="186" cy="622" r="1.8"></circle>
-          <line x1="202" y1="592" x2="250" y2="592"></line>
-          <line x1="202" y1="604" x2="250" y2="604"></line>
-          <line x1="202" y1="616" x2="236" y2="616"></line>
+          <line x1="192" y1="422" x2="192" y2="470"></line>
+          <circle cx="186" cy="434" r="1.8"></circle>
+          <circle cx="186" cy="446" r="1.8"></circle>
+          <circle cx="186" cy="458" r="1.8"></circle>
+          <line x1="202" y1="436" x2="250" y2="436"></line>
+          <line x1="202" y1="446" x2="250" y2="446"></line>
+          <line x1="202" y1="456" x2="236" y2="456"></line>
         </g>
         <g class="balloon-mark">
-          <line class="leader" x1="260" y1="606" x2="304" y2="606"></line>
-          <circle cx="314" cy="606" r="9.5"></circle>
-          <text class="fig-num" x="314" y="609.5" text-anchor="middle">6</text>
+          <line class="leader" x1="260" y1="446" x2="304" y2="446"></line>
+          <circle cx="314" cy="446" r="9.5"></circle>
+          <text class="fig-num" x="314" y="449.5" text-anchor="middle">6</text>
         </g>
       </g>
       <g class="label label--docs">
-          <text class="fig-label" x="12" y="610">DOCS</text>
-          <path class="ext" d="M133 609 140 602 M135.5 602 H140 V606.5"></path>
+          <text class="fig-label" x="12" y="450">DOCS</text>
+          <path class="ext" d="M133 449 140 442 M135.5 442 H140 V446.5"></path>
       </g>
     </a>
 
@@ -445,23 +445,23 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
   }
   .is-assembled .part--rig,
   .is-assembled .label--rig {
-    translate: 0 92px;
+    translate: 0 66px;
   }
   .is-assembled .part--app,
   .is-assembled .label--app {
-    translate: 0 56px;
+    translate: 0 40px;
   }
   .is-assembled .part--web,
   .is-assembled .label--web {
-    translate: 0 30px;
+    translate: 0 22px;
   }
   .is-assembled .part--db,
   .is-assembled .label--db {
-    translate: 0 -28px;
+    translate: 0 -20px;
   }
   .is-assembled .part--docs,
   .is-assembled .label--docs {
-    translate: 0 -56px;
+    translate: 0 -40px;
   }
 
   /* The register's last column: an arrow out, drawn, in the link colour at
