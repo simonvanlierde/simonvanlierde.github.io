@@ -7,7 +7,9 @@ import { z } from "zod";
  * One publication. `authors` accepts either a YAML list or a single comma-joined
  * string, because the two repos are coordinated by hand and a mismatch there
  * should not be a broken build. `status` is an enum so a typo upstream fails the
- * build instead of quietly rendering an unrecognised label.
+ * build instead of quietly rendering an unrecognised label. `doi` is the bare
+ * identifier for the same reason: both consumers prefix it with the resolver,
+ * so a full URL upstream would render a doubled, dead link.
  */
 export const PublicationSchema = z.object({
   authors: z
@@ -16,7 +18,10 @@ export const PublicationSchema = z.object({
   title: z.string(),
   venue: z.string(),
   year: z.union([z.string(), z.number()]).transform(String),
-  doi: z.string().optional(),
+  doi: z
+    .string()
+    .regex(/^10\.\d{4,9}\/\S+$/)
+    .optional(),
   status: z.enum(["published", "in press", "preprint", "under review"]).default("published"),
 });
 
