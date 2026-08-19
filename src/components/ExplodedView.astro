@@ -20,14 +20,20 @@ const parts = [
   { id: "db", name: "Database", href: repo, to: "ReLab source on GitHub" },
   { id: "docs", name: "Docs", href: "https://docs.cml-relab.org", to: "ReLab documentation" },
 ];
-const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
+// Throws rather than falling back: a typo'd id would otherwise silently draw
+// the first part's destination onto some other balloon.
+const link = (id: string) => {
+  const part = parts.find((p) => p.id === id);
+  if (!part) throw new Error(`ExplodedView: no part "${id}"`);
+  return part;
+};
 ---
 
 <figure class="exploded" aria-labelledby="exploded-caption" aria-describedby="exploded-instruction">
   <p class="exploded__instruction" id="exploded-instruction">Open any numbered part.</p>
   <svg
     class="exploded__svg exploded__svg--desktop"
-    viewBox="0 0 340 640"
+    viewBox="0 0 340 486"
     role="group"
     aria-label="Exploded view of ReLab; each part links to its source, app, or docs"
     fill="none"
@@ -475,10 +481,16 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
   }
 
   /* Each part and its register label are one link. Hover or focus lights
-     both; the ring is the ink change, not a box around a drawing. */
+     both. Focus also draws a boundary: an ink change on 1.7px linework is
+     too fine to locate a focused part by. The offset is negative so the
+     box lands inside the link's bounding box and the plate cannot clip it. */
   .exploded a {
-    outline: none;
     cursor: pointer;
+  }
+
+  .exploded a:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
   }
 
   .exploded a:hover .ext,
@@ -501,7 +513,11 @@ const link = (id: string) => parts.find((p) => p.id === id) ?? parts[0];
     stroke-width: 2.4;
   }
 
-  @media (max-width: 40rem) {
+  /* Width picks the plate, but so does a coarse pointer: on a touch device
+     with a wide viewport the desktop parts scale down to ~34px hit areas,
+     under the 44px the rest of the sheet keeps. The assembly map's targets
+     stay large at any width. */
+  @media (max-width: 40rem), (pointer: coarse) {
     .exploded__svg--desktop {
       display: none;
     }
