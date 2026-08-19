@@ -1,5 +1,5 @@
 ---
-import { formatPeriod } from "../components/cvPeriod.ts";
+import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, cvPdf as pdf } from "../data/cv.ts";
@@ -22,16 +22,7 @@ const {
 // Accepted work always lists; unaccepted work only once it has a DOI.
 const publications = listablePublications(cv.publications);
 
-const exportedLabel = exported
-  ? new Date(exported).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      // The title block prints the same stamp as `exported.slice(0, 10)` (UTC);
-      // a local-zone build near midnight would otherwise disagree by a day.
-      timeZone: "UTC",
-    })
-  : null;
+const exportedLabel = exported ? formatIsoDate(exported) : null;
 
 // The headline splits at its interpunct the way the landing page's header
 // does: the first part is the lead, the rest the muted line under it.

@@ -42,7 +42,7 @@ typography:
     letterSpacing: "normal"
   label:
     fontFamily: "osifont, Segoe UI, system-ui, sans-serif"
-    fontSize: "clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem)"
+    fontSize: "clamp(0.85rem, 0.81rem + 0.26vw, 1rem)"
     fontWeight: 400
     lineHeight: 1.4
     letterSpacing: "0.08em"

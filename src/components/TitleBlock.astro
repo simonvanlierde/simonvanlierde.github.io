@@ -5,7 +5,8 @@
 // Nothing decorative, nothing invented: there is no scale cell because
 // nothing on a web page is drawn to scale.
 import { version } from "../../package.json";
-import { cv } from "../data/cv.ts";
+import { cv, profiles } from "../data/cv.ts";
+import { formatIsoDate } from "./cvPeriod.ts";
 
 interface Props {
   /** Document title, e.g. the person's name. */
@@ -15,33 +16,14 @@ interface Props {
   sheet: string; // e.g. "1 OF 2"
   /** ISO date the sheet's data was last generated, if known. */
   dated?: string;
-  /** Optional context that turns the final contact cell into a clear invitation. */
-  contactPurpose?: string;
 }
 
-const { title, docType, sheet, dated, contactPurpose } = Astro.props;
-const datedLabel = dated
-  ? new Date(dated).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      timeZone: "UTC",
-    })
-  : null;
+const { title, docType, sheet, dated } = Astro.props;
+const datedLabel = dated ? formatIsoDate(dated) : null;
 
-// The address and the two profiles come from the CV export; ORCID and the
-// Leiden page have no export field yet and are kept by hand here.
+// The address, then the profiles from the one shared list the hero also reads.
 const { basics } = cv;
-const contact = [
-  ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
-  { label: "GitHub", href: basics.links.github },
-  { label: "LinkedIn", href: basics.links.linkedin },
-  { label: "ORCID", href: "https://orcid.org/0009-0006-6953-909X" },
-  {
-    label: "Leiden profile",
-    href: "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
-  },
-];
+const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []), ...profiles];
 ---
 
 <footer class="container">
@@ -66,7 +48,6 @@ const contact = [
     </div>
     <div class="title-block__cell title-block__cell--contact">
       <span class="title-block__label" id="contact-label">Contact Simon</span>
-      {contactPurpose && <p class="title-block__contact-purpose">{contactPurpose}</p>}
       <ul class="title-block__value title-block__contact" aria-labelledby="contact-label">
         {
           contact.map((c) => (

@@ -5,7 +5,7 @@ import ExplodedView from "../components/ExplodedView.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv } from "../data/cv.ts";
+import { cv, profiles } from "../data/cv.ts";
 import { personJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import Base from "../layouts/Base.astro";
@@ -52,8 +52,8 @@ const lead = "PhD researcher and research software engineer";
 const tagline =
   "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
 
-// One stamp per sheet: the CV. The address is a plain link beside it; the
-// profile links live once, in the title block, on both sheets.
+// One stamp per sheet: the CV. The address is a plain link beside it, and the
+// profiles run quietly under both, repeating the title block's list.
 ---
 
 <Base
@@ -84,6 +84,20 @@ const tagline =
             )
           }
         </div>
+
+        {/* The same profiles the title block carries, repeated once at the top:
+            the block is a footer at the end of a long sheet, and these are the
+            proofs a reader wants before scrolling. Text only and muted, so the
+            stamp stays the sheet's one strong call. */}
+        <ul class="hero__profiles link-list draft" aria-label="Profiles">
+          {
+            profiles.map((p) => (
+              <li>
+                <a href={p.href}>{p.label}</a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
 
       <div class="hero__figure">
@@ -173,7 +187,7 @@ const tagline =
         }
       </div>
 
-      <p class="prose upstream-note">
+      <p class="upstream-note">
         Currently prototyping an <a href="https://github.com/simonvanlierde/ai4ie-demo">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes upstream to tools I build on, mostly in the FastAPI and open-LCA ecosystems, such as <a href="https://github.com/sabuhish/fastapi-mail/pull/283">fastapi-mail</a> and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2">sentier_data_tools</a>.
       </p>
 
@@ -202,13 +216,7 @@ const tagline =
   </main>
   </div>
 
-  <TitleBlock
-    title={name}
-    docType="Index of work"
-    sheet="1 OF 2"
-    dated={exported?.slice(0, 10)}
-    contactPurpose="Research and software collaboration"
-  />
+  <TitleBlock title={name} docType="Index of work" sheet="1 OF 2" dated={exported?.slice(0, 10)} />
 </Base>
 
 <style>
@@ -223,11 +231,12 @@ const tagline =
   }
 
   @media (min-width: 60rem) {
-    /* The text block sits opposite the plate's middle, so the stamp is not
-       left over a band of empty paper while the drawing runs to the fold. */
+    /* Both columns hang from the top rule, so the name sits at the same
+       height on this sheet as on the CV. The shortened plate keeps the two
+       columns close enough in length that nothing is left stranded. */
     .hero__grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
-      align-items: center;
+      align-items: start;
     }
 
     .hero__figure {
@@ -253,6 +262,23 @@ const tagline =
   }
 
   .hero__email:hover {
+    color: var(--accent-strong);
+  }
+
+  /* A reference line, set like a note: small, muted, no rules or glyphs, so it
+     reads under the actions rather than beside them. */
+  .hero__profiles {
+    margin-top: var(--space-s);
+    font-size: var(--step--1);
+    letter-spacing: 0.03em;
+    gap: 0 var(--space-m);
+  }
+
+  .hero__profiles a {
+    color: var(--text-muted);
+  }
+
+  .hero__profiles a:hover {
     color: var(--accent-strong);
   }
 
@@ -336,6 +362,8 @@ const tagline =
     margin-top: var(--space-l);
   }
 
+  /* A footnote to the parts list, not prose: it runs the full sheet width
+     rather than the reading measure, because it is two lines of reference. */
   .upstream-note {
     margin-top: var(--space-l);
     color: var(--text-muted);
