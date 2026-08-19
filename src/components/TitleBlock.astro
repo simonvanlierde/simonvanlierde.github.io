@@ -1,0 +1,72 @@
+---
+// ISO 7200 title block: the document's own footer, one per sheet. Carries
+// real provenance (who, what, which sheet, when it was generated, the site
+// version linking the source) and, once per sheet, how to reach the author.
+// Nothing decorative, nothing invented: there is no scale cell because
+// nothing on a web page is drawn to scale.
+import { version } from "../../package.json";
+import { cv, profiles } from "../data/cv.ts";
+import { formatIsoDate } from "./cvPeriod.ts";
+
+interface Props {
+  /** Document title, e.g. the person's name. */
+  title: string;
+  /** What this sheet is, e.g. "Index of work" / "Curriculum vitae". */
+  docType: string;
+  sheet: string; // e.g. "1 OF 2"
+  /** ISO date the sheet's data was last generated, if known. */
+  dated?: string;
+}
+
+const { title, docType, sheet, dated } = Astro.props;
+const datedLabel = dated ? formatIsoDate(dated) : null;
+
+// The address, then the profiles from the one shared list the hero also reads.
+const { basics } = cv;
+const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []), ...profiles];
+---
+
+<footer class="container">
+  <section class="title-block" aria-label="Document title block">
+    <div class="title-block__cell">
+      <span class="title-block__label">Title</span>
+      <span class="title-block__value">{title}</span>
+    </div>
+    <div class="title-block__cell">
+      <span class="title-block__label">Document</span>
+      <span class="title-block__value">{docType}</span>
+    </div>
+    <div class="title-block__cell">
+      <span class="title-block__label">Sheet</span>
+      <span class="title-block__value">{sheet}</span>
+    </div>
+    <div class="title-block__cell">
+      <span class="title-block__label">{dated ? "Dated" : "Drawn by"}</span>
+      <span class="title-block__value">
+        {dated ? <time datetime={dated}>{datedLabel}</time> : "SVL"}
+      </span>
+    </div>
+    <div class="title-block__cell title-block__cell--contact">
+      <span class="title-block__label" id="contact-label">Contact Simon</span>
+      <ul class="title-block__value title-block__contact" aria-labelledby="contact-label">
+        {
+          contact.map((c) => (
+            <li>
+              <a href={c.href}>{c.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="title-block__cell">
+      {/* "Site rev", not "Rev": on the CV sheet a bare revision number reads
+          as the CV's own version. */}
+      <span class="title-block__label">Site rev</span>
+      <span class="title-block__value">
+        <a href="https://github.com/simonvanlierde/simonvanlierde.github.io" aria-label={`Site version ${version}, view source on GitHub`}>
+          v{version}
+        </a>
+      </span>
+    </div>
+  </section>
+</footer>

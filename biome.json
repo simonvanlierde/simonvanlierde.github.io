@@ -34,6 +34,16 @@
   },
   "overrides": [
     {
+      "includes": ["**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useQwikValidLexicalScope": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["scripts/**", "tests/**", "**/*.config.ts"],
       "linter": {
         "rules": {
@@ -57,6 +67,9 @@
           "correctness": {
             "noUnusedImports": "off",
             "noUnusedVariables": "off"
+          },
+          "suspicious": {
+            "noEmptySource": "off"
           }
         }
       }

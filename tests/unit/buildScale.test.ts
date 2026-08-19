@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { buildScale } from "../../src/components/chartScale.ts";
 
 // The documented reason the integer path exists: a whole-count max of 2 must
-// give 0,1,2 — not 0,0.5,1,1.5,2, which round to a duplicated "0,1,1,2,2".
+// give 0,1,2, not 0,0.5,1,1.5,2, which round to a duplicated "0,1,1,2,2".
 test("integer measures never produce fractional ticks (max 2 -> 0,1,2)", () => {
   assert.deepEqual(buildScale(2, true), { yMax: 2, ticks: [0, 1, 2] });
 });

@@ -4,22 +4,29 @@
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsimonvanlierde.github.io)](https://simonvanlierde.github.io)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Personal website for Simon van Lierde, research software engineer and PhD researcher at CML, Leiden University. A single static page for my work, built with Astro and deployed to GitHub Pages at
-[simonvanlierde.github.io](https://simonvanlierde.github.io).
+Personal website for Simon van Lierde, research software engineer and PhD researcher at CML, Leiden
+University. A landing page for my work and a CV page, built with Astro and deployed to GitHub Pages
+at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 
 ## Stack
 
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
-- One React island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive data visualisation; everything else ships as zero-JS HTML
-- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project cards
-- Plain CSS with design tokens; light and dark via `prefers-color-scheme`
-- Scheduled GitHub Actions refresh for the RELab chart snapshot, with CI and Pages deploy kept separate
+- One React island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
+  data visualisation; everything else ships as zero-JS HTML
+- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows (the parts list)
+- One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind
+  [/cv/](https://simonvanlierde.github.io/cv/) and the landing page's contact details
+- Plain CSS with design tokens; light (ink on paper) and dark (blueprint) via
+  `prefers-color-scheme` plus a toggle; display and data lettering in a vendored
+  [osifont](https://github.com/hikikomori82/osifont) subset (ISO 3098, LGPL+FE)
+- Scheduled GitHub Actions refresh for the RELab chart snapshot, with CI and Pages deploy kept
+  separate
 
 See [docs/architecture.md](docs/architecture.md) for the site architecture and data-refresh path.
 
 ## Project structure
 
-```
+```text
 .
 ├── public/
 │   ├── favicon.svg      # adapts to light/dark
@@ -29,20 +36,33 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 │   └── fetch-stats.mjs  # refreshes the chart's disassembly data
 ├── src/
 │   ├── components/
-│   │   ├── ProjectCard.astro
+│   │   ├── ExplodedView.astro     # Fig. 1, RELab taken apart (inline SVG)
+│   │   ├── ProjectCard.astro      # one parts-list row
+│   │   ├── SheetNav.astro
+│   │   ├── TitleBlock.astro
+│   │   ├── ThemeToggle.astro
 │   │   ├── DisassemblyChart.tsx   # the one React island
 │   │   ├── DisassemblyChart.css
-│   │   └── chartScale.ts          # axis-scale maths (unit-tested)
+│   │   ├── chartScale.ts          # axis-scale maths (unit-tested)
+│   │   └── cvPeriod.ts            # CV date formatting (unit-tested)
 │   ├── content/
 │   │   └── projects/              # one markdown file per project
 │   ├── content.config.ts          # content collection + Zod schema
+│   ├── data/
+│   │   ├── cv-public.yaml         # exported from a separate private CV repo
+│   │   ├── cv.ts                  # Zod schema: the contract between the two repos
+│   │   ├── publications.ts        # publication schema + listing rule (unit-tested)
+│   │   ├── schemaOrg.ts           # JSON-LD for both pages
+│   │   └── stats.json             # chart data, refreshed by fetch-stats.mjs
 │   ├── layouts/
 │   │   └── Base.astro             # head, meta, Open Graph
 │   ├── pages/
-│   │   └── index.astro            # the single page
+│   │   ├── index.astro            # the landing page
+│   │   ├── cv.astro               # the CV, rendered from cv-public.yaml
+│   │   └── 404.astro
 │   └── styles/
 │       └── global.css             # design tokens + base styles
-├── tests/                         # unit (chart maths) + Playwright axe/e2e
+├── tests/                         # unit (node --test) + Playwright axe/e2e
 └── .github/workflows/             # ci, deploy, refresh-data
 ```
 
@@ -63,23 +83,25 @@ pnpm gen:og       # regenerate public/og.png (the social-card image)
 Both layers run locally and gate every pull request:
 
 ```sh
-pnpm check        # lint + typecheck + unit tests (chart axis-scale maths)
+pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
 
-Unit tests ([tests/unit/](tests/unit/)) cover [chartScale.ts](src/components/chartScale.ts); the
+Unit tests ([tests/unit/](tests/unit/)) cover the chart scale and bar geometry, CV date
+formatting, and the publication listing rule; the
 browser suite ([tests/](tests/)) is the accessibility + behaviour coverage below.
 
 ## Accessibility
 
 Checked two ways in CI on every pull request (see [ci.yml](.github/workflows/ci.yml)):
 
-- **Static** — [Biome](https://biomejs.dev)'s `a11y` rules (`pnpm lint`) flag missing `alt` text,
+- **Static**: [Biome](https://biomejs.dev)'s `a11y` rules (`pnpm lint`) flag missing `alt` text,
   misused ARIA, and click handlers without keyboard equivalents.
-- **Runtime** — [Playwright](https://playwright.dev) runs [axe-core](https://github.com/dequelabs/axe-core)
-  over the built page ([tests/a11y.spec.ts](tests/a11y.spec.ts)) in both colour schemes and after
-  interaction, plus behavioural checks ([tests/e2e.spec.ts](tests/e2e.spec.ts)) for the skip link,
-  theme-toggle persistence, and the chart's `aria-pressed` toggles.
+- **Runtime**: [Playwright](https://playwright.dev) runs
+  [axe-core](https://github.com/dequelabs/axe-core) over the built page
+  ([tests/a11y.spec.ts](tests/a11y.spec.ts)) in both colour schemes and after interaction, plus
+  behavioural checks ([tests/e2e.spec.ts](tests/e2e.spec.ts)) for the skip link, theme-toggle
+  persistence, and the chart's `aria-pressed` toggles.
 
 ## Deployment
 
@@ -89,7 +111,17 @@ the site and publishes to GitHub Pages, live at
 **GitHub Actions** (Settings → Pages). A shared `pages` concurrency group keeps deploys and the
 weekly [refresh-data.yml](.github/workflows/refresh-data.yml) refresh from racing.
 
-## Adding or editing a project
+## Content
 
-Projects are markdown files under [src/content/projects/](src/content/projects/),
-validated against the schema in [src/content.config.ts](src/content.config.ts).
+Projects are markdown files under [src/content/projects/](src/content/projects/), validated against
+the schema in [src/content.config.ts](src/content.config.ts).
+
+[/cv/](https://simonvanlierde.github.io/cv/) renders from
+[src/data/cv-public.yaml](src/data/cv-public.yaml). The landing page reads only the contact details
+from it and links to the CV. That file and the CV PDF are exported from a separate private repo and
+committed here, so a clean checkout builds without access to it.
+
+[src/data/cv.ts](src/data/cv.ts) validates the export against a Zod schema at build time, so a
+broken export fails the build instead of rendering an empty page. Optional sections (publications,
+skills, projects, talks and training, interests) render only when the export carries them. An
+unaccepted publication stays hidden until it has a preprint DOI to link to.

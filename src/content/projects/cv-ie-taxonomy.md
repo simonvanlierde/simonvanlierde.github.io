@@ -1,8 +1,9 @@
 ---
 title: cv-ie-taxonomy
-description: "Interactive exploded-teardown map of a computer-vision taxonomy for industrial ecology, built as a companion visual for an upcoming publication. A custom React/SVG scene with scroll-driven exploration and Motion animations."
+description: "A companion visual for an upcoming publication that maps a computer-vision taxonomy for industrial ecology as an interactive exploded teardown. Built as a custom React and SVG scene with scroll-driven Motion animations."
 repo: https://github.com/simonvanlierde/cv-ie-taxonomy
 demo: https://simonvanlierde.github.io/cv-ie-taxonomy/
+kind: interactive visual
 tags:
   - React
   - TypeScript

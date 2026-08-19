@@ -1,0 +1,30 @@
+---
+// The sheet's header strip: wordmark, sheet index, theme toggle. Shared by
+// both pages so the two sheets read as one drawing set. Solid ground: the
+// chrome of a sheet never lets content show through it.
+import ThemeToggle from "./ThemeToggle.astro";
+
+interface Props {
+  /** Which sheet is open, for aria-current. Omitted on pages that are
+   *  neither sheet (the 404). */
+  current?: "index" | "cv";
+}
+
+const { current } = Astro.props;
+---
+
+<nav class="sheet-nav" aria-label="Primary">
+  <div class="container sheet-nav__inner">
+    <a class="sheet-nav__mark" href="/" aria-label="SVL, home">SVL</a>
+    <div class="sheet-nav__actions">
+      {/* Both sheets named the same way: number, then what it is. */}
+      <a class="sheet-nav__link" href="/" aria-current={current === "index" ? "page" : undefined}>
+        Sheet 1: Index
+      </a>
+      <a class="sheet-nav__link" href="/cv/" aria-current={current === "cv" ? "page" : undefined}>
+        Sheet 2: CV
+      </a>
+      <ThemeToggle />
+    </div>
+  </div>
+</nav>

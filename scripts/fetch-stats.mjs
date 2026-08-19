@@ -5,7 +5,7 @@
 // the API is down, this script logs a warning and exits 0 WITHOUT touching the
 // committed snapshot, so the last good figures stay on the site and CI is green.
 
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import process from "node:process";
 
@@ -44,8 +44,29 @@ if (payload.series.some((row) => required.some((k) => row?.[k] == null))) {
   skip(`a series row is missing one of: ${required.join(", ")}`);
 }
 
+// The hero notes print the running totals as counted figures, so they must
+// be present and numeric, not silently absent.
+const totals = ["products", "parts", "images"];
+if (totals.some((k) => typeof payload.totals?.[k] !== "number")) {
+  skip(`totals is missing one of: ${totals.join(", ")}`);
+}
+
 // Drop the sample flag — these are real figures now.
 delete payload.sample;
+
+// When the figures were counted. The API does not date its own response, so
+// the fetch date stands in; ISO YYYY-MM-DD in UTC, same as the CV export stamp.
+// If nothing but the date would change, keep the previous date: the label says
+// when the counts last moved, and the workflow's no-change guard stays useful.
+let previous = null;
+try {
+  previous = JSON.parse(await readFile(out, "utf8"));
+} catch {
+  // no committed snapshot yet
+}
+const { as_of: previousAsOf, ...previousRest } = previous ?? {};
+const unchanged = previousAsOf && JSON.stringify(previousRest) === JSON.stringify(payload);
+payload.as_of = unchanged ? previousAsOf : new Date().toISOString().slice(0, 10);
 
 await writeFile(out, `${JSON.stringify(payload, null, 2)}\n`);
 console.log(`fetch-stats: wrote ${payload.series.length} rows to src/data/stats.json`);

@@ -1,0 +1,447 @@
+---
+import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
+import { cv, cvPdf as pdf } from "../data/cv.ts";
+import { listablePublications } from "../data/publications.ts";
+import { cvJsonLd } from "../data/schemaOrg.ts";
+import Base from "../layouts/Base.astro";
+
+const {
+  basics,
+  profile,
+  skills,
+  experience,
+  projects,
+  education,
+  professional_development: development,
+  interests,
+  exported,
+} = cv;
+
+// Accepted work always lists; unaccepted work only once it has a DOI.
+const publications = listablePublications(cv.publications);
+
+const exportedLabel = exported ? formatIsoDate(exported) : null;
+
+// The headline splits at its interpunct the way the landing page's header
+// does: the first part is the lead, the rest the muted line under it.
+const [headlineLead, ...headlineRest] = basics.headline.split(" · ");
+
+// The sheet's zone index: one datum letter per section that renders, in
+// reading order, so a hurried reader can be sent to "C" instead of scrolling.
+const sections = [
+  { id: "profile-heading", label: "Profile", show: true },
+  { id: "experience-heading", label: "Experience", show: true },
+  { id: "publications-heading", label: "Publications", show: publications.length > 0 },
+  { id: "education-heading", label: "Education", show: true },
+  { id: "projects-heading", label: "Projects", show: projects.length > 0 },
+  { id: "skills-heading", label: "Skills", show: skills.length > 0 },
+  { id: "development-heading", label: "Talks and training", show: development.length > 0 },
+  { id: "interests-heading", label: "Interests", show: interests.length > 0 },
+]
+  .filter((s) => s.show)
+  .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
+
+// Location and address only: the profile links live once, in the title
+// block, on both sheets.
+const contact = [
+  { label: basics.location, href: null },
+  ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
+];
+---
+
+<Base
+  title={`CV | ${basics.name}`}
+  description={`Curriculum vitae of ${basics.name}: ${basics.headline}.`}
+  jsonLd={cvJsonLd}
+>
+  <SheetNav current="cv" />
+
+  {/* Skip target: only the sheet nav is chrome. */}
+  <header class="container cv-header" id="main">
+    {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
+    <h1>{basics.name}</h1>
+    <p class="lead">{headlineLead}</p>
+    {headlineRest.length > 0 && <p class="tagline prose">{headlineRest.join(" · ")}</p>}
+
+    <ul class="link-list cv-contact">
+      {
+        contact.map((c) => (
+          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft cv-contact__plain">{c.label}</span>}</li>
+        ))
+      }
+    </ul>
+
+    <a class="stamp cv-download" href={pdf} download>
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <path d="M7 10l5 5 5-5"></path>
+        <path d="M12 15V3"></path>
+      </svg>
+      Download as PDF
+    </a>
+
+    {
+      exportedLabel && (
+        <p class="cv-updated">
+          Last updated <time datetime={exported}>{exportedLabel}</time>
+        </p>
+      )
+    }
+  </header>
+
+  {/* Zone index: lettered sections, so a reader can jump. */}
+  <nav class="container cv-index" aria-label="Sections">
+    <ol class="cv-index__list">
+      {
+        sections.map((sec) => (
+          <li>
+            <a href={`#${sec.id}`}>
+              <span class="datum" aria-hidden="true">
+                {sec.ref}
+              </span>
+              {sec.label}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <main>
+    <section class="container" aria-labelledby="profile-heading">
+      <h2 id="profile-heading">Profile</h2>
+      <p class="prose cv-profile">{profile}</p>
+    </section>
+
+    <section class="container" aria-labelledby="experience-heading">
+      <h2 id="experience-heading">Experience</h2>
+      <div class="cv-entries">
+        {
+          experience.map((job) => (
+            <article class="cv-entry">
+              <p class="cv-entry__period">{formatPeriod(job.start, job.end)}</p>
+              <div class="cv-entry__body">
+                <h3 class="cv-entry__role">{job.role}</h3>
+                <p class="cv-entry__org">{job.organization}</p>
+                {job.highlights.length > 0 && (
+                  <ul class="cv-highlights">
+                    {job.highlights.map((h) => (
+                      <li>{h}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      /* After Experience: what an academic reader looks for first. */
+      publications.length > 0 && (
+        <section class="container" aria-labelledby="publications-heading">
+          <h2 id="publications-heading">Publications</h2>
+          <div class="cv-entries">
+            {publications.map((pub) => (
+              <article class="cv-entry">
+                <p class="cv-entry__period">{pub.year}</p>
+                <div class="cv-entry__body">
+                  <h3 class="cv-entry__role">
+                    {pub.doi ? <a href={`https://doi.org/${pub.doi}`}>{pub.title}</a> : pub.title}
+                  </h3>
+                  <p class="cv-entry__org">{pub.authors.join(", ")}</p>
+                  <p class="cv-publication__venue">
+                    {pub.venue}
+                    {pub.status !== "published" && <span class="tag">{pub.status}</span>}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="container" aria-labelledby="education-heading">
+      <h2 id="education-heading">Education</h2>
+      <div class="cv-entries">
+        {
+          education.map((school) => (
+            <article class="cv-entry">
+              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
+              <div class="cv-entry__body">
+                <h3 class="cv-entry__role">{school.degree}</h3>
+                <p class="cv-entry__org">{school.institution}</p>
+                {school.details && <p class="cv-entry__detail">{school.details}</p>}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      projects.length > 0 && (
+        <section class="container" aria-labelledby="projects-heading">
+          <h2 id="projects-heading">Projects</h2>
+          <div class="cv-entries">
+            {projects.map((project) => (
+              <article class="cv-entry cv-entry--railless">
+                <div class="cv-entry__body">
+                  <h3 class="cv-entry__role">
+                    <a href={project.url}>{project.name}</a>
+                  </h3>
+                  <p class="cv-entry__org">{project.summary}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      /* Optional sections: an empty heading would read as a gap in the person. */
+      skills.length > 0 && (
+        <section class="container" aria-labelledby="skills-heading">
+          <h2 id="skills-heading">Skills</h2>
+          <div class="cv-entries">
+            {/* One line per group: skills are read, not filtered. */}
+            {skills.map((group) => (
+              <div class="cv-entry">
+                <p class="cv-entry__period">{group.group}</p>
+                <p class="cv-entry__body cv-skills">{group.items.join(", ")}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      /* Talks, schools, upstream contributions. */
+      development.length > 0 && (
+        <section class="container" aria-labelledby="development-heading">
+          <h2 id="development-heading">Talks and training</h2>
+          <ul class="prose cv-list">
+            {development.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      interests.length > 0 && (
+        <section class="container" aria-labelledby="interests-heading">
+          <h2 id="interests-heading">Interests</h2>
+          <p class="prose cv-interests">{interests.join(", ")}</p>
+        </section>
+      )
+    }
+
+    <aside class="container cv-download-utility" aria-label="PDF download">
+      <p class="prose">Generated from the same source as this page.</p>
+      {/* The one stamp is in the header; this is a plain utility link. */}
+      <a class="draft cv-download-utility__link" href={pdf} download>Download as PDF</a>
+    </aside>
+  </main>
+
+  <TitleBlock
+    title={basics.name}
+    docType="Curriculum vitae"
+    sheet="2 OF 2"
+    dated={exported?.slice(0, 10)}
+  />
+</Base>
+
+<style>
+  .cv-header {
+    padding-block: var(--space-l) var(--space-m);
+  }
+
+  .cv-contact {
+    margin-top: var(--space-m);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  /* The plain location shares the links' box so the row sits on one baseline. */
+  .cv-contact__plain {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.65rem 0.25rem;
+    margin: -0.3rem -0.25rem;
+  }
+
+  /* Zone index: lettered datum marks, one row on a desktop sheet (tracked
+     and gapped so the seven fit the container), wrapping below that. */
+  .cv-index {
+    margin-top: var(--space-m);
+  }
+
+  .cv-index__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-s);
+    font-family: var(--font-draft);
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 60rem) {
+    .cv-index__list {
+      justify-content: space-between;
+      flex-wrap: nowrap;
+    }
+  }
+
+  .cv-index__list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding-inline: 0.25rem;
+    margin-inline: -0.25rem;
+  }
+
+  .cv-index__list a:hover {
+    color: var(--accent);
+  }
+
+  .cv-index__list a:hover .datum {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .cv-download {
+    margin-top: var(--space-l);
+  }
+
+  .cv-updated {
+    margin-top: var(--space-s);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  /* The profile is the CV's argument, in full ink. */
+  .cv-profile {
+    margin-top: var(--space-m);
+  }
+
+  .cv-skills {
+    max-width: var(--measure);
+  }
+
+  /* Venue sits under the byline, with the status chip only when it isn't
+     "published": absence already means accepted. */
+  .cv-publication__venue {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .cv-entry__detail {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+    max-width: var(--measure);
+  }
+
+  .cv-list {
+    margin-top: var(--space-l);
+    padding-left: 1.1em;
+  }
+
+  .cv-list li + li {
+    margin-top: var(--space-xs);
+  }
+
+  .cv-interests {
+    margin-top: var(--space-l);
+  }
+
+  .cv-download-utility {
+    margin-top: var(--space-m);
+    padding-block: var(--space-s);
+    border-top: var(--border-width) solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s) var(--space-l);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .cv-download-utility__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-block: 0.65rem;
+    margin-block: -0.65rem;
+  }
+
+  /* On paper the PDF is the document; the download controls and the zone
+     index are screen affordances, and an entry never breaks across pages. */
+  @media print {
+    @page {
+      margin: 12mm 14mm;
+    }
+
+    body {
+      padding: 0;
+    }
+
+    .cv-header {
+      padding-block: 0 0.75rem;
+    }
+
+    main > section {
+      padding-block: 0.75rem 1rem;
+    }
+
+    .cv-entries {
+      margin-top: 0.9rem;
+      gap: 0.9rem;
+    }
+
+    .cv-highlights {
+      margin-top: 0.4rem;
+    }
+
+    .cv-highlights li + li {
+      margin-top: 0.15rem;
+    }
+
+    .cv-download,
+    .cv-index,
+    .cv-download-utility {
+      display: none;
+    }
+  }
+</style>

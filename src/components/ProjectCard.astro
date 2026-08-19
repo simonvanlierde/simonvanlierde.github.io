@@ -1,75 +1,61 @@
 ---
+// One row of the parts list: kind in the rail, part name (the one target,
+// linking the repo), spec, links, tags. The row's prose stays selectable.
 interface Props {
   title: string;
   description: string;
   repo: string;
+  kind?: string;
   demo?: string;
   tags?: string[];
   links?: { label: string; url: string }[];
 }
 
-const { title, description, repo, demo, tags = [], links = [] } = Astro.props;
+const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.props;
+
+// The kind cell says what the thing is, so the column can be scanned on its
+// own. It falls back to the leading tag, which is then dropped from the tag
+// list: one value in two places on the same row is noise.
+const [lead, ...rest] = tags;
+const rail = kind ?? lead;
+const railTags = kind ? tags : rest;
 ---
 
-<article class="card">
-  <h3 class="card__title">
-    <a href={repo}>{title}</a>
-  </h3>
-  <p class="card__desc">{description}</p>
+<article class="bom-row">
+  <p class="bom-row__pos">{rail}</p>
+  <div class="bom-row__body">
+    <h3 class="bom-row__title">
+      <a href={repo}>{title}</a>
+    </h3>
+    <p class="bom-row__desc">{description}</p>
 
-  <p class="card__links">
-    <a href={repo}>Source</a>
-    {demo && <a href={demo}>Live demo</a>}
-    {links.map((l) => <a href={l.url}>{l.label}</a>)}
-  </p>
+    {
+      /* No "Source" link: the title already links the repo. The links here
+         name their project, which is what a screen reader's link list needs. */
+      (demo || links.length > 0) && (
+        <p class="bom-row__links">
+          {demo && (
+            <a href={demo} aria-label={`Live demo of ${title}`}>
+              Live demo
+            </a>
+          )}
+          {links.map((l) => (
+            <a href={l.url} aria-label={`${l.label} for ${title}`}>
+              {l.label}
+            </a>
+          ))}
+        </p>
+      )
+    }
 
-  {
-    tags.length > 0 && (
-      <ul class="tag-list" aria-label="Technologies">
-        {tags.map((t) => (
-          <li class="tag">{t}</li>
-        ))}
-      </ul>
-    )
-  }
+    {
+      railTags.length > 0 && (
+        <ul class="tag-list" aria-label="Technologies">
+          {railTags.map((t) => (
+            <li class="tag">{t}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
 </article>
-
-<style>
-  /* The box itself is global (.card); these are ProjectCard's own additions. */
-  .card {
-    transition: border-color 0.15s ease;
-  }
-
-  .card:hover {
-    border-color: var(--accent);
-  }
-
-  .card__title {
-    font-size: var(--step-1);
-    font-family: var(--font-mono);
-    font-weight: 600;
-    padding-bottom: var(--space-s);
-    border-bottom: var(--border-width) solid var(--border);
-  }
-
-  .card__title a {
-    text-decoration: none;
-  }
-
-  .card__title a:hover {
-    text-decoration: underline;
-  }
-
-  .card__desc {
-    margin-top: var(--space-s);
-    color: var(--text-muted);
-  }
-
-  .card__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-m);
-    margin-top: var(--space-s);
-    font-size: var(--step--1);
-  }
-</style>

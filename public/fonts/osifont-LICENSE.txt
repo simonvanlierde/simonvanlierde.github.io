@@ -1,0 +1,14 @@
+osifont — ISO 3098 technical lettering typeface
+Source: https://github.com/hikikomori82/osifont (osifont-lgpl3fe.ttf)
+License: GNU LGPL v3 with font-embedding exception:
+
+"As a special exception, if you create a document which uses this font,
+and embed this font or unaltered portions of this font into the document,
+this font does not by itself cause the resulting document to be covered
+by the GNU Lesser General Public License. This exception does not however
+invalidate any other reasons why the document might be covered by the
+GNU Lesser General Public License."
+
+The file osifont.woff2 in this directory is a latin subset of that font,
+converted to WOFF2 with fonttools; the subsetting is the only alteration.
+Full license text: https://www.gnu.org/licenses/lgpl-3.0.html

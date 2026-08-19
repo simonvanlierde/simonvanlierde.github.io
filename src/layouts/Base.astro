@@ -4,9 +4,11 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description: string;
+  /** schema.org JSON-LD for this page. Built in src/data/schemaOrg.ts. */
+  jsonLd?: object;
 }
 
-const { title, description } = Astro.props;
+const { title, description, jsonLd } = Astro.props;
 
 // Astro.site is set in astro.config.mjs (https://simonvanlierde.github.io).
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -24,19 +26,26 @@ const ogImage = new URL("og.png", Astro.site);
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Icons / theme -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Content set by the theme script below so it tracks the toggle, not just the system pref. -->
-    <meta name="theme-color" content="#0f766e" />
+    {/* Browser chrome only takes a literal colour. The literal is the light
+        paper --bg; the theme script below rewrites it from the computed
+        background once the stylesheet is in, so it always matches --bg. */}
+    <meta name="theme-color" content="#f8f7f3" />
     <meta name="color-scheme" content="light dark" />
 
-    <!-- Apply saved theme before paint to avoid a flash -->
+    {/* The drafting lettering carries the first paint of every heading. */}
+    <link rel="preload" href="/fonts/osifont.woff2" as="font" type="font/woff2" crossorigin />
+
+    {/* Apply the saved theme before paint to avoid a flash. */}
     <script is:inline>
-      const t = localStorage.getItem("theme");
-      if (t) document.documentElement.dataset.theme = t;
+      // Storage throws where it is blocked (sandboxed iframe, strict privacy
+      // modes). The theme then just falls back to the system preference.
+      try {
+        const t = localStorage.getItem("theme");
+        if (t) document.documentElement.dataset.theme = t;
+      } catch {}
     </script>
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -46,6 +55,17 @@ const ogImage = new URL("og.png", Astro.site);
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_US" />
 
+    {
+      /* Structured data: lets a publication be read as a publication rather
+         than as a heading. */
+      jsonLd && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(jsonLd).replace(/</g, "\\u003c")}
+          is:inline
+        />
+      )
+    }
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -56,6 +76,21 @@ const ogImage = new URL("og.png", Astro.site);
       const meta = document.querySelector('meta[name="theme-color"]');
       const media = matchMedia("(prefers-color-scheme: dark)");
 
+      // Same guard as the head script: a blocked store must not stop the
+      // toggle from applying the theme, only from remembering it.
+      const saved = () => {
+        try {
+          return localStorage.getItem("theme");
+        } catch {
+          return null;
+        }
+      };
+      const remember = (v) => {
+        try {
+          localStorage.setItem("theme", v);
+        } catch {}
+      };
+
       const isDark = () =>
         document.documentElement.dataset.theme
           ? document.documentElement.dataset.theme === "dark"
@@ -65,20 +100,21 @@ const ogImage = new URL("og.png", Astro.site);
       // btn is optional: this layout may wrap a page without a toggle.
       const sync = () => {
         const dark = isDark();
-        meta.content = dark ? "#0e1416" : "#0f766e";
+        // The chrome colour is whatever --bg resolved to; no literal to drift.
+        meta.content = getComputedStyle(document.body).backgroundColor;
         btn?.setAttribute("aria-pressed", String(dark));
       };
 
       btn?.addEventListener("click", () => {
         const next = isDark() ? "light" : "dark";
         document.documentElement.dataset.theme = next;
-        localStorage.setItem("theme", next);
+        remember(next);
         sync();
       });
 
       // Follow system changes only while the user hasn't picked a theme.
       media.addEventListener("change", () => {
-        if (!localStorage.getItem("theme")) sync();
+        if (!saved()) sync();
       });
 
       sync();

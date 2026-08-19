@@ -1,167 +1,174 @@
 ---
 import { getCollection } from "astro:content";
-import { version } from "../../package.json";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
+import ExplodedView from "../components/ExplodedView.astro";
 import ProjectCard from "../components/ProjectCard.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
+import { cv, profiles } from "../data/cv.ts";
+import { personJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import Base from "../layouts/Base.astro";
 
-// `stats.json` is refreshed from the RELab /stats endpoint by a scheduled
-// workflow (scripts/fetch-stats.mjs). Until that lands it holds seeded sample
-// figures, flagged via `sample` so the chart can label them as such.
-const { sample: statsAreSample = false, ...statsData } = stats;
+// The history lives on /cv/; this sheet reads only the basics and the date.
+const { basics, exported } = cv;
+
+// stats.json is refreshed by scripts/fetch-stats.mjs; until live data lands
+// it is a seeded sample. `sample` is optional by hand: the first live export
+// deletes the key. Sample data never ships; the dev server may draw it.
+const { sample: statsAreSample = false, ...statsData } = stats as typeof stats & { sample?: boolean };
+const showChart = !statsAreSample || import.meta.env.DEV;
+
+// General notes: ReLab's running counts. Live figures share the chart's
+// payload; while it is sample, the last hand-counted, dated totals stand in.
+// NOTE: update `fallback` when a newer count is known.
+const fallback = { as_of: "2026-08-01", products: 78, parts: 1331, images: 3610 };
+const counts = statsAreSample ? fallback : { as_of: statsData.as_of, ...statsData.totals };
+const fmt = (n: number) => n.toLocaleString("en-US").replace(/,/g, "\u2009");
+const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+// NOTE: not in the /stats payload; counted at the two workshops, kept by hand.
+const participants = 135;
+const notes = [
+  { ref: "A", label: "Products documented", value: fmt(counts.products) },
+  { ref: "B", label: "Components catalogued", value: fmt(counts.parts) },
+  { ref: "C", label: "Images captured", value: fmt(counts.images) },
+  { ref: "D", label: "Workshop participants", value: fmt(participants) },
+];
 
 const allProjects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
 const workProjects = allProjects.filter((p) => p.data.category === "work");
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
 
-const name = "Simon van Lierde";
+const name = basics.name;
+
+// The lead is who, the same words the CV's headline leads with; the tagline
+// is what and where.
+const lead = "PhD researcher and research software engineer";
+
 const tagline =
-  "PhD researcher and research software engineer at CML, Leiden University. I build open, reproducible research infrastructure for industrial ecology and the circular economy.";
+  "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
 
-// Primary links, shown in the hero. Icons are inline single-colour SVGs
-// (brand marks from simple-icons; the Leiden profile uses a mortarboard),
-// injected with set:html and drawn in currentColor.
-const icons = {
-  github:
-    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>',
-  linkedin:
-    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>',
-  orcid:
-    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/></svg>',
-  leiden:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>',
-  code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>',
-};
-
-const links = [
-  {
-    label: "GitHub",
-    href: "https://github.com/simonvanlierde",
-    icon: icons.github,
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/simon-van-lierde/",
-    icon: icons.linkedin,
-  },
-  {
-    label: "ORCID",
-    href: "https://orcid.org/0009-0006-6953-909X",
-    icon: icons.orcid,
-  },
-  {
-    label: "Leiden profile",
-    href: "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
-    icon: icons.leiden,
-  },
-];
+// One stamp per sheet: the CV. The address is a plain link beside it, and the
+// profiles run quietly under both, repeating the title block's list.
 ---
 
 <Base
   title={`${name} | PhD researcher & Research Software Engineer`}
   description={tagline}
+  jsonLd={personJsonLd}
 >
-  <nav class="site-nav" aria-label="Primary">
-    <div class="container site-nav__inner">
-      <a class="site-nav__mark" href="#main" aria-label={`${name} — home`}>SVL</a>
-      <div class="site-nav__actions">
-        <ul class="site-nav__links">
+  <SheetNav current="index" />
+
+  {/* Skip target. A div, not <main>: a header inside <main> loses its banner role. */}
+  <div id="main">
+  <header class="container hero">
+    <div class="hero__grid">
+      <div class="hero__intro">
+        <h1>{name}</h1>
+        <p class="lead">{lead}</p>
+        <p class="tagline prose">{tagline}</p>
+
+        <div class="hero__actions">
+          <a class="stamp" href="/cv/">
+            Curriculum vitae<span class="visually-hidden">, sheet 2</span>
+          </a>
           {
-            links.map((l) => (
+            basics.email && (
+              <a class="hero__email draft" href={`mailto:${basics.email}`}>
+                {basics.email}
+              </a>
+            )
+          }
+        </div>
+
+        {/* The same profiles the title block carries, repeated once at the top:
+            the block is a footer at the end of a long sheet, and these are the
+            proofs a reader wants before scrolling. Text only and muted, so the
+            stamp stays the sheet's one strong call. */}
+        <ul class="hero__profiles link-list draft" aria-label="Profiles">
+          {
+            profiles.map((p) => (
               <li>
-                <a href={l.href} aria-label={l.label} title={l.label}>
-                  <span aria-hidden="true" set:html={l.icon} />
-                </a>
+                <a href={p.href}>{p.label}</a>
               </li>
             ))
           }
         </ul>
-        <ThemeToggle />
+      </div>
+
+      <div class="hero__figure">
+        <ExplodedView />
       </div>
     </div>
-  </nav>
-
-  <header class="container hero">
-    <h1>{name}</h1>
-    <p class="hero__tagline prose">{tagline}</p>
-    <p class="hero__meta prose">
-      Focus areas: industrial ecology, circular economy, and life-cycle
-      assessment. <br />
-      Main stack: Python, FastAPI, TypeScript/React, PostgreSQL, and Docker.
-    </p>
-    <ul class="link-list hero__links">
-      {
-        links.map((l) => (
-          <li>
-            <a href={l.href}>
-              <span
-                class="link-list__icon"
-                aria-hidden="true"
-                set:html={l.icon}
-              />
-              {l.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
   </header>
 
-  <main id="main">
+  <main>
     <section class="container" aria-labelledby="work-heading">
       <h2 id="work-heading">Selected work</h2>
-      <div class="card-grid">
-        <!-- Featured: RELab, spanning the row, with the interactive chart -->
-        <article class="card card--wide relab-card">
-          <h3>Reverse Engineering Lab (RELab)</h3>
-          <div class="relab-card__body">
-            <div class="relab-card__intro">
-              <div class="prose">
-                <p>
-                  Research infrastructure I designed and built: a FastAPI
-                  backend, a PostgreSQL data model for life-cycle assessment,
-                  and an Expo / React Native frontend. RELab collects
-                  disassembly data on durable goods to close a long-standing
-                  product-data gap in industrial ecology.
-                </p>
-                <p>
-                  In active use at CML: 78 products, 1,331 components, and
-                  3,610 images catalogued so far, including two teardown
-                  workshops with 135 participants.
-                </p>
-              </div>
-              <ul class="link-list">
-                <li><a href="https://app.cml-relab.org">Live platform</a></li>
-                <li><a href="https://docs.cml-relab.org">Documentation</a></li>
-                <li>
-                  <a href="https://github.com/CMLPlatform/relab">Source</a>
-                </li>
-                <li>
-                  <a href="https://github.com/CMLPlatform/relab-rpi-cam-plugin">
-                    RPI camera plugin
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div class="relab__chart">
-              <h4>Disassembly over time</h4>
-              <p class="viz__caption">
-                Activity in RELab by month. Switch measures and hover a column
-                for the exact figure.{
-                  statsAreSample
-                    ? " The numbers shown are sample data pending a live connection to the RELab API."
-                    : ""
-                }
+      <div class="bom">
+        {/* ReLab first: the platform, with the chart when data is live */}
+        <article class="bom-row relab-row" id="relab">
+          <p class="bom-row__pos">Research platform</p>
+          <div class="bom-row__body">
+            <h3 class="bom-row__title relab-row__title">
+              <a href="https://github.com/CMLPlatform/relab">ReLab</a>
+            </h3>
+            <div class="relab-row__intro prose">
+              <p>
+                ReLab closes a product-data gap in industrial ecology by
+                recording how durable goods come apart, component by component.
+                I designed and built the platform now used at CML: a FastAPI
+                backend, a PostgreSQL data model for life-cycle assessment, and
+                an Expo / React Native capture app.
               </p>
-              <DisassemblyChart
-                stats={statsData}
-                isSample={statsAreSample}
-                client:visible
-              />
+              <p>In active use at CML, including two teardown workshops.</p>
             </div>
+            <ul class="bom-row__links link-list">
+              <li><a href="https://app.cml-relab.org">Live platform</a></li>
+              <li><a href="https://docs.cml-relab.org">Documentation</a></li>
+              <li>
+                <a href="https://github.com/CMLPlatform/relab-rpi-cam-plugin">
+                  Raspberry Pi camera plugin
+                </a>
+              </li>
+            </ul>
+
+            <section class="notes" aria-labelledby="notes-heading">
+              <h4 id="notes-heading" class="notes__heading">
+                Notes A–D<span class="notes__heading-aside"> · running totals</span>
+              </h4>
+              <ol class="notes__list">
+                {
+                  notes.map((n) => (
+                    <li>
+                      <span class="datum" aria-hidden="true">
+                        {n.ref}
+                      </span>
+                      <span class="notes__value draft">{n.value}</span>
+                      <span class="notes__label">{n.label}</span>
+                    </li>
+                  ))
+                }
+              </ol>
+              <p class="notes__foot draft">As counted {asOfLabel}.</p>
+            </section>
+
+            {
+              showChart && (
+                <div class="relab__chart">
+                  <DisassemblyChart
+                    stats={statsData}
+                    isSample={statsAreSample}
+                    caption="Fig. 2: ReLab activity by month."
+                    client:visible
+                  />
+                </div>
+              )
+            }
           </div>
         </article>
 
@@ -171,6 +178,7 @@ const links = [
               title={p.data.title}
               description={p.data.description}
               repo={p.data.repo}
+              kind={p.data.kind}
               demo={p.data.demo}
               tags={p.data.tags}
               links={p.data.links}
@@ -179,32 +187,22 @@ const links = [
         }
       </div>
 
-      <p class="prose upstream-note">
-        Currently prototyping an <a
-          href="https://github.com/simonvanlierde/ai4ie-demo">AI4IE resource hub</a
-        > and a <a href="https://github.com/CMLPlatform/cml-gallery"
-          >project gallery</a
-        > for CML.
-        <br> I also send fixes upstream to tools I build on, mostly in the FastAPI
-        and open-LCA ecosystems, such as <a
-          href="https://github.com/sabuhish/fastapi-mail/pull/283"
-          >fastapi-mail</a
-        > and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2"
-          >sentier_data_tools</a
-        >. 
+      <p class="upstream-note">
+        Currently prototyping an <a href="https://github.com/simonvanlierde/ai4ie-demo">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes upstream to tools I build on, mostly in the FastAPI and open-LCA ecosystems, such as <a href="https://github.com/sabuhish/fastapi-mail/pull/283">fastapi-mail</a> and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2">sentier_data_tools</a>.
       </p>
 
-      <details class="disclosure personal" open>
+      <details class="disclosure personal">
         <summary>
           <h3>Personal projects ({personalProjects.length})</h3>
         </summary>
-        <div class="card-grid card-grid--dense">
+        <div class="bom">
           {
             personalProjects.map((p) => (
               <ProjectCard
                 title={p.data.title}
                 description={p.data.description}
                 repo={p.data.repo}
+                kind={p.data.kind}
                 demo={p.data.demo}
                 tags={p.data.tags}
                 links={p.data.links}
@@ -216,194 +214,164 @@ const links = [
     </section>
 
   </main>
+  </div>
 
-  <footer class="container site-footer">
-    <p class="site-footer__copyright">
-      &copy; {new Date().getFullYear()}&nbsp;{name}
-    </p>
-    <a
-      class="site-footer__version"
-      href="https://github.com/simonvanlierde/simonvanlierde.github.io"
-      aria-label={`View source on GitHub (v${version})`}
-    >
-      <span class="site-footer__version-icon" set:html={icons.code} />
-      v{version}
-    </a>
-  </footer>
+  <TitleBlock title={name} docType="Index of work" sheet="1 OF 2" dated={exported?.slice(0, 10)} />
 </Base>
 
-<script>
-  // Reveal the condensed icon links in the nav once the hero's social links
-  // have scrolled up under the sticky bar. The negative top margin ≈ nav height,
-  // so the swap happens right as the real links slip out of sight.
-  const nav = document.querySelector(".site-nav");
-  const heroLinks = document.querySelector(".hero__links");
-  if (nav && heroLinks) {
-    new IntersectionObserver(
-      ([entry]) => nav.classList.toggle("is-condensed", !entry.isIntersecting),
-      { rootMargin: "-48px 0px 0px 0px" },
-    ).observe(heroLinks);
-  }
-</script>
-
 <style>
-  .site-nav {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: var(--border-width) solid var(--border);
-  }
-
-  .site-nav__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-block: var(--space-xs);
-  }
-
-  .site-nav__mark {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: var(--step-0);
-    letter-spacing: 0.18em;
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  .site-nav__mark:hover {
-    color: var(--accent);
-  }
-
-  .site-nav__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-  }
-
-  /* Icon-only copies of the hero social links. Hidden until the real links in
-     the hero scroll out of view, then they cascade in (see the observer below). */
-  .site-nav__links {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3xs, 0.15rem);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity 0.3s ease,
-      visibility 0.3s;
-  }
-
-  .site-nav.is-condensed .site-nav__links {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .site-nav__links a {
-    display: inline-flex;
-    padding: 0.35rem;
-    border-radius: var(--radius);
-    color: var(--text-muted);
-    opacity: 0;
-    transform: translateY(-0.4rem);
-    transition:
-      opacity 0.3s ease,
-      transform 0.3s ease,
-      color 0.15s ease;
-  }
-
-  .site-nav.is-condensed .site-nav__links a {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Stagger the entrance so the icons flow in one after another. */
-  .site-nav.is-condensed .site-nav__links li:nth-child(2) a {
-    transition-delay: 0.04s;
-  }
-  .site-nav.is-condensed .site-nav__links li:nth-child(3) a {
-    transition-delay: 0.08s;
-  }
-  .site-nav.is-condensed .site-nav__links li:nth-child(4) a {
-    transition-delay: 0.12s;
-  }
-  .site-nav__links a:hover {
-    color: var(--accent);
-  }
-
-  .site-nav__links a :global(svg) {
-    display: block;
-    width: 18px;
-    height: 18px;
-  }
-
-  /* No sticky nav, blur, or motion for users who prefer reduced motion. */
-  @media (prefers-reduced-motion: reduce) {
-    .site-nav {
-      position: static;
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-    }
-    .site-nav__links,
-    .site-nav__links a {
-      transform: none;
-      transition:
-        opacity 0.2s ease,
-        visibility 0.2s;
-      transition-delay: 0s;
-    }
-  }
-
   .hero {
-    padding-block: var(--space-l) var(--space-s);
+    padding-block: var(--space-l) var(--space-xl);
   }
 
-  /* Tagline and meta share one rem-based measure so they wrap to the same
-     width (a ch-based measure makes the smaller meta text look under-set). */
-  .hero__tagline,
-  .hero__meta {
-    max-width: 56rem;
+  .hero__grid {
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
   }
 
-  .hero__tagline {
-    margin-top: var(--space-m);
-    font-size: var(--step-1);
-    color: var(--text);
+  @media (min-width: 60rem) {
+    /* Both columns hang from the top rule, so the name sits at the same
+       height on this sheet as on the CV. The shortened plate keeps the two
+       columns close enough in length that nothing is left stranded. */
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+      align-items: start;
+    }
+
+    .hero__figure {
+      justify-self: end;
+      width: 100%;
+    }
   }
 
-  .hero__meta {
-    margin-top: var(--space-m);
+  .hero__actions {
+    margin-top: var(--space-l);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-m);
+  }
+
+  .hero__email {
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    overflow-wrap: anywhere;
+    padding-block: 0.65rem; /* 44px target */
+    margin-block: -0.65rem;
+  }
+
+  .hero__email:hover {
+    color: var(--accent-strong);
+  }
+
+  /* A reference line, set like a note: small, muted, no rules or glyphs, so it
+     reads under the actions rather than beside them. */
+  .hero__profiles {
+    margin-top: var(--space-s);
+    font-size: var(--step--1);
+    letter-spacing: 0.03em;
+    gap: 0 var(--space-m);
+  }
+
+  .hero__profiles a {
     color: var(--text-muted);
   }
 
-  .hero__links {
+  .hero__profiles a:hover {
+    color: var(--accent-strong);
+  }
+
+  /* General notes: the platform's running counts, a boxed note block in its
+     row, so the row reads text, notes, figure. */
+  .notes {
+    margin-top: var(--space-l);
+    max-width: var(--measure);
+    padding: var(--space-s) var(--space-m) var(--space-m);
+    border: var(--border-width) solid var(--border-strong);
+  }
+
+  .notes__heading {
+    font-family: var(--font-draft);
+    font-weight: 400;
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--border-width) solid var(--border-strong);
+  }
+
+  .notes__heading-aside {
+    color: var(--text-muted);
+  }
+
+  .notes__list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-s);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-s) var(--space-m);
+  }
+
+  .notes__list li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-s);
+    align-content: start;
+  }
+
+  .notes__value {
+    font-size: var(--step-3);
+    line-height: 1.05;
+    color: var(--text);
+  }
+
+  .notes__label {
+    grid-column: 2;
+    font-family: var(--font-draft);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .notes__foot {
+    margin-top: var(--space-s);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
+  /* Lead row: the platform's title outranks the repo slugs below it. */
+  .relab-row__title {
+    font-size: var(--step-2);
+  }
+
+  .relab-row__intro {
+    color: var(--text-muted);
+  }
+
+  /* An inline-size container cannot size from its content, so it takes an
+     explicit width: the plot's own 30rem cap (see DisassemblyChart.css). */
+  .relab__chart {
+    container: chart / inline-size;
+    width: 100%;
+    max-width: 30rem;
     margin-top: var(--space-l);
   }
 
-  /* Even spacing between stacked blocks inside the cards. */
-  .relab-card > * + *,
-  .relab-card__intro > * + *,
-  .relab-card__body > * + * {
-    margin-top: var(--space-m);
-  }
-
-  /* Disclosure: a collapsed <details> that keeps secondary content (personal
-     projects) below the work above. Native, no JS. */
-  .disclosure {
-    margin-top: var(--space-xl);
-  }
-
-  /* A quiet one-liner noting upstream contributions, kept as prose so it does
-     not compete with the project cards above. */
+  /* A footnote to the parts list, not prose: it runs the full sheet width
+     rather than the reading measure, because it is two lines of reference. */
   .upstream-note {
     margin-top: var(--space-l);
     color: var(--text-muted);
     font-size: var(--step--1);
+  }
+
+  .disclosure {
+    margin-top: var(--space-xl);
   }
 
   .disclosure summary {
@@ -411,15 +379,16 @@ const links = [
     align-items: center;
     gap: var(--space-xs);
     cursor: pointer;
-    list-style: none; /* drop the default disclosure triangle */
+    list-style: none;
     color: var(--text-muted);
+    min-height: 44px;
+    padding-block: var(--space-s);
   }
 
   .disclosure summary::-webkit-details-marker {
-    display: none; /* Safari */
+    display: none;
   }
 
-  /* A small caret that points right when closed, down when open. */
   .disclosure summary::before {
     content: "";
     width: 0.45em;
@@ -427,7 +396,7 @@ const links = [
     border-right: 2px solid currentColor;
     border-bottom: 2px solid currentColor;
     transform: rotate(-45deg);
-    transition: transform 0.15s ease;
+    transition: transform var(--dur-fast) var(--ease-out);
   }
 
   .disclosure[open] summary::before {
@@ -436,78 +405,37 @@ const links = [
 
   .disclosure summary h3 {
     color: inherit;
+    font-size: var(--step-0);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (interpolate-size: allow-keywords) {
+      .disclosure {
+        interpolate-size: allow-keywords;
+      }
+
+      .disclosure::details-content {
+        block-size: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition:
+          block-size var(--dur-slow) var(--ease-out),
+          content-visibility var(--dur-slow) allow-discrete,
+          opacity var(--dur-base) ease;
+      }
+
+      .disclosure[open]::details-content {
+        block-size: auto;
+        opacity: 1;
+      }
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .disclosure summary::before {
       transition: none;
     }
-  }
-
-  /* Featured card: intro and chart sit side by side once there is room. */
-  @media (min-width: 48rem) {
-    .relab-card__body {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: var(--space-l);
-      align-items: start;
-    }
-
-    .relab-card__body > * + * {
-      margin-top: 0; /* the grid gap handles spacing now */
-    }
-  }
-
-  .viz__caption {
-    margin-top: var(--space-xs);
-    margin-bottom: var(--space-l);
-    color: var(--text-muted);
-  }
-
-  .site-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-m) var(--space-l);
-    padding-block: var(--space-l);
-    border-top: var(--border-width) solid var(--border);
-    font-size: var(--step--1);
-    color: var(--text-muted);
-  }
-
-  .site-footer__version {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2xs);
-    padding: 0.2em 0.6em;
-    border: var(--border-width) solid var(--border);
-    border-radius: 999px;
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    letter-spacing: 0.02em;
-    line-height: 1;
-    text-decoration: none;
-    transition:
-      border-color 0.15s ease,
-      color 0.15s ease;
-  }
-
-  .site-footer__version:hover {
-    border-color: currentColor;
-    color: var(--text);
-  }
-
-  .site-footer__version-icon {
-    display: inline-flex;
-  }
-
-  .site-footer__version-icon :global(svg) {
-    width: 0.95em;
-    height: 0.95em;
-  }
-
-  .site-footer a {
-    color: inherit;
   }
 </style>

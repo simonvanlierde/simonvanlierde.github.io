@@ -1,20 +1,37 @@
 /* ---------------------------------------------------------------------------
-   Design tokens
-   Light theme is the default; dark theme via prefers-color-scheme.
-   One accent colour (a muted sea-green, in keeping with "duinlab" / dune).
+   THE ENGINEERING DRAWING SHEET
+   One visual world, two renderings of the same sheet:
+     light = ink linework on drafting paper
+     dark  = blueprint (cyanotype: pale lines on Prussian-blue ground)
+   Display and label voice: osifont (ISO 3098 technical lettering, vendored,
+   subset, ~10KB). Body prose: system sans. Colour is never the sole signal.
+   Token NAMES are kept from the previous system (--bg, --text, --accent,
+   --chart-bar...) so every consumer, the chart island included, rethemes
+   without edits; the VALUES are the new world.
    --------------------------------------------------------------------------- */
 
+@font-face {
+  font-family: "osifont";
+  src: url("/fonts/osifont.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  /* Type. Native system stacks; no webfonts. Mono is used only for data labels. */
+  /* Type. Drafting lettering carries display, labels, and data; prose stays
+     on the system sans so long text reads as text, not as a costume. */
+  --font-draft: "osifont", "Segoe UI", system-ui, sans-serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  /* Kept name: the chart and data labels resolve through this. */
+  --font-mono: var(--font-draft);
 
   /* Fluid type scale */
-  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
+  --step--1: clamp(0.85rem, 0.81rem + 0.26vw, 1rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
   --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
   --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  --step-3: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --step-3: clamp(2.1rem, 1.6rem + 2.4vw, 3.4rem);
 
   /* Spacing */
   --space-2xs: 0.25rem;
@@ -23,29 +40,70 @@
   --space-m: 1.25rem;
   --space-l: 2rem;
   --space-xl: 3.5rem;
-  --space-2xl: 5.5rem;
 
-  /* Layout */
-  --measure: 72ch;
-  --radius: 4px; /* crisp data-sheet edges */
+  /* Layout. 72ch measures the zero glyph and lands near 91 real characters in
+     a system sans; 38rem lands near 70. The rem value is the cap. */
+  --measure: 38rem;
+  --radius: 0px; /* a drawing has no rounded corners */
   --border-width: 1px;
 
-  /* Palette. Each token carries both themes; light-dark() picks one against the
-     active color-scheme (set below) — the system preference by default, or the
-     scheme the footer toggle forces. Single source of truth, no media query. */
+  /* The fixed sheet frame (trim margin + frame line) */
+  --frame-inset: clamp(8px, 1.2vw, 16px);
+  --frame-line: 1.5px;
+
+  /* Motion: drafting behaviour, not decoration. */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-slow: 250ms;
+  --dur-explode: 700ms; /* the exploded view settling apart */
+
+  /* Palette. Two grounds, one working ink, engineer's blue, checker's green.
+     Light: warm drafting paper, near-black blue ink, Prussian-blue accents.
+     Dark: the same sheet printed as a cyanotype, ground and line swap roles.
+     Every text pair clears 4.5:1 on its ground; verified at build time. */
   color-scheme: light dark;
-  --bg: light-dark(#fbfcfc, #0e1416);
-  --surface: light-dark(#ffffff, #161e21);
-  --text: light-dark(#1a2024, #e7edef);
-  --text-muted: light-dark(#56636b, #9fadb3);
-  --border: light-dark(#e2e7e9, #283337);
-  --accent: light-dark(#0f766e, #5eead4); /* sea-green >= 4.7:1 on light; lighter teal on dark */
-  --accent-strong: light-dark(#0b5650, #99f6e4);
-  --accent-contrast: light-dark(#ffffff, #06251f);
-  --focus: light-dark(#0f766e, #5eead4);
+
+  --bg: light-dark(oklch(97.5% 0.005 95), oklch(27% 0.05 262));
+  --surface: light-dark(oklch(99.2% 0.003 95), oklch(30.5% 0.055 262));
+  --text: light-dark(oklch(23% 0.015 255), oklch(96.5% 0.008 240));
+  --text-muted: light-dark(oklch(43% 0.02 255), oklch(85% 0.03 240));
+  --border: light-dark(oklch(80% 0.012 255), oklch(45% 0.05 258));
+  --border-strong: light-dark(oklch(32% 0.02 255), oklch(90% 0.02 240));
+
+  /* Engineer's blue: links and working accents. Pale drafting cyan on the
+     blueprint side, where the ground already owns the blue. */
+  --accent: light-dark(oklch(42% 0.13 262), oklch(88% 0.055 225));
+  --accent-strong: light-dark(oklch(34% 0.11 262), oklch(94% 0.035 225));
+  --accent-contrast: light-dark(oklch(98% 0.003 95), oklch(25% 0.05 262));
+
+  /* Checker's green: the one approval stamp, exactly one primary action per
+     sheet. Green, not red: red on a drawing marks a correction, and on a
+     screen it reads as an error. */
+  --stamp: light-dark(oklch(44% 0.11 150), oklch(82% 0.1 150));
+  --stamp-contrast: light-dark(oklch(98.5% 0.003 95), oklch(23% 0.05 262));
+
+  --focus: var(--accent);
+
+  /* Chart marks (kept names). Solid engineer's blue bars on paper; pale
+     cyanotype lines on blueprint. Both clear 3:1 against --surface. */
+  --chart-bar: light-dark(oklch(42% 0.13 262), oklch(80% 0.07 225));
+  --chart-bar-strong: light-dark(oklch(34% 0.11 262), oklch(88% 0.055 225));
 }
 
-/* The toggle sets data-theme; forcing color-scheme flips every token above. */
+/* Wide gamut: lift only the chromatic tokens, uniformly, never lightness.
+   A display that claims P3 and clamps still clears every contrast floor. */
+@media (color-gamut: p3) {
+  :root {
+    --accent: light-dark(oklch(42% 0.155 262), oklch(88% 0.066 225));
+    --accent-strong: light-dark(oklch(34% 0.132 262), oklch(94% 0.042 225));
+    --stamp: light-dark(oklch(44% 0.13 150), oklch(82% 0.12 150));
+    --chart-bar: light-dark(oklch(42% 0.155 262), oklch(80% 0.084 225));
+    --chart-bar-strong: light-dark(oklch(34% 0.132 262), oklch(88% 0.066 225));
+  }
+}
+
 :root[data-theme="light"] {
   color-scheme: light;
 }
@@ -70,6 +128,10 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* The scrollbar is a rule on the sheet's edge, in the sheet's ink. */
+  scrollbar-color: var(--border) transparent;
+  /* In-page jumps (the CV's zone index, a caption pointing at its row) travel
+     rather than cut, so the reader keeps their place on the sheet. */
   scroll-behavior: smooth;
 }
 
@@ -80,6 +142,7 @@ html {
 }
 
 body {
+  position: relative; /* the sheet frame is drawn on the document, not the viewport */
   font-family: var(--font-sans);
   font-size: var(--step-0);
   line-height: 1.6;
@@ -87,37 +150,120 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Content lives inside the sheet frame. */
+  padding: calc(var(--frame-inset) + var(--frame-line));
+}
+
+/* The sheet frame: a trim border around the whole document, like the frame
+   every drawing is plotted inside. Drawn on the document, not the viewport:
+   the page is one tall sheet, and a viewport-fixed line would cross moving
+   text like a strike. Screen-only: print gets the plain document. */
+@media screen {
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--frame-line) solid var(--border-strong);
+    pointer-events: none;
+    z-index: 90;
+  }
+}
+
+/* Print gets the plain document: no sheet chrome, no toggle, paper theme. */
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  .sheet-nav,
+  .skip-link,
+  .theme-toggle {
+    display: none;
+  }
+
+  main > section {
+    padding-block: var(--space-m) var(--space-l);
+  }
+
+  .cv-entry,
+  .bom-row {
+    break-inside: avoid;
+  }
+}
+
+/* Selection and caret belong to the world too. */
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
 
 h1,
 h2,
 h3 {
-  line-height: 1.15;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-family: var(--font-draft);
+  line-height: 1.12;
+  font-weight: 400;
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--step-3);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
+/* Section headings are zone labels: smaller than the content they label,
+   tracked caps over a heavy rule. A label, not a statement. */
 h2 {
-  font-size: var(--step-2);
+  font-size: var(--step-1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
 }
 
 h3 {
   font-size: var(--step-1);
+  letter-spacing: 0.02em;
 }
 
 p {
   text-wrap: pretty;
 }
 
+/* The line under a sheet's name: the thesis on Sheet 1, the headline on
+   Sheet 2. Same voice on both, so the two headers read as one set. */
+.lead {
+  max-width: 30rem;
+  margin-top: var(--space-m);
+  font-family: var(--font-draft);
+  font-size: var(--step-2);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  color: var(--text);
+}
+
+/* The muted sentence under the lead: the tagline on Sheet 1, the rest of the
+   headline on Sheet 2. */
+.tagline {
+  margin-top: var(--space-m);
+  font-size: var(--step-0);
+  color: var(--text-muted);
+}
+
+/* Figure captions: one style for every figure on the set, under the figure,
+   "Fig. N:" first. */
+figcaption {
+  margin-top: var(--space-s);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  max-width: var(--measure);
+}
+
 a {
   color: var(--accent);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.15em;
+  text-underline-offset: 0.18em;
 }
 
 a:hover {
@@ -131,12 +277,20 @@ svg {
 }
 
 code {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
+  font-family: var(--font-draft);
+  font-size: 0.95em;
 }
 
 ul {
   padding: 0;
+}
+
+/* Figures and data are set in the drafting hand with even numerals. */
+.draft,
+.tag,
+time {
+  font-family: var(--font-draft);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------------------------------------------------------------------------
@@ -146,7 +300,17 @@ ul {
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
-  border-radius: 3px;
+}
+
+/* Controls that buy their 44px target with padding + negative margin draw
+   the ring inside that padding, so it never crosses a neighbour's glyphs. */
+.theme-toggle:focus-visible,
+.sheet-nav__mark:focus-visible,
+.sheet-nav__link:focus-visible,
+.link-list a:focus-visible,
+.bom-row__links a:focus-visible,
+.title-block__value a:focus-visible {
+  outline-offset: -2px;
 }
 
 .visually-hidden {
@@ -162,39 +326,54 @@ ul {
 }
 
 .skip-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   position: absolute;
-  left: var(--space-s);
+  left: var(--space-m);
   top: -100%;
   z-index: 100;
   padding: var(--space-xs) var(--space-m);
   background: var(--accent);
   color: var(--accent-contrast);
-  border-radius: var(--radius);
+  font-family: var(--font-draft);
   text-decoration: none;
 }
 
 .skip-link:focus {
-  top: var(--space-s);
+  top: var(--space-m);
   color: var(--accent-contrast);
 }
 
 .theme-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2xs);
-  padding: 0;
+  /* 18px glyph + 0.85rem padding clears 44px; negative margin keeps the
+     glyph optically in place. */
+  padding: 0.85rem;
+  margin: -0.85rem;
   font: inherit;
   color: var(--text-muted);
   background: none;
   border: 0;
   cursor: pointer;
+  transition: color var(--dur-fast) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle,
+  .sheet-nav__mark,
+  .sheet-nav__link {
+    transition: none;
+  }
 }
 
 .theme-toggle:hover {
   color: var(--accent);
 }
 
-/* Show the icon for the theme you'd switch TO: moon in light, sun in dark. */
 .theme-toggle__sun {
   display: none;
 }
@@ -209,8 +388,11 @@ ul {
    Layout
    --------------------------------------------------------------------------- */
 
+/* The sheet is as wide as its content: an 11rem rail, a 2rem gutter and a
+   38rem measure, with 3rem to spare for tags and the hero's plate. Rules end
+   where the writing ends; the paper is not wider than the drawing. */
 .container {
-  width: min(100% - 2 * var(--space-m), 64rem);
+  width: min(100% - 2 * var(--space-m), 54rem);
   margin-inline: auto;
 }
 
@@ -218,18 +400,155 @@ ul {
   max-width: var(--measure);
 }
 
-main > section {
-  padding-block: var(--space-xl);
-  border-top: var(--border-width) solid var(--border);
+.prose > p + p {
+  margin-top: var(--space-m);
 }
 
-main > section:first-of-type {
-  border-top: 0;
-  padding-top: var(--space-l);
+/* One rule per boundary: the zone label's own 2px rule divides sections, so
+   there is no hairline above them; more air below a zone than above its
+   successor's label. */
+main > section {
+  padding-block: var(--space-l) calc(var(--space-l) + var(--space-s));
+}
+
+#main,
+#relab,
+main > section,
+main > section > h2,
+main > section > .container > h2 {
+  scroll-margin-top: 4rem;
+}
+
+/* Section heading rule: the zone label sits on its own heavy rule. */
+main > section > .container > h2,
+main > section.container > h2 {
+  padding-bottom: var(--space-xs);
+  border-bottom: 2px solid var(--border-strong);
 }
 
 /* ---------------------------------------------------------------------------
-   Link lists (the only place we allow emoji)
+   Sheet header (shared chrome, both pages)
+   --------------------------------------------------------------------------- */
+
+.sheet-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  /* Solid: nothing may show through the chrome of the sheet. */
+  background: var(--bg);
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+.sheet-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m);
+  padding-block: var(--space-xs);
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+}
+
+.sheet-nav__mark {
+  color: var(--text);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  /* Padding + negative margin buys the 44px target without moving the mark. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.7rem 0.5rem;
+  margin: -0.7rem -0.5rem;
+  transition: color var(--dur-fast) ease;
+}
+
+.sheet-nav__mark:hover {
+  color: var(--accent);
+}
+
+.sheet-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+/* Below 22rem the two sheet labels and the toggle fill the strip; the
+   wordmark yields, since "Sheet 1: Index" is the same link home. */
+@media (max-width: 21.99rem) {
+  .sheet-nav__mark {
+    display: none;
+  }
+
+  .sheet-nav__inner {
+    justify-content: flex-end;
+  }
+}
+
+.sheet-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0.7rem 0.35rem;
+  margin: -0.7rem -0.35rem;
+  transition: color var(--dur-fast) ease;
+}
+
+.sheet-nav__link:hover {
+  color: var(--accent);
+}
+
+.sheet-nav__link[aria-current="page"] {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* ---------------------------------------------------------------------------
+   Stamp: the one primary action per sheet, in checker's green
+   --------------------------------------------------------------------------- */
+
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-m) var(--space-l);
+  border: 2px solid var(--stamp);
+  color: var(--stamp);
+  background: transparent;
+  font-family: var(--font-draft);
+  font-size: var(--step-0);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.stamp:hover {
+  background: var(--stamp);
+  color: var(--stamp-contrast);
+}
+
+.stamp:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Link lists
    --------------------------------------------------------------------------- */
 
 .link-list {
@@ -243,44 +562,109 @@ main > section:first-of-type {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
+  /* Buys the 44px target in both axes; the negative margin keeps the row
+     rhythm and the glyph optically in place. */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.65rem 0.25rem;
+  margin: -0.3rem -0.25rem;
 }
 
 /* ---------------------------------------------------------------------------
-   Cards / grid
+   Selected work (the parts list)
+   A parts-list table: kind in the rail, part name, spec. The name is the
+   target. Circled numerals live on Fig. 1 only, where they balloon parts.
    --------------------------------------------------------------------------- */
 
-.card-grid {
-  display: grid;
-  gap: var(--space-m);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.bom {
   margin-top: var(--space-l);
 }
 
-@media (max-width: 38rem) {
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
+.bom-row {
+  display: grid;
+  gap: var(--space-2xs) var(--space-l);
+  padding-block: var(--space-m);
+  border-top: var(--border-width) solid var(--border);
 }
 
-/* Shared card box. ProjectCard adds the title/hover treatment on top; the RELab
-   and side-project cards reuse just this box. `--wide` spans the full grid row. */
-.card {
+.bom-row:last-child {
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+/* The rail: what the part is, in the drafting hand, on the title's midline. */
+.bom-row__pos {
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding-top: 0.45em;
+}
+
+/* Datum mark: the figure's boxed-letter note reference. Square, where the
+   figure balloon is the circle. */
+.datum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  flex: none;
+  border: 1.5px solid var(--border-strong);
+  font-family: var(--font-draft);
+  font-size: 0.8rem;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.bom-row__body > * + * {
+  margin-top: var(--space-s);
+}
+
+.bom-row__title {
+  font-family: var(--font-draft);
+  font-size: var(--step-1);
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
+/* The part name is the target (the row's prose stays selectable and
+   copyable): ink and underlined at rest, so it reads as a path to the repo
+   before hover; engineer's blue on hover; the 44px target bought by padding
+   + negative margin. */
+.bom-row__title a {
+  display: inline-block;
+  color: var(--text);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  padding: 0.7rem 0.3rem;
+  margin: -0.7rem -0.3rem;
+  transition: color var(--dur-fast) ease;
+}
+
+.bom-row__title a:hover {
+  color: var(--accent);
+}
+
+.bom-row__desc {
+  max-width: var(--measure);
+  color: var(--text-muted);
+}
+
+.bom-row__links {
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: var(--space-m);
-  background: var(--surface);
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius);
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-m);
+  font-size: var(--step--1);
+  width: fit-content;
 }
 
-.card--wide {
-  grid-column: 1 / -1;
-}
-
-/* Denser grid for the lighter personal-project cards. */
-.card-grid--dense {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+.bom-row__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: 0.65rem;
+  margin-block: -0.3rem;
 }
 
 .tag-list {
@@ -288,26 +672,190 @@ main > section:first-of-type {
   flex-wrap: wrap;
   gap: var(--space-2xs) var(--space-xs);
   list-style: none;
-  margin-top: auto;
-  padding-top: var(--space-s);
 }
 
 .tag {
   font-size: var(--step--1);
-  font-family: var(--font-mono);
   color: var(--text-muted);
-  background: var(--bg);
+  background: transparent;
+  /* Read-only spec callouts, not controls: a hairline is enough, and it
+     keeps them below the section rules in weight. */
   border: var(--border-width) solid var(--border);
-  border-radius: 2px;
   padding: 0.1em 0.55em;
+  letter-spacing: 0.04em;
 }
 
-/* Inline brand/link icons sit at cap height beside the label text. */
-.link-list__icon {
+@media (min-width: 40rem) {
+  .bom-row {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bom-row__title a {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   CV timeline (shared: condensed on /, full on /cv/)
+   --------------------------------------------------------------------------- */
+
+.cv-entries {
+  margin-top: var(--space-l);
+  display: grid;
+  gap: var(--space-l);
+}
+
+.cv-entry {
+  display: grid;
+  gap: var(--space-2xs) var(--space-l);
+}
+
+@media (min-width: 40rem) {
+  .cv-entry {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+
+  .cv-entry--railless {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.cv-entry__period {
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  padding-top: 0.15em;
+  text-transform: uppercase;
+}
+
+.cv-entry__role {
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* A linked role or project name is underlined at rest: colour alone must not
+   be the only sign that a title opens somewhere. */
+.cv-entry__role a {
+  text-underline-offset: 0.18em;
+}
+
+.cv-entry__role a:hover {
+  color: var(--accent-strong);
+}
+
+.cv-entry__org {
+  margin-top: var(--space-2xs);
+  color: var(--text-muted);
+  max-width: var(--measure);
+}
+
+/* The highlights are the evidence, in full ink; only the rail and the
+   organisation line are muted. */
+.cv-highlights {
+  margin-top: var(--space-s);
+  padding-left: 1.1em;
+  max-width: var(--measure);
+}
+
+.cv-highlights li + li {
+  margin-top: var(--space-2xs);
+}
+
+.cv-entry__body.tag-list {
+  align-content: start;
+}
+
+/* ---------------------------------------------------------------------------
+   Title block (ISO 7200): the document's own footer, on every sheet, the full
+   width of the container. Real provenance (title, document, sheet, date,
+   site version) and, once per sheet, how to reach the author.
+   --------------------------------------------------------------------------- */
+
+.title-block {
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-s);
+  border: var(--border-width) solid var(--border-strong);
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
+  letter-spacing: 0.05em;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Hairlines between cells: the grid's gap shows the border colour through. */
+  gap: var(--border-width);
+  background: var(--border);
+}
+
+.title-block__cell {
+  padding: var(--space-xs) var(--space-s);
+  min-width: 0;
+  background: var(--bg);
+}
+
+/* Contact spans the row but the last cell. */
+.title-block__cell--contact {
+  grid-column: 1 / -2;
+}
+
+/* Narrow sheets: two columns; the wide cells take a row each. */
+@media (max-width: 39.99rem) {
+  .title-block {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .title-block__cell--contact,
+  .title-block__cell:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.title-block__label {
+  display: block;
+  font-size: 0.8em; /* stays above the 10px floor at every step */
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.15em;
+}
+
+.title-block__value {
+  color: var(--text);
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+/* Every cell around them holds inert data, so a link here is underlined to
+   say it is one; hover only shifts the colour. */
+.title-block__value a {
   display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-underline-offset: 0.18em;
+  padding: 0.65rem 0.4rem;
+  margin: -0.65rem -0.4rem;
 }
 
-.link-list__icon svg {
-  width: 1.05em;
-  height: 1.05em;
+.title-block__value a:hover {
+  color: var(--accent);
+}
+
+/* The contact cell: one row of links, the address in the accent so it reads
+   as the way in; the profiles in ink like the other cell values. */
+.title-block__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-m);
+  list-style: none;
+  text-transform: none;
+}
+
+.title-block__contact a[href^="mailto:"] {
+  color: var(--accent);
 }
