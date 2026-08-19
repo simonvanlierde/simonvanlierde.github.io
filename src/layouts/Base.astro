@@ -38,8 +38,12 @@ const ogImage = new URL("og.png", Astro.site);
 
     {/* Apply the saved theme before paint to avoid a flash. */}
     <script is:inline>
-      const t = localStorage.getItem("theme");
-      if (t) document.documentElement.dataset.theme = t;
+      // Storage throws where it is blocked (sandboxed iframe, strict privacy
+      // modes). The theme then just falls back to the system preference.
+      try {
+        const t = localStorage.getItem("theme");
+        if (t) document.documentElement.dataset.theme = t;
+      } catch {}
     </script>
 
     <meta property="og:type" content="website" />
@@ -72,6 +76,21 @@ const ogImage = new URL("og.png", Astro.site);
       const meta = document.querySelector('meta[name="theme-color"]');
       const media = matchMedia("(prefers-color-scheme: dark)");
 
+      // Same guard as the head script: a blocked store must not stop the
+      // toggle from applying the theme, only from remembering it.
+      const saved = () => {
+        try {
+          return localStorage.getItem("theme");
+        } catch {
+          return null;
+        }
+      };
+      const remember = (v) => {
+        try {
+          localStorage.setItem("theme", v);
+        } catch {}
+      };
+
       const isDark = () =>
         document.documentElement.dataset.theme
           ? document.documentElement.dataset.theme === "dark"
@@ -89,13 +108,13 @@ const ogImage = new URL("og.png", Astro.site);
       btn?.addEventListener("click", () => {
         const next = isDark() ? "light" : "dark";
         document.documentElement.dataset.theme = next;
-        localStorage.setItem("theme", next);
+        remember(next);
         sync();
       });
 
       // Follow system changes only while the user hasn't picked a theme.
       media.addEventListener("change", () => {
-        if (!localStorage.getItem("theme")) sync();
+        if (!saved()) sync();
       });
 
       sync();
