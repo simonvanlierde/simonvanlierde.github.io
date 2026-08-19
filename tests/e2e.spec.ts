@@ -124,9 +124,87 @@ test("the exploded view becomes one compact, touch-sized system on mobile", asyn
   await expect(mobile).toBeHidden();
 });
 
+// The plate is hand-drawn SVG: each balloon's href is written out at its own
+// coordinates, so a copy-paste between parts is the likely mistake. Restated
+// here on purpose, as the second source of truth the drawing lacks.
+const PART_DESTINATIONS = [
+  ["Camera rig", "https://github.com/CMLPlatform/relab-rpi-cam-plugin"],
+  ["Capture app", "https://github.com/CMLPlatform/relab"],
+  ["Web app", "https://app.cml-relab.org"],
+  ["API", "https://github.com/CMLPlatform/relab"],
+  ["Database", "https://github.com/CMLPlatform/relab"],
+  ["Docs", "https://docs.cml-relab.org"],
+];
+
+for (const [variant, width] of [
+  ["desktop", 900],
+  ["mobile", 390],
+] as const) {
+  test(`every numbered part on the ${variant} plate opens its own destination`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    const links = page.locator(`.exploded__svg--${variant} a`);
+    await expect(links).toHaveCount(PART_DESTINATIONS.length);
+
+    for (const [i, [name, href]] of PART_DESTINATIONS.entries()) {
+      await expect(links.nth(i)).toHaveAttribute("href", href);
+      // The label carries the part's identity; a swapped balloon shows up here.
+      await expect(links.nth(i)).toHaveAttribute("aria-label", new RegExp(`^${name}:`));
+    }
+  });
+}
+
+test("a keyboard user can focus each part of the figure", async ({ page }) => {
+  const first = page.locator(".exploded__svg--desktop a").first();
+  await first.focus();
+  await expect(first).toBeFocused();
+  // The ring is what a sighted keyboard user locates the part by.
+  await expect(first).toHaveCSS("outline-style", "solid");
+});
+
+test("without motion the drawing starts exploded and never assembles", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  // The settle is the one animation here; reduced motion must skip it entirely
+  // rather than run it faster, or the parts sit collapsed on first paint.
+  await expect(page.locator(".exploded")).not.toHaveClass(/is-assembled/);
+});
+
+test("the title block states what the sheet is, and when it was drawn", async ({ page }) => {
+  const block = page.getByRole("region", { name: "Document title block" });
+  await expect(block.getByText("Simon van Lierde", { exact: true })).toBeVisible();
+  await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
+  await expect(block.getByText("1 OF 2", { exact: true })).toBeVisible();
+
+  // Both sheets are generated, so both are dated. The stamp is the export
+  // date in UTC; a local-zone build must not shift it by a day.
+  await expect(block.getByText("Dated", { exact: true })).toBeVisible();
+  await expect(block.locator("time")).toHaveAttribute("datetime", cv.exported.slice(0, 10));
+
+  const rev = block.getByRole("link", { name: /^Site version / });
+  await expect(rev).toHaveAttribute("href", "https://github.com/simonvanlierde/simonvanlierde.github.io");
+  await expect(rev).toHaveText(/^v\d+\.\d+\.\d+/);
+});
+
+test("a sheet with nothing generated is attributed rather than dated", async ({ page }) => {
+  // The 404 is the only sheet without an export behind it, so it is the only
+  // one that takes the title block's "Drawn by" fallback.
+  await page.goto("/no-such-page/");
+  const block = page.getByRole("region", { name: "Document title block" });
+  await expect(block.getByText("Drawn by", { exact: true })).toBeVisible();
+  await expect(block.getByText("SVL", { exact: true })).toBeVisible();
+  await expect(block.locator("time")).toHaveCount(0);
+  await expect(block.getByText("— OF 2", { exact: true })).toBeVisible();
+});
+
+test("the open sheet is marked current in the nav", async ({ page }) => {
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await expect(nav.getByRole("link", { name: "Sheet 1: Index" })).toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link", { name: "Sheet 2: CV" })).not.toHaveAttribute("aria-current", "page");
+});
+
 test("the title block ends with a clear collaboration path", async ({ page }) => {
   const footer = page.getByRole("contentinfo");
-  await expect(footer.getByText("Research and software collaboration")).toBeVisible();
+  await expect(footer.getByText("Contact Simon")).toBeVisible();
   if (cv.basics.email) {
     await expect(footer.getByRole("link", { name: cv.basics.email, exact: true })).toHaveAttribute(
       "href",
@@ -186,6 +264,29 @@ if (statsAreSample) {
     // Without the live region the switch is silent to a screen reader: the label
     // and the table both change off-screen with nothing announcing it.
     await expect(page.locator("[aria-live=polite]")).toHaveText(/^Parts: /);
+  });
+
+  test("arrow keys walk the tooltip, which never blocks the pointer", async ({ page }) => {
+    // Hover is the only way to read an exact value, and the hidden table serves
+    // screen readers only; a sighted keyboard user needs this path.
+    const chart = page.locator('svg[role="img"]');
+    await chart.focus();
+    const tip = page.locator(".chart__tip-title");
+    const first = await tip.textContent();
+    expect(first).toBeTruthy();
+
+    await page.keyboard.press("ArrowRight");
+    await expect(tip).not.toHaveText(first ?? "");
+    await page.keyboard.press("Home");
+    await expect(tip).toHaveText(first ?? "");
+
+    // The tooltip paints over the hit rects; without pointer-events:none it
+    // swallows the hover meant for a neighbouring column and sticks.
+    const labels = await page.locator("table tbody tr th").allTextContents();
+    const hits = page.locator("rect.chart__hit");
+    const last = (await hits.count()) - 1;
+    await hits.nth(last).hover();
+    await expect(tip).toHaveText(labels[last]);
   });
 
   test("secondary chart measures use progressive disclosure", async ({ page }) => {

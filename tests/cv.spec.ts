@@ -147,3 +147,20 @@ test("the homepage does not restate the CV timeline", async ({ page }) => {
   await expect(page.locator(".cv-entry")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 2, name: /Experience|Education/ })).toHaveCount(0);
 });
+
+test("the CV sheet stamps when its data was exported, and marks itself current", async ({ page }) => {
+  const block = page.getByRole("region", { name: "Document title block" });
+  await expect(block.getByText("Curriculum vitae", { exact: true })).toBeVisible();
+  await expect(block.getByText("2 OF 2", { exact: true })).toBeVisible();
+
+  // This sheet is generated, so it is dated rather than merely attributed.
+  await expect(block.getByText("Dated", { exact: true })).toBeVisible();
+  const stamp = block.locator("time");
+  await expect(stamp).toHaveAttribute("datetime", cv.exported.slice(0, 10));
+  // The stamp reads in UTC; a local-zone build must not shift it by a day.
+  await expect(stamp).toHaveText(new RegExp(String(Number(cv.exported.slice(8, 10)))));
+
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await expect(nav.getByRole("link", { name: "Sheet 2: CV" })).toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link", { name: "Sheet 1: Index" })).not.toHaveAttribute("aria-current", "page");
+});

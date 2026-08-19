@@ -38,3 +38,10 @@ test("authors accept a YAML list or one comma-joined string", () => {
 test("an unrecognised status fails the build rather than rendering a stray label", () => {
   assert.throws(() => pub({ status: "submitted" }));
 });
+
+test("a DOI must be the bare identifier: both consumers prefix the resolver", () => {
+  assert.equal(pub({ doi: "10.5281/zenodo.1" }).doi, "10.5281/zenodo.1");
+  // A full URL upstream would render https://doi.org/https://doi.org/... .
+  assert.throws(() => pub({ doi: "https://doi.org/10.5281/zenodo.1" }));
+  assert.throws(() => pub({ doi: "doi:10.5281/zenodo.1" }));
+});

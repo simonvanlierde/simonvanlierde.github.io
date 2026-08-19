@@ -15,6 +15,10 @@ export default defineConfig({
   webServer: {
     command: "astro preview --port 4321 --host 127.0.0.1",
     url: "http://127.0.0.1:4321",
-    reuseExistingServer: !process.env.CI,
+    // Never adopt whatever already answers on 4321: a stray `astro dev` there
+    // serves DEV-gated output (the sample chart among it) and the suite would
+    // pass against a page visitors never see. Playwright starts its own
+    // preview or fails on the busy port, which is the signal you want.
+    reuseExistingServer: false,
   },
 });
