@@ -187,13 +187,38 @@ export default function DisassemblyChart({
       </fieldset>
 
       <div className="chart__plot">
-        {/* Pointer hover is a visual enhancement; keyboard/SR users get the data table */}
+        {/* A screen reader gets the data table below. A sighted keyboard user
+            gets neither that nor hover, so the plot is one tab stop and the
+            arrow keys walk the same tooltip across the columns. One stop, not
+            one per column: role="img" makes the children presentational. */}
         <svg
           viewBox={`0 0 ${W} ${H}`}
           width="100%"
           role="img"
           aria-label={summary}
           preserveAspectRatio="xMidYMid meet"
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: the tab stop is the fix, not an oversight
+          tabIndex={0}
+          onFocus={(e) => {
+            // A click focuses the plot as well. Only a keyboard focus should
+            // move the tooltip, or clicking near the axis jerks it to column 1.
+            if (e.currentTarget.matches(":focus-visible")) setActive((i) => i ?? 0);
+          }}
+          onBlur={() => setActive(null)}
+          onKeyDown={(e) => {
+            const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+            if (step) {
+              setActive((i) => Math.min(series.length - 1, Math.max(0, (i ?? 0) + step)));
+            } else if (e.key === "Home") {
+              setActive(0);
+            } else if (e.key === "End") {
+              setActive(series.length - 1);
+            } else {
+              return;
+            }
+            // Otherwise the arrows scroll the page out from under the chart.
+            e.preventDefault();
+          }}
           onPointerLeave={(e) => {
             // A touch pointer fires pointerleave on finger lift; the tooltip
             // would flash and vanish. Only a mouse leaving clears it; a tap

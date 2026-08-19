@@ -131,6 +131,12 @@
   overflow: visible;
 }
 
+/* The plot is a tab stop (arrow keys walk the tooltip), so it needs a ring. */
+.chart__plot svg:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
 /* Grid */
 .chart__grid line {
   stroke: var(--border);
@@ -232,6 +238,13 @@
 }
 
 /* Tooltip */
+
+/* Painted last and wider than a column: without this it swallows the
+   pointerenter meant for the hit rect underneath and the tip sticks. */
+.chart__tooltip {
+  pointer-events: none;
+}
+
 .chart__tooltip line {
   stroke: var(--text-muted);
   stroke-width: 1;
