@@ -26,17 +26,17 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/react": "^6.0.0",
-    "astro": "^7.1.1",
+    "@astrojs/react": "^6.0.4",
+    "astro": "^7.2.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
-    "@biomejs/biome": "^2.5.1",
+    "@biomejs/biome": "^2.5.10",
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.0",
     "@types/react": "^19.2.0",
