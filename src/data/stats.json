@@ -1,124 +1,149 @@
 {
-  "sample": true,
-  "as_of": "2026-08-18",
   "granularity": "month",
   "series": [
     {
+      "period": "2025-06",
+      "label": "Jun 2025",
+      "teardowns": 0,
+      "parts": 0,
+      "mass_kg": 0,
+      "images": 0,
+      "users": 3
+    },
+    {
       "period": "2025-07",
       "label": "Jul 2025",
-      "teardowns": 2,
-      "parts": 42,
-      "mass_kg": 13.0,
-      "images": 100,
-      "users": 2
+      "teardowns": 0,
+      "parts": 0,
+      "mass_kg": 0,
+      "images": 0,
+      "users": 0
     },
     {
       "period": "2025-08",
       "label": "Aug 2025",
-      "teardowns": 3,
-      "parts": 63,
-      "mass_kg": 19.5,
-      "images": 150,
-      "users": 1
+      "teardowns": 0,
+      "parts": 0,
+      "mass_kg": 0,
+      "images": 0,
+      "users": 0
     },
     {
       "period": "2025-09",
       "label": "Sep 2025",
-      "teardowns": 4,
-      "parts": 84,
-      "mass_kg": 26.0,
-      "images": 200,
+      "teardowns": 1,
+      "parts": 0,
+      "mass_kg": 21,
+      "images": 2,
       "users": 1
     },
     {
       "period": "2025-10",
       "label": "Oct 2025",
-      "teardowns": 3,
-      "parts": 63,
-      "mass_kg": 19.5,
-      "images": 150,
-      "users": 0
+      "teardowns": 26,
+      "parts": 86,
+      "mass_kg": 10.34,
+      "images": 91,
+      "users": 12
     },
     {
       "period": "2025-11",
       "label": "Nov 2025",
-      "teardowns": 5,
-      "parts": 105,
-      "mass_kg": 32.5,
-      "images": 250,
-      "users": 2
+      "teardowns": 16,
+      "parts": 321,
+      "mass_kg": 7.08,
+      "images": 417,
+      "users": 1
     },
     {
       "period": "2025-12",
       "label": "Dec 2025",
-      "teardowns": 4,
-      "parts": 84,
-      "mass_kg": 26.0,
-      "images": 200,
-      "users": 1
+      "teardowns": 3,
+      "parts": 118,
+      "mass_kg": 4.47,
+      "images": 341,
+      "users": 0
     },
     {
       "period": "2026-01",
       "label": "Jan 2026",
-      "teardowns": 6,
-      "parts": 126,
-      "mass_kg": 39.0,
-      "images": 300,
+      "teardowns": 13,
+      "parts": 266,
+      "mass_kg": 2.11,
+      "images": 1014,
       "users": 1
     },
     {
       "period": "2026-02",
       "label": "Feb 2026",
-      "teardowns": 5,
-      "parts": 105,
-      "mass_kg": 32.5,
-      "images": 250,
-      "users": 0
+      "teardowns": 15,
+      "parts": 491,
+      "mass_kg": 11.3,
+      "images": 1600,
+      "users": 13
     },
     {
       "period": "2026-03",
       "label": "Mar 2026",
-      "teardowns": 7,
-      "parts": 147,
-      "mass_kg": 45.5,
-      "images": 350,
-      "users": 1
+      "teardowns": 9,
+      "parts": 303,
+      "mass_kg": 2.61,
+      "images": 553,
+      "users": 0
     },
     {
       "period": "2026-04",
       "label": "Apr 2026",
-      "teardowns": 6,
-      "parts": 126,
-      "mass_kg": 39.0,
-      "images": 300,
+      "teardowns": 9,
+      "parts": 102,
+      "mass_kg": 5.66,
+      "images": 233,
       "users": 1
     },
     {
       "period": "2026-05",
       "label": "May 2026",
-      "teardowns": 8,
-      "parts": 168,
-      "mass_kg": 52.0,
-      "images": 400,
-      "users": 2
+      "teardowns": 2,
+      "parts": 92,
+      "mass_kg": 0.97,
+      "images": 201,
+      "users": 0
     },
     {
       "period": "2026-06",
       "label": "Jun 2026",
-      "teardowns": 7,
-      "parts": 147,
-      "mass_kg": 45.5,
-      "images": 350,
-      "users": 1
+      "teardowns": 0,
+      "parts": 0,
+      "mass_kg": 0,
+      "images": 0,
+      "users": 0
+    },
+    {
+      "period": "2026-07",
+      "label": "Jul 2026",
+      "teardowns": 0,
+      "parts": 0,
+      "mass_kg": 0,
+      "images": 0,
+      "users": 0
+    },
+    {
+      "period": "2026-08",
+      "label": "Aug 2026",
+      "teardowns": 0,
+      "parts": 0,
+      "mass_kg": 0,
+      "images": 0,
+      "users": 2
     }
   ],
   "totals": {
-    "products": 60,
-    "parts": 1260,
-    "materials": 38,
-    "mass_kg": 390.0,
-    "images": 3515,
-    "users": 14,
-    "contributors": 5
-  }
+    "teardowns": 94,
+    "parts": 1779,
+    "mass_kg": 65.53,
+    "images": 4452,
+    "users": 34,
+    "products": 94
+  },
+  "as_of": "2026-09-08"
 }

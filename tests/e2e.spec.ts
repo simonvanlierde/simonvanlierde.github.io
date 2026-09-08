@@ -225,6 +225,15 @@ if (statsAreSample) {
     await expect(page.getByRole("button", { name: "Teardowns" })).toHaveCount(0);
   });
 } else {
+  // The chart is a client:visible island: it hydrates only once scrolled into
+  // view, and a click before that lands on inert server-rendered markup. Astro
+  // drops the `ssr` attribute when hydration finishes, so wait for that once
+  // rather than retrying each interaction.
+  test.beforeEach(async ({ page }) => {
+    await page.locator("astro-island").scrollIntoViewIfNeeded();
+    await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
+  });
+
   test("the visually-hidden data table mirrors the plotted series", async ({ page }) => {
     // The table is the chart's accessible fallback; if it drifts from the bars,
     // assistive-tech users silently get a different dataset than sighted users.
@@ -239,10 +248,7 @@ if (statsAreSample) {
     await expect(caption).toHaveText(/Teardowns/i);
 
     const parts = page.getByRole("button", { name: "Parts" });
-    await expect(async () => {
-      await parts.click();
-      await expect(parts).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
-    }).toPass();
+    await parts.click();
     await expect(caption).toHaveText(/Parts/i);
   });
 
@@ -251,12 +257,8 @@ if (statsAreSample) {
     await expect(chart).toHaveAttribute("aria-label", /teardowns/i);
 
     const parts = page.getByRole("button", { name: "Parts" });
-    // client:visible island: retry the click until hydration has attached the
-    // handler (aria-pressed is server-rendered, so it can't gate hydration).
-    await expect(async () => {
-      await parts.click();
-      await expect(parts).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
-    }).toPass();
+    await parts.click();
+    await expect(parts).toHaveAttribute("aria-pressed", "true");
 
     await expect(chart).toHaveAttribute("aria-label", /parts/i);
     await expect(page.getByRole("button", { name: "Teardowns" })).toHaveAttribute("aria-pressed", "false");
@@ -290,18 +292,23 @@ if (statsAreSample) {
   });
 
   test("secondary chart measures use progressive disclosure", async ({ page }) => {
-    const more = page.getByRole("button", { name: "Show more measures" });
+    // The disclosure button relabels itself as it toggles, so hold it by element
+    // and assert the accessible name separately; a by-name locator stops
+    // resolving the moment the name it was built from changes.
+    const more = page.locator("button.chart__more");
     await expect(more).toHaveAttribute("aria-expanded", "false");
+    await expect(more).toHaveAccessibleName("Show more measures");
     await expect(page.getByRole("button", { name: "Images" })).toBeHidden();
 
     await more.click();
     await expect(more).toHaveAttribute("aria-expanded", "true");
+    await expect(more).toHaveAccessibleName("Show fewer measures");
     const images = page.getByRole("button", { name: "Images" });
     await expect(images).toBeVisible();
     await images.click();
     await expect(images).toHaveAttribute("aria-pressed", "true");
 
-    await page.getByRole("button", { name: "Show fewer measures" }).click();
+    await more.click();
     await expect(page.getByRole("button", { name: /Images selected\. Show more measures/ })).toBeVisible();
   });
 }
