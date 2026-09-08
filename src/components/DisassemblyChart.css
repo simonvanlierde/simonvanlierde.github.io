@@ -102,9 +102,31 @@
   outline-color: var(--accent-contrast);
 }
 
+/* Not a measure but a disclosure, so it must not read as a sixth thing the
+   chart could plot: a recessed ground and a chevron that turns with the state
+   it reports. Drawn in CSS rather than shipped as a glyph or a file, so it
+   inherits currentColor through the accent fill and the focus ring. */
 .chart__more {
   flex-direction: column;
   gap: 0.1em;
+  background: color-mix(in oklab, var(--surface) 88%, var(--border));
+}
+
+.chart__more > span:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 0.36em;
+  height: 0.36em;
+  margin-inline-start: 0.5em;
+  vertical-align: 0.1em;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--dur-fast) ease;
+}
+
+.chart__more[aria-expanded="true"] > span:last-child::after {
+  transform: rotate(-135deg);
 }
 
 .chart__more[data-secondary-active="true"] {
@@ -308,7 +330,8 @@
 @media (prefers-reduced-motion: reduce) {
   .chart__bar,
   .chart__toggle,
-  .chart__more {
+  .chart__more,
+  .chart__more > span:last-child::after {
     transition: none;
   }
 }
