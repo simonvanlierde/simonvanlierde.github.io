@@ -191,6 +191,7 @@ export default function DisassemblyChart({
             gets neither that nor hover, so the plot is one tab stop and the
             arrow keys walk the same tooltip across the columns. One stop, not
             one per column: role="img" makes the children presentational. */}
+        {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: the handlers are the keyboard affordance described above */}
         <svg
           viewBox={`0 0 ${W} ${H}`}
           width="100%"
