@@ -31,10 +31,10 @@
     {
       "period": "2025-09",
       "label": "Sep 2025",
-      "teardowns": 1,
+      "teardowns": 0,
       "parts": 0,
-      "mass_kg": 21,
-      "images": 2,
+      "mass_kg": 0,
+      "images": 0,
       "users": 1
     },
     {
@@ -44,7 +44,7 @@
       "parts": 86,
       "mass_kg": 10.34,
       "images": 91,
-      "users": 12
+      "users": 11
     },
     {
       "period": "2025-11",
@@ -135,15 +135,24 @@
       "mass_kg": 0,
       "images": 0,
       "users": 2
+    },
+    {
+      "period": "2026-09",
+      "label": "Sep 2026",
+      "teardowns": 0,
+      "parts": 0,
+      "mass_kg": 0,
+      "images": 0,
+      "users": 1
     }
   ],
   "totals": {
-    "teardowns": 94,
+    "teardowns": 95,
     "parts": 1779,
     "mass_kg": 65.53,
     "images": 4452,
     "users": 34,
-    "products": 94
+    "products": 95
   },
-  "as_of": "2026-09-08"
+  "as_of": "2026-09-14"
 }
