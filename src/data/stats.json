@@ -147,12 +147,12 @@
     }
   ],
   "totals": {
-    "teardowns": 95,
+    "teardowns": 93,
     "parts": 1779,
-    "mass_kg": 65.53,
-    "images": 4452,
+    "mass_kg": 44.53,
+    "images": 4450,
     "users": 34,
-    "products": 95
+    "products": 93
   },
-  "as_of": "2026-09-14"
+  "as_of": "2026-09-21"
 }
