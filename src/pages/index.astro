@@ -16,6 +16,8 @@ const { basics, exported } = cv;
 
 // Same payload as the chart, refreshed by scripts/fetch-stats.mjs.
 const counts = { as_of: stats.as_of, ...stats.totals };
+// The first month with a teardown: when the platform went into use.
+const firstTeardown = stats.series.find((row) => row.teardowns > 0)?.label;
 const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
   month: "short",
   year: "numeric",
@@ -113,7 +115,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
                 backend, a PostgreSQL data model for life-cycle assessment, and
                 an Expo / React Native capture app.
               </p>
-              <p>In active use at CML, including two teardown workshops.</p>
+              <p>In use at CML since {firstTeardown}, including two teardown workshops.</p>
             </div>
             <ul class="bom-row__links link-list">
               <li><a href="https://app.cml-relab.org">Live platform</a></li>

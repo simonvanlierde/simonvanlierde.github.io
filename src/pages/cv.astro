@@ -2,7 +2,7 @@
 import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, cvPdf as pdf } from "../data/cv.ts";
+import { cv, cvPdf as pdf, profiles } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
 import Base from "../layouts/Base.astro";
@@ -43,7 +43,6 @@ const sections = [
   .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
 const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
 
-// The profile links live in the title block, not here.
 const contact = [
   { label: basics.location, href: null },
   ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
@@ -68,6 +67,17 @@ const contact = [
       {
         contact.map((c) => (
           <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft cv-contact__plain">{c.label}</span>}</li>
+        ))
+      }
+    </ul>
+
+    {/* The same profile links as the landing hero, so a peer finds ORCID up top. */}
+    <ul class="link-list cv-profiles draft" aria-label="Profiles">
+      {
+        profiles.map((p) => (
+          <li>
+            <a href={p.href}>{p.label}</a>
+          </li>
         ))
       }
     </ul>
@@ -129,10 +139,14 @@ const contact = [
         {
           experience.map((job) => (
             <article class="cv-entry">
-              {/* The period follows the heading so screen readers read the
-                  role first. CSS moves it into the rail. */}
+              {/* The rail period is hidden from screen readers; the heading
+                  carries it instead, so heading navigation hears the dates. */}
+              <p class="cv-entry__period" aria-hidden="true">{formatPeriod(job.start, job.end)}</p>
               <div class="cv-entry__body">
-                <h3 class="cv-entry__role">{job.role}</h3>
+                <h3 class="cv-entry__role">
+                  {job.role}
+                  <span class="visually-hidden">, {formatPeriod(job.start, job.end)}</span>
+                </h3>
                 <p class="cv-entry__org">{job.organization}</p>
                 {job.highlights.length > 0 && (
                   <ul class="cv-highlights">
@@ -142,7 +156,6 @@ const contact = [
                   </ul>
                 )}
               </div>
-              <p class="cv-entry__period">{formatPeriod(job.start, job.end)}</p>
             </article>
           ))
         }
@@ -157,9 +170,11 @@ const contact = [
           <div class="cv-entries">
             {publications.map((pub) => (
               <article class="cv-entry">
+                <p class="cv-entry__period" aria-hidden="true">{pub.year}</p>
                 <div class="cv-entry__body">
                   <h3 class="cv-entry__role">
                     {pub.doi ? <a href={`https://doi.org/${pub.doi}`}>{pub.title}</a> : pub.title}
+                    <span class="visually-hidden">, {pub.year}</span>
                   </h3>
                   <p class="cv-entry__org">{pub.authors.join(", ")}</p>
                   <p class="cv-publication__venue">
@@ -167,7 +182,6 @@ const contact = [
                     {pub.status !== "published" && <span class="tag">{pub.status}</span>}
                   </p>
                 </div>
-                <p class="cv-entry__period">{pub.year}</p>
               </article>
             ))}
           </div>
@@ -181,12 +195,15 @@ const contact = [
         {
           education.map((school) => (
             <article class="cv-entry">
+              <p class="cv-entry__period" aria-hidden="true">{formatPeriod(school.start, school.end)}</p>
               <div class="cv-entry__body">
-                <h3 class="cv-entry__role">{school.degree}</h3>
+                <h3 class="cv-entry__role">
+                  {school.degree}
+                  <span class="visually-hidden">, {formatPeriod(school.start, school.end)}</span>
+                </h3>
                 <p class="cv-entry__org">{school.institution}</p>
                 {school.details && <p class="cv-entry__detail">{school.details}</p>}
               </div>
-              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
             </article>
           ))
         }
@@ -276,6 +293,21 @@ const contact = [
     margin-top: var(--space-m);
     font-size: var(--step--1);
     color: var(--text-muted);
+  }
+
+  .cv-profiles {
+    margin-top: var(--space-xs);
+    font-size: var(--step--1);
+    letter-spacing: 0.03em;
+    gap: 0 var(--space-m);
+  }
+
+  .cv-profiles a {
+    color: var(--text-muted);
+  }
+
+  .cv-profiles a:hover {
+    color: var(--accent-strong);
   }
 
   /* Matches the links' box so the row sits on one baseline. */
