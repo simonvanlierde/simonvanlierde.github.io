@@ -58,18 +58,14 @@ if (totalKeys.some((k) => typeof totalsPayload?.totals?.[k] !== "number")) {
   skip(`totals is missing one of: ${totalKeys.join(", ")}`);
 }
 
-const granularity = seriesPayload.granularity ?? "month";
-
 // The API omits periods with no activity. Bars are evenly spaced, so a missing
 // month would read as a month that never happened: fill the gaps with zeros.
-// Month periods only ("YYYY-MM"); any other granularity passes through as sent.
 const monthLabel = (period) => {
   const [year, month] = period.split("-").map(Number);
   return `${new Date(Date.UTC(year, month - 1)).toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })} ${year}`;
 };
 
 function fillMonthGaps(rows) {
-  if (granularity !== "month" || rows.some((r) => !/^\d{4}-\d{2}$/.test(r.period))) return rows;
   const byPeriod = new Map(rows.map((r) => [r.period, r]));
   const [firstYear, firstMonth] = rows[0].period.split("-").map(Number);
   const last = rows[rows.length - 1].period;
@@ -87,10 +83,9 @@ function fillMonthGaps(rows) {
 const sorted = [...seriesPayload.series].sort((a, b) => a.period.localeCompare(b.period));
 
 const payload = {
-  granularity,
   series: fillMonthGaps(sorted).map((row) => ({
     period: row.period,
-    label: granularity === "month" ? monthLabel(row.period) : row.period,
+    label: monthLabel(row.period),
     teardowns: row.teardowns,
     parts: row.parts,
     mass_kg: row.mass_kg,
@@ -98,8 +93,7 @@ const payload = {
     // "New members" in the chart; the API also reports users_active, unused here.
     users: row.users_new,
   })),
-  // `products` is the site's word for a teardown: one product taken apart.
-  totals: { ...totalsPayload.totals, products: totalsPayload.totals.teardowns },
+  totals: totalsPayload.totals,
 };
 
 // When the figures were counted, per the API's own stamp; ISO YYYY-MM-DD in UTC,

@@ -18,8 +18,7 @@ const projects = defineCollection({
     // What the thing is, in two or three words: "pre-commit hook", "observability
     // stack". It fills the plate's left rail, where naming the kind of artefact
     // tells a reader more than repeating a language already visible in the tags.
-    // Falls back to the first tag when absent.
-    kind: z.string().optional(),
+    kind: z.string(),
     // Technology tags shown as a small list on the card.
     tags: z.array(z.string()).default([]),
     // Extra labelled links (publications, datasets, etc.).

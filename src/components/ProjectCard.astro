@@ -5,24 +5,17 @@ interface Props {
   title: string;
   description: string;
   repo: string;
-  kind?: string;
+  kind: string;
   demo?: string;
   tags?: string[];
   links?: { label: string; url: string }[];
 }
 
 const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.props;
-
-// The kind cell says what the thing is, so the column can be scanned on its
-// own. It falls back to the leading tag, which is then dropped from the tag
-// list: one value in two places on the same row is noise.
-const [lead, ...rest] = tags;
-const rail = kind ?? lead;
-const railTags = kind ? tags : rest;
 ---
 
 <article class="bom-row">
-  <p class="bom-row__pos">{rail}</p>
+  <p class="bom-row__pos">{kind}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
       <a href={repo}>{title}</a>
@@ -49,9 +42,9 @@ const railTags = kind ? tags : rest;
     }
 
     {
-      railTags.length > 0 && (
+      tags.length > 0 && (
         <ul class="tag-list" aria-label="Technologies">
-          {railTags.map((t) => (
+          {tags.map((t) => (
             <li class="tag">{t}</li>
           ))}
         </ul>
