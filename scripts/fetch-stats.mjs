@@ -1,4 +1,4 @@
-// Refreshes src/data/stats.json from the RELab public API (`pnpm fetch:stats`).
+// Refreshes src/data/stats.json from the ReLab public API (`pnpm fetch:stats`).
 // If the API is down or Cloudflare blocks a request, the script warns and exits 0
 // without touching the committed snapshot, so the site keeps the last good figures.
 

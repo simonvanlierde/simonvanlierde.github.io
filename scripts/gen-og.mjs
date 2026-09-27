@@ -16,7 +16,7 @@ const frame = "#2c333d"; // --border-strong oklch(32% 0.02 255)
 
 const draft = "'osifont', 'DIN Alternate', 'Bahnschrift', 'Segoe UI', Roboto, Helvetica, sans-serif";
 
-// A compact copy of the site's Fig. 1: RELab's six parts on one axis, with
+// A compact copy of the site's Fig. 1: ReLab's six parts on one axis, with
 // balloons on the right.
 const X = 985;
 const balloon = (y, n) =>

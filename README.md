@@ -21,7 +21,7 @@ at [simonvanlierde.github.io](https://simonvanlierde.github.io).
   `prefers-color-scheme`, plus a toggle
 - Display and data lettering in a vendored
   [osifont](https://github.com/hikikomori82/osifont) subset (ISO 3098, LGPL+FE)
-- A scheduled GitHub Actions workflow that refreshes the RELab chart snapshot, separate from the
+- A scheduled GitHub Actions workflow that refreshes the ReLab chart snapshot, separate from the
   CI and Pages deploy workflows
 
 See [docs/architecture.md](docs/architecture.md) for the site architecture and data-refresh path.
@@ -38,7 +38,7 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 │   └── fetch-stats.mjs  # refreshes the chart's disassembly data
 ├── src/
 │   ├── components/
-│   │   ├── ExplodedView.astro     # Fig. 1, RELab taken apart (inline SVG)
+│   │   ├── ExplodedView.astro     # Fig. 1, ReLab taken apart (inline SVG)
 │   │   ├── ProjectCard.astro      # one parts-list row
 │   │   ├── SheetNav.astro
 │   │   ├── TitleBlock.astro

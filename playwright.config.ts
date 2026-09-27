@@ -4,6 +4,8 @@ import { defineConfig, devices } from "@playwright/test";
 // Tests the built site: run `pnpm build` first (CI does).
 export default defineConfig({
   testDir: "./tests",
+  // tests/unit/ runs under `node --test`, not Playwright.
+  testIgnore: "unit/**",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? "github" : "list",
