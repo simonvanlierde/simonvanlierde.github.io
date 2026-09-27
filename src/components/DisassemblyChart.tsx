@@ -19,18 +19,14 @@ type MeasureKey = "teardowns" | "parts" | "mass_kg" | "images" | "users";
 
 const stats = data as { series: SeriesRow[]; totals: Record<MeasureKey, number> };
 
-// Formatters shared by the chart axis, tooltip, and table: the notes' thin-space
-// thousands, so one figure never prints two ways on the sheet.
+// Axis, tooltip, and table share the notes' thin-space thousands.
 const int = formatCount;
 const num = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 1 }).replace(/,/g, "\u2009");
 const kg = (n: number) => `${num(n)} kg`;
 
-// The switchable time-series measures. Adding one takes a single entry here plus
-// the matching field in the /stats payload, and no other code changes.
-// `fractional` marks measures that aren't whole counts, so the axis allows
-// fractional steps. `format` carries the unit (tooltip, table); `tick` omits it,
-// because a unit repeated down every gridline is noise. `unit` prints it once,
-// atop the axis.
+// Switchable measures. A new one needs only an entry here and the matching
+// /stats field. `format` carries the unit; `tick` omits it, and `unit` prints
+// it once above the axis.
 type Measure = {
   key: MeasureKey;
   label: string;
@@ -40,7 +36,7 @@ type Measure = {
   unit?: string;
   fractional?: boolean;
 };
-// Labels use the notes' own words, so "Products" here is note A there.
+// Labels match the notes' wording: "Products" is note A.
 const MEASURES: Measure[] = [
   { key: "teardowns", label: "Products", noun: "products documented", format: int },
   { key: "parts", label: "Components", noun: "components catalogued", format: int },
@@ -59,26 +55,22 @@ const MEASURES: Measure[] = [
 ];
 const MEASURE_KEYS = MEASURES.map((m) => m.key);
 
-// Teardowns come in workshop campaigns, so monthly figures made every quiet
-// month look like the platform had stopped. The chart plots running totals
-// instead, as a stepped outline: bars would read as per-month amounts.
+// Running totals as a step, not monthly bars. Teardowns come in workshop
+// campaigns, so monthly bars made quiet months look like the platform stopped.
 const rows = runningTotals(stats.series, MEASURE_KEYS, stats.totals, "teardowns");
 const PRIMARY_MEASURE_KEYS: MeasureKey[] = ["teardowns", "parts", "mass_kg"];
 const primaryMeasures = MEASURES.filter((measure) => PRIMARY_MEASURE_KEYS.includes(measure.key));
 const secondaryMeasures = MEASURES.filter((measure) => !PRIMARY_MEASURE_KEYS.includes(measure.key));
 
-// Split "Jul 2025" into a tick ("Jul") and a qualifier ("2025") that only prints
-// when it changes. Purely textual, so "Q1 2025" and a bare "2025" pass through
-// unharmed.
+// "Jul 2025" -> ["Jul", "2025"]. A label with no space passes through whole.
 const splitLabel = (label: string): [string, string] => {
   const i = label.indexOf(" ");
   return i === -1 ? [label, ""] : [label.slice(0, i), label.slice(i + 1)];
 };
 
-// SVG coordinate system. The SVG scales fluidly via viewBox, so every user unit
-// here is also a type size: at 720 wide the chart rendered at 0.66 in its column
-// and 12px axis labels came out at 8 real pixels. 480 keeps the widest case near
-// 1:1; narrow screens trade the y-axis away instead (see the CSS).
+// viewBox size. The SVG scales to its column, so user units set the type size.
+// 480 renders near 1:1 at full width; 720 shrank 12px labels to 8px. The CSS
+// handles narrow plots.
 const W = 480;
 const H = 240;
 const PAD = { top: 20, right: 12, bottom: 40, left: 48 };
@@ -88,8 +80,7 @@ const INNER_H = H - PAD.top - PAD.bottom;
 export default function DisassemblyChart({
   caption,
 }: {
-  /** Figure caption, set under the plot in the set's caption style. The
-      chart appends the period it covers, so the caption dates itself. */
+  /** Figure caption. The chart appends the period it covers. */
   caption?: string;
 }) {
   const [measureKey, setMeasureKey] = useState<MeasureKey>("teardowns");
@@ -111,8 +102,7 @@ export default function DisassemblyChart({
   const maxValue = Math.max(1, ...series.map((d) => d.value));
   const { yMax, ticks } = buildScale(maxValue, !measure.fractional);
 
-  // All hooks have run; bail out with a graceful empty state when there are no
-  // periods to plot (e.g. a fresh dataset or an empty time window).
+  // Empty state. Keep this return below every hook call.
   if (series.length === 0) {
     return (
       <figure className="chart">
@@ -129,10 +119,9 @@ export default function DisassemblyChart({
   const baseline = PAD.top + INNER_H;
   const tick = measure.tick ?? measure.format;
 
-  // A narrow plot has room for about six month labels. Count the stride back
-  // from the latest month, so the newest period always keeps its label, and
-  // put the year on the labelled months where it changes, so a narrow plot
-  // never prints two unqualified runs of "Jun Jul Aug".
+  // A narrow plot fits about six month labels. Count the stride back from the
+  // latest month, so that month is always labelled. Labelled months show the
+  // year where it changes.
   const stride = Math.ceil(series.length / 6);
   const isMajor = (i: number) => (series.length - 1 - i) % stride === 0;
   let lastMajorYear = "";
@@ -163,8 +152,7 @@ export default function DisassemblyChart({
 
   return (
     <figure className="chart">
-      {/* No running-total tiles here: the ReLab row's general notes carry
-          them, from the same payload. The chart answers "when". */}
+      {/* No total tiles: the ReLab notes show the totals from the same data. */}
 
       <fieldset className="chart__controls">
         <legend className="visually-hidden">Measure</legend>
@@ -203,10 +191,9 @@ export default function DisassemblyChart({
       </fieldset>
 
       <div className="chart__plot">
-        {/* A screen reader gets the data table below. A sighted keyboard user
-            gets neither that nor hover, so the plot is one tab stop and the
-            arrow keys walk the same tooltip across the columns. One stop, not
-            one per column: role="img" makes the children presentational. */}
+        {/* Keyboard users get one tab stop, and arrow keys move the tooltip
+            between columns. Not one stop per column: role="img" makes the
+            children presentational. Screen readers use the data table. */}
         {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: the handlers are the keyboard affordance described above */}
         <svg
           viewBox={`0 0 ${W} ${H}`}
@@ -214,7 +201,7 @@ export default function DisassemblyChart({
           role="img"
           aria-label={summary}
           preserveAspectRatio="xMidYMid meet"
-          // biome-ignore lint/a11y/noNoninteractiveTabindex: the tab stop is the fix, not an oversight
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: the plot's single tab stop, see above
           tabIndex={0}
           onFocus={(e) => {
             // A click focuses the plot as well. Only a keyboard focus should
@@ -237,13 +224,11 @@ export default function DisassemblyChart({
             e.preventDefault();
           }}
           onPointerLeave={(e) => {
-            // A touch pointer fires pointerleave on finger lift; the tooltip
-            // would flash and vanish. Only a mouse leaving clears it; a tap
-            // elsewhere replaces it.
+            // Touch fires pointerleave on finger lift, which would hide the
+            // tooltip at once. Only a mouse leaving clears it.
             if (e.pointerType === "mouse") setActive(null);
           }}
         >
-          {/* Gridlines and y-axis labels */}
           <g className="chart__grid">
             {ticks.map((t) => (
               <g key={t}>
@@ -255,31 +240,25 @@ export default function DisassemblyChart({
             ))}
           </g>
 
-          {/* The unit, once, rather than repeated down every gridline */}
           {measure.unit && (
             <text className="chart__unit" x={PAD.left - 8} y={PAD.top - 10} textAnchor="end">
               {measure.unit}
             </text>
           )}
 
-          {/* Section hatching: the drafting convention for a filled region. */}
           <defs>
             <pattern id={hatchId} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
               <line className="chart__hatch" x1="0" y1="0" x2="0" y2="6" />
             </pattern>
           </defs>
 
-          {/* The running total: a hatched region under a stepped outline, drawn
-              in left to right on load. */}
           <g className="chart__total">
             <path className="chart__area" d={outline.area} fill={`url(#${hatchId})`} />
             <path className="chart__line" d={outline.line} />
           </g>
 
-          {/* Zero baseline: the total stands on it, so it outweighs the gridlines */}
           <line className="chart__axis" x1={PAD.left} x2={W - PAD.right} y1={baseline} y2={baseline} />
 
-          {/* x-axis labels + hover targets */}
           {series.map((d, i) => {
             const [head, tail] = splitLabel(d.label);
             const major = isMajor(i);
@@ -300,8 +279,7 @@ export default function DisassemblyChart({
                     </tspan>
                   )}
                 </text>
-                {/* Transparent hover target spanning the column. Pointer events, not
-                    mouse events, so a tap on a touch screen also reveals the tooltip. */}
+                {/* Column hover target. Pointer events, so a tap also shows the tooltip. */}
                 <rect
                   className="chart__hit"
                   x={PAD.left + i * colW}
@@ -314,13 +292,12 @@ export default function DisassemblyChart({
             );
           })}
 
-          {/* The latest total, printed at the end of the step. A narrow plot
-              hides the y-axis, so this label is its only magnitude. */}
+          {/* Latest total. The only magnitude label when a narrow plot hides the y-axis. */}
           <text className="chart__endlabel" x={x(series.length - 1)} y={y(last.value) - 8} textAnchor="middle">
             {tick(last.value)}
           </text>
 
-          {/* Tooltip (mouse-driven enhancement; data is in the table below) */}
+          {/* Tooltip: an enhancement only, the table holds the same data */}
           {active !== null &&
             (() => {
               const d = series[active];
@@ -348,14 +325,11 @@ export default function DisassemblyChart({
         </svg>
       </div>
 
-      {/* Pressing a measure button rewrites the chart, its aria-label and the
-          table below, none of which announces itself. The button reports its own
-          pressed state; this reports what the data now says. */}
+      {/* Announces the new figure when a measure button redraws the chart. */}
       <p className="visually-hidden" aria-live="polite">
         {`${measure.label}: ${measure.format(last.value)} by ${last.label}.`}
       </p>
 
-      {/* Accessible data table (visually hidden, read by assistive tech) */}
       <table className="visually-hidden" aria-labelledby={legendId}>
         <caption id={legendId}>{measure.label}, running total by month</caption>
         <thead>

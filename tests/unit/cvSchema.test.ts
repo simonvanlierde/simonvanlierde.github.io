@@ -2,8 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { CvSchema } from "../../src/data/cvSchema.ts";
 
-// The minimum a public export must carry. Every test below starts here and
-// breaks one thing, so a passing suite says the contract still bites.
+// The minimum valid export. Each test below breaks one thing in it.
 const minimal = () => ({
   basics: {
     name: "S. van Lierde",

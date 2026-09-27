@@ -1,9 +1,8 @@
 import { cv, profiles } from "./cv.ts";
 import { listablePublications } from "./publications.ts";
 
-// Structured data for the two pages. Values come from the CV export, so the
-// machine-readable copy of this site cannot claim anything the visible page does
-// not: one source, two renderings, same as the timeline.
+// Structured data for both pages. It reads the CV export, so it claims nothing
+// the visible page does not.
 
 const site = "https://simonvanlierde.github.io";
 
@@ -27,17 +26,13 @@ const person = {
   knowsAbout: cv.skills.flatMap((group) => group.items),
 };
 
-/** The landing page: the person, and nothing it cannot support. */
+/** The landing page: the person only. */
 export const personJsonLd = {
   "@context": "https://schema.org",
   ...person,
 };
 
-/**
- * The CV page: the person plus any publication the page itself is willing to
- * show. An entry withheld from the reader stays out of the structured data too,
- * so search engines are told exactly what a visitor is told.
- */
+/** The CV page: the person plus exactly the publications the page lists. */
 export const cvJsonLd = {
   "@context": "https://schema.org",
   "@graph": [

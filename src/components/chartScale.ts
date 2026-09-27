@@ -1,7 +1,5 @@
-// Build an axis with a "nice" round step (1/2/5 × 10ⁿ) so tick labels are
-// evenly spaced and never collide after formatting. For whole-count measures
-// the step is forced to an integer, so e.g. a max of 2 gives ticks 0,1,2
-// rather than 0,0.5,1,1.5,2 (which round to a duplicated "0,1,1,2,2").
+// Axis with a round 1/2/5 × 10ⁿ step. Whole counts get an integer step: a max
+// of 2 would otherwise tick every 0.5 and format as "0,1,1,2,2".
 export function buildScale(max: number, integer: boolean): { yMax: number; ticks: number[] } {
   const targetSteps = 4;
   const rawStep = max / targetSteps || 1;
@@ -15,12 +13,9 @@ export function buildScale(max: number, integer: boolean): { yMax: number; ticks
   return { yMax, ticks };
 }
 
-// A running total as a step: each month holds its value flat across its own
-// column and rises at the column edge, which is how a count that only grows
-// actually behaves. Returns the outline (`line`) and the same outline closed
-// down to the baseline (`area`). The command sequence depends only on the
-// number of months, never on the values, so browsers can interpolate `d`
-// between measures.
+// Stepped outline of a running total (`line`) and the same outline closed to
+// the baseline (`area`). The path commands depend only on the month count, so
+// CSS can transition `d` between measures.
 export function stepPaths(tops: number[], left: number, colW: number, base: number): { line: string; area: string } {
   const steps = tops.map((top, i) => `V${top}H${left + (i + 1) * colW}`).join("");
   return {
@@ -29,14 +24,12 @@ export function stepPaths(tops: number[], left: number, colW: number, base: numb
   };
 }
 
-// Counts in the drafting hand's thousands style (a thin space, as the notes set
-// them), so "1 779" reads the same in the notes, the chart, and its table.
+// Thousands separated by a thin space, the style the notes use.
 export const formatCount = (n: number) => Math.round(n).toLocaleString("en-US").replace(/,/g, " ");
 
-// Running totals, anchored to the payload's own totals so the last column
-// always equals the figure in the notes. Months before the first nonzero
-// `startKey` are dropped rather than drawn as empty columns. Their counts (such
-// as early sign-ups) are already in the totals.
+// Running totals, counted back from the payload's totals so the last column
+// matches the notes. Months before the first nonzero `startKey` are dropped.
+// Their counts stay in the totals.
 export function runningTotals<K extends string, R extends { period: string; label: string } & Record<K, number>>(
   rows: R[],
   keys: readonly K[],

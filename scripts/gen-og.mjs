@@ -1,10 +1,6 @@
-// Generates public/og.png (the 1200x630 social-share card) from an inline SVG
-// via sharp. Mirrors the site's identity: the engineering drawing sheet, in
-// its ink-on-paper rendering, with the exploded RELab figure and the sheet
-// frame. Run with `pnpm gen:og` whenever the look or copy changes.
-//
-// osifont renders only if installed on the generating machine; the fallback
-// sans still reads as the sheet because the frame and figure carry the world.
+// Generates public/og.png, the 1200x630 social card, from an inline SVG of the
+// drawing sheet. Rerun `pnpm gen:og` when the look or copy changes.
+// osifont renders only if it is installed locally; otherwise a fallback sans is used.
 import sharp from "sharp";
 
 const W = 1200;
@@ -20,9 +16,8 @@ const frame = "#2c333d"; // --border-strong oklch(32% 0.02 255)
 
 const draft = "'osifont', 'DIN Alternate', 'Bahnschrift', 'Segoe UI', Roboto, Helvetica, sans-serif";
 
-// A compact echo of the site's Fig. 1: RELab taken apart on its axis, six
-// parts, capture end at the top: camera rig, capture app, web app, API,
-// database, docs. Balloons on the right, as on the sheet.
+// A compact copy of the site's Fig. 1: RELab's six parts on one axis, with
+// balloons on the right.
 const X = 985;
 const balloon = (y, n) =>
   `<line x1="${X + 70}" y1="${y}" x2="${X + 108}" y2="${y}" stroke="${frame}" stroke-width="1.5"/>

@@ -2,8 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { stepPaths } from "../../src/components/chartScale.ts";
 
-// The `d` transition between measures only works if every measure yields the
-// same command sequence; only the numbers may differ.
+// The `d` transition needs every measure to yield the same path commands.
 const commands = (d: string) => d.replace(/[^A-Za-z]/g, "");
 
 test("each month holds flat across its column and the area closes on the baseline", () => {

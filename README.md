@@ -13,14 +13,16 @@ at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
 - One Preact island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
   data visualisation; everything else ships as zero-JS HTML
-- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows (the parts list)
+- A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows
+  (the parts list)
 - One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind
   [/cv/](https://simonvanlierde.github.io/cv/) and the landing page's contact details
-- Plain CSS with design tokens; light (ink on paper) and dark (blueprint) via
-  `prefers-color-scheme` plus a toggle; display and data lettering in a vendored
+- Plain CSS with design tokens. Light (ink on paper) and dark (blueprint) themes follow
+  `prefers-color-scheme`, plus a toggle
+- Display and data lettering in a vendored
   [osifont](https://github.com/hikikomori82/osifont) subset (ISO 3098, LGPL+FE)
-- Scheduled GitHub Actions refresh for the RELab chart snapshot, with CI and Pages deploy kept
-  separate
+- A scheduled GitHub Actions workflow that refreshes the RELab chart snapshot, separate from the
+  CI and Pages deploy workflows
 
 See [docs/architecture.md](docs/architecture.md) for the site architecture and data-refresh path.
 
@@ -87,20 +89,20 @@ pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
 
-Unit tests ([tests/unit/](tests/unit/)) cover the chart scale, step outline, and running totals, CV date
-formatting, and the publication listing rule; the
-browser suite ([tests/](tests/)) is the accessibility + behaviour coverage below.
+Unit tests ([tests/unit/](tests/unit/)) cover the chart scale, step outline, running totals, CV date
+formatting, and the publication listing rule. The browser suite ([tests/](tests/)) runs the
+accessibility and behaviour checks below.
 
 ## Accessibility
 
-Checked two ways in CI on every pull request (see [ci.yml](.github/workflows/ci.yml)):
+CI checks accessibility in two ways on every pull request (see [ci.yml](.github/workflows/ci.yml)):
 
 - **Static**: [Biome](https://biomejs.dev)'s `a11y` rules (`pnpm lint`) flag missing `alt` text,
   misused ARIA, and click handlers without keyboard equivalents.
 - **Runtime**: [Playwright](https://playwright.dev) runs
   [axe-core](https://github.com/dequelabs/axe-core) over the built page
-  ([tests/a11y.spec.ts](tests/a11y.spec.ts)) in both colour schemes and after interaction, plus
-  behavioural checks ([tests/e2e.spec.ts](tests/e2e.spec.ts)) for the skip link, theme-toggle
+  ([tests/a11y.spec.ts](tests/a11y.spec.ts)) in both colour schemes and after interaction. It also
+  runs behavioural checks ([tests/e2e.spec.ts](tests/e2e.spec.ts)) for the skip link, theme-toggle
   persistence, and the chart's `aria-pressed` toggles.
 
 ## Deployment
@@ -109,7 +111,7 @@ Pushing to `main` triggers [deploy.yml](.github/workflows/deploy.yml): GitHub Ac
 the site and publishes to GitHub Pages, live at
 [simonvanlierde.github.io](https://simonvanlierde.github.io). Pages source must be set to
 **GitHub Actions** (Settings → Pages). The weekly
-[refresh-data.yml](.github/workflows/refresh-data.yml) refresh commits new stats and dispatches
+[refresh-data.yml](.github/workflows/refresh-data.yml) workflow commits new stats and dispatches
 deploy.yml. A `pages` concurrency group queues deploys instead of racing them.
 
 ## Content

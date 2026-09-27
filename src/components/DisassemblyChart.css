@@ -1,7 +1,7 @@
 /* DisassemblyChart island styles. Colours come from global design tokens. */
 
-/* 30rem is the 480-unit viewBox at 1:1. Wider and the SVG scales up, inflating
-   13px axis labels into 19px ones; the plot has one correct size and this is it. */
+/* 30rem renders the 480-unit viewBox at 1:1. Wider, and 13px labels scale up
+   to 19px. */
 .chart {
   margin: 0;
   max-width: 30rem;
@@ -12,9 +12,7 @@
   color: var(--text-muted);
 }
 
-/* Three core measures stay immediately available. The remaining two sit in a
-   second ruled row on request, preserving the complete dataset without making
-   every visit begin with five equal choices. */
+/* Three measures show by default. The other two open in a second row. */
 .chart__controls {
   display: grid;
   width: 100%;
@@ -51,8 +49,7 @@
   min-width: 0;
   align-items: center;
   justify-content: center;
-  /* Full 44px target: a mis-tap changes the measure under you without
-     saying so. */
+  /* 44px target: a mis-tap changes the measure without notice. */
   min-height: 44px;
   font-family: var(--font-mono);
   font-size: var(--step--1);
@@ -65,9 +62,8 @@
   background: var(--surface);
   color: var(--text-muted);
   cursor: pointer;
-  /* The fill fades on the same clock as the outline it drives. No press-scale:
-     these segments share one ruled fieldset, and shrinking one would open a
-     seam against its neighbours. */
+  /* No press-scale: the buttons share one ruled fieldset, and a shrinking
+     button would open a gap. */
   transition:
     background-color var(--dur-fast) ease,
     color var(--dur-fast) ease;
@@ -94,10 +90,8 @@
   outline-color: var(--accent-contrast);
 }
 
-/* Not a measure but a disclosure, so it must not read as a sixth thing the
-   chart could plot: a recessed ground and a chevron that turns with the state
-   it reports. Drawn in CSS rather than shipped as a glyph or a file, so it
-   inherits currentColor through the accent fill and the focus ring. */
+/* A disclosure, not a measure, so it gets a recessed background and a
+   chevron. The chevron is CSS borders, so it inherits currentColor. */
 .chart__more {
   flex-direction: column;
   gap: 0.1em;
@@ -145,8 +139,7 @@
   overflow: visible;
 }
 
-/* Every figure on the plot is data, so all of it is in the drafting hand with
-   tabular numerals: axis, months, tooltip, and the lettered total. */
+/* All plot text is data: drafting hand with tabular numerals. */
 .chart__plot text {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
@@ -186,9 +179,8 @@
   font-size: 13px;
 }
 
-/* The year (or other qualifier) only prints where it changes. It stays quieter
-   through size alone: 0.75 opacity here drops the text to 3.5:1, and small text
-   is the last place to spend contrast. */
+/* The year prints only where it changes. It is quieter by size, not opacity:
+   0.75 opacity drops the small text to 3.5:1 contrast. */
 .chart__xlabel-qualifier {
   font-size: 11px;
 }
@@ -199,9 +191,8 @@
   font-size: 13px;
 }
 
-/* Marks: section hatching under a stepped outline. Solid lines, never a
-   translucent fill: opacity would blend with whatever sits behind, making the
-   real contrast unknowable. The outline is the data; the hatch says "region". */
+/* Hatching marks the area under the outline. Solid strokes, not a translucent
+   fill: opacity blends with the background and makes contrast unpredictable. */
 .chart__hatch {
   stroke: var(--chart-bar);
   stroke-width: 1;
@@ -220,16 +211,10 @@
 
 /* Motion is opt-in; reduced-motion users get the final state instantly. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Switching measure redraws the outline; ease to the new heights rather than
-     replaying the load reveal. `stepPaths` always emits the same command
-     sequence, so `d` interpolates. Where `transition: d` is unsupported the
-     outline snaps to the new measure, which is fine.
-
-     Keep it short. The gridlines and their tick labels rescale in a single
-     frame (they carry new *numbers*, so there is nothing to interpolate), and
-     for the length of this transition the outline is drawn against an axis that
-     no longer describes it. At 350ms that gap reads as wrong values; at 200ms
-     it reads as the change itself. */
+  /* A measure change eases the outline to its new heights. `stepPaths` keeps
+     the path commands fixed, so `d` interpolates. Unsupported browsers snap.
+     Keep the duration short: the axis rescales at once, so a long transition
+     shows the outline against the wrong scale. */
   @supports (transition-property: d) {
     .chart__area,
     .chart__line {
@@ -237,8 +222,7 @@
     }
   }
 
-  /* Load reveal: the total is drawn in from the left, once, the way a pen
-     traces it. */
+  /* Load reveal: draws the total in from the left, once. */
   .chart__total {
     animation: chart-draw 0.7s var(--ease-out) both;
   }
@@ -259,8 +243,8 @@
 
 /* Tooltip */
 
-/* Painted last and wider than a column: without this it swallows the
-   pointerenter meant for the hit rect underneath and the tip sticks. */
+/* Painted over the hit rects and wider than a column. Without this, it takes
+   the pointerenter and the tooltip sticks. */
 .chart__tooltip {
   pointer-events: none;
 }
@@ -291,15 +275,12 @@
   font-size: 13px;
 }
 
-/* A narrow plot renders the 480-unit viewBox at roughly 0.6, which would put 13px
-   labels back under 8 real pixels. Scale the type up in user units instead,
-   letter only every few months (the component marks which), and drop the
-   y-axis text: the total lettered at the end of the step carries magnitude, a tap
-   carries each month's figure, and the gridlines give the eye a level.
+/* A narrow plot renders at about 0.6 scale, putting 13px labels under 8 real
+   pixels. Enlarge the type and label only every few months (the component
+   picks which). Hide the y-axis text: the end label gives the magnitude.
 
-   Keyed to the `chart` container (declared on .relab__chart) rather than the
-   viewport, because a 26rem plot needs this treatment whether it is narrow from
-   being on a phone or from sitting in a half-width column. */
+   A container query, because the plot is also narrow in a half-width column.
+   The `chart` container is declared on .relab__chart. */
 @container chart (max-width: 26rem) {
   .chart__controls-row--primary {
     grid-template-columns: repeat(2, minmax(0, 1fr));

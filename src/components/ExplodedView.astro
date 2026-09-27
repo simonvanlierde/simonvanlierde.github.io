@@ -1,11 +1,7 @@
 ---
-// The sheet's figure: ReLab, the lab's own platform, drawn taken apart, the
-// way the lab takes products apart. Six parts on a dash-dot axis, capture end
-// at the top, foundation at the bottom, in flat front elevation. Each part
-// carries a balloon keyed to the left register, and each part is a link to
-// the real thing: the plugin repo, the live app, the docs, the source. On
-// load the parts settle apart from the assembled stack (reduced motion: the
-// drawing starts exploded).
+// Fig. 1: ReLab as an exploded view. Each part links to its repo, app, or docs
+// and has a balloon keyed to the left register. On load the parts move apart
+// from the assembled stack.
 const repo = "https://github.com/CMLPlatform/relab";
 const parts = [
   {
@@ -20,8 +16,7 @@ const parts = [
   { id: "db", name: "Database", href: repo, to: "ReLab source on GitHub" },
   { id: "docs", name: "Docs", href: "https://docs.cml-relab.org", to: "ReLab documentation" },
 ];
-// Throws rather than falling back: a typo'd id would otherwise silently draw
-// the first part's destination onto some other balloon.
+// Throw on an unknown id: a fallback would silently link the wrong part.
 const link = (id: string) => {
   const part = parts.find((p) => p.id === id);
   if (!part) throw new Error(`ExplodedView: no part "${id}"`);
@@ -40,10 +35,8 @@ const link = (id: string) => {
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    {/* centreline: the dash-dot axis every assembly is drawn on */}
     <line class="axis" x1="220" y1="8" x2="220" y2="478" stroke-dasharray="14 5 2 5"></line>
 
-    {/* ============ PARTS (top to bottom along the axis) ============ */}
     {/* 1 Camera rig: the Raspberry Pi board with its camera module */}
     <a href={link("rig").href} aria-label={`${link("rig").name}: ${link("rig").to}`}>
       <g class="part part--rig">
@@ -199,9 +192,8 @@ const link = (id: string) => {
 
   </svg>
 
-  {/* On a narrow screen, the tall desktop plate becomes a compact six-part
-      assembly map. The shared centreline preserves the system relationship;
-      every numbered cell is one large, explicit link. */}
+  {/* Compact plate for narrow or touch screens: a 2×3 grid, one large link
+      per cell. */}
   <svg
     class="exploded__svg exploded__svg--mobile"
     viewBox="0 0 340 336"
@@ -335,11 +327,10 @@ const link = (id: string) => {
 </figure>
 
 <script is:inline>
-  // Assembled -> exploded on first view. Inline, right after the figure, so
-  // the class is on before the drawing's first paint (a deferred module could
-  // land after it and pop the parts together); removed a frame later, so
-  // the transition runs from the assembled position. No JS, or reduced
-  // motion: the static exploded view.
+  // Start assembled, then explode. Inline, right after the figure, so the class
+  // is set before first paint: a deferred module could run later and make the
+  // parts jump. Removing it two frames later lets the transition run. Without
+  // JS or with reduced motion, the view stays exploded.
   {
     const fig = document.querySelector(".exploded");
     if (fig && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -360,7 +351,7 @@ const link = (id: string) => {
     letter-spacing: 0.04em;
   }
 
-  /* Plate size: the notes carry the proof, the drawing shows the method. */
+  /* Capped small: the drawing illustrates, and the notes carry the figures. */
   .exploded__svg {
     width: 100%;
     height: auto;
@@ -371,8 +362,8 @@ const link = (id: string) => {
     display: none;
   }
 
-  /* Linework. A transparent (not none) fill makes the whole part a pointer
-     target, so a tap inside a part hits it, not only its stroke. */
+  /* A transparent (not none) fill makes the whole part a pointer target, not
+     only its stroke. */
   .part {
     fill: transparent;
     stroke: var(--text);
@@ -394,8 +385,7 @@ const link = (id: string) => {
     stroke-width: 1;
   }
 
-  /* The balloon: a drawing's item mark, keyed to the register. Its stroke
-     stays the strong rule; only the numeral answers hover. */
+  /* Balloon stroke stays fixed. Only the numeral changes on hover. */
   .balloon-mark circle {
     stroke: var(--border-strong);
     stroke-width: 1.5;
@@ -406,8 +396,8 @@ const link = (id: string) => {
     fill: var(--text);
   }
 
-  /* Lettering. Sizes are svg units; the drawing caps at 20rem, where one
-     unit is 0.94px, so 13 units letters at just over 12px. */
+  /* Sizes are SVG units. At the 20rem cap one unit is 0.94px, so 13 units is
+     just over 12px. */
   text {
     stroke: none;
     fill: var(--text-muted);
@@ -443,9 +433,8 @@ const link = (id: string) => {
     transition: stroke var(--dur-fast) ease;
   }
 
-  /* The assembled position: the stack closes onto the API, capture end
-     coming down, foundation coming up. Balloons and register labels travel
-     with their parts, so the settle reads as one drawing. */
+  /* Assembled position: the parts close onto the API. Labels move with their
+     parts. */
   .label {
     transition: translate var(--dur-explode) var(--ease-out);
   }
@@ -470,8 +459,8 @@ const link = (id: string) => {
     translate: 0 -40px;
   }
 
-  /* The register's last column: an arrow out, drawn, in the link colour at
-     rest, so every row reads as a link off the sheet before anyone hovers. */
+  /* The arrow-out mark is accent-coloured at rest, so each row reads as a link
+     before hover. */
   .ext {
     stroke: var(--accent);
     stroke-width: 1.4;
@@ -480,10 +469,8 @@ const link = (id: string) => {
       translate var(--dur-fast) var(--ease-out);
   }
 
-  /* Each part and its register label are one link. Hover or focus lights
-     both. Focus also draws a boundary: an ink change on 1.7px linework is
-     too fine to locate a focused part by. The offset is negative so the
-     box lands inside the link's bounding box and the plate cannot clip it. */
+  /* Focus also draws an outline: a colour change on 1.7px lines is too faint
+     to find. The negative offset keeps it inside the plate, unclipped. */
   .exploded a {
     cursor: pointer;
   }
@@ -513,10 +500,8 @@ const link = (id: string) => {
     stroke-width: 2.4;
   }
 
-  /* Width picks the plate, but so does a coarse pointer: on a touch device
-     with a wide viewport the desktop parts scale down to ~34px hit areas,
-     under the 44px the rest of the sheet keeps. The assembly map's targets
-     stay large at any width. */
+  /* Touch screens get the compact plate at any width. Scaled down, the desktop
+     parts are about 34px targets, under the 44px minimum. */
   @media (max-width: 40rem), (pointer: coarse) {
     .exploded__svg--desktop {
       display: none;
@@ -539,8 +524,8 @@ const link = (id: string) => {
     fill: var(--accent);
   }
 
-  /* Reduced motion drops the settle; the 150ms ink change on hover is
-     feedback, not movement, and stays. */
+  /* Reduced motion drops the movement. The hover colour change is feedback,
+     not motion, so it stays. */
   @media (prefers-reduced-motion: reduce) {
     .part {
       transition: stroke var(--dur-fast) ease;

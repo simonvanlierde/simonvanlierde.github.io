@@ -1,11 +1,6 @@
-// Refreshes src/data/stats.json from the RELab public API.
-// Run with: pnpm fetch:stats  (a scheduled workflow runs it and commits changes)
-//
-// Two endpoints, /v1/stats/series and /v1/stats/totals, are folded into the one
-// snapshot the site reads. The API is public but fronted by Cloudflare; if a
-// request is blocked or the API is down, this script logs a warning and exits 0
-// WITHOUT touching the committed snapshot, so the last good figures stay on the
-// site and CI is green.
+// Refreshes src/data/stats.json from the RELab public API (`pnpm fetch:stats`).
+// If the API is down or Cloudflare blocks a request, the script warns and exits 0
+// without touching the committed snapshot, so the site keeps the last good figures.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -17,7 +12,6 @@ const base = (process.env.RELAB_API_URL || "https://api.cml-relab.org").replace(
 const seriesUrl = `${base}/v1/stats/series?granularity=month`;
 const totalsUrl = `${base}/v1/stats/totals`;
 
-// Bail out gracefully: warn, leave the snapshot untouched, succeed.
 function skip(reason) {
   console.warn(`fetch-stats: ${reason}. Keeping existing src/data/stats.json.`);
   process.exit(0);
@@ -43,23 +37,20 @@ if (!Array.isArray(seriesPayload?.series) || seriesPayload.series.length === 0) 
   skip("series response had no rows");
 }
 
-// Every row must carry the fields the chart reads; a shape drift (renamed or
-// dropped field) would otherwise render as silent zeros. Keep the last good snapshot instead.
+// A renamed or dropped field would otherwise render as zeros.
 const required = ["period", "teardowns", "parts", "mass_kg", "images", "users_new"];
 // biome-ignore lint/suspicious/noEqualsToNull: == null intentionally matches null and undefined
 if (seriesPayload.series.some((row) => required.some((k) => row?.[k] == null))) {
   skip(`a series row is missing one of: ${required.join(", ")}`);
 }
 
-// The hero notes print the running totals as counted figures, so they must
-// be present and numeric, not silently absent.
+// The hero prints these totals, so each must be a number.
 const totalKeys = ["teardowns", "parts", "mass_kg", "images", "users"];
 if (totalKeys.some((k) => typeof totalsPayload?.totals?.[k] !== "number")) {
   skip(`totals is missing one of: ${totalKeys.join(", ")}`);
 }
 
-// The API omits periods with no activity. Bars are evenly spaced, so a missing
-// month would read as a month that never happened: fill the gaps with zeros.
+// The API omits idle months. Bars are evenly spaced, so fill the gaps with zeros.
 const monthLabel = (period) => {
   const [year, month] = period.split("-").map(Number);
   return `${new Date(Date.UTC(year, month - 1)).toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })} ${year}`;
@@ -78,9 +69,8 @@ function fillMonthGaps(rows) {
   return filled;
 }
 
-// Months at the edges with no teardown are kept rather than trimmed: they carry
-// sign-ups. The chart plots running totals anchored to `totals`, so it skips the
-// idle lead-in itself without losing those counts.
+// Keep idle months at the edges: they still carry sign-ups. The chart skips the
+// idle lead-in itself.
 const sorted = [...seriesPayload.series].sort((a, b) => a.period.localeCompare(b.period));
 
 const payload = {
@@ -91,23 +81,21 @@ const payload = {
     parts: row.parts,
     mass_kg: row.mass_kg,
     images: row.images,
-    // Sign-ups ("Accounts" in the chart); the API also reports users_active, unused here.
+    // Sign-ups ("Accounts" in the chart).
     users: row.users_new,
   })),
   totals: totalsPayload.totals,
 };
 
-// When the figures were counted, per the API's own stamp; ISO YYYY-MM-DD in UTC,
-// same as the CV export stamp. If nothing but the date would change, keep the
-// previous date: the label says when the counts last moved, and the workflow's
-// no-change guard stays useful.
+// as_of is the API's count date (UTC, YYYY-MM-DD). If only the date would change,
+// keep the old one, so the refresh workflow commits only when the counts move.
 let previous = null;
 try {
   previous = JSON.parse(await readFile(out, "utf8"));
 } catch {
   // no committed snapshot yet
 }
-// `sample` is dropped along with it: these are real figures now.
+// Also drop the legacy `sample` flag.
 const { as_of: previousAsOf, sample: _sample, ...previousRest } = previous ?? {};
 const unchanged = previousAsOf && JSON.stringify(previousRest) === JSON.stringify(payload);
 payload.as_of = unchanged ? previousAsOf : seriesPayload.generated_at.slice(0, 10);

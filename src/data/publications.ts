@@ -1,15 +1,11 @@
 import { z } from "zod";
 
-// Kept out of cv.ts so it stays importable by `node --test`: cv.ts pulls the YAML
-// in through Vite's `?raw`, which plain Node cannot resolve.
+// Kept out of cv.ts so `node --test` can import it: plain Node cannot resolve `?raw`.
 
 /**
- * One publication. `authors` accepts either a YAML list or a single comma-joined
- * string, because the two repos are coordinated by hand and a mismatch there
- * should not be a broken build. `status` is an enum so a typo upstream fails the
- * build instead of quietly rendering an unrecognised label. `doi` is the bare
- * identifier for the same reason: both consumers prefix it with the resolver,
- * so a full URL upstream would render a doubled, dead link.
+ * One publication. `authors` takes a YAML list or a comma-joined string. An
+ * unknown `status` fails the build. `doi` must be the bare identifier, because
+ * both consumers prefix the resolver.
  */
 export const PublicationSchema = z.object({
   authors: z
@@ -28,10 +24,8 @@ export const PublicationSchema = z.object({
 export type Publication = z.infer<typeof PublicationSchema>;
 
 /**
- * Which publications the site is willing to show. Accepted work always lists.
- * Unaccepted work lists only when it carries a DOI, i.e. only once there is a
- * preprint a reader can actually go and read: a bare "under review" line asks the
- * reader to take the work on trust, and the venue can still change.
+ * Accepted work always lists. Unaccepted work lists only with a DOI, so a reader
+ * can open a preprint instead of taking "under review" on trust.
  */
 export const listablePublications = (pubs: Publication[]): Publication[] =>
   pubs.filter((p) => p.status === "published" || p.status === "in press" || Boolean(p.doi));

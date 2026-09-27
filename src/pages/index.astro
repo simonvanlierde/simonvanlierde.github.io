@@ -14,8 +14,7 @@ import Base from "../layouts/Base.astro";
 // The history lives on /cv/; this sheet reads only the basics and the date.
 const { basics, exported } = cv;
 
-// General notes: ReLab's running counts, from the same payload as the chart
-// (refreshed by scripts/fetch-stats.mjs).
+// Same payload as the chart, refreshed by scripts/fetch-stats.mjs.
 const counts = { as_of: stats.as_of, ...stats.totals };
 const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
   month: "short",
@@ -37,19 +36,14 @@ const personalProjects = allProjects.filter((p) => p.data.category === "personal
 
 const name = basics.name;
 
-// The lead is who, the same words the CV's headline leads with; the tagline
-// is what and where.
+// Matches the start of the CV headline.
 const lead = "PhD researcher and research software engineer";
 
 const tagline =
   "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
 
-// A dated summary of the ReLab counts, so the first screen carries evidence.
-// The notes further down have the full record.
+// Puts dated evidence on the first screen; the notes below have the full counts.
 const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
-
-// One stamp per sheet: the CV. The address is a plain link beside it, and the
-// profiles run quietly under both, repeating the title block's list.
 ---
 
 <Base
@@ -82,10 +76,8 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
           }
         </div>
 
-        {/* The same profiles the title block carries, repeated once at the top:
-            the block is a footer at the end of a long sheet, and these are the
-            proofs a reader wants before scrolling. Text only and muted, so the
-            stamp stays the sheet's one strong call. */}
+        {/* Repeats the title block's profiles, which sit at the end of a long
+            sheet. Muted, so the stamp stays the one primary action. */}
         <ul class="hero__profiles link-list draft" aria-label="Profiles">
           {
             profiles.map((p) => (
@@ -107,7 +99,6 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     <section class="container" aria-labelledby="work-heading">
       <h2 id="work-heading">Selected work</h2>
       <div class="bom">
-        {/* ReLab first: the platform, its running totals, and their chart */}
         <article class="bom-row relab-row" id="relab">
           <p class="bom-row__pos">Research platform</p>
           <div class="bom-row__body">
@@ -204,8 +195,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
   </main>
   </div>
 
-  {/* Date the sheet by its newest input, the CV data or the counts, so the
-      title block is never older than a figure on the page. */}
+  {/* Date by the newer input, so the title block is never older than a figure on the page. */}
   <TitleBlock
     title={name}
     docType="Index of work"
@@ -226,9 +216,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
   }
 
   @media (min-width: 60rem) {
-    /* Both columns hang from the top rule, so the name sits at the same
-       height on this sheet as on the CV. The shortened plate keeps the two
-       columns close enough in length that nothing is left stranded. */
+    /* Top-aligned, so the name sits at the same height as on the CV. */
     .hero__grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
       align-items: start;
@@ -260,8 +248,6 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     color: var(--accent-strong);
   }
 
-  /* The proof line is data, so it uses the drafting hand. It links to the
-     notes, which carry the full counts. */
   .hero__proof {
     margin-top: var(--space-m);
     max-width: var(--measure);
@@ -279,8 +265,6 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     color: var(--accent-strong);
   }
 
-  /* A reference line, set like a note: small, muted, no rules or glyphs, so it
-     reads under the actions rather than beside them. */
   .hero__profiles {
     margin-top: var(--space-s);
     font-size: var(--step--1);
@@ -296,8 +280,6 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     color: var(--accent-strong);
   }
 
-  /* General notes: the platform's running counts, a boxed note block in its
-     row, so the row reads text, notes, figure. */
   .notes {
     margin-top: var(--space-l);
     max-width: var(--measure);
@@ -359,7 +341,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     color: var(--text-muted);
   }
 
-  /* Lead row: the platform's title outranks the repo slugs below it. */
+  /* ReLab's title outranks the repo names below it. */
   .relab-row__title {
     font-size: var(--step-2);
   }
@@ -368,8 +350,8 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     color: var(--text-muted);
   }
 
-  /* An inline-size container cannot size from its content, so it takes an
-     explicit width: the plot's own 30rem cap (see DisassemblyChart.css). */
+  /* An inline-size container cannot size from its content, so it needs an
+     explicit width: the plot's 30rem cap (see DisassemblyChart.css). */
   .relab__chart {
     container: chart / inline-size;
     width: 100%;
@@ -377,8 +359,6 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     margin-top: var(--space-l);
   }
 
-  /* A footnote to the parts list. It runs to several lines, so it keeps to
-     the reading measure. */
   .upstream-note {
     margin-top: var(--space-l);
     max-width: var(--measure);

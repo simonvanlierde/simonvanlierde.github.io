@@ -24,13 +24,11 @@ const publications = listablePublications(cv.publications);
 
 const exportedLabel = exported ? formatIsoDate(exported) : null;
 
-// The headline splits at its interpunct the way the landing page's header
-// does: the first part is the lead, the rest the muted line under it.
+// Split at the interpunct: the first part is the lead, the rest the tagline.
 const [headlineLead, ...headlineRest] = basics.headline.split(" · ");
 
-// The sheet's zone index: one datum letter per section that renders, in
-// reading order, so a hurried reader can be sent to "C" instead of scrolling.
-// Each section heading shows the same letter.
+// Letters follow the rendered sections, so hidden sections leave no gaps.
+// Each section heading shows the same letter as the zone index.
 const sections = [
   { id: "profile-heading", label: "Profile", show: true },
   { id: "experience-heading", label: "Experience", show: true },
@@ -45,8 +43,7 @@ const sections = [
   .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
 const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
 
-// Location and address only: the profile links live once, in the title
-// block, on both sheets.
+// The profile links live in the title block, not here.
 const contact = [
   { label: basics.location, href: null },
   ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
@@ -60,7 +57,7 @@ const contact = [
 >
   <SheetNav current="cv" />
 
-  {/* Skip target: only the sheet nav is chrome. */}
+  {/* Skip target: the skip link passes only the sheet nav. */}
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
     <h1>{basics.name}</h1>
@@ -103,7 +100,6 @@ const contact = [
     }
   </header>
 
-  {/* Zone index: lettered sections, so a reader can jump. */}
   <nav class="container cv-index" aria-label="Sections">
     <ol class="cv-index__list">
       {
@@ -133,9 +129,8 @@ const contact = [
         {
           experience.map((job) => (
             <article class="cv-entry">
-              {/* The period comes after the heading in the source, so a screen
-                  reader reads the role and then its dates. The grid still
-                  places the period in the rail. */}
+              {/* The period follows the heading so screen readers read the
+                  role first. CSS moves it into the rail. */}
               <div class="cv-entry__body">
                 <h3 class="cv-entry__role">{job.role}</h3>
                 <p class="cv-entry__org">{job.organization}</p>
@@ -155,7 +150,7 @@ const contact = [
     </section>
 
     {
-      /* After Experience: what an academic reader looks for first. */
+      /* After Experience: an academic reader looks here first. */
       publications.length > 0 && (
         <section class="container" aria-labelledby="publications-heading">
           <h2 id="publications-heading"><span class="datum" aria-hidden="true">{ref("publications-heading")}</span>Publications</h2>
@@ -219,12 +214,11 @@ const contact = [
     }
 
     {
-      /* Optional sections: an empty heading would read as a gap in the person. */
+      /* Optional sections render only when they have content. */
       skills.length > 0 && (
         <section class="container" aria-labelledby="skills-heading">
           <h2 id="skills-heading"><span class="datum" aria-hidden="true">{ref("skills-heading")}</span>Skills</h2>
           <div class="cv-entries">
-            {/* One line per group: skills are read, not filtered. */}
             {skills.map((group) => (
               <div class="cv-entry">
                 <p class="cv-entry__period">{group.group}</p>
@@ -237,7 +231,6 @@ const contact = [
     }
 
     {
-      /* Talks, schools, upstream contributions. */
       development.length > 0 && (
         <section class="container" aria-labelledby="development-heading">
           <h2 id="development-heading"><span class="datum" aria-hidden="true">{ref("development-heading")}</span>Talks and training</h2>
@@ -261,7 +254,7 @@ const contact = [
 
     <aside class="container cv-download-utility" aria-label="PDF download">
       <p class="prose">Generated from the same source as this page.</p>
-      {/* The one stamp is in the header; this is a plain utility link. */}
+      {/* Plain link: the header holds the sheet's one stamp. */}
       <a class="draft cv-download-utility__link" href={pdf} download>Download as PDF</a>
     </aside>
   </main>
@@ -285,7 +278,7 @@ const contact = [
     color: var(--text-muted);
   }
 
-  /* The plain location shares the links' box so the row sits on one baseline. */
+  /* Matches the links' box so the row sits on one baseline. */
   .cv-contact__plain {
     display: inline-flex;
     align-items: center;
@@ -294,8 +287,6 @@ const contact = [
     margin: -0.3rem -0.25rem;
   }
 
-  /* Zone index: lettered datum marks, one row on a desktop sheet, wrapping
-     below that. Labels never break mid-name. */
   .cv-index {
     margin-top: var(--space-m);
   }
@@ -312,8 +303,6 @@ const contact = [
     text-transform: uppercase;
   }
 
-  /* Spread across the sheet when the row fits; wrap rather than overrun the
-     frame when an optional section (Publications) makes it longer. */
   @media (min-width: 60rem) {
     .cv-index__list {
       justify-content: space-between;
@@ -346,15 +335,13 @@ const contact = [
     margin-top: var(--space-m);
   }
 
-  /* Section headings show their letter from the zone index. */
   main h2 .datum {
     margin-inline-end: var(--space-s);
     vertical-align: 0.1em;
     letter-spacing: 0;
   }
 
-  /* Prose sections start at the body column of the rail grid, so every
-     section shares one left text edge. */
+  /* 11rem rail + gutter: aligns prose with the entries' body column. */
   @media (min-width: 40rem) {
     .cv-aligned {
       margin-inline-start: calc(11rem + var(--space-l));
@@ -367,7 +354,6 @@ const contact = [
     font-size: var(--step--1);
   }
 
-  /* The profile is the CV's argument, in full ink. */
   .cv-profile {
     margin-top: var(--space-m);
   }
@@ -376,8 +362,6 @@ const contact = [
     max-width: var(--measure);
   }
 
-  /* Venue sits under the byline, with the status chip only when it isn't
-     "published": absence already means accepted. */
   .cv-publication__venue {
     display: flex;
     flex-wrap: wrap;
@@ -429,8 +413,6 @@ const contact = [
     margin-block: -0.65rem;
   }
 
-  /* On paper the PDF is the document; the download controls and the zone
-     index are screen affordances, and an entry never breaks across pages. */
   @media print {
     @page {
       margin: 12mm 14mm;
@@ -461,7 +443,7 @@ const contact = [
       margin-top: 0.15rem;
     }
 
-    /* Print drops the zone index, so the heading letters would point at nothing. */
+    /* Without the zone index, the heading letters point at nothing. */
     .cv-download,
     .cv-index,
     .cv-download-utility,
@@ -469,8 +451,7 @@ const contact = [
       display: none;
     }
 
-    /* Print each link's URL after its text. Email links already show the
-       address. */
+    /* Print URLs after link text. Email links already show the address. */
     .cv-entry__role a::after,
     :global(.title-block__contact a:not([href^="mailto:"]))::after {
       content: " (" attr(href) ")";
