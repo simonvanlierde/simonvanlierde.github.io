@@ -58,7 +58,8 @@ const MEASURE_KEYS = MEASURES.map((m) => m.key);
 // Running totals as a step, not monthly bars. Teardowns come in workshop
 // campaigns, so monthly bars made quiet months look like the platform stopped.
 const rows = runningTotals(stats.series, MEASURE_KEYS, stats.totals, "teardowns");
-const PRIMARY_MEASURE_KEYS: MeasureKey[] = ["teardowns", "parts", "mass_kg"];
+// The first three match notes A-C; the rest sit behind "More".
+const PRIMARY_MEASURE_KEYS: MeasureKey[] = ["teardowns", "parts", "images"];
 const primaryMeasures = MEASURES.filter((measure) => PRIMARY_MEASURE_KEYS.includes(measure.key));
 const secondaryMeasures = MEASURES.filter((measure) => !PRIMARY_MEASURE_KEYS.includes(measure.key));
 
@@ -352,7 +353,7 @@ export default function DisassemblyChart({
 
       {caption && (
         <figcaption>
-          {caption}, {first.label} to {last.label}.
+          {caption} of {measure.label.toLowerCase()}, {first.label} to {last.label}.
         </figcaption>
       )}
     </figure>

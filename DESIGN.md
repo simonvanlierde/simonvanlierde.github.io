@@ -284,7 +284,7 @@ The current sheets use these:
 | Tags | Read-only spec callouts, hairline and transparent, never interactive filters |
 | Work row | A parts-list row, not a card: a top rule, no background, no hover tint, the part name as the target |
 | Sheet nav | Sticky, solid ground, hairline rule; current sheet marked with `aria-current="page"` and ink, not colour alone |
-| Title block | ISO 7200 provenance, and the one place the profile links live |
+| Title block | ISO 7200 provenance and contact; the profile links repeat, muted, under each sheet's header |
 | Exploded view | The signature figure; see below |
 | General notes | Datum-lettered running totals, sitting with the platform they describe |
 | Chart island | Kept token names only, a stepped outline over section hatching; see below |

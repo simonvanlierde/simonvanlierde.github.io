@@ -2,7 +2,7 @@
 import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, cvPdf as pdf } from "../data/cv.ts";
+import { cv, cvPdf as pdf, profiles } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
 import Base from "../layouts/Base.astro";
@@ -43,7 +43,6 @@ const sections = [
   .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
 const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
 
-// The profile links live in the title block, not here.
 const contact = [
   { label: basics.location, href: null },
   ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
@@ -68,6 +67,17 @@ const contact = [
       {
         contact.map((c) => (
           <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft cv-contact__plain">{c.label}</span>}</li>
+        ))
+      }
+    </ul>
+
+    {/* The same profile links as the landing hero, so a peer finds ORCID up top. */}
+    <ul class="link-list cv-profiles draft" aria-label="Profiles">
+      {
+        profiles.map((p) => (
+          <li>
+            <a href={p.href}>{p.label}</a>
+          </li>
         ))
       }
     </ul>
@@ -283,6 +293,21 @@ const contact = [
     margin-top: var(--space-m);
     font-size: var(--step--1);
     color: var(--text-muted);
+  }
+
+  .cv-profiles {
+    margin-top: var(--space-xs);
+    font-size: var(--step--1);
+    letter-spacing: 0.03em;
+    gap: 0 var(--space-m);
+  }
+
+  .cv-profiles a {
+    color: var(--text-muted);
+  }
+
+  .cv-profiles a:hover {
+    color: var(--accent-strong);
   }
 
   /* Matches the links' box so the row sits on one baseline. */

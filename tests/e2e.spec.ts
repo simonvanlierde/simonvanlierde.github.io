@@ -284,17 +284,17 @@ test.describe("disassembly chart", () => {
     const more = page.locator("button.chart__more");
     await expect(more).toHaveAttribute("aria-expanded", "false");
     await expect(more).toHaveAccessibleName("Show more measures");
-    await expect(page.getByRole("button", { name: "Images" })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Mass" })).toBeHidden();
 
     await more.click();
     await expect(more).toHaveAttribute("aria-expanded", "true");
     await expect(more).toHaveAccessibleName("Show fewer measures");
-    const images = page.getByRole("button", { name: "Images" });
+    const images = page.getByRole("button", { name: "Mass" });
     await expect(images).toBeVisible();
     await images.click();
     await expect(images).toHaveAttribute("aria-pressed", "true");
 
     await more.click();
-    await expect(page.getByRole("button", { name: /Images selected\. Show more measures/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Mass selected\. Show more measures/ })).toBeVisible();
   });
 });
