@@ -13,7 +13,10 @@ export default defineConfig({
   use: { baseURL: "http://127.0.0.1:4321" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "astro preview --port 4321 --host 127.0.0.1",
+    // --ignore-lock keeps the server in the foreground: Astro backgrounds
+    // `preview` when it detects an AI agent, and a detached server makes
+    // Playwright see the command exit early.
+    command: "astro preview --port 4321 --host 127.0.0.1 --ignore-lock",
     url: "http://127.0.0.1:4321",
     // Never adopt whatever already answers on 4321: a stray `astro dev` there
     // serves dev-mode output and the suite would pass against a page visitors
