@@ -1,4 +1,4 @@
-import { cv } from "./cv.ts";
+import { cv, profiles } from "./cv.ts";
 import { listablePublications } from "./publications.ts";
 
 // Structured data for the two pages. Values come from the CV export, so the
@@ -8,12 +8,7 @@ import { listablePublications } from "./publications.ts";
 const site = "https://simonvanlierde.github.io";
 
 /** Profiles that identify the same person elsewhere. */
-const sameAs = [
-  cv.basics.links.github,
-  cv.basics.links.linkedin,
-  "https://orcid.org/0009-0006-6953-909X",
-  "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
-];
+const sameAs = profiles.map((p) => p.href);
 
 const person = {
   "@type": "Person",

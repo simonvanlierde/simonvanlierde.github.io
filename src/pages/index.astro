@@ -13,17 +13,9 @@ import Base from "../layouts/Base.astro";
 // The history lives on /cv/; this sheet reads only the basics and the date.
 const { basics, exported } = cv;
 
-// stats.json is refreshed by scripts/fetch-stats.mjs; until live data lands
-// it is a seeded sample. `sample` is optional by hand: the first live export
-// deletes the key. Sample data never ships; the dev server may draw it.
-const { sample: statsAreSample = false, ...statsData } = stats as typeof stats & { sample?: boolean };
-const showChart = !statsAreSample || import.meta.env.DEV;
-
-// General notes: ReLab's running counts. Live figures share the chart's
-// payload; while it is sample, the last hand-counted, dated totals stand in.
-// NOTE: update `fallback` when a newer count is known.
-const fallback = { as_of: "2026-08-01", products: 78, parts: 1331, images: 3610 };
-const counts = statsAreSample ? fallback : { as_of: statsData.as_of, ...statsData.totals };
+// General notes: ReLab's running counts, from the same payload as the chart
+// (refreshed by scripts/fetch-stats.mjs).
+const counts = { as_of: stats.as_of, ...stats.totals };
 const fmt = (n: number) => n.toLocaleString("en-US").replace(/,/g, "\u2009");
 const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
   month: "short",
@@ -33,7 +25,7 @@ const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
 // NOTE: not in the /stats payload; counted at the two workshops, kept by hand.
 const participants = 135;
 const notes = [
-  { ref: "A", label: "Products documented", value: fmt(counts.products) },
+  { ref: "A", label: "Products documented", value: fmt(counts.teardowns) },
   { ref: "B", label: "Components catalogued", value: fmt(counts.parts) },
   { ref: "C", label: "Images captured", value: fmt(counts.images) },
   { ref: "D", label: "Workshop participants", value: fmt(participants) },
@@ -157,18 +149,9 @@ const tagline =
               <p class="notes__foot draft">As counted {asOfLabel}.</p>
             </section>
 
-            {
-              showChart && (
-                <div class="relab__chart">
-                  <DisassemblyChart
-                    stats={statsData}
-                    isSample={statsAreSample}
-                    caption="Fig. 2: ReLab activity by month."
-                    client:visible
-                  />
-                </div>
-              )
-            }
+            <div class="relab__chart">
+              <DisassemblyChart caption="Fig. 2: ReLab activity by month." client:visible />
+            </div>
           </div>
         </article>
 

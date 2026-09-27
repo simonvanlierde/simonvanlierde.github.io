@@ -1,6 +1,6 @@
 import { type CSSProperties, useId, useState } from "react";
 import "./DisassemblyChart.css";
-import fallback from "../data/stats.json" with { type: "json" };
+import data from "../data/stats.json" with { type: "json" };
 import { barPath, buildScale } from "./chartScale";
 
 // Pre-aggregated figures from the ReLab /stats endpoint, baked in at build time
@@ -15,10 +15,7 @@ type SeriesRow = {
   users: number;
 };
 
-type StatsPayload = {
-  granularity?: string;
-  series: SeriesRow[];
-};
+const stats = data as { series: SeriesRow[] };
 
 type MeasureKey = "teardowns" | "parts" | "mass_kg" | "images" | "users";
 
@@ -82,12 +79,8 @@ const INNER_W = W - PAD.left - PAD.right;
 const INNER_H = H - PAD.top - PAD.bottom;
 
 export default function DisassemblyChart({
-  stats = fallback as StatsPayload,
-  isSample = false,
   caption,
 }: {
-  stats?: StatsPayload;
-  isSample?: boolean;
   /** Figure caption, set under the plot in the set's caption style. */
   caption?: string;
 }) {
@@ -98,7 +91,6 @@ export default function DisassemblyChart({
   const secondaryControlsId = useId();
 
   const measure = MEASURES.find((m) => m.key === measureKey) ?? MEASURES[0];
-  const periodNoun = stats.granularity ?? "month";
 
   const series = stats.series.map((row) => ({
     period: row.period,
@@ -129,9 +121,8 @@ export default function DisassemblyChart({
 
   const summary =
     `Chart of ${measure.label.toLowerCase()} in ReLab (${measure.noun}): ` +
-    `${measure.format(total)} across ${series.length} ${periodNoun}s, from ${series[0]?.label} to ` +
-    `${series[series.length - 1]?.label}. Full figures are in the table below.` +
-    (isSample ? " Sample data." : "");
+    `${measure.format(total)} across ${series.length} months, from ${series[0]?.label} to ` +
+    `${series[series.length - 1]?.label}. Full figures are in the table below.`;
 
   const secondaryMeasureActive = secondaryMeasures.some((m) => m.key === measure.key);
   const measureButton = (m: Measure) => (
@@ -150,7 +141,6 @@ export default function DisassemblyChart({
     <figure className="chart">
       {/* No running-total tiles here: the ReLab row's general notes carry
           them, from the same payload. The chart answers "when". */}
-      {isSample && <p className="chart__sample">Sample data for interface preview, not current ReLab activity.</p>}
 
       <fieldset className="chart__controls">
         <legend className="visually-hidden">Measure</legend>
@@ -315,15 +305,12 @@ export default function DisassemblyChart({
           table below, none of which announces itself. The button reports its own
           pressed state; this reports what the data now says. */}
       <p className="visually-hidden" aria-live="polite">
-        {`${measure.label}: ${measure.format(total)} across ${series.length} ${periodNoun}s.`}
+        {`${measure.label}: ${measure.format(total)} across ${series.length} months.`}
       </p>
 
       {/* Accessible data table (visually hidden, read by assistive tech) */}
       <table className="visually-hidden" aria-labelledby={legendId}>
-        <caption id={legendId}>
-          {measure.label} per {periodNoun}
-          {isSample ? " (sample data)" : ""}
-        </caption>
+        <caption id={legendId}>{measure.label} per month</caption>
         <thead>
           <tr>
             <th scope="col">Period</th>

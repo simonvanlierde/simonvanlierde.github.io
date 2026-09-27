@@ -12,14 +12,6 @@
   color: var(--text-muted);
 }
 
-.chart__sample {
-  margin: 0 0 var(--space-s);
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  letter-spacing: 0.04em;
-}
-
 /* Three core measures stay immediately available. The remaining two sit in a
    second ruled row on request, preserving the complete dataset without making
    every visit begin with five equal choices. */

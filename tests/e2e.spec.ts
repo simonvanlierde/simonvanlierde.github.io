@@ -1,17 +1,10 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
-import stats from "../src/data/stats.json" with { type: "json" };
 
 // The export decides which hero link is primary, so read it rather than restate
 // it. See tests/cv.spec.ts for the same reasoning.
 const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
-
-// The landing page only plots the series once the stats export is real: sample
-// figures next to real counts would be worse than no chart. So the chart specs
-// below skip themselves while `sample` is set and come back automatically the
-// first time scripts/fetch-stats.mjs writes live data.
-const statsAreSample = (stats as { sample?: boolean }).sample === true;
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -219,12 +212,7 @@ test("an unknown path serves the 404 page with a way back", async ({ page }) => 
   await expect(page.getByRole("link", { name: "Sheet 1: index of work" })).toHaveAttribute("href", "/");
 });
 
-if (statsAreSample) {
-  test("no chart is rendered while the stats export is sample data", async ({ page }) => {
-    await expect(page.locator('svg[role="img"]')).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Teardowns" })).toHaveCount(0);
-  });
-} else {
+test.describe("disassembly chart", () => {
   // The chart is a client:visible island: it hydrates only once scrolled into
   // view, and a click before that lands on inert server-rendered markup. Astro
   // drops the `ssr` attribute when hydration finishes, so wait for that once
@@ -311,4 +299,4 @@ if (statsAreSample) {
     await more.click();
     await expect(page.getByRole("button", { name: /Images selected\. Show more measures/ })).toBeVisible();
   });
-}
+});
