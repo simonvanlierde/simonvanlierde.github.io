@@ -61,7 +61,7 @@ components:
     textColor: "{colors.checkers-green}"
     typography: "{typography.label}"
     rounded: "{rounded.none}"
-    padding: "0.75rem 1.25rem"
+    padding: "1.25rem 2rem"
   stamp-hover:
     backgroundColor: "{colors.checkers-green}"
     textColor: "{colors.on-stamp}"

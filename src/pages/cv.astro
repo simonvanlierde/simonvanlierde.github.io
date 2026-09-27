@@ -129,10 +129,14 @@ const contact = [
         {
           experience.map((job) => (
             <article class="cv-entry">
-              {/* The period follows the heading so screen readers read the
-                  role first. CSS moves it into the rail. */}
+              {/* The rail period is hidden from screen readers; the heading
+                  carries it instead, so heading navigation hears the dates. */}
+              <p class="cv-entry__period" aria-hidden="true">{formatPeriod(job.start, job.end)}</p>
               <div class="cv-entry__body">
-                <h3 class="cv-entry__role">{job.role}</h3>
+                <h3 class="cv-entry__role">
+                  {job.role}
+                  <span class="visually-hidden">, {formatPeriod(job.start, job.end)}</span>
+                </h3>
                 <p class="cv-entry__org">{job.organization}</p>
                 {job.highlights.length > 0 && (
                   <ul class="cv-highlights">
@@ -142,7 +146,6 @@ const contact = [
                   </ul>
                 )}
               </div>
-              <p class="cv-entry__period">{formatPeriod(job.start, job.end)}</p>
             </article>
           ))
         }
@@ -157,9 +160,11 @@ const contact = [
           <div class="cv-entries">
             {publications.map((pub) => (
               <article class="cv-entry">
+                <p class="cv-entry__period" aria-hidden="true">{pub.year}</p>
                 <div class="cv-entry__body">
                   <h3 class="cv-entry__role">
                     {pub.doi ? <a href={`https://doi.org/${pub.doi}`}>{pub.title}</a> : pub.title}
+                    <span class="visually-hidden">, {pub.year}</span>
                   </h3>
                   <p class="cv-entry__org">{pub.authors.join(", ")}</p>
                   <p class="cv-publication__venue">
@@ -167,7 +172,6 @@ const contact = [
                     {pub.status !== "published" && <span class="tag">{pub.status}</span>}
                   </p>
                 </div>
-                <p class="cv-entry__period">{pub.year}</p>
               </article>
             ))}
           </div>
@@ -181,12 +185,15 @@ const contact = [
         {
           education.map((school) => (
             <article class="cv-entry">
+              <p class="cv-entry__period" aria-hidden="true">{formatPeriod(school.start, school.end)}</p>
               <div class="cv-entry__body">
-                <h3 class="cv-entry__role">{school.degree}</h3>
+                <h3 class="cv-entry__role">
+                  {school.degree}
+                  <span class="visually-hidden">, {formatPeriod(school.start, school.end)}</span>
+                </h3>
                 <p class="cv-entry__org">{school.institution}</p>
                 {school.details && <p class="cv-entry__detail">{school.details}</p>}
               </div>
-              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
             </article>
           ))
         }

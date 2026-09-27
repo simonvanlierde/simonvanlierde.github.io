@@ -169,9 +169,10 @@ body {
   }
 
   /* Entries may break across pages: keeping each whole left half-empty pages. */
+  /* Not on a last child: a row's closing line would chain it to the next row. */
   h2,
   h3,
-  .cv-entry__org {
+  .cv-entry__org:not(:last-child) {
     break-after: avoid;
   }
 
@@ -684,7 +685,7 @@ main > section.container > h2 {
     grid-template-columns: 11rem minmax(0, 1fr);
   }
 
-  /* The period follows the heading in the source, for screen readers. */
+  /* Explicit placement, so the rail holds whatever the source order. */
   .cv-entry__body {
     grid-column: 2;
   }
@@ -693,11 +694,6 @@ main > section.container > h2 {
     grid-column: 1;
     grid-row: 1;
   }
-}
-
-/* Stacked, the period still reads above the role. */
-.cv-entry__period {
-  order: -1;
 }
 
 .cv-entry__period {
