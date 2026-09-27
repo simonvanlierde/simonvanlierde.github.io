@@ -44,8 +44,8 @@ const lead = "PhD researcher and research software engineer";
 const tagline =
   "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
 
-// One dated line of proof in the first viewport, in the drafting hand: the
-// notes below carry the full record, this carries the claim to the fold.
+// A dated summary of the ReLab counts, so the first screen carries evidence.
+// The notes further down have the full record.
 const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
 
 // One stamp per sheet: the CV. The address is a plain link beside it, and the
@@ -204,8 +204,8 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
   </main>
   </div>
 
-  {/* Dated by whichever input moved last, the CV export or the counts, so the
-      title block never predates a figure on its own sheet. */}
+  {/* Date the sheet by its newest input, the CV data or the counts, so the
+      title block is never older than a figure on the page. */}
   <TitleBlock
     title={name}
     docType="Index of work"
@@ -260,8 +260,8 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     color: var(--accent-strong);
   }
 
-  /* The proof line: data, so the drafting hand, and a jump to the notes that
-     carry the full count. Muted ink, so the stamp stays the one strong call. */
+  /* The proof line is data, so it uses the drafting hand. It links to the
+     notes, which carry the full counts. */
   .hero__proof {
     margin-top: var(--space-m);
     max-width: var(--measure);
@@ -336,7 +336,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     align-content: start;
   }
 
-  /* A step under the sheet's name: the notes are evidence, not a second title. */
+  /* One step below the h1, so the counts do not compete with the name. */
   .notes__value {
     font-size: var(--step-2);
     line-height: 1.05;
@@ -377,8 +377,8 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     margin-top: var(--space-l);
   }
 
-  /* A footnote to the parts list, held to the reading measure: it is several
-     lines of prose with links, not a single reference line. */
+  /* A footnote to the parts list. It runs to several lines, so it keeps to
+     the reading measure. */
   .upstream-note {
     margin-top: var(--space-l);
     max-width: var(--measure);

@@ -59,10 +59,9 @@ const MEASURES: Measure[] = [
 ];
 const MEASURE_KEYS = MEASURES.map((m) => m.key);
 
-// Running totals, not monthly bars: teardowns come in workshop campaigns, and
-// monthly bars made every quiet month read as the platform stopping. Drawn as a
-// hatched step, not bars: a bar per month reads as that month's amount, where a
-// stepped outline reads as one quantity building up.
+// Teardowns come in workshop campaigns, so monthly figures made every quiet
+// month look like the platform had stopped. The chart plots running totals
+// instead, as a stepped outline: bars would read as per-month amounts.
 const rows = runningTotals(stats.series, MEASURE_KEYS, stats.totals, "teardowns");
 const PRIMARY_MEASURE_KEYS: MeasureKey[] = ["teardowns", "parts", "mass_kg"];
 const primaryMeasures = MEASURES.filter((measure) => PRIMARY_MEASURE_KEYS.includes(measure.key));
@@ -176,8 +175,8 @@ export default function DisassemblyChart({
             className="chart__more"
             aria-expanded={showAllMeasures}
             aria-controls={secondaryControlsId}
-            // The visible word leads each name (WCAG 2.5.3), so "click Fewer"
-            // works for a voice-control user.
+            // Each name contains the visible word (WCAG 2.5.3), so a
+            // voice-control user can say "click Fewer".
             aria-label={
               !showAllMeasures && secondaryMeasureActive
                 ? `${measure.label} selected. Show more measures`
@@ -263,8 +262,7 @@ export default function DisassemblyChart({
             </text>
           )}
 
-          {/* Section hatching, the drafting convention for a filled region:
-              solid lines, so its contrast is the line colour's, not a blend. */}
+          {/* Section hatching: the drafting convention for a filled region. */}
           <defs>
             <pattern id={hatchId} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
               <line className="chart__hatch" x1="0" y1="0" x2="0" y2="6" />
@@ -316,8 +314,8 @@ export default function DisassemblyChart({
             );
           })}
 
-          {/* The latest total, lettered at the end of its step: the figure a reader wants, and
-              the one the narrow plot would otherwise hide with its y-axis. */}
+          {/* The latest total, printed at the end of the step. A narrow plot
+              hides the y-axis, so this label is its only magnitude. */}
           <text className="chart__endlabel" x={x(series.length - 1)} y={y(last.value) - 8} textAnchor="middle">
             {tick(last.value)}
           </text>

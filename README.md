@@ -87,7 +87,7 @@ pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
 
-Unit tests ([tests/unit/](tests/unit/)) cover the chart scale and bar geometry, CV date
+Unit tests ([tests/unit/](tests/unit/)) cover the chart scale, step outline, and running totals, CV date
 formatting, and the publication listing rule; the
 browser suite ([tests/](tests/)) is the accessibility + behaviour coverage below.
 

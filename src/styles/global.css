@@ -170,8 +170,8 @@ body {
 }
 
 /* Print gets the plain document: no sheet chrome, no toggle, paper theme.
-   The attribute selector matches the toggle's own specificity, or a reader
-   who chose dark would print the cyanotype. */
+   The attribute selector matches the theme toggle's specificity. Without it,
+   a reader who chose dark would print the cyanotype. */
 @media print {
   :root,
   :root[data-theme] {
@@ -192,9 +192,8 @@ body {
     padding-block: var(--space-m) var(--space-l);
   }
 
-  /* A heading never ends a page, and an entry's heading lines stay with its
-     first highlight; long entries may still flow on, so a tall one does not
-     push a whole half page blank ahead of it. */
+  /* Keep headings with the content after them. Long entries may break across
+     pages: keeping each one whole left half-empty pages. */
   h2,
   h3,
   .cv-entry__org {

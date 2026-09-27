@@ -5,7 +5,7 @@ This is a small static portfolio site, not a general web platform. The architect
 ```mermaid
 flowchart LR
   author[Project markdown files] --> astro[Astro static build]
-  stats[src/data/stats.json] --> island[React chart island]
+  stats[src/data/stats.json] --> island[Preact chart island]
   island --> astro
   astro --> dist[dist/ static site]
   dist --> pages[GitHub Pages]

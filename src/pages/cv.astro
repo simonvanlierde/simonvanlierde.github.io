@@ -30,7 +30,7 @@ const [headlineLead, ...headlineRest] = basics.headline.split(" · ");
 
 // The sheet's zone index: one datum letter per section that renders, in
 // reading order, so a hurried reader can be sent to "C" instead of scrolling.
-// Each section's heading carries the same letter, so the reference resolves.
+// Each section heading shows the same letter.
 const sections = [
   { id: "profile-heading", label: "Profile", show: true },
   { id: "experience-heading", label: "Experience", show: true },
@@ -133,9 +133,9 @@ const contact = [
         {
           experience.map((job) => (
             <article class="cv-entry">
-              {/* The period follows the heading in source order and sits in the
-                  rail by grid, so heading navigation lands on the role and
-                  reads its dates next, rather than skipping them. */}
+              {/* The period comes after the heading in the source, so a screen
+                  reader reads the role and then its dates. The grid still
+                  places the period in the rail. */}
               <div class="cv-entry__body">
                 <h3 class="cv-entry__role">{job.role}</h3>
                 <p class="cv-entry__org">{job.organization}</p>
@@ -346,15 +346,15 @@ const contact = [
     margin-top: var(--space-m);
   }
 
-  /* Section headings carry the index's datum letter, so "go to C" resolves. */
+  /* Section headings show their letter from the zone index. */
   main h2 .datum {
     margin-inline-end: var(--space-s);
     vertical-align: 0.1em;
     letter-spacing: 0;
   }
 
-  /* Prose sections start on the body line of the rail grid, so the sheet
-     keeps one left text edge under every heading. */
+  /* Prose sections start at the body column of the rail grid, so every
+     section shares one left text edge. */
   @media (min-width: 40rem) {
     .cv-aligned {
       margin-inline-start: calc(11rem + var(--space-l));
@@ -461,7 +461,7 @@ const contact = [
       margin-top: 0.15rem;
     }
 
-    /* The letters point into the zone index, which paper does not carry. */
+    /* Print drops the zone index, so the heading letters would point at nothing. */
     .cv-download,
     .cv-index,
     .cv-download-utility,
@@ -469,8 +469,8 @@ const contact = [
       display: none;
     }
 
-    /* Paper has no hover: a link prints where it goes. The address already
-       reads as itself, so mailto links are left alone. */
+    /* Print each link's URL after its text. Email links already show the
+       address. */
     .cv-entry__role a::after,
     :global(.title-block__contact a:not([href^="mailto:"]))::after {
       content: " (" attr(href) ")";

@@ -34,9 +34,9 @@ export function stepPaths(tops: number[], left: number, colW: number, base: numb
 export const formatCount = (n: number) => Math.round(n).toLocaleString("en-US").replace(/,/g, " ");
 
 // Running totals, anchored to the payload's own totals so the last column
-// always equals the figure in the notes. Months before `startKey` first moves
-// (the platform took sign-ups before anyone took a product apart) are not
-// drawn as a run of empty columns; their counts are already in the totals.
+// always equals the figure in the notes. Months before the first nonzero
+// `startKey` are dropped rather than drawn as empty columns. Their counts (such
+// as early sign-ups) are already in the totals.
 export function runningTotals<K extends string, R extends { period: string; label: string } & Record<K, number>>(
   rows: R[],
   keys: readonly K[],

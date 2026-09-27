@@ -207,9 +207,9 @@ retunes the set.
 
 A zone label is set smaller than the content it labels: it is a label, not a
 statement. The drafting hand stays at 400 throughout; hierarchy comes from size,
-tracking, case, and rules. The one exception is the CV's role line, set in the
-system sans at 650: a role title in the reading face needs weight to lead its
-entry, and osifont has no bold to give it.
+tracking, case, and rules. The one exception is the CV's role line, in the
+system sans at 650: a role title in the reading face needs weight, and osifont
+has no bold.
 
 #### Named Rules
 
@@ -249,7 +249,7 @@ In-page jumps scroll smoothly, `auto` under reduced motion.
 ### Elevation & Depth
 
 No shadows, anywhere. Hierarchy is carried by line weight, by the two-step
-ground (`--bg` against the barely-lighter `--surface`), and by lettering size.
+ground (`--bg` against the barely lighter `--surface`), and by lettering size.
 Chrome that floats over the sheet, such as the sticky nav, separates itself with
 a solid ground and a rule, never with a shadow or blur.
 
@@ -292,7 +292,10 @@ Build a new one against the rules above; the sheets today carry these.
 | Title block | ISO 7200 provenance, and the one place the profile links live |
 | Exploded view | The signature figure; see below |
 | General notes | Datum-lettered running totals, sitting with the platform they describe |
-| Chart island | Kept token names only, running totals as a stepped outline over section hatching (never bars, which read as per-month amounts), the notes' own measure names, drafting numerals, the latest total lettered at the step's end, controls in a ruled fieldset |
+| Chart island | Kept token names only, a stepped outline over section hatching, the notes' measure names, drafting numerals, controls in a ruled fieldset |
+
+The chart plots running totals, never monthly bars: a bar per month reads as
+that month's amount. The current total is printed at the end of the outline.
 
 Every interactive target buys a 44px hit area with padding plus negative margin,
 so the glyph stays optically in place.
@@ -315,7 +318,8 @@ figure on the set. A second figure inherits all of this.
 
 **The Drafting Motion Rule.** Motion is drafting-derived behaviour, never
 decoration: parts settle apart from an assembled stack, a chart's total is
-traced in from the left, fills swap on the `--dur-fast`/`--dur-base` clock. Reveal motion runs
+traced in from the left, and fills swap on the `--dur-fast`/`--dur-base` clock.
+Reveal motion runs
 once, on load. Every animation is answered by a `prefers-reduced-motion` block
 in the file that declares it, and the reduced state is the finished state, never
 a missing one.
@@ -351,7 +355,7 @@ placeholder ever ships as a figure.
 - **Don't** use shadows, blur, or translucent fills; state answers with
   `--surface`, a fill swap, or a line.
 - **Don't** hardcode a colour: every colour is a `light-dark()` token. The one
-  literal is the theme-color meta's first-paint value in Base.astro (light
-  `--bg`); the theme script then rewrites it from the computed `--bg`, read
-  back as sRGB, so change the literal when light `--bg` changes.
+  literal is the theme-color meta in Base.astro, which holds light `--bg` for
+  the first paint. The theme script then rewrites it from the computed `--bg`.
+  Change the literal when light `--bg` changes.
 - **Don't** letter prose in osifont, and don't cap the measure in `ch`.
