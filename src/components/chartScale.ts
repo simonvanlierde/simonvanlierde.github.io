@@ -15,14 +15,43 @@ export function buildScale(max: number, integer: boolean): { yMax: number; ticks
   return { yMax, ticks };
 }
 
-export const ZERO_STUB = 2;
+// A running total as a step: each month holds its value flat across its own
+// column and rises at the column edge, which is how a count that only grows
+// actually behaves. Returns the outline (`line`) and the same outline closed
+// down to the baseline (`area`). The command sequence depends only on the
+// number of months, never on the values, so browsers can interpolate `d`
+// between measures.
+export function stepPaths(tops: number[], left: number, colW: number, base: number): { line: string; area: string } {
+  const steps = tops.map((top, i) => `V${top}H${left + (i + 1) * colW}`).join("");
+  return {
+    line: `M${left},${tops[0] ?? base}${steps}`,
+    area: `M${left},${base}${steps}V${base}H${left}Z`,
+  };
+}
 
-// A bar as a path rather than a <rect>: a zero value still draws a
-// `ZERO_STUB`-tall sliver (an empty period must read as "zero", not as "no
-// data"), and the command sequence is identical for every input, so browsers
-// can interpolate `d` on measure switch.
-export function barPath(cx: number, width: number, top: number, base: number): string {
-  const y = base - Math.max(base - top, ZERO_STUB);
-  const x = cx - width / 2;
-  return `M${x},${base}V${y}H${x + width}V${base}Z`;
+// Counts in the drafting hand's thousands style (a thin space, as the notes set
+// them), so "1 779" reads the same in the notes, the chart, and its table.
+export const formatCount = (n: number) => Math.round(n).toLocaleString("en-US").replace(/,/g, " ");
+
+// Running totals, anchored to the payload's own totals so the last column
+// always equals the figure in the notes. Months before `startKey` first moves
+// (the platform took sign-ups before anyone took a product apart) are not
+// drawn as a run of empty columns; their counts are already in the totals.
+export function runningTotals<K extends string, R extends { period: string; label: string } & Record<K, number>>(
+  rows: R[],
+  keys: readonly K[],
+  totals: Record<K, number>,
+  startKey: K,
+): (R & { total: Record<K, number> })[] {
+  const total = { ...totals };
+  const withTotals = rows
+    .toReversed()
+    .map((row) => {
+      const snapshot = { ...total };
+      for (const k of keys) total[k] -= Number(row[k]) || 0;
+      return { ...row, total: snapshot };
+    })
+    .toReversed();
+  const start = rows.findIndex((row) => row[startKey] > 0);
+  return start === -1 ? withTotals : withTotals.slice(start);
 }

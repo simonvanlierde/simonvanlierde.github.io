@@ -172,7 +172,7 @@ engineer's-blue link.
 
 **The Kept Names Rule.** The custom property names (`--bg`, `--text`,
 `--accent`, `--chart-bar`, and the rest) are the previous design system's, kept
-so every consumer rethemes without edits, the React chart island included.
+so every consumer rethemes without edits, the Preact chart island included.
 Retheme by changing what a name resolves to; never fork a parallel palette.
 
 **The Uniform Chroma Rule.** On `@media (color-gamut: p3)` only the chromatic
@@ -206,8 +206,10 @@ retunes the set.
 | Label | `--step--1` | Nav links, tags, title-block cells, periods, figure labels |
 
 A zone label is set smaller than the content it labels: it is a label, not a
-statement. Weights stay at 400 throughout; hierarchy comes from size, tracking,
-case, and rules.
+statement. The drafting hand stays at 400 throughout; hierarchy comes from size,
+tracking, case, and rules. The one exception is the CV's role line, set in the
+system sans at 650: a role title in the reading face needs weight to lead its
+entry, and osifont has no bold to give it.
 
 #### Named Rules
 
@@ -290,7 +292,7 @@ Build a new one against the rules above; the sheets today carry these.
 | Title block | ISO 7200 provenance, and the one place the profile links live |
 | Exploded view | The signature figure; see below |
 | General notes | Datum-lettered running totals, sitting with the platform they describe |
-| Chart island | Kept token names only, solid bars, drafting numerals, controls in a ruled fieldset |
+| Chart island | Kept token names only, running totals as a stepped outline over section hatching (never bars, which read as per-month amounts), the notes' own measure names, drafting numerals, the latest total lettered at the step's end, controls in a ruled fieldset |
 
 Every interactive target buys a 44px hit area with padding plus negative margin,
 so the glyph stays optically in place.
@@ -312,8 +314,8 @@ figure on the set. A second figure inherits all of this.
 #### Named Rules
 
 **The Drafting Motion Rule.** Motion is drafting-derived behaviour, never
-decoration: parts settle apart from an assembled stack, bars grow from their
-baseline, fills swap on the `--dur-fast`/`--dur-base` clock. Reveal motion runs
+decoration: parts settle apart from an assembled stack, a chart's total is
+traced in from the left, fills swap on the `--dur-fast`/`--dur-base` clock. Reveal motion runs
 once, on load. Every animation is answered by a `prefers-reduced-motion` block
 in the file that declares it, and the reduced state is the finished state, never
 a missing one.
@@ -348,7 +350,8 @@ placeholder ever ships as a figure.
   item balloon.
 - **Don't** use shadows, blur, or translucent fills; state answers with
   `--surface`, a fill swap, or a line.
-- **Don't** hardcode a colour: every colour is a `light-dark()` token, and the
-  two theme-color metas in Base.astro mirror `--bg` by hand; change them
-  together.
+- **Don't** hardcode a colour: every colour is a `light-dark()` token. The one
+  literal is the theme-color meta's first-paint value in Base.astro (light
+  `--bg`); the theme script then rewrites it from the computed `--bg`, read
+  back as sRGB, so change the literal when light `--bg` changes.
 - **Don't** letter prose in osifont, and don't cap the measure in `ch`.

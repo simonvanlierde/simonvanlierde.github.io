@@ -79,7 +79,8 @@ function fillMonthGaps(rows) {
 }
 
 // Months at the edges with no teardown are kept rather than trimmed: they carry
-// sign-ups, and the window reads as the lab's whole run, not just its busy part.
+// sign-ups. The chart plots running totals anchored to `totals`, so it skips the
+// idle lead-in itself without losing those counts.
 const sorted = [...seriesPayload.series].sort((a, b) => a.period.localeCompare(b.period));
 
 const payload = {
@@ -90,7 +91,7 @@ const payload = {
     parts: row.parts,
     mass_kg: row.mass_kg,
     images: row.images,
-    // "New members" in the chart; the API also reports users_active, unused here.
+    // Sign-ups ("Accounts" in the chart); the API also reports users_active, unused here.
     users: row.users_new,
   })),
   totals: totalsPayload.totals,

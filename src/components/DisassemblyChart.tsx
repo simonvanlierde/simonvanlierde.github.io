@@ -1,7 +1,7 @@
-import { type CSSProperties, useId, useState } from "react";
+import { useId, useState } from "preact/hooks";
 import "./DisassemblyChart.css";
 import data from "../data/stats.json" with { type: "json" };
-import { barPath, buildScale } from "./chartScale";
+import { buildScale, formatCount, runningTotals, stepPaths } from "./chartScale";
 
 // Pre-aggregated figures from the ReLab /stats endpoint, baked in at build time
 // (see scripts/fetch-stats.mjs). Shape mirrors that endpoint's response.
@@ -15,13 +15,14 @@ type SeriesRow = {
   users: number;
 };
 
-const stats = data as { series: SeriesRow[] };
-
 type MeasureKey = "teardowns" | "parts" | "mass_kg" | "images" | "users";
 
-// Formatters shared by the chart axis, tooltip, and table.
-const int = (n: number) => Math.round(n).toLocaleString("en");
-const num = (n: number) => n.toLocaleString("en", { maximumFractionDigits: 1 });
+const stats = data as { series: SeriesRow[]; totals: Record<MeasureKey, number> };
+
+// Formatters shared by the chart axis, tooltip, and table: the notes' thin-space
+// thousands, so one figure never prints two ways on the sheet.
+const int = formatCount;
+const num = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 1 }).replace(/,/g, "\u2009");
 const kg = (n: number) => `${num(n)} kg`;
 
 // The switchable time-series measures. Adding one takes a single entry here plus
@@ -39,29 +40,36 @@ type Measure = {
   unit?: string;
   fractional?: boolean;
 };
+// Labels use the notes' own words, so "Products" here is note A there.
 const MEASURES: Measure[] = [
-  { key: "teardowns", label: "Teardowns", noun: "products disassembled", format: int },
-  { key: "parts", label: "Parts", noun: "components extracted", format: int },
+  { key: "teardowns", label: "Products", noun: "products documented", format: int },
+  { key: "parts", label: "Components", noun: "components catalogued", format: int },
   {
     key: "mass_kg",
     label: "Mass",
-    noun: "reverse-engineered",
+    noun: "product mass taken apart",
     format: kg,
     tick: num,
     unit: "kg",
     fractional: true,
   },
-  { key: "images", label: "Images", noun: "photos catalogued", format: int },
-  { key: "users", label: "New members", noun: "new lab members", format: int },
+  { key: "images", label: "Images", noun: "images captured", format: int },
+  // `users` counts platform sign-ups, not lab staff; the label says so.
+  { key: "users", label: "Accounts", noun: "platform accounts", format: int },
 ];
+const MEASURE_KEYS = MEASURES.map((m) => m.key);
+
+// Running totals, not monthly bars: teardowns come in workshop campaigns, and
+// monthly bars made every quiet month read as the platform stopping. Drawn as a
+// hatched step, not bars: a bar per month reads as that month's amount, where a
+// stepped outline reads as one quantity building up.
+const rows = runningTotals(stats.series, MEASURE_KEYS, stats.totals, "teardowns");
 const PRIMARY_MEASURE_KEYS: MeasureKey[] = ["teardowns", "parts", "mass_kg"];
 const primaryMeasures = MEASURES.filter((measure) => PRIMARY_MEASURE_KEYS.includes(measure.key));
 const secondaryMeasures = MEASURES.filter((measure) => !PRIMARY_MEASURE_KEYS.includes(measure.key));
 
 // Split "Jul 2025" into a tick ("Jul") and a qualifier ("2025") that only prints
-// when it changes. Every column keeps a label and none collide, so no
-// every-other-column rule is needed: such a rule drops the most recent period
-// without saying so. Purely textual, so "Q1 2025" and a bare "2025" pass through
+// when it changes. Purely textual, so "Q1 2025" and a bare "2025" pass through
 // unharmed.
 const splitLabel = (label: string): [string, string] => {
   const i = label.indexOf(" ");
@@ -81,7 +89,8 @@ const INNER_H = H - PAD.top - PAD.bottom;
 export default function DisassemblyChart({
   caption,
 }: {
-  /** Figure caption, set under the plot in the set's caption style. */
+  /** Figure caption, set under the plot in the set's caption style. The
+      chart appends the period it covers, so the caption dates itself. */
   caption?: string;
 }) {
   const [measureKey, setMeasureKey] = useState<MeasureKey>("teardowns");
@@ -89,13 +98,15 @@ export default function DisassemblyChart({
   const [showAllMeasures, setShowAllMeasures] = useState(false);
   const legendId = useId();
   const secondaryControlsId = useId();
+  const hatchId = useId();
 
   const measure = MEASURES.find((m) => m.key === measureKey) ?? MEASURES[0];
 
-  const series = stats.series.map((row) => ({
+  const series = rows.map((row) => ({
     period: row.period,
     label: row.label,
-    value: Number(row[measure.key]) || 0,
+    added: Number(row[measure.key]) || 0,
+    value: row.total[measure.key],
   }));
 
   const maxValue = Math.max(1, ...series.map((d) => d.value));
@@ -111,18 +122,32 @@ export default function DisassemblyChart({
     );
   }
 
-  const total = series.reduce((sum, d) => sum + d.value, 0);
+  const first = series[0];
+  const last = series[series.length - 1];
   const x = (i: number) => PAD.left + (i + 0.5) * (INNER_W / series.length);
   const y = (v: number) => PAD.top + INNER_H - (v / yMax) * INNER_H;
   const colW = INNER_W / series.length;
-  const barWidth = colW * 0.6;
   const baseline = PAD.top + INNER_H;
   const tick = measure.tick ?? measure.format;
 
+  // A narrow plot has room for about six month labels. Count the stride back
+  // from the latest month, so the newest period always keeps its label, and
+  // put the year on the labelled months where it changes, so a narrow plot
+  // never prints two unqualified runs of "Jun Jul Aug".
+  const stride = Math.ceil(series.length / 6);
+  const isMajor = (i: number) => (series.length - 1 - i) % stride === 0;
+  let lastMajorYear = "";
+
+  const outline = stepPaths(
+    series.map((d) => y(d.value)),
+    PAD.left,
+    colW,
+    baseline,
+  );
+
   const summary =
-    `Chart of ${measure.label.toLowerCase()} in ReLab (${measure.noun}): ` +
-    `${measure.format(total)} across ${series.length} months, from ${series[0]?.label} to ` +
-    `${series[series.length - 1]?.label}. Full figures are in the table below.`;
+    `Running total of ${measure.noun} in ReLab: ${measure.format(first.value)} by ${first.label}, ` +
+    `${measure.format(last.value)} by ${last.label}. Monthly figures are in the table below.`;
 
   const secondaryMeasureActive = secondaryMeasures.some((m) => m.key === measure.key);
   const measureButton = (m: Measure) => (
@@ -151,6 +176,8 @@ export default function DisassemblyChart({
             className="chart__more"
             aria-expanded={showAllMeasures}
             aria-controls={secondaryControlsId}
+            // The visible word leads each name (WCAG 2.5.3), so "click Fewer"
+            // works for a voice-control user.
             aria-label={
               !showAllMeasures && secondaryMeasureActive
                 ? `${measure.label} selected. Show more measures`
@@ -164,7 +191,7 @@ export default function DisassemblyChart({
             {!showAllMeasures && secondaryMeasureActive && (
               <span className="chart__more-current">{measure.label} selected</span>
             )}
-            <span>{showAllMeasures ? "Less" : "More"}</span>
+            <span>{showAllMeasures ? "Fewer" : "More"}</span>
           </button>
         </div>
         <div
@@ -236,22 +263,38 @@ export default function DisassemblyChart({
             </text>
           )}
 
-          {/* Zero baseline: the bars sit on it, so it outweighs the gridlines */}
+          {/* Section hatching, the drafting convention for a filled region:
+              solid lines, so its contrast is the line colour's, not a blend. */}
+          <defs>
+            <pattern id={hatchId} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line className="chart__hatch" x1="0" y1="0" x2="0" y2="6" />
+            </pattern>
+          </defs>
+
+          {/* The running total: a hatched region under a stepped outline, drawn
+              in left to right on load. */}
+          <g className="chart__total">
+            <path className="chart__area" d={outline.area} fill={`url(#${hatchId})`} />
+            <path className="chart__line" d={outline.line} />
+          </g>
+
+          {/* Zero baseline: the total stands on it, so it outweighs the gridlines */}
           <line className="chart__axis" x1={PAD.left} x2={W - PAD.right} y1={baseline} y2={baseline} />
 
-          {/* Bars + x-axis labels + hover targets */}
+          {/* x-axis labels + hover targets */}
           {series.map((d, i) => {
             const [head, tail] = splitLabel(d.label);
-            const showTail = tail !== "" && (i === 0 || tail !== splitLabel(series[i - 1].label)[1]);
+            const major = isMajor(i);
+            const showTail = major && tail !== "" && tail !== lastMajorYear;
+            if (major) lastMajorYear = tail;
             return (
               <g key={d.period}>
-                <path
-                  className="chart__bar"
-                  d={barPath(x(i), barWidth, y(d.value), baseline)}
-                  data-active={active === i}
-                  style={{ "--bar-i": i } as CSSProperties}
-                />
-                <text className="chart__xlabel" x={x(i)} y={H - PAD.bottom + 18} textAnchor="middle">
+                <text
+                  className={major ? "chart__xlabel" : "chart__xlabel chart__xlabel--minor"}
+                  x={x(i)}
+                  y={H - PAD.bottom + 18}
+                  textAnchor="middle"
+                >
                   {head}
                   {showTail && (
                     <tspan className="chart__xlabel-qualifier" x={x(i)} dy="1.15em">
@@ -273,6 +316,12 @@ export default function DisassemblyChart({
             );
           })}
 
+          {/* The latest total, lettered at the end of its step: the figure a reader wants, and
+              the one the narrow plot would otherwise hide with its y-axis. */}
+          <text className="chart__endlabel" x={x(series.length - 1)} y={y(last.value) - 8} textAnchor="middle">
+            {tick(last.value)}
+          </text>
+
           {/* Tooltip (mouse-driven enhancement; data is in the table below) */}
           {active !== null &&
             (() => {
@@ -280,19 +329,19 @@ export default function DisassemblyChart({
               const v = d.value;
               const cx = x(active);
               const cy = y(v);
-              const tipX = Math.min(Math.max(cx, PAD.left + 58), W - PAD.right - 58);
+              const tipX = Math.min(Math.max(cx, PAD.left + 64), W - PAD.right - 64);
               const tipY = Math.max(cy - 16, PAD.top + 12);
               return (
                 <g className="chart__tooltip">
                   <line x1={cx} x2={cx} y1={PAD.top} y2={PAD.top + INNER_H} />
                   <circle cx={cx} cy={cy} r="4" />
                   <g transform={`translate(${tipX}, ${tipY})`}>
-                    <rect x="-58" y="-26" width="116" height="34" />
+                    <rect x="-64" y="-26" width="128" height="34" />
                     <text x="0" y="-12" textAnchor="middle" className="chart__tip-title">
                       {d.label}
                     </text>
                     <text x="0" y="2" textAnchor="middle" className="chart__tip-value">
-                      {measure.format(v)}
+                      {measure.format(v)} (+{measure.format(d.added)})
                     </text>
                   </g>
                 </g>
@@ -305,29 +354,35 @@ export default function DisassemblyChart({
           table below, none of which announces itself. The button reports its own
           pressed state; this reports what the data now says. */}
       <p className="visually-hidden" aria-live="polite">
-        {`${measure.label}: ${measure.format(total)} across ${series.length} months.`}
+        {`${measure.label}: ${measure.format(last.value)} by ${last.label}.`}
       </p>
 
       {/* Accessible data table (visually hidden, read by assistive tech) */}
       <table className="visually-hidden" aria-labelledby={legendId}>
-        <caption id={legendId}>{measure.label} per month</caption>
+        <caption id={legendId}>{measure.label}, running total by month</caption>
         <thead>
           <tr>
             <th scope="col">Period</th>
-            <th scope="col">{measure.label}</th>
+            <th scope="col">Added</th>
+            <th scope="col">Running total</th>
           </tr>
         </thead>
         <tbody>
           {series.map((d) => (
             <tr key={d.period}>
               <th scope="row">{d.label}</th>
+              <td>{measure.format(d.added)}</td>
               <td>{measure.format(d.value)}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {caption && <figcaption>{caption}</figcaption>}
+      {caption && (
+        <figcaption>
+          {caption}, {first.label} to {last.label}.
+        </figcaption>
+      )}
     </figure>
   );
 }

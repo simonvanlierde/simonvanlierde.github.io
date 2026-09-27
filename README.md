@@ -11,7 +11,7 @@ at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 ## Stack
 
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
-- One React island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
+- One Preact island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
   data visualisation; everything else ships as zero-JS HTML
 - A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows (the parts list)
 - One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind
@@ -41,7 +41,7 @@ See [docs/architecture.md](docs/architecture.md) for the site architecture and d
 │   │   ├── SheetNav.astro
 │   │   ├── TitleBlock.astro
 │   │   ├── ThemeToggle.astro
-│   │   ├── DisassemblyChart.tsx   # the one React island
+│   │   ├── DisassemblyChart.tsx   # the one Preact island
 │   │   ├── DisassemblyChart.css
 │   │   ├── chartScale.ts          # axis-scale maths (unit-tested)
 │   │   └── cvPeriod.ts            # CV date formatting (unit-tested)

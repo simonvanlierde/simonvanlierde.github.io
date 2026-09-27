@@ -65,7 +65,7 @@
   background: var(--surface);
   color: var(--text-muted);
   cursor: pointer;
-  /* The fill fades on the same clock as the bars it drives. No press-scale:
+  /* The fill fades on the same clock as the outline it drives. No press-scale:
      these segments share one ruled fieldset, and shrinking one would open a
      seam against its neighbours. */
   transition:
@@ -145,6 +145,13 @@
   overflow: visible;
 }
 
+/* Every figure on the plot is data, so all of it is in the drafting hand with
+   tabular numerals: axis, months, tooltip, and the lettered total. */
+.chart__plot text {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
 /* The plot is a tab stop (arrow keys walk the tooltip), so it needs a ring. */
 .chart__plot svg:focus-visible {
   outline: 3px solid var(--focus);
@@ -160,11 +167,9 @@
 .chart__grid text {
   fill: var(--text-muted);
   font-size: 13px;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
 }
 
-/* The zero line the bars stand on: darker and thicker than the gridlines. */
+/* The zero line the total stands on: darker and thicker than the gridlines. */
 .chart__axis {
   stroke: var(--text-muted);
   stroke-width: 2;
@@ -174,7 +179,6 @@
 .chart__unit {
   fill: var(--text-muted);
   font-size: 11px;
-  font-family: var(--font-mono);
 }
 
 .chart__xlabel {
@@ -189,62 +193,64 @@
   font-size: 11px;
 }
 
-/* Marks. A solid fill, never a translucent one: opacity would blend the bar with
-   whatever sits behind it, making its real contrast unknowable. Hover changes
-   the fill step instead. */
-.chart__bar {
-  fill: var(--chart-bar);
-  transition: fill var(--dur-fast) ease;
+/* The running total as it stands, lettered at the end of the step. */
+.chart__endlabel {
+  fill: var(--text);
+  font-size: 13px;
+}
+
+/* Marks: section hatching under a stepped outline. Solid lines, never a
+   translucent fill: opacity would blend with whatever sits behind, making the
+   real contrast unknowable. The outline is the data; the hatch says "region". */
+.chart__hatch {
+  stroke: var(--chart-bar);
+  stroke-width: 1;
+}
+
+.chart__area {
+  stroke: none;
+}
+
+.chart__line {
+  fill: none;
+  stroke: var(--chart-bar-strong);
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
 }
 
 /* Motion is opt-in; reduced-motion users get the final state instantly. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Switching measure redraws every bar's path; ease to the new heights rather
-     than replaying the load reveal. `barPath` always emits the same command
-     sequence, so `d` interpolates. Where `transition: d` is unsupported the bars
-     snap to the new measure, which is fine. (Keep the hover fade too, since this
-     shorthand replaces the base one.)
+  /* Switching measure redraws the outline; ease to the new heights rather than
+     replaying the load reveal. `stepPaths` always emits the same command
+     sequence, so `d` interpolates. Where `transition: d` is unsupported the
+     outline snaps to the new measure, which is fine.
 
      Keep it short. The gridlines and their tick labels rescale in a single
      frame (they carry new *numbers*, so there is nothing to interpolate), and
-     for the length of this transition the bars are drawn against an axis that
-     no longer describes them. At 350ms that gap reads as wrong values; at 200ms
+     for the length of this transition the outline is drawn against an axis that
+     no longer describes it. At 350ms that gap reads as wrong values; at 200ms
      it reads as the change itself. */
   @supports (transition-property: d) {
-    .chart__bar {
-      transition:
-        d var(--dur-base) var(--ease-in-out),
-        fill var(--dur-fast) ease;
+    .chart__area,
+    .chart__line {
+      transition: d var(--dur-base) var(--ease-in-out);
     }
   }
 
-  /* Load reveal: bars grow up from the baseline, staggered left to right, once
-     on mount. Needs fill-box so scaleY pivots on each bar's own baseline rather
-     than the SVG viewport; where that is unsupported (Safari < 15.4) the reveal
-     is skipped and bars just appear, which is fine.
+  /* Load reveal: the total is drawn in from the left, once, the way a pen
+     traces it. */
+  .chart__total {
+    animation: chart-draw 0.7s var(--ease-out) both;
+  }
 
-     Duration and stagger are both sized so twelve bars finish inside ~730ms.
-     Keyframes restart from zero instead of retargeting, so any measure switch
-     during the reveal has a bar morphing its `d` while still scaling up out of
-     the baseline; the shorter the run, the smaller that window. */
-  @supports (transform-box: fill-box) {
-    .chart__bar {
-      transform-box: fill-box;
-      transform-origin: bottom;
-      animation: chart-bar-grow 0.4s var(--ease-out) both;
-      animation-delay: calc(var(--bar-i, 0) * 30ms);
+  @keyframes chart-draw {
+    from {
+      clip-path: inset(0 100% 0 0);
     }
-
-    @keyframes chart-bar-grow {
-      from {
-        transform: scaleY(0);
-      }
+    to {
+      clip-path: inset(0 0 0 0);
     }
   }
-}
-
-.chart__bar[data-active="true"] {
-  fill: var(--chart-bar-strong);
 }
 
 .chart__hit {
@@ -286,9 +292,10 @@
 }
 
 /* A narrow plot renders the 480-unit viewBox at roughly 0.6, which would put 13px
-   labels back under 8 real pixels. Scale the type up in user units instead, and
-   drop the y-axis text: the notes above carry magnitude, a tap carries the exact
-   figure, and the gridlines still give the eye a level to read against.
+   labels back under 8 real pixels. Scale the type up in user units instead,
+   letter only every few months (the component marks which), and drop the
+   y-axis text: the total lettered at the end of the step carries magnitude, a tap
+   carries each month's figure, and the gridlines give the eye a level.
 
    Keyed to the `chart` container (declared on .relab__chart) rather than the
    viewport, because a 26rem plot needs this treatment whether it is narrow from
@@ -300,14 +307,17 @@
 
   .chart__grid text,
   .chart__unit,
-  .chart__xlabel-qualifier {
+  .chart__xlabel--minor {
     display: none;
   }
 
-  .chart__xlabel {
-    /* 18, not 19: twelve month labels in 420 user units start colliding above
-       this and the gap between them is doing the separating. */
-    font-size: 18px;
+  .chart__xlabel,
+  .chart__endlabel {
+    font-size: 19px;
+  }
+
+  .chart__xlabel-qualifier {
+    font-size: 16px;
   }
 
   .chart__tip-title {
@@ -320,7 +330,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chart__bar,
+  .chart__area,
+  .chart__line,
   .chart__toggle,
   .chart__more,
   .chart__more > span:last-child::after {
