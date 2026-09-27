@@ -5,6 +5,7 @@ import { parse } from "yaml";
 // The export decides which hero link is primary, so read it rather than restate
 // it. See tests/cv.spec.ts for the same reasoning.
 const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
+const stats = JSON.parse(readFileSync("src/data/stats.json", "utf8"));
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -69,15 +70,15 @@ test("theme toggle flips the theme and persists across reload", async ({ page })
   await expect(html).toHaveAttribute("data-theme", "dark");
 });
 
-test("the personal-projects disclosure expands then collapses", async ({ page }) => {
-  // Personal projects ships closed: it is secondary to the work above it, and
-  // it is the only disclosure, so it carries the expand/collapse coverage.
+test("the personal-projects disclosure ships open and still collapses", async ({ page }) => {
+  // Personal projects ships open, so the whole parts list reads without a
+  // click; it stays a disclosure so a reader can fold it away.
   const details = page.locator("details.disclosure.personal");
-  await expect(details).toHaveJSProperty("open", false);
-  await details.locator("summary").click();
   await expect(details).toHaveJSProperty("open", true);
   await details.locator("summary").click();
   await expect(details).toHaveJSProperty("open", false);
+  await details.locator("summary").click();
+  await expect(details).toHaveJSProperty("open", true);
 });
 
 test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
@@ -168,10 +169,12 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
   await expect(block.getByText("1 OF 2", { exact: true })).toBeVisible();
 
-  // Both sheets are generated, so both are dated. The stamp is the export
-  // date in UTC; a local-zone build must not shift it by a day.
+  // Both sheets are generated, so both are dated. This sheet also carries the
+  // ReLab counts, so it takes whichever moved last, the export or the counts,
+  // as a UTC date; a local-zone build must not shift it by a day.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
-  await expect(block.locator("time")).toHaveAttribute("datetime", cv.exported.slice(0, 10));
+  const latest = [cv.exported.slice(0, 10), stats.as_of].sort().at(-1) ?? "";
+  await expect(block.locator("time")).toHaveAttribute("datetime", latest);
 
   const rev = block.getByRole("link", { name: /^Site version / });
   await expect(rev).toHaveAttribute("href", "https://github.com/simonvanlierde/simonvanlierde.github.io");
@@ -186,7 +189,7 @@ test("a sheet with nothing generated is attributed rather than dated", async ({ 
   await expect(block.getByText("Drawn by", { exact: true })).toBeVisible();
   await expect(block.getByText("SVL", { exact: true })).toBeVisible();
   await expect(block.locator("time")).toHaveCount(0);
-  await expect(block.getByText("— OF 2", { exact: true })).toBeVisible();
+  await expect(block.getByText("NOT IN SET", { exact: true })).toBeVisible();
 });
 
 test("the open sheet is marked current in the nav", async ({ page }) => {
@@ -223,37 +226,37 @@ test.describe("disassembly chart", () => {
   });
 
   test("the visually-hidden data table mirrors the plotted series", async ({ page }) => {
-    // The table is the chart's accessible fallback; if it drifts from the bars,
-    // assistive-tech users silently get a different dataset than sighted users.
+    // The table is the chart's accessible fallback; if it drifts from the plotted
+    // months, assistive-tech users silently get a different dataset than sighted users.
     const rows = page.locator("table tbody tr");
-    const bars = page.locator("path.chart__bar");
+    const columns = page.locator("rect.chart__hit");
     const rowCount = await rows.count();
     expect(rowCount).toBeGreaterThan(0);
-    await expect(bars).toHaveCount(rowCount);
+    await expect(columns).toHaveCount(rowCount);
 
     // Caption names the active measure and tracks the toggle.
     const caption = page.locator("table caption");
-    await expect(caption).toHaveText(/Teardowns/i);
+    await expect(caption).toHaveText(/Products/i);
 
-    const parts = page.getByRole("button", { name: "Parts" });
+    const parts = page.getByRole("button", { name: "Components" });
     await parts.click();
-    await expect(caption).toHaveText(/Parts/i);
+    await expect(caption).toHaveText(/Components/i);
   });
 
   test("chart measure toggle updates pressed state and the accessible summary", async ({ page }) => {
     const chart = page.locator('svg[role="img"]');
-    await expect(chart).toHaveAttribute("aria-label", /teardowns/i);
+    await expect(chart).toHaveAttribute("aria-label", /products/i);
 
-    const parts = page.getByRole("button", { name: "Parts" });
+    const parts = page.getByRole("button", { name: "Components" });
     await parts.click();
     await expect(parts).toHaveAttribute("aria-pressed", "true");
 
-    await expect(chart).toHaveAttribute("aria-label", /parts/i);
-    await expect(page.getByRole("button", { name: "Teardowns" })).toHaveAttribute("aria-pressed", "false");
+    await expect(chart).toHaveAttribute("aria-label", /components/i);
+    await expect(page.getByRole("button", { name: "Products" })).toHaveAttribute("aria-pressed", "false");
 
     // Without the live region the switch is silent to a screen reader: the label
     // and the table both change off-screen with nothing announcing it.
-    await expect(page.locator("[aria-live=polite]")).toHaveText(/^Parts: /);
+    await expect(page.locator("[aria-live=polite]")).toHaveText(/^Components: /);
   });
 
   test("arrow keys walk the tooltip, which never blocks the pointer", async ({ page }) => {
@@ -277,6 +280,22 @@ test.describe("disassembly chart", () => {
     const last = (await hits.count()) - 1;
     await hits.nth(last).hover();
     await expect(tip).toHaveText(labels[last]);
+  });
+
+  test("month labels never overlap on a phone, and the latest keeps its label", async ({ page }) => {
+    // Labels are thinned on a narrow plot; overlapping ones read as one word.
+    await page.setViewportSize({ width: 390, height: 844 });
+    const boxes = await page.locator("text.chart__xlabel").evaluateAll((els) =>
+      els
+        .filter((el) => getComputedStyle(el).display !== "none")
+        .map((el) => el.getBoundingClientRect())
+        .map((r) => ({ left: r.left, right: r.right })),
+    );
+    expect(boxes.length).toBeGreaterThan(1);
+    for (let i = 1; i < boxes.length; i++) {
+      expect(boxes[i].left, `label ${i} overlaps label ${i - 1}`).toBeGreaterThanOrEqual(boxes[i - 1].right);
+    }
+    await expect(page.locator("text.chart__xlabel").last()).toBeVisible();
   });
 
   test("secondary chart measures use progressive disclosure", async ({ page }) => {

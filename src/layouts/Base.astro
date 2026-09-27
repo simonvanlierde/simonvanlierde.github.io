@@ -98,10 +98,21 @@ const ogImage = new URL("og.png", Astro.site);
 
       // Keep browser chrome and the toggle icon in step with the active theme.
       // btn is optional: this layout may wrap a page without a toggle.
+      // The chrome colour is whatever --bg resolved to; no literal to drift.
+      // Computed styles serialise it as oklch(), which theme-color parsers
+      // may not accept, so a 1px canvas reads it back as plain sRGB.
+      const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+      const toRgb = (color) => {
+        if (!ctx) return color;
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 1, 1);
+        const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+        return `rgb(${r}, ${g}, ${b})`;
+      };
+
       const sync = () => {
         const dark = isDark();
-        // The chrome colour is whatever --bg resolved to; no literal to drift.
-        meta.content = getComputedStyle(document.body).backgroundColor;
+        meta.content = toRgb(getComputedStyle(document.body).backgroundColor);
         btn?.setAttribute("aria-pressed", String(dark));
       };
 

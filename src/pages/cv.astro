@@ -30,6 +30,7 @@ const [headlineLead, ...headlineRest] = basics.headline.split(" · ");
 
 // The sheet's zone index: one datum letter per section that renders, in
 // reading order, so a hurried reader can be sent to "C" instead of scrolling.
+// Each section's heading carries the same letter, so the reference resolves.
 const sections = [
   { id: "profile-heading", label: "Profile", show: true },
   { id: "experience-heading", label: "Experience", show: true },
@@ -42,6 +43,7 @@ const sections = [
 ]
   .filter((s) => s.show)
   .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
+const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
 
 // Location and address only: the profile links live once, in the title
 // block, on both sheets.
@@ -121,17 +123,19 @@ const contact = [
 
   <main>
     <section class="container" aria-labelledby="profile-heading">
-      <h2 id="profile-heading">Profile</h2>
-      <p class="prose cv-profile">{profile}</p>
+      <h2 id="profile-heading"><span class="datum" aria-hidden="true">{ref("profile-heading")}</span>Profile</h2>
+      <p class="prose cv-profile cv-aligned">{profile}</p>
     </section>
 
     <section class="container" aria-labelledby="experience-heading">
-      <h2 id="experience-heading">Experience</h2>
+      <h2 id="experience-heading"><span class="datum" aria-hidden="true">{ref("experience-heading")}</span>Experience</h2>
       <div class="cv-entries">
         {
           experience.map((job) => (
             <article class="cv-entry">
-              <p class="cv-entry__period">{formatPeriod(job.start, job.end)}</p>
+              {/* The period follows the heading in source order and sits in the
+                  rail by grid, so heading navigation lands on the role and
+                  reads its dates next, rather than skipping them. */}
               <div class="cv-entry__body">
                 <h3 class="cv-entry__role">{job.role}</h3>
                 <p class="cv-entry__org">{job.organization}</p>
@@ -143,6 +147,7 @@ const contact = [
                   </ul>
                 )}
               </div>
+              <p class="cv-entry__period">{formatPeriod(job.start, job.end)}</p>
             </article>
           ))
         }
@@ -153,11 +158,10 @@ const contact = [
       /* After Experience: what an academic reader looks for first. */
       publications.length > 0 && (
         <section class="container" aria-labelledby="publications-heading">
-          <h2 id="publications-heading">Publications</h2>
+          <h2 id="publications-heading"><span class="datum" aria-hidden="true">{ref("publications-heading")}</span>Publications</h2>
           <div class="cv-entries">
             {publications.map((pub) => (
               <article class="cv-entry">
-                <p class="cv-entry__period">{pub.year}</p>
                 <div class="cv-entry__body">
                   <h3 class="cv-entry__role">
                     {pub.doi ? <a href={`https://doi.org/${pub.doi}`}>{pub.title}</a> : pub.title}
@@ -168,6 +172,7 @@ const contact = [
                     {pub.status !== "published" && <span class="tag">{pub.status}</span>}
                   </p>
                 </div>
+                <p class="cv-entry__period">{pub.year}</p>
               </article>
             ))}
           </div>
@@ -176,17 +181,17 @@ const contact = [
     }
 
     <section class="container" aria-labelledby="education-heading">
-      <h2 id="education-heading">Education</h2>
+      <h2 id="education-heading"><span class="datum" aria-hidden="true">{ref("education-heading")}</span>Education</h2>
       <div class="cv-entries">
         {
           education.map((school) => (
             <article class="cv-entry">
-              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
               <div class="cv-entry__body">
                 <h3 class="cv-entry__role">{school.degree}</h3>
                 <p class="cv-entry__org">{school.institution}</p>
                 {school.details && <p class="cv-entry__detail">{school.details}</p>}
               </div>
+              <p class="cv-entry__period">{formatPeriod(school.start, school.end)}</p>
             </article>
           ))
         }
@@ -196,7 +201,7 @@ const contact = [
     {
       projects.length > 0 && (
         <section class="container" aria-labelledby="projects-heading">
-          <h2 id="projects-heading">Projects</h2>
+          <h2 id="projects-heading"><span class="datum" aria-hidden="true">{ref("projects-heading")}</span>Projects</h2>
           <div class="cv-entries">
             {projects.map((project) => (
               <article class="cv-entry cv-entry--railless">
@@ -217,7 +222,7 @@ const contact = [
       /* Optional sections: an empty heading would read as a gap in the person. */
       skills.length > 0 && (
         <section class="container" aria-labelledby="skills-heading">
-          <h2 id="skills-heading">Skills</h2>
+          <h2 id="skills-heading"><span class="datum" aria-hidden="true">{ref("skills-heading")}</span>Skills</h2>
           <div class="cv-entries">
             {/* One line per group: skills are read, not filtered. */}
             {skills.map((group) => (
@@ -235,8 +240,8 @@ const contact = [
       /* Talks, schools, upstream contributions. */
       development.length > 0 && (
         <section class="container" aria-labelledby="development-heading">
-          <h2 id="development-heading">Talks and training</h2>
-          <ul class="prose cv-list">
+          <h2 id="development-heading"><span class="datum" aria-hidden="true">{ref("development-heading")}</span>Talks and training</h2>
+          <ul class="prose cv-list cv-aligned">
             {development.map((item) => (
               <li>{item}</li>
             ))}
@@ -248,8 +253,8 @@ const contact = [
     {
       interests.length > 0 && (
         <section class="container" aria-labelledby="interests-heading">
-          <h2 id="interests-heading">Interests</h2>
-          <p class="prose cv-interests">{interests.join(", ")}</p>
+          <h2 id="interests-heading"><span class="datum" aria-hidden="true">{ref("interests-heading")}</span>Interests</h2>
+          <p class="prose cv-interests cv-aligned">{interests.join(", ")}</p>
         </section>
       )
     }
@@ -289,8 +294,8 @@ const contact = [
     margin: -0.3rem -0.25rem;
   }
 
-  /* Zone index: lettered datum marks, one row on a desktop sheet (tracked
-     and gapped so the seven fit the container), wrapping below that. */
+  /* Zone index: lettered datum marks, one row on a desktop sheet, wrapping
+     below that. Labels never break mid-name. */
   .cv-index {
     margin-top: var(--space-m);
   }
@@ -307,14 +312,17 @@ const contact = [
     text-transform: uppercase;
   }
 
+  /* Spread across the sheet when the row fits; wrap rather than overrun the
+     frame when an optional section (Publications) makes it longer. */
   @media (min-width: 60rem) {
     .cv-index__list {
       justify-content: space-between;
-      flex-wrap: nowrap;
+      letter-spacing: 0.03em;
     }
   }
 
   .cv-index__list a {
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -335,7 +343,22 @@ const contact = [
   }
 
   .cv-download {
-    margin-top: var(--space-l);
+    margin-top: var(--space-m);
+  }
+
+  /* Section headings carry the index's datum letter, so "go to C" resolves. */
+  main h2 .datum {
+    margin-inline-end: var(--space-s);
+    vertical-align: 0.1em;
+    letter-spacing: 0;
+  }
+
+  /* Prose sections start on the body line of the rail grid, so the sheet
+     keeps one left text edge under every heading. */
+  @media (min-width: 40rem) {
+    .cv-aligned {
+      margin-inline-start: calc(11rem + var(--space-l));
+    }
   }
 
   .cv-updated {
@@ -438,10 +461,21 @@ const contact = [
       margin-top: 0.15rem;
     }
 
+    /* The letters point into the zone index, which paper does not carry. */
     .cv-download,
     .cv-index,
-    .cv-download-utility {
+    .cv-download-utility,
+    main h2 .datum {
       display: none;
+    }
+
+    /* Paper has no hover: a link prints where it goes. The address already
+       reads as itself, so mailto links are left alone. */
+    .cv-entry__role a::after,
+    :global(.title-block__contact a:not([href^="mailto:"]))::after {
+      content: " (" attr(href) ")";
+      font-size: 0.85em;
+      overflow-wrap: anywhere;
     }
   }
 </style>

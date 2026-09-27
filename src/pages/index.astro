@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { formatCount as fmt } from "../components/chartScale.ts";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ExplodedView from "../components/ExplodedView.astro";
 import ProjectCard from "../components/ProjectCard.astro";
@@ -16,7 +17,6 @@ const { basics, exported } = cv;
 // General notes: ReLab's running counts, from the same payload as the chart
 // (refreshed by scripts/fetch-stats.mjs).
 const counts = { as_of: stats.as_of, ...stats.totals };
-const fmt = (n: number) => n.toLocaleString("en-US").replace(/,/g, "\u2009");
 const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
   month: "short",
   year: "numeric",
@@ -44,6 +44,10 @@ const lead = "PhD researcher and research software engineer";
 const tagline =
   "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
 
+// One dated line of proof in the first viewport, in the drafting hand: the
+// notes below carry the full record, this carries the claim to the fold.
+const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
+
 // One stamp per sheet: the CV. The address is a plain link beside it, and the
 // profiles run quietly under both, repeating the title block's list.
 ---
@@ -63,6 +67,7 @@ const tagline =
         <h1>{name}</h1>
         <p class="lead">{lead}</p>
         <p class="tagline prose">{tagline}</p>
+        <p class="hero__proof draft"><a href="#relab">{proof}</a></p>
 
         <div class="hero__actions">
           <a class="stamp" href="/cv/">
@@ -102,7 +107,7 @@ const tagline =
     <section class="container" aria-labelledby="work-heading">
       <h2 id="work-heading">Selected work</h2>
       <div class="bom">
-        {/* ReLab first: the platform, with the chart when data is live */}
+        {/* ReLab first: the platform, its running totals, and their chart */}
         <article class="bom-row relab-row" id="relab">
           <p class="bom-row__pos">Research platform</p>
           <div class="bom-row__body">
@@ -150,7 +155,7 @@ const tagline =
             </section>
 
             <div class="relab__chart">
-              <DisassemblyChart caption="Fig. 2: ReLab activity by month." client:visible />
+              <DisassemblyChart caption="Fig. 2: ReLab running totals" client:visible />
             </div>
           </div>
         </article>
@@ -174,7 +179,7 @@ const tagline =
         Currently prototyping an <a href="https://github.com/simonvanlierde/ai4ie-demo">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes upstream to tools I build on, mostly in the FastAPI and open-LCA ecosystems, such as <a href="https://github.com/sabuhish/fastapi-mail/pull/283">fastapi-mail</a> and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2">sentier_data_tools</a>.
       </p>
 
-      <details class="disclosure personal">
+      <details class="disclosure personal" open>
         <summary>
           <h3>Personal projects ({personalProjects.length})</h3>
         </summary>
@@ -199,7 +204,14 @@ const tagline =
   </main>
   </div>
 
-  <TitleBlock title={name} docType="Index of work" sheet="1 OF 2" dated={exported?.slice(0, 10)} />
+  {/* Dated by whichever input moved last, the CV export or the counts, so the
+      title block never predates a figure on its own sheet. */}
+  <TitleBlock
+    title={name}
+    docType="Index of work"
+    sheet="1 OF 2"
+    dated={[exported?.slice(0, 10), stats.as_of].filter(Boolean).sort().at(-1)}
+  />
 </Base>
 
 <style>
@@ -245,6 +257,25 @@ const tagline =
   }
 
   .hero__email:hover {
+    color: var(--accent-strong);
+  }
+
+  /* The proof line: data, so the drafting hand, and a jump to the notes that
+     carry the full count. Muted ink, so the stamp stays the one strong call. */
+  .hero__proof {
+    margin-top: var(--space-m);
+    max-width: var(--measure);
+    font-size: var(--step--1);
+    letter-spacing: 0.03em;
+  }
+
+  .hero__proof a {
+    color: var(--text);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .hero__proof a:hover {
     color: var(--accent-strong);
   }
 
@@ -305,8 +336,9 @@ const tagline =
     align-content: start;
   }
 
+  /* A step under the sheet's name: the notes are evidence, not a second title. */
   .notes__value {
-    font-size: var(--step-3);
+    font-size: var(--step-2);
     line-height: 1.05;
     color: var(--text);
   }
@@ -345,10 +377,11 @@ const tagline =
     margin-top: var(--space-l);
   }
 
-  /* A footnote to the parts list, not prose: it runs the full sheet width
-     rather than the reading measure, because it is two lines of reference. */
+  /* A footnote to the parts list, held to the reading measure: it is several
+     lines of prose with links, not a single reference line. */
   .upstream-note {
     margin-top: var(--space-l);
+    max-width: var(--measure);
     color: var(--text-muted);
     font-size: var(--step--1);
   }

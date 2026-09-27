@@ -26,7 +26,7 @@ import Base from "../layouts/Base.astro";
     </p>
   </main>
 
-  <TitleBlock title="Simon van Lierde" docType="Page not found" sheet="— OF 2" />
+  <TitleBlock title="Simon van Lierde" docType="Page not found" sheet="NOT IN SET" />
 </Base>
 
 <style>
@@ -49,5 +49,11 @@ import Base from "../layouts/Base.astro";
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-m) var(--space-l);
+  }
+
+  /* The plain sheet link buys the set's 44px target without moving its text. */
+  .notfound__row a:not(.stamp) {
+    padding-block: 0.65rem;
+    margin-block: -0.65rem;
   }
 </style>
