@@ -22,9 +22,8 @@ export function formatPeriod(start: string, end: string): string {
 }
 
 /**
- * An ISO timestamp as a long English date, e.g. `18 August 2026`. Always UTC:
- * the title block prints the same stamp as `exported.slice(0, 10)`, and a
- * local-zone build near midnight would otherwise disagree by a day.
+ * An ISO timestamp as a long English date, e.g. `18 August 2026`. Always UTC,
+ * so it matches `exported.slice(0, 10)` for a build near midnight.
  */
 export function formatIsoDate(value: string): string {
   return new Date(value).toLocaleDateString("en-GB", {

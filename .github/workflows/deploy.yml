@@ -11,8 +11,7 @@ permissions:
   pages: write
   id-token: write
 
-# Deploys queue instead of racing, including the ones refresh-data.yml
-# dispatches; an in-progress deploy is never cancelled.
+# Queue deploys, including those refresh-data.yml dispatches; never cancel one.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -25,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # The action sets up pnpm and Node itself; its Node default (24) is below engines.
+      # The action's default Node (24) is below the `engines` minimum.
       - name: Build with Astro
         uses: withastro/action@v6
         with:

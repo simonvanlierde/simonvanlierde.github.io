@@ -1,10 +1,7 @@
 name: Refresh RELab stats
 
-# Pulls fresh figures from the RELab /stats endpoint into src/data/stats.json,
-# commits them, then dispatches deploy.yml so the new numbers reach the live site.
-#
-# Pushes made with the default GITHUB_TOKEN do not trigger other workflows,
-# but workflow_dispatch is the exception, so the deploy is dispatched explicitly.
+# Commits fresh RELab figures to src/data/stats.json, then dispatches deploy.yml:
+# a push with the default GITHUB_TOKEN triggers no other workflow.
 
 on:
   schedule:
@@ -45,7 +42,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add src/data/stats.json
           git commit -m "chore: refresh RELab stats"
-          # Rebase onto any commits that landed while this job ran, then push.
+          # Rebase onto commits that landed while this job ran.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
           gh workflow run deploy.yml --ref "${GITHUB_REF_NAME}"

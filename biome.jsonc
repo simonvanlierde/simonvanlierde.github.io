@@ -38,8 +38,7 @@
       "linter": {
         "rules": {
           "correctness": {
-            // Framework rules for frameworks this repo does not use: both fire
-            // on ordinary React code, where neither diagnosis applies.
+            // Qwik and Solid rules; they misfire on this repo's Preact code.
             "useQwikValidLexicalScope": "off",
             "noSolidDestructuredProps": "off"
           }

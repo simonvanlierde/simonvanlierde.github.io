@@ -1,13 +1,8 @@
 /* ---------------------------------------------------------------------------
-   THE ENGINEERING DRAWING SHEET
-   One visual world, two renderings of the same sheet:
-     light = ink linework on drafting paper
-     dark  = blueprint (cyanotype: pale lines on Prussian-blue ground)
-   Display and label voice: osifont (ISO 3098 technical lettering, vendored,
-   subset, ~10KB). Body prose: system sans. Colour is never the sole signal.
-   Token NAMES are kept from the previous system (--bg, --text, --accent,
-   --chart-bar...) so every consumer, the chart island included, rethemes
-   without edits; the VALUES are the new world.
+   THE ENGINEERING DRAWING SHEET (see DESIGN.md)
+   Light: ink on drafting paper. Dark: cyanotype.
+   Change token values, not names: the chart island and other consumers read
+   the names (--bg, --text, --accent, --chart-bar...).
    --------------------------------------------------------------------------- */
 
 @font-face {
@@ -19,21 +14,18 @@
 }
 
 :root {
-  /* Type. Drafting lettering carries display, labels, and data; prose stays
-     on the system sans so long text reads as text, not as a costume. */
+  /* osifont for display, labels, and data; system sans for prose. */
   --font-draft: "osifont", "Segoe UI", system-ui, sans-serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  /* Kept name: the chart and data labels resolve through this. */
+  /* The chart and data labels read this name. */
   --font-mono: var(--font-draft);
 
-  /* Fluid type scale */
   --step--1: clamp(0.85rem, 0.81rem + 0.26vw, 1rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
   --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
   --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
   --step-3: clamp(2.1rem, 1.6rem + 2.4vw, 3.4rem);
 
-  /* Spacing */
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-s: 0.75rem;
@@ -41,28 +33,23 @@
   --space-l: 2rem;
   --space-xl: 3.5rem;
 
-  /* Layout. 72ch measures the zero glyph and lands near 91 real characters in
-     a system sans; 38rem lands near 70. The rem value is the cap. */
+  /* rem, not ch: 1ch is the zero glyph, so 72ch fits about 91 characters of
+     system sans. 38rem fits about 70. */
   --measure: 38rem;
-  --radius: 0px; /* a drawing has no rounded corners */
+  --radius: 0px;
   --border-width: 1px;
 
-  /* The fixed sheet frame (trim margin + frame line) */
   --frame-inset: clamp(8px, 1.2vw, 16px);
   --frame-line: 1.5px;
 
-  /* Motion: drafting behaviour, not decoration. */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --dur-fast: 150ms;
   --dur-base: 200ms;
   --dur-slow: 250ms;
-  --dur-explode: 700ms; /* the exploded view settling apart */
+  --dur-explode: 700ms; /* exploded view (Fig. 1) */
 
-  /* Palette. Two grounds, one working ink, engineer's blue, checker's green.
-     Light: warm drafting paper, near-black blue ink, Prussian-blue accents.
-     Dark: the same sheet printed as a cyanotype, ground and line swap roles.
-     Every text pair clears 4.5:1 on its ground; verified at build time. */
+  /* Every text pair clears 4.5:1 on its ground; tests/a11y.spec.ts checks it. */
   color-scheme: light dark;
 
   --bg: light-dark(oklch(97.5% 0.005 95), oklch(27% 0.05 262));
@@ -72,28 +59,24 @@
   --border: light-dark(oklch(80% 0.012 255), oklch(45% 0.05 258));
   --border-strong: light-dark(oklch(32% 0.02 255), oklch(90% 0.02 240));
 
-  /* Engineer's blue: links and working accents. Pale drafting cyan on the
-     blueprint side, where the ground already owns the blue. */
+  /* Pale cyan in dark mode, where the ground is already blue. */
   --accent: light-dark(oklch(42% 0.13 262), oklch(88% 0.055 225));
   --accent-strong: light-dark(oklch(34% 0.11 262), oklch(94% 0.035 225));
   --accent-contrast: light-dark(oklch(98% 0.003 95), oklch(25% 0.05 262));
 
-  /* Checker's green: the one approval stamp, exactly one primary action per
-     sheet. Green, not red: red on a drawing marks a correction, and on a
-     screen it reads as an error. */
+  /* The stamp: one primary action per sheet. Green, not red: red reads as an
+     error. */
   --stamp: light-dark(oklch(44% 0.11 150), oklch(82% 0.1 150));
   --stamp-contrast: light-dark(oklch(98.5% 0.003 95), oklch(23% 0.05 262));
 
   --focus: var(--accent);
 
-  /* Chart marks (kept names). Solid engineer's blue bars on paper; pale
-     cyanotype lines on blueprint. Both clear 3:1 against --surface. */
+  /* Both clear 3:1 against --surface. */
   --chart-bar: light-dark(oklch(42% 0.13 262), oklch(80% 0.07 225));
   --chart-bar-strong: light-dark(oklch(34% 0.11 262), oklch(88% 0.055 225));
 }
 
-/* Wide gamut: lift only the chromatic tokens, uniformly, never lightness.
-   A display that claims P3 and clamps still clears every contrast floor. */
+/* P3: raise chroma only, never lightness, so contrast holds on any display. */
 @media (color-gamut: p3) {
   :root {
     --accent: light-dark(oklch(42% 0.155 262), oklch(88% 0.066 225));
@@ -128,10 +111,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  /* The scrollbar is a rule on the sheet's edge, in the sheet's ink. */
   scrollbar-color: var(--border) transparent;
-  /* In-page jumps (the CV's zone index, a caption pointing at its row) travel
-     rather than cut, so the reader keeps their place on the sheet. */
   scroll-behavior: smooth;
 }
 
@@ -150,14 +130,11 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* Content lives inside the sheet frame. */
   padding: calc(var(--frame-inset) + var(--frame-line));
 }
 
-/* The sheet frame: a trim border around the whole document, like the frame
-   every drawing is plotted inside. Drawn on the document, not the viewport:
-   the page is one tall sheet, and a viewport-fixed line would cross moving
-   text like a strike. Screen-only: print gets the plain document. */
+/* Sheet frame on the document, not the viewport: a fixed line would cross
+   scrolling text like a strikethrough. */
 @media screen {
   body::before {
     content: "";
@@ -169,10 +146,16 @@ body {
   }
 }
 
-/* Print gets the plain document: no sheet chrome, no toggle, paper theme. */
+/* Print in the light theme. :root[data-theme] matches the toggle's
+   specificity; without it, a dark choice would print dark. */
 @media print {
-  :root {
+  :root,
+  :root[data-theme] {
     color-scheme: light;
+  }
+
+  body {
+    background: none;
   }
 
   .sheet-nav,
@@ -185,13 +168,19 @@ body {
     padding-block: var(--space-m) var(--space-l);
   }
 
-  .cv-entry,
+  /* Entries may break across pages: keeping each whole left half-empty pages. */
+  h2,
+  h3,
+  .cv-entry__org {
+    break-after: avoid;
+  }
+
+  .cv-highlights li,
   .bom-row {
     break-inside: avoid;
   }
 }
 
-/* Selection and caret belong to the world too. */
 ::selection {
   background: var(--accent);
   color: var(--accent-contrast);
@@ -212,8 +201,6 @@ h1 {
   text-transform: uppercase;
 }
 
-/* Section headings are zone labels: smaller than the content they label,
-   tracked caps over a heavy rule. A label, not a statement. */
 h2 {
   font-size: var(--step-1);
   letter-spacing: 0.14em;
@@ -230,8 +217,6 @@ p {
   text-wrap: pretty;
 }
 
-/* The line under a sheet's name: the thesis on Sheet 1, the headline on
-   Sheet 2. Same voice on both, so the two headers read as one set. */
 .lead {
   max-width: 30rem;
   margin-top: var(--space-m);
@@ -243,16 +228,12 @@ p {
   color: var(--text);
 }
 
-/* The muted sentence under the lead: the tagline on Sheet 1, the rest of the
-   headline on Sheet 2. */
 .tagline {
   margin-top: var(--space-m);
   font-size: var(--step-0);
   color: var(--text-muted);
 }
 
-/* Figure captions: one style for every figure on the set, under the figure,
-   "Fig. N:" first. */
 figcaption {
   margin-top: var(--space-s);
   font-size: var(--step--1);
@@ -285,7 +266,6 @@ ul {
   padding: 0;
 }
 
-/* Figures and data are set in the drafting hand with even numerals. */
 .draft,
 .tag,
 time {
@@ -302,8 +282,8 @@ time {
   outline-offset: 2px;
 }
 
-/* Controls that buy their 44px target with padding + negative margin draw
-   the ring inside that padding, so it never crosses a neighbour's glyphs. */
+/* 44px targets use padding + negative margin. An inset ring stays off the
+   neighbouring text. */
 .theme-toggle:focus-visible,
 .sheet-nav__mark:focus-visible,
 .sheet-nav__link:focus-visible,
@@ -350,8 +330,7 @@ time {
   align-items: center;
   justify-content: center;
   gap: var(--space-2xs);
-  /* 18px glyph + 0.85rem padding clears 44px; negative margin keeps the
-     glyph optically in place. */
+  /* 18px glyph + padding clears 44px; the negative margin keeps it in place. */
   padding: 0.85rem;
   margin: -0.85rem;
   font: inherit;
@@ -388,9 +367,8 @@ time {
    Layout
    --------------------------------------------------------------------------- */
 
-/* The sheet is as wide as its content: an 11rem rail, a 2rem gutter and a
-   38rem measure, with 3rem to spare for tags and the hero's plate. Rules end
-   where the writing ends; the paper is not wider than the drawing. */
+/* 11rem rail + 2rem gutter + 38rem measure + 3rem spare, so rules end where
+   the text ends. */
 .container {
   width: min(100% - 2 * var(--space-m), 54rem);
   margin-inline: auto;
@@ -404,9 +382,7 @@ time {
   margin-top: var(--space-m);
 }
 
-/* One rule per boundary: the zone label's own 2px rule divides sections, so
-   there is no hairline above them; more air below a zone than above its
-   successor's label. */
+/* The h2's 2px rule divides sections, so no hairline goes above them. */
 main > section {
   padding-block: var(--space-l) calc(var(--space-l) + var(--space-s));
 }
@@ -419,7 +395,6 @@ main > section > .container > h2 {
   scroll-margin-top: 4rem;
 }
 
-/* Section heading rule: the zone label sits on its own heavy rule. */
 main > section > .container > h2,
 main > section.container > h2 {
   padding-bottom: var(--space-xs);
@@ -430,11 +405,11 @@ main > section.container > h2 {
    Sheet header (shared chrome, both pages)
    --------------------------------------------------------------------------- */
 
+/* Opaque ground and a rule, never a shadow or blur (the Flat Sheet Rule). */
 .sheet-nav {
   position: sticky;
   top: 0;
   z-index: 50;
-  /* Solid: nothing may show through the chrome of the sheet. */
   background: var(--bg);
   border-bottom: var(--border-width) solid var(--border);
 }
@@ -455,7 +430,7 @@ main > section.container > h2 {
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  /* Padding + negative margin buys the 44px target without moving the mark. */
+  /* 44px target without moving the mark. */
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -474,8 +449,7 @@ main > section.container > h2 {
   gap: var(--space-m);
 }
 
-/* Below 22rem the two sheet labels and the toggle fill the strip; the
-   wordmark yields, since "Sheet 1: Index" is the same link home. */
+/* Below 22rem, hide the wordmark: "Sheet 1: Index" links home too. */
 @media (max-width: 21.99rem) {
   .sheet-nav__mark {
     display: none;
@@ -562,8 +536,7 @@ main > section.container > h2 {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
-  /* Buys the 44px target in both axes; the negative margin keeps the row
-     rhythm and the glyph optically in place. */
+  /* 44px target; the negative margin keeps the row spacing. */
   min-height: 44px;
   min-width: 44px;
   padding: 0.65rem 0.25rem;
@@ -572,8 +545,7 @@ main > section.container > h2 {
 
 /* ---------------------------------------------------------------------------
    Selected work (the parts list)
-   A parts-list table: kind in the rail, part name, spec. The name is the
-   target. Circled numerals live on Fig. 1 only, where they balloon parts.
+   Circled numerals (balloons) belong to Fig. 1 only.
    --------------------------------------------------------------------------- */
 
 .bom {
@@ -591,7 +563,6 @@ main > section.container > h2 {
   border-bottom: var(--border-width) solid var(--border);
 }
 
-/* The rail: what the part is, in the drafting hand, on the title's midline. */
 .bom-row__pos {
   font-family: var(--font-draft);
   font-size: var(--step--1);
@@ -601,8 +572,7 @@ main > section.container > h2 {
   padding-top: 0.45em;
 }
 
-/* Datum mark: the figure's boxed-letter note reference. Square, where the
-   figure balloon is the circle. */
+/* Datum mark: a boxed letter, square to set it apart from the round balloons. */
 .datum {
   display: inline-flex;
   align-items: center;
@@ -628,10 +598,8 @@ main > section.container > h2 {
   overflow-wrap: anywhere;
 }
 
-/* The part name is the target (the row's prose stays selectable and
-   copyable): ink and underlined at rest, so it reads as a path to the repo
-   before hover; engineer's blue on hover; the 44px target bought by padding
-   + negative margin. */
+/* Only the name links, so the row's prose stays selectable. Underlined at
+   rest so it reads as a link before hover. */
 .bom-row__title a {
   display: inline-block;
   color: var(--text);
@@ -678,8 +646,7 @@ main > section.container > h2 {
   font-size: var(--step--1);
   color: var(--text-muted);
   background: transparent;
-  /* Read-only spec callouts, not controls: a hairline is enough, and it
-     keeps them below the section rules in weight. */
+  /* Hairline: tags are not controls. */
   border: var(--border-width) solid var(--border);
   padding: 0.1em 0.55em;
   letter-spacing: 0.04em;
@@ -698,7 +665,7 @@ main > section.container > h2 {
 }
 
 /* ---------------------------------------------------------------------------
-   CV timeline (shared: condensed on /, full on /cv/)
+   CV timeline (/cv/)
    --------------------------------------------------------------------------- */
 
 .cv-entries {
@@ -717,9 +684,20 @@ main > section.container > h2 {
     grid-template-columns: 11rem minmax(0, 1fr);
   }
 
-  .cv-entry--railless {
-    grid-template-columns: minmax(0, 1fr);
+  /* The period follows the heading in the source, for screen readers. */
+  .cv-entry__body {
+    grid-column: 2;
   }
+
+  .cv-entry__period {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+/* Stacked, the period still reads above the role. */
+.cv-entry__period {
+  order: -1;
 }
 
 .cv-entry__period {
@@ -736,14 +714,16 @@ main > section.container > h2 {
   font-family: var(--font-sans);
   font-size: var(--step-0);
   font-weight: 650;
+  line-height: 1.3;
   letter-spacing: 0;
   text-transform: none;
 }
 
-/* A linked role or project name is underlined at rest: colour alone must not
-   be the only sign that a title opens somewhere. */
+/* Underlined at rest: colour must not be the only link cue. */
 .cv-entry__role a {
   text-underline-offset: 0.18em;
+  /* 44px target. Padding on an inline link grows the hit area, not the line. */
+  padding-block: 0.65rem;
 }
 
 .cv-entry__role a:hover {
@@ -756,8 +736,6 @@ main > section.container > h2 {
   max-width: var(--measure);
 }
 
-/* The highlights are the evidence, in full ink; only the rail and the
-   organisation line are muted. */
 .cv-highlights {
   margin-top: var(--space-s);
   padding-left: 1.1em;
@@ -773,9 +751,7 @@ main > section.container > h2 {
 }
 
 /* ---------------------------------------------------------------------------
-   Title block (ISO 7200): the document's own footer, on every sheet, the full
-   width of the container. Real provenance (title, document, sheet, date,
-   site version) and, once per sheet, how to reach the author.
+   Title block (ISO 7200): the footer on every sheet
    --------------------------------------------------------------------------- */
 
 .title-block {
@@ -787,7 +763,7 @@ main > section.container > h2 {
   letter-spacing: 0.05em;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  /* Hairlines between cells: the grid's gap shows the border colour through. */
+  /* The 1px gap shows the --border background as cell hairlines. */
   gap: var(--border-width);
   background: var(--border);
 }
@@ -798,12 +774,11 @@ main > section.container > h2 {
   background: var(--bg);
 }
 
-/* Contact spans the row but the last cell. */
+/* Contact spans every column except the last. */
 .title-block__cell--contact {
   grid-column: 1 / -2;
 }
 
-/* Narrow sheets: two columns; the wide cells take a row each. */
 @media (max-width: 39.99rem) {
   .title-block {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -817,7 +792,7 @@ main > section.container > h2 {
 
 .title-block__label {
   display: block;
-  font-size: 0.8em; /* stays above the 10px floor at every step */
+  font-size: 0.8em; /* stays above 10px at every step */
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -830,8 +805,7 @@ main > section.container > h2 {
   overflow-wrap: anywhere;
 }
 
-/* Every cell around them holds inert data, so a link here is underlined to
-   say it is one; hover only shifts the colour. */
+/* Underlined: the surrounding cells are plain data. */
 .title-block__value a {
   display: inline-flex;
   align-items: center;
@@ -846,8 +820,7 @@ main > section.container > h2 {
   color: var(--accent);
 }
 
-/* The contact cell: one row of links, the address in the accent so it reads
-   as the way in; the profiles in ink like the other cell values. */
+/* Email in the accent colour; profiles in ink like other values. */
 .title-block__contact {
   display: flex;
   flex-wrap: wrap;

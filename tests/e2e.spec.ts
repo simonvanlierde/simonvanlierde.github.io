@@ -2,9 +2,9 @@ import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
 
-// The export decides which hero link is primary, so read it rather than restate
-// it. See tests/cv.spec.ts for the same reasoning.
+// Read the export instead of restating it (see tests/cv.spec.ts).
 const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
+const stats = JSON.parse(readFileSync("src/data/stats.json", "utf8"));
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -16,8 +16,7 @@ test("renders the page shell: title, main landmark, single h1", async ({ page })
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Simon van Lierde");
 });
 
-// The drawn sheet frame and the exploded view both reach outside their boxes at
-// small widths; a page must never grow a horizontal scrollbar because of them.
+// The sheet frame and the exploded view reach outside their boxes at small widths.
 for (const width of [320, 390, 900, 1200]) {
   test(`no page scrolls sideways at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
@@ -34,8 +33,7 @@ for (const width of [320, 390, 900, 1200]) {
 
 test("the title block's contact links point at the right destinations", async ({ page }) => {
   const footer = page.getByRole("contentinfo");
-  // GitHub and LinkedIn come from the export; ORCID and the Leiden page have
-  // no export field yet and are kept by hand in the title block and here.
+  // ORCID and Leiden have no export field yet, so they are hard-coded here too.
   const expected: Record<string, string> = {
     GitHub: cv.basics.links.github,
     LinkedIn: cv.basics.links.linkedin,
@@ -52,8 +50,7 @@ test("skip link is the first tab stop and lands before the h1", async ({ page })
   const skip = page.getByRole("link", { name: "Skip to content" });
   await expect(skip).toBeFocused();
   await expect(skip).toHaveAttribute("href", "#main");
-  // Only the sheet nav is chrome; the h1 and the primary stamp are content and
-  // must sit inside the skip target, not before it.
+  // The h1 and the primary stamp are content, so they sit inside the skip target.
   await expect(page.locator("#main").getByRole("heading", { level: 1 })).toHaveCount(1);
 });
 
@@ -69,21 +66,18 @@ test("theme toggle flips the theme and persists across reload", async ({ page })
   await expect(html).toHaveAttribute("data-theme", "dark");
 });
 
-test("the personal-projects disclosure expands then collapses", async ({ page }) => {
-  // Personal projects ships closed: it is secondary to the work above it, and
-  // it is the only disclosure, so it carries the expand/collapse coverage.
+test("the personal-projects disclosure ships open and still collapses", async ({ page }) => {
   const details = page.locator("details.disclosure.personal");
-  await expect(details).toHaveJSProperty("open", false);
-  await details.locator("summary").click();
   await expect(details).toHaveJSProperty("open", true);
   await details.locator("summary").click();
   await expect(details).toHaveJSProperty("open", false);
+  await details.locator("summary").click();
+  await expect(details).toHaveJSProperty("open", true);
 });
 
 test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
-  // The sheet grammar allows one stamp in the header, and it is the CV: a
-  // hiring reader wants to read before writing. The address, when the export
-  // publishes one, sits beside it as a plain link whose text is the address.
+  // The header allows one stamp, and it goes to the CV. An exported address sits
+  // beside it as a plain link.
   const primary = page.locator("header .stamp");
   await expect(primary).toHaveCount(1);
   await expect(primary).toHaveAttribute("href", "/cv/");
@@ -117,9 +111,8 @@ test("the exploded view becomes one compact, touch-sized system on mobile", asyn
   await expect(mobile).toBeHidden();
 });
 
-// The plate is hand-drawn SVG: each balloon's href is written out at its own
-// coordinates, so a copy-paste between parts is the likely mistake. Restated
-// here on purpose, as the second source of truth the drawing lacks.
+// Each balloon's href is hand-written in the SVG, so copy-paste slips are likely.
+// This list is the independent check.
 const PART_DESTINATIONS = [
   ["Camera rig", "https://github.com/CMLPlatform/relab-rpi-cam-plugin"],
   ["Capture app", "https://github.com/CMLPlatform/relab"],
@@ -140,7 +133,7 @@ for (const [variant, width] of [
 
     for (const [i, [name, href]] of PART_DESTINATIONS.entries()) {
       await expect(links.nth(i)).toHaveAttribute("href", href);
-      // The label carries the part's identity; a swapped balloon shows up here.
+      // The label names the part, so a swapped balloon fails here.
       await expect(links.nth(i)).toHaveAttribute("aria-label", new RegExp(`^${name}:`));
     }
   });
@@ -150,15 +143,14 @@ test("a keyboard user can focus each part of the figure", async ({ page }) => {
   const first = page.locator(".exploded__svg--desktop a").first();
   await first.focus();
   await expect(first).toBeFocused();
-  // The ring is what a sighted keyboard user locates the part by.
+  // Sighted keyboard users find the part by its focus ring.
   await expect(first).toHaveCSS("outline-style", "solid");
 });
 
 test("without motion the drawing starts exploded and never assembles", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  // The settle is the one animation here; reduced motion must skip it entirely
-  // rather than run it faster, or the parts sit collapsed on first paint.
+  // Reduced motion must skip the settle animation, not shorten it.
   await expect(page.locator(".exploded")).not.toHaveClass(/is-assembled/);
 });
 
@@ -168,10 +160,10 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
   await expect(block.getByText("1 OF 2", { exact: true })).toBeVisible();
 
-  // Both sheets are generated, so both are dated. The stamp is the export
-  // date in UTC; a local-zone build must not shift it by a day.
+  // This sheet takes the later of the export and stats dates, in UTC.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
-  await expect(block.locator("time")).toHaveAttribute("datetime", cv.exported.slice(0, 10));
+  const latest = [cv.exported.slice(0, 10), stats.as_of].sort().at(-1) ?? "";
+  await expect(block.locator("time")).toHaveAttribute("datetime", latest);
 
   const rev = block.getByRole("link", { name: /^Site version / });
   await expect(rev).toHaveAttribute("href", "https://github.com/simonvanlierde/simonvanlierde.github.io");
@@ -179,14 +171,13 @@ test("the title block states what the sheet is, and when it was drawn", async ({
 });
 
 test("a sheet with nothing generated is attributed rather than dated", async ({ page }) => {
-  // The 404 is the only sheet without an export behind it, so it is the only
-  // one that takes the title block's "Drawn by" fallback.
+  // The 404 has no export behind it, so it falls back to "Drawn by".
   await page.goto("/no-such-page/");
   const block = page.getByRole("region", { name: "Document title block" });
   await expect(block.getByText("Drawn by", { exact: true })).toBeVisible();
   await expect(block.getByText("SVL", { exact: true })).toBeVisible();
   await expect(block.locator("time")).toHaveCount(0);
-  await expect(block.getByText("— OF 2", { exact: true })).toBeVisible();
+  await expect(block.getByText("NOT IN SET", { exact: true })).toBeVisible();
 });
 
 test("the open sheet is marked current in the nav", async ({ page }) => {
@@ -213,52 +204,46 @@ test("an unknown path serves the 404 page with a way back", async ({ page }) => 
 });
 
 test.describe("disassembly chart", () => {
-  // The chart is a client:visible island: it hydrates only once scrolled into
-  // view, and a click before that lands on inert server-rendered markup. Astro
-  // drops the `ssr` attribute when hydration finishes, so wait for that once
-  // rather than retrying each interaction.
+  // The chart hydrates on scroll (client:visible). Astro drops `ssr` once it has
+  // hydrated, so wait for that before interacting.
   test.beforeEach(async ({ page }) => {
     await page.locator("astro-island").scrollIntoViewIfNeeded();
     await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
   });
 
   test("the visually-hidden data table mirrors the plotted series", async ({ page }) => {
-    // The table is the chart's accessible fallback; if it drifts from the bars,
-    // assistive-tech users silently get a different dataset than sighted users.
+    // The hidden table is the accessible fallback, so it must match the plotted months.
     const rows = page.locator("table tbody tr");
-    const bars = page.locator("path.chart__bar");
+    const columns = page.locator("rect.chart__hit");
     const rowCount = await rows.count();
     expect(rowCount).toBeGreaterThan(0);
-    await expect(bars).toHaveCount(rowCount);
+    await expect(columns).toHaveCount(rowCount);
 
-    // Caption names the active measure and tracks the toggle.
     const caption = page.locator("table caption");
-    await expect(caption).toHaveText(/Teardowns/i);
+    await expect(caption).toHaveText(/Products/i);
 
-    const parts = page.getByRole("button", { name: "Parts" });
+    const parts = page.getByRole("button", { name: "Components" });
     await parts.click();
-    await expect(caption).toHaveText(/Parts/i);
+    await expect(caption).toHaveText(/Components/i);
   });
 
   test("chart measure toggle updates pressed state and the accessible summary", async ({ page }) => {
     const chart = page.locator('svg[role="img"]');
-    await expect(chart).toHaveAttribute("aria-label", /teardowns/i);
+    await expect(chart).toHaveAttribute("aria-label", /products/i);
 
-    const parts = page.getByRole("button", { name: "Parts" });
+    const parts = page.getByRole("button", { name: "Components" });
     await parts.click();
     await expect(parts).toHaveAttribute("aria-pressed", "true");
 
-    await expect(chart).toHaveAttribute("aria-label", /parts/i);
-    await expect(page.getByRole("button", { name: "Teardowns" })).toHaveAttribute("aria-pressed", "false");
+    await expect(chart).toHaveAttribute("aria-label", /components/i);
+    await expect(page.getByRole("button", { name: "Products" })).toHaveAttribute("aria-pressed", "false");
 
-    // Without the live region the switch is silent to a screen reader: the label
-    // and the table both change off-screen with nothing announcing it.
-    await expect(page.locator("[aria-live=polite]")).toHaveText(/^Parts: /);
+    // Without the live region, a screen reader hears nothing when the measure switches.
+    await expect(page.locator("[aria-live=polite]")).toHaveText(/^Components: /);
   });
 
   test("arrow keys walk the tooltip, which never blocks the pointer", async ({ page }) => {
-    // Hover is the only way to read an exact value, and the hidden table serves
-    // screen readers only; a sighted keyboard user needs this path.
+    // Sighted keyboard users read exact values here; the hidden table serves screen readers.
     const chart = page.locator('svg[role="img"]');
     await chart.focus();
     const tip = page.locator(".chart__tip-title");
@@ -270,8 +255,7 @@ test.describe("disassembly chart", () => {
     await page.keyboard.press("Home");
     await expect(tip).toHaveText(first ?? "");
 
-    // The tooltip paints over the hit rects; without pointer-events:none it
-    // swallows the hover meant for a neighbouring column and sticks.
+    // The tooltip covers the hit rects; without pointer-events:none it swallows hovers.
     const labels = await page.locator("table tbody tr th").allTextContents();
     const hits = page.locator("rect.chart__hit");
     const last = (await hits.count()) - 1;
@@ -279,10 +263,24 @@ test.describe("disassembly chart", () => {
     await expect(tip).toHaveText(labels[last]);
   });
 
+  test("month labels never overlap on a phone, and the latest keeps its label", async ({ page }) => {
+    // Overlapping labels read as one word.
+    await page.setViewportSize({ width: 390, height: 844 });
+    const boxes = await page.locator("text.chart__xlabel").evaluateAll((els) =>
+      els
+        .filter((el) => getComputedStyle(el).display !== "none")
+        .map((el) => el.getBoundingClientRect())
+        .map((r) => ({ left: r.left, right: r.right })),
+    );
+    expect(boxes.length).toBeGreaterThan(1);
+    for (let i = 1; i < boxes.length; i++) {
+      expect(boxes[i].left, `label ${i} overlaps label ${i - 1}`).toBeGreaterThanOrEqual(boxes[i - 1].right);
+    }
+    await expect(page.locator("text.chart__xlabel").last()).toBeVisible();
+  });
+
   test("secondary chart measures use progressive disclosure", async ({ page }) => {
-    // The disclosure button relabels itself as it toggles, so hold it by element
-    // and assert the accessible name separately; a by-name locator stops
-    // resolving the moment the name it was built from changes.
+    // The button relabels itself, so locate it by element, not by name.
     const more = page.locator("button.chart__more");
     await expect(more).toHaveAttribute("aria-expanded", "false");
     await expect(more).toHaveAccessibleName("Show more measures");

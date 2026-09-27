@@ -1,8 +1,6 @@
 ---
-// GitHub Pages serves the built 404.html for any unmatched path, so this is
-// the only error state a static site has. It is still a sheet of the same
-// drawing set: frame, nav, title block, so a wrong URL never looks like a
-// broken host.
+// GitHub Pages serves this for any unmatched path. It keeps the site chrome
+// so a wrong URL does not look like a broken host.
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import Base from "../layouts/Base.astro";
@@ -26,7 +24,7 @@ import Base from "../layouts/Base.astro";
     </p>
   </main>
 
-  <TitleBlock title="Simon van Lierde" docType="Page not found" sheet="— OF 2" />
+  <TitleBlock title="Simon van Lierde" docType="Page not found" sheet="NOT IN SET" />
 </Base>
 
 <style>
@@ -49,5 +47,11 @@ import Base from "../layouts/Base.astro";
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-m) var(--space-l);
+  }
+
+  /* 44px target without moving the text. */
+  .notfound__row a:not(.stamp) {
+    padding-block: 0.65rem;
+    margin-block: -0.65rem;
   }
 </style>

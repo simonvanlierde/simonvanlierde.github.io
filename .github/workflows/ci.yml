@@ -32,20 +32,13 @@ jobs:
       - name: Lint, typecheck & test
         run: pnpm check
 
-      # pnpm check already typechecks (astro check), so build bare — no redundant re-check.
+      # pnpm check already ran astro check, so skip it here.
       - name: Build
         run: pnpm exec astro build
 
-      # axe + e2e run the built site in a real browser (contrast, keyboard,
-      # hydration — things the linter can't see). Install Chromium fresh each run:
-      # the headless shell is ~115 MB and downloads in seconds, so version-keyed
-      # caching saves little and buys real failure modes (a poisoned cache never
-      # self-heals; new PR branches miss it anyway).
-      #
-      # No --with-deps: the ubuntu-latest image already ships every shared library
-      # Chromium needs, so the flag only spent ~150s on apt-get update plus CJK,
-      # Thai and Cyrillic font packages this Latin-only site never renders. If a
-      # future runner image drops a library, add the flag back.
+      # Uncached: the download takes seconds, and a stale cache never self-heals.
+      # No --with-deps: ubuntu-latest already has Chromium's libraries, and the flag
+      # cost ~150s. Add it back if a runner image drops one.
       - name: Install Playwright Chromium
         run: pnpm exec playwright install chromium
 

@@ -1,24 +1,22 @@
 import process from "node:process";
 import { defineConfig, devices } from "@playwright/test";
 
-// Accessibility gate only: drive the built site in headless Chromium and run
-// axe against it. Playwright starts `astro preview` itself (webServer), so no
-// separate server-orchestration dependency is needed. Requires a prior build
-// (dist/); CI builds before this step, locally run `pnpm build` first.
+// Tests the built site: run `pnpm build` first (CI does).
 export default defineConfig({
   testDir: "./tests",
+  // tests/unit/ runs under `node --test`, not Playwright.
+  testIgnore: "unit/**",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? "github" : "list",
   use: { baseURL: "http://127.0.0.1:4321" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "astro preview --port 4321 --host 127.0.0.1",
+    // --ignore-lock keeps preview in the foreground. Astro backgrounds it under an
+    // AI agent, and Playwright reads that as an early exit.
+    command: "astro preview --port 4321 --host 127.0.0.1 --ignore-lock",
     url: "http://127.0.0.1:4321",
-    // Never adopt whatever already answers on 4321: a stray `astro dev` there
-    // serves dev-mode output and the suite would pass against a page visitors
-    // never see. Playwright starts its own
-    // preview or fails on the busy port, which is the signal you want.
+    // A stray `astro dev` on 4321 would serve dev output; fail on the busy port instead.
     reuseExistingServer: false,
   },
 });

@@ -2,11 +2,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 
 /**
- * Wait until nothing on the page is still animating. A contrast scan samples
- * computed colours once, so scanning mid-transition reads half-blended values:
- * that is what produced a 3.66:1 reading on the segmented control (settled: 5.5:1)
- * and, twice, an intermittent failure on a freshly loaded page. axe is meant to
- * audit a settled page, so settling first is part of asking the question properly.
+ * Wait for animations to finish. axe samples colours once, so a scan
+ * mid-transition reads half-blended values and reports false contrast failures.
  */
 async function settle(page: Page) {
   await page.waitForLoadState("load");
@@ -19,10 +16,8 @@ async function settle(page: Page) {
     });
 }
 
-// Assert on axe `violations` only. axe returns SVG `<text>` contrast (the chart
-// axis labels) as `incomplete` because it cannot resolve an SVG element's
-// background. That is inconclusive, not a failure, so ignoring it here is
-// correct and needs no element hiding.
+// Assert on violations only. axe reports SVG `<text>` contrast (chart axis labels)
+// as `incomplete` because it cannot resolve SVG backgrounds; that is not a failure.
 async function expectNoViolations(page: Page) {
   await settle(page);
   const { violations } = await new AxeBuilder({ page }).analyze();
@@ -30,8 +25,7 @@ async function expectNoViolations(page: Page) {
   expect(violations, `axe violations:\n${summary}`).toEqual([]);
 }
 
-// Both colour schemes are scanned because the site ships distinct light/dark
-// tokens, and contrast is the class of issue static linting can't catch.
+// Each colour scheme has its own tokens, and linting cannot catch contrast.
 for (const colorScheme of ["light", "dark"] as const) {
   for (const path of ["/", "/cv/", "/no-such-page/"]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
@@ -42,25 +36,24 @@ for (const colorScheme of ["light", "dark"] as const) {
   }
 }
 
-// Scan a mutated DOM, not just first paint: open the personal-projects
-// disclosure, switch the chart measure when a chart is rendered at all, and
-// flip the theme so the blueprint rendering is scanned too, then re-check.
-// Regressions often hide in the states a static scan never reaches.
+// Scan states a first-paint scan never reaches: a toggled disclosure, another
+// chart measure, and the blueprint theme.
 test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
 
-  await page.locator("details.disclosure.personal summary").click();
+  // Personal projects ships open; fold and reopen it so the scan sees the toggled state.
+  const personal = page.locator("details.disclosure.personal summary");
+  await personal.click();
+  await personal.click();
 
-  const parts = page.getByRole("button", { name: "Parts" });
+  const parts = page.getByRole("button", { name: "Components" });
   if ((await parts.count()) > 0) {
     await expect(async () => {
       await parts.click();
       await expect(parts).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
     }).toPass();
 
-    // Let the segment's 120ms background fade finish. Scanned mid-transition,
-    // axe samples a half-blended fill and reports 3.66:1 for a pair that reads
-    // at 5.5:1 once settled: a measurement artefact, not a contrast failure.
+    // Let the segment's 120ms background fade finish (see settle()).
     await parts.evaluate(
       (el) =>
         new Promise((resolve) => {
@@ -70,10 +63,8 @@ test("no axe violations after interaction", async ({ page }) => {
     );
   }
 
-  // The blueprint rendering is a full second palette; scan it as well.
   await page.locator(".theme-toggle").click();
-  // A fresh context starts light, so the click must land on "true"; anything
-  // else means the toggle is broken and axe would scan the light palette twice.
+  // A fresh context starts light, so anything but "true" means the toggle is broken.
   await expect(page.locator(".theme-toggle")).toHaveAttribute("aria-pressed", "true");
 
   await expectNoViolations(page);

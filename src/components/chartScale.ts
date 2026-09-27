@@ -1,7 +1,5 @@
-// Build an axis with a "nice" round step (1/2/5 × 10ⁿ) so tick labels are
-// evenly spaced and never collide after formatting. For whole-count measures
-// the step is forced to an integer, so e.g. a max of 2 gives ticks 0,1,2
-// rather than 0,0.5,1,1.5,2 (which round to a duplicated "0,1,1,2,2").
+// Axis with a round 1/2/5 × 10ⁿ step. Whole counts get an integer step: a max
+// of 2 would otherwise tick every 0.5 and format as "0,1,1,2,2".
 export function buildScale(max: number, integer: boolean): { yMax: number; ticks: number[] } {
   const targetSteps = 4;
   const rawStep = max / targetSteps || 1;
@@ -15,14 +13,38 @@ export function buildScale(max: number, integer: boolean): { yMax: number; ticks
   return { yMax, ticks };
 }
 
-export const ZERO_STUB = 2;
+// Stepped outline of a running total (`line`) and the same outline closed to
+// the baseline (`area`). The path commands depend only on the month count, so
+// CSS can transition `d` between measures.
+export function stepPaths(tops: number[], left: number, colW: number, base: number): { line: string; area: string } {
+  const steps = tops.map((top, i) => `V${top}H${left + (i + 1) * colW}`).join("");
+  return {
+    line: `M${left},${tops[0] ?? base}${steps}`,
+    area: `M${left},${base}${steps}V${base}H${left}Z`,
+  };
+}
 
-// A bar as a path rather than a <rect>: a zero value still draws a
-// `ZERO_STUB`-tall sliver (an empty period must read as "zero", not as "no
-// data"), and the command sequence is identical for every input, so browsers
-// can interpolate `d` on measure switch.
-export function barPath(cx: number, width: number, top: number, base: number): string {
-  const y = base - Math.max(base - top, ZERO_STUB);
-  const x = cx - width / 2;
-  return `M${x},${base}V${y}H${x + width}V${base}Z`;
+// Thousands separated by a thin space, the style the notes use.
+export const formatCount = (n: number) => Math.round(n).toLocaleString("en-US").replace(/,/g, " ");
+
+// Running totals, counted back from the payload's totals so the last column
+// matches the notes. Months before the first nonzero `startKey` are dropped.
+// Their counts stay in the totals.
+export function runningTotals<K extends string, R extends { period: string; label: string } & Record<K, number>>(
+  rows: R[],
+  keys: readonly K[],
+  totals: Record<K, number>,
+  startKey: K,
+): (R & { total: Record<K, number> })[] {
+  const total = { ...totals };
+  const withTotals = rows
+    .toReversed()
+    .map((row) => {
+      const snapshot = { ...total };
+      for (const k of keys) total[k] -= Number(row[k]) || 0;
+      return { ...row, total: snapshot };
+    })
+    .toReversed();
+  const start = rows.findIndex((row) => row[startKey] > 0);
+  return start === -1 ? withTotals : withTotals.slice(start);
 }

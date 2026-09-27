@@ -90,27 +90,24 @@ components:
 
 **Creative North Star: "The Engineering Drawing Set"**
 
-Taking products apart is what the author does, so the page is drawn the way a
-product is drawn: an exploded view with balloons and a register, lettered
-general notes, a parts list, an ISO 7200 title block, a trim frame around every
-sheet. It is a measured drawing of the work, not a portfolio text column.
+The site is drawn like a product drawing. It has an exploded view with balloons
+and a register, lettered general notes, a parts list, an ISO 7200 title block,
+and a trim frame around every sheet.
 
-Two renderings of one sheet. Light mode is ink linework on warm drafting paper.
-Dark mode is the same sheet as a cyanotype: pale lines on a Prussian-blue
-ground, roles swapped, nothing redesigned. Colour is never the sole signal.
+Light mode is ink linework on warm drafting paper. Dark mode is the same sheet
+as a cyanotype: pale lines on a Prussian-blue ground, with the roles swapped.
+Colour is never the sole signal.
 
-Every figure is real and dated: the general notes carry running counts from the
-stats export, the title block carries the package version and the export dates.
-The exploded view is ReLab taken apart, its six real parts, labelled schematic.
+Every figure is real and dated. The general notes show running counts from the
+stats export. The title block shows the package version and the export dates.
+The exploded view shows the six real parts of ReLab and is labelled schematic.
 
-**How to read this document.** The named rules are the binding part: they say
-what makes a page belong to this set, and breaking one is a decision to make
-deliberately. Everything else describes the intent behind the current sheets so
-a new one can be drawn in the same hand. Specific values live in
-`src/styles/global.css` and in the frontmatter above, and they are settings, not
-commitments: a new size, a new part of the figure, a new section, or a whole new
-sheet is welcome as long as the rules still hold. This is a drawing convention
-to design within, not an inventory to preserve.
+**How to read this document.** The named rules are binding: they define what
+makes a page belong to this set. Everything else describes the current sheets,
+so a new one can be drawn in the same hand. Specific values live in
+`src/styles/global.css` and in the frontmatter above. They are settings, not
+commitments. A new size, figure part, section, or sheet is welcome as long as
+the rules still hold.
 
 **Key Characteristics:**
 
@@ -123,11 +120,11 @@ to design within, not an inventory to preserve.
 
 ### Colors
 
-Design in roles, not in hex. Two grounds, one working ink, engineer's blue for
-the working accents, and checker's green for the single stamp. Every pair is one
-`light-dark()` OKLCH token, and every text pair clears 4.5:1 on its ground,
-verified at build time. A new colour is a new role, argued for, or it is one of
-these tokens reused.
+Design in roles, not in hex. The palette has two grounds, one working ink,
+engineer's blue for the working accents, and checker's green for the single
+stamp. Every pair is one `light-dark()` OKLCH token. Every text pair clears
+4.5:1 on its ground, verified by the axe suite in CI. A new colour must be a new role
+with a reason, or one of these tokens reused.
 
 #### Primary
 
@@ -161,8 +158,7 @@ correction on a drawing and an error on a screen.
 | `--border` (Hairline) | Rules between rows and cells |
 | `--border-strong` (Frame Line) | The sheet frame, section-heading rules, balloons, datum marks |
 
-Hairline and Frame Line are the only two rule weights on the set. A third weight
-would need a reason a draughtsman would recognise.
+Hairline and Frame Line are the only two rule weights on the set.
 
 #### Named Rules
 
@@ -171,13 +167,13 @@ the one thing to do next; a second stamp demotes both. Every other action is an
 engineer's-blue link.
 
 **The Kept Names Rule.** The custom property names (`--bg`, `--text`,
-`--accent`, `--chart-bar`, and the rest) are the previous design system's, kept
-so every consumer rethemes without edits, the React chart island included.
-Retheme by changing what a name resolves to; never fork a parallel palette.
+`--accent`, `--chart-bar`, and the rest) come from the previous design system.
+They are kept so every consumer, the Preact chart island included, rethemes
+without edits. Retheme by changing what a name resolves to; never fork a parallel palette.
 
-**The Uniform Chroma Rule.** On `@media (color-gamut: p3)` only the chromatic
-tokens lift, uniformly, never lightness. A display that claims P3 and clamps
-still clears every contrast floor.
+**The Uniform Chroma Rule.** On `@media (color-gamut: p3)`, the chromatic tokens raise their chroma
+by one uniform factor. Lightness never changes. A display that claims P3 and clamps still clears
+every contrast floor.
 
 ### Typography
 
@@ -205,9 +201,10 @@ retunes the set.
 | Body | `--step-0` | Prose, capped at `--measure` |
 | Label | `--step--1` | Nav links, tags, title-block cells, periods, figure labels |
 
-A zone label is set smaller than the content it labels: it is a label, not a
-statement. Weights stay at 400 throughout; hierarchy comes from size, tracking,
-case, and rules.
+A zone label is set smaller than the content it labels. The drafting hand stays
+at weight 400; hierarchy comes from size, tracking, case, and rules. The one
+exception is the CV's role line, set in the system sans at 650, because osifont
+has no bold.
 
 #### Named Rules
 
@@ -222,34 +219,34 @@ in rem, near 70 characters.
 
 ### Layout
 
-The page is one tall sheet, and `body::before` draws the trim frame around the
-document, not the viewport: a fixed line would strike through scrolling text.
-The frame is screen only; print gets the plain document. Every page of the site
-carries this chrome.
+The page is one tall sheet. `body::before` draws the trim frame around the
+document, not the viewport, so the line never crosses scrolling text. The frame
+is screen only; print gets the plain document. Every page of the site carries
+this chrome.
 
-One container width governs the sheet, sized so the rail, the gutter, and the
-prose measure fit with room to spare, and so rules end where the writing ends.
-Sections stack on the spacing scale and carry no rule of their own: the zone
-label's rule is the one line per boundary. Content that pairs a short key with a
-body (work rows, CV entries) shares one two-column grid, a fixed left rail and a
-fluid body, collapsing to one column on narrow screens. New sections should join
-that grid rather than invent a second one.
+One container width governs the sheet. It fits the rail, the gutter, and the
+prose measure, so rules end where the writing ends. Sections stack on the
+spacing scale and carry no rule of their own: the zone label's rule is the one
+line per boundary.
 
-Below the reading width, a layout may re-compose rather than merely stack: the
-exploded figure becomes a compact assembly map so all its parts stay visible as
-one system. Re-composing is encouraged where stacking would cost the reader the
-whole picture.
+Content that pairs a short key with a body (work rows, CV entries) shares one
+two-column grid: a fixed left rail and a fluid body. On narrow screens it
+collapses to one column. New sections join that grid instead of adding a second
+one.
+
+Below the reading width, a layout may re-compose instead of only stacking. For
+example, the exploded figure becomes a compact assembly map, so all its parts
+stay visible together.
 
 Moving between sheets is a plain page load, with no cross-document view
-transition: a morphing name on every switch was a distraction, not continuity.
-In-page jumps scroll smoothly, `auto` under reduced motion.
+transition. In-page jumps scroll smoothly, `auto` under reduced motion.
 
 ### Elevation & Depth
 
-No shadows, anywhere. Hierarchy is carried by line weight, by the two-step
-ground (`--bg` against the barely-lighter `--surface`), and by lettering size.
-Chrome that floats over the sheet, such as the sticky nav, separates itself with
-a solid ground and a rule, never with a shadow or blur.
+No shadows, anywhere. Line weight, lettering size, and the two-step ground
+(`--bg` against the barely lighter `--surface`) carry hierarchy. Chrome that
+floats over the sheet, such as the sticky nav, uses a solid ground and a rule to
+separate itself.
 
 #### Named Rules
 
@@ -261,7 +258,7 @@ devices a drawing has.
 
 Zero radii: `--radius` and `--radius-pill` are both 0px. Everything is
 rectilinear and rule-drawn, with no fills except the paper itself. Two notation
-marks are the deliberate exceptions, and they are notation, not decoration:
+marks are the only exceptions:
 
 - **The balloon**, a circle with a `--border-strong` stroke, numbers an item on
   a figure and is keyed to that figure's register. Circled numerals mean a
@@ -269,15 +266,15 @@ marks are the deliberate exceptions, and they are notation, not decoration:
 - **The datum mark**, a square box, carries lettered references: the general
   notes (A–D) and the zone index.
 
-A future figure may add balloons and a register of its own. Nothing else earns a
+A future figure may add balloons and a register of its own. Nothing else is a
 circle.
 
 ### Components
 
-A component belongs to this set when it is drawn rather than styled: rules and
-lettering carry it, it consumes tokens by their kept names, it answers state
-with a tint, a fill swap, or a line, and it needs no colour to be understood.
-Build a new one against the rules above; the sheets today carry these.
+A component belongs to this set when rules and lettering carry it. It consumes
+tokens by their kept names, answers state with a tint, a fill swap, or a line,
+and needs no colour to be understood. Build a new one against the rules above.
+The current sheets use these:
 
 | Component | What governs it |
 |---|---|
@@ -290,55 +287,61 @@ Build a new one against the rules above; the sheets today carry these.
 | Title block | ISO 7200 provenance, and the one place the profile links live |
 | Exploded view | The signature figure; see below |
 | General notes | Datum-lettered running totals, sitting with the platform they describe |
-| Chart island | Kept token names only, solid bars, drafting numerals, controls in a ruled fieldset |
+| Chart island | Kept token names only, a stepped outline over section hatching; see below |
 
-Every interactive target buys a 44px hit area with padding plus negative margin,
-so the glyph stays optically in place.
+The chart island draws its running totals as a stepped outline over section
+hatching. It uses the general notes' measure names, drafting numerals, and a
+ruled fieldset for its controls. It never plots monthly bars, because a bar per
+month reads as that month's amount. The current total is printed at the end of
+the outline.
+
+Every interactive target gets a 44px hit area from padding plus negative margin,
+so the glyph stays in place.
 
 #### The signature figure
 
-The exploded view is authored SVG linework of a real system taken apart on a
-dash-dot centreline, in flat front elevation, with part strokes heavier than
-fine lines. Each part carries a balloon on a short leader, and a register keys
-the numbers to part names. Part and label are one link to the real thing, named
-for assistive tech, with a drawn arrow in the register so a row reads as a link
-before hover; hover and focus answer in ink, not in a box, so the whole
-silhouette is the target. The drawing carries no statistics and no dimensions,
-and the caption says "schematic".
+The exploded view is authored SVG linework of a real system, taken apart along
+a dash-dot centreline. It is drawn in flat front elevation, with part strokes
+heavier than fine lines. Each part carries a balloon on a short leader, and a
+register keys the numbers to part names.
 
-Captions are global: under the figure, "Fig. N:" first, one style for every
-figure on the set. A second figure inherits all of this.
+Each part and its label form one link to the real thing, with an accessible
+name. A drawn arrow in the register shows that a row is a link before hover.
+Hover and focus answer in ink, not in a box, so the whole silhouette is the
+target. The drawing carries no statistics and no dimensions, and the caption
+says "schematic".
+
+Every figure on the set uses one caption style: under the figure, starting with
+"Fig. N:". A second figure inherits all of this.
 
 #### Named Rules
 
 **The Drafting Motion Rule.** Motion is drafting-derived behaviour, never
-decoration: parts settle apart from an assembled stack, bars grow from their
-baseline, fills swap on the `--dur-fast`/`--dur-base` clock. Reveal motion runs
-once, on load. Every animation is answered by a `prefers-reduced-motion` block
-in the file that declares it, and the reduced state is the finished state, never
-a missing one.
+decoration. Parts settle apart from an assembled stack, a chart's total is
+traced in from the left, and fills swap on the `--dur-fast`/`--dur-base` clock.
+Reveal motion runs once, on load. Every animation has a
+`prefers-reduced-motion` block in the file that declares it. The reduced state
+is the finished state, never a missing one.
 
 **The Real Figures Rule.** Every number on the sheet is a real, dated count or
-version, inherited product truth. Counts come from the stats export
-(`stats.json`); while that export is flagged `sample`, the sheet falls back to
-the last dated counts the platform itself reported, kept in `index.astro`. Data
-flagged as sample renders labelled as sample or not at all. No invented
-placeholder ever ships as a figure.
+version from the product. Counts come from the stats export (`stats.json`),
+which a scheduled workflow refreshes from the live ReLab API. No sample or
+placeholder figure ever ships.
 
 ### Do's and Don'ts
 
 #### Do
 
-- **Do** consume the kept token names for every new surface; both themes come
-  free.
+- **Do** consume the kept token names for every new surface, so both themes
+  work without extra styles.
 - **Do** set every figure, date, and label in the drafting hand with
   `font-variant-numeric: tabular-nums` (`.draft` / `.tag` / `time`).
 - **Do** draw hierarchy with the two rule weights and the zone-label h2.
-- **Do** buy 44px hit targets with padding plus negative margin.
+- **Do** make hit targets 44px with padding plus negative margin.
 - **Do** keep the sheet chrome on every page, the 404 included: frame, sheet
   nav, title block. A wrong URL is still a sheet of the set.
 - **Do** add sheets, sections, figures, and components. The set is meant to
-  grow; the rules are what keep a new one legible beside the old ones.
+  grow, and the rules keep a new part legible beside the old ones.
 
 #### Don't
 
@@ -348,7 +351,8 @@ placeholder ever ships as a figure.
   item balloon.
 - **Don't** use shadows, blur, or translucent fills; state answers with
   `--surface`, a fill swap, or a line.
-- **Don't** hardcode a colour: every colour is a `light-dark()` token, and the
-  two theme-color metas in Base.astro mirror `--bg` by hand; change them
-  together.
+- **Don't** hardcode a colour: every colour is a `light-dark()` token. The one
+  literal is the theme-color meta in Base.astro, which holds light `--bg` for
+  the first paint. The theme script then rewrites it from the computed `--bg`.
+  Change the literal when light `--bg` changes.
 - **Don't** letter prose in osifont, and don't cap the measure in `ch`.

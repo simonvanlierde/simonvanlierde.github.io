@@ -1,7 +1,7 @@
 /* DisassemblyChart island styles. Colours come from global design tokens. */
 
-/* 30rem is the 480-unit viewBox at 1:1. Wider and the SVG scales up, inflating
-   13px axis labels into 19px ones; the plot has one correct size and this is it. */
+/* 30rem renders the 480-unit viewBox at 1:1. Wider, and 13px labels scale up
+   to 19px. */
 .chart {
   margin: 0;
   max-width: 30rem;
@@ -12,9 +12,7 @@
   color: var(--text-muted);
 }
 
-/* Three core measures stay immediately available. The remaining two sit in a
-   second ruled row on request, preserving the complete dataset without making
-   every visit begin with five equal choices. */
+/* Three measures show by default. The other two open in a second row. */
 .chart__controls {
   display: grid;
   width: 100%;
@@ -51,8 +49,7 @@
   min-width: 0;
   align-items: center;
   justify-content: center;
-  /* Full 44px target: a mis-tap changes the measure under you without
-     saying so. */
+  /* 44px target: a mis-tap changes the measure without notice. */
   min-height: 44px;
   font-family: var(--font-mono);
   font-size: var(--step--1);
@@ -65,9 +62,8 @@
   background: var(--surface);
   color: var(--text-muted);
   cursor: pointer;
-  /* The fill fades on the same clock as the bars it drives. No press-scale:
-     these segments share one ruled fieldset, and shrinking one would open a
-     seam against its neighbours. */
+  /* No press-scale: the buttons share one ruled fieldset, and a shrinking
+     button would open a gap. */
   transition:
     background-color var(--dur-fast) ease,
     color var(--dur-fast) ease;
@@ -94,10 +90,8 @@
   outline-color: var(--accent-contrast);
 }
 
-/* Not a measure but a disclosure, so it must not read as a sixth thing the
-   chart could plot: a recessed ground and a chevron that turns with the state
-   it reports. Drawn in CSS rather than shipped as a glyph or a file, so it
-   inherits currentColor through the accent fill and the focus ring. */
+/* A disclosure, not a measure, so it gets a recessed background and a
+   chevron. The chevron is CSS borders, so it inherits currentColor. */
 .chart__more {
   flex-direction: column;
   gap: 0.1em;
@@ -145,6 +139,12 @@
   overflow: visible;
 }
 
+/* All plot text is data: drafting hand with tabular numerals. */
+.chart__plot text {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
 /* The plot is a tab stop (arrow keys walk the tooltip), so it needs a ring. */
 .chart__plot svg:focus-visible {
   outline: 3px solid var(--focus);
@@ -160,11 +160,9 @@
 .chart__grid text {
   fill: var(--text-muted);
   font-size: 13px;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
 }
 
-/* The zero line the bars stand on: darker and thicker than the gridlines. */
+/* The zero line the total stands on: darker and thicker than the gridlines. */
 .chart__axis {
   stroke: var(--text-muted);
   stroke-width: 2;
@@ -174,7 +172,6 @@
 .chart__unit {
   fill: var(--text-muted);
   font-size: 11px;
-  font-family: var(--font-mono);
 }
 
 .chart__xlabel {
@@ -182,69 +179,62 @@
   font-size: 13px;
 }
 
-/* The year (or other qualifier) only prints where it changes. It stays quieter
-   through size alone: 0.75 opacity here drops the text to 3.5:1, and small text
-   is the last place to spend contrast. */
+/* The year prints only where it changes. It is quieter by size, not opacity:
+   0.75 opacity drops the small text to 3.5:1 contrast. */
 .chart__xlabel-qualifier {
   font-size: 11px;
 }
 
-/* Marks. A solid fill, never a translucent one: opacity would blend the bar with
-   whatever sits behind it, making its real contrast unknowable. Hover changes
-   the fill step instead. */
-.chart__bar {
-  fill: var(--chart-bar);
-  transition: fill var(--dur-fast) ease;
+/* The running total as it stands, lettered at the end of the step. */
+.chart__endlabel {
+  fill: var(--text);
+  font-size: 13px;
+}
+
+/* Hatching marks the area under the outline. Solid strokes, not a translucent
+   fill: opacity blends with the background and makes contrast unpredictable. */
+.chart__hatch {
+  stroke: var(--chart-bar);
+  stroke-width: 1;
+}
+
+.chart__area {
+  stroke: none;
+}
+
+.chart__line {
+  fill: none;
+  stroke: var(--chart-bar-strong);
+  stroke-width: 2.5;
+  stroke-linejoin: miter;
 }
 
 /* Motion is opt-in; reduced-motion users get the final state instantly. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Switching measure redraws every bar's path; ease to the new heights rather
-     than replaying the load reveal. `barPath` always emits the same command
-     sequence, so `d` interpolates. Where `transition: d` is unsupported the bars
-     snap to the new measure, which is fine. (Keep the hover fade too, since this
-     shorthand replaces the base one.)
-
-     Keep it short. The gridlines and their tick labels rescale in a single
-     frame (they carry new *numbers*, so there is nothing to interpolate), and
-     for the length of this transition the bars are drawn against an axis that
-     no longer describes them. At 350ms that gap reads as wrong values; at 200ms
-     it reads as the change itself. */
+  /* A measure change eases the outline to its new heights. `stepPaths` keeps
+     the path commands fixed, so `d` interpolates. Unsupported browsers snap.
+     Keep the duration short: the axis rescales at once, so a long transition
+     shows the outline against the wrong scale. */
   @supports (transition-property: d) {
-    .chart__bar {
-      transition:
-        d var(--dur-base) var(--ease-in-out),
-        fill var(--dur-fast) ease;
+    .chart__area,
+    .chart__line {
+      transition: d var(--dur-base) var(--ease-in-out);
     }
   }
 
-  /* Load reveal: bars grow up from the baseline, staggered left to right, once
-     on mount. Needs fill-box so scaleY pivots on each bar's own baseline rather
-     than the SVG viewport; where that is unsupported (Safari < 15.4) the reveal
-     is skipped and bars just appear, which is fine.
+  /* Load reveal: draws the total in from the left, once. */
+  .chart__total {
+    animation: chart-draw 0.7s var(--ease-out) both;
+  }
 
-     Duration and stagger are both sized so twelve bars finish inside ~730ms.
-     Keyframes restart from zero instead of retargeting, so any measure switch
-     during the reveal has a bar morphing its `d` while still scaling up out of
-     the baseline; the shorter the run, the smaller that window. */
-  @supports (transform-box: fill-box) {
-    .chart__bar {
-      transform-box: fill-box;
-      transform-origin: bottom;
-      animation: chart-bar-grow 0.4s var(--ease-out) both;
-      animation-delay: calc(var(--bar-i, 0) * 30ms);
+  @keyframes chart-draw {
+    from {
+      clip-path: inset(0 100% 0 0);
     }
-
-    @keyframes chart-bar-grow {
-      from {
-        transform: scaleY(0);
-      }
+    to {
+      clip-path: inset(0 0 0 0);
     }
   }
-}
-
-.chart__bar[data-active="true"] {
-  fill: var(--chart-bar-strong);
 }
 
 .chart__hit {
@@ -253,8 +243,8 @@
 
 /* Tooltip */
 
-/* Painted last and wider than a column: without this it swallows the
-   pointerenter meant for the hit rect underneath and the tip sticks. */
+/* Painted over the hit rects and wider than a column. Without this, it takes
+   the pointerenter and the tooltip sticks. */
 .chart__tooltip {
   pointer-events: none;
 }
@@ -285,14 +275,12 @@
   font-size: 13px;
 }
 
-/* A narrow plot renders the 480-unit viewBox at roughly 0.6, which would put 13px
-   labels back under 8 real pixels. Scale the type up in user units instead, and
-   drop the y-axis text: the notes above carry magnitude, a tap carries the exact
-   figure, and the gridlines still give the eye a level to read against.
+/* A narrow plot renders at about 0.6 scale, putting 13px labels under 8 real
+   pixels. Enlarge the type and label only every few months (the component
+   picks which). Hide the y-axis text: the end label gives the magnitude.
 
-   Keyed to the `chart` container (declared on .relab__chart) rather than the
-   viewport, because a 26rem plot needs this treatment whether it is narrow from
-   being on a phone or from sitting in a half-width column. */
+   A container query, because the plot is also narrow in a half-width column.
+   The `chart` container is declared on .relab__chart. */
 @container chart (max-width: 26rem) {
   .chart__controls-row--primary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -300,14 +288,17 @@
 
   .chart__grid text,
   .chart__unit,
-  .chart__xlabel-qualifier {
+  .chart__xlabel--minor {
     display: none;
   }
 
-  .chart__xlabel {
-    /* 18, not 19: twelve month labels in 420 user units start colliding above
-       this and the gap between them is doing the separating. */
-    font-size: 18px;
+  .chart__xlabel,
+  .chart__endlabel {
+    font-size: 19px;
+  }
+
+  .chart__xlabel-qualifier {
+    font-size: 16px;
   }
 
   .chart__tip-title {
@@ -320,7 +311,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chart__bar,
+  .chart__area,
+  .chart__line,
   .chart__toggle,
   .chart__more,
   .chart__more > span:last-child::after {

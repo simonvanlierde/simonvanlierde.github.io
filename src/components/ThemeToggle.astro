@@ -1,10 +1,8 @@
-{/* The button only. Its behaviour (click handler, aria-pressed, theme-color
-    sync) lives in Base.astro, which looks this up by class and tolerates its
-    absence. Its styles are global, in global.css. */}
+{/* Markup only. Base.astro adds the behaviour and tolerates a missing button.
+    Styles are in global.css. */}
 
-{/* The label names the state the button controls, not the act of toggling:
-    "Dark mode, pressed" says where you are, where "Toggle dark mode, pressed"
-    leaves it ambiguous which way pressing goes. */}
+{/* The label names the state, not the action: "Dark mode, pressed" is clear,
+    "Toggle dark mode, pressed" is not. */}
 <button type="button" class="theme-toggle" aria-label="Dark mode" aria-pressed="false">
   <svg
     class="theme-toggle__moon"

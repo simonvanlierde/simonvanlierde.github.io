@@ -14,15 +14,12 @@ updates:
     cooldown:
       default-days: 7
     ignore:
-      # `astro check` (pnpm typecheck, pnpm build) drives TypeScript's
-      # programmatic API, which the native compiler in 7.0 does not ship:
-      # https://github.com/withastro/roadmap/discussions/1321
-      # Drop this once 7.1 restores it; re-check before taking the bump.
+      # `astro check` needs TypeScript's programmatic API, which 7.0 lacks.
+      # Drop once 7.1 restores it: https://github.com/withastro/roadmap/discussions/1321
       - dependency-name: "typescript"
         versions: ["7.0.x"]
     groups:
-      # Advisories arrive outside the monthly window and ignore the group above,
-      # so without this each one opens its own pull request and its own CI run.
+      # Security updates skip the monthly group; batch them into one pull request.
       npm-security:
         applies-to: security-updates
         patterns:

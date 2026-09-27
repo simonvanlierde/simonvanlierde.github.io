@@ -1,6 +1,6 @@
 ---
-// One row of the parts list: kind in the rail, part name (the one target,
-// linking the repo), spec, links, tags. The row's prose stays selectable.
+// One parts-list row. Only the title links the repo, so the description
+// stays selectable.
 interface Props {
   title: string;
   description: string;
@@ -23,8 +23,8 @@ const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.pr
     <p class="bom-row__desc">{description}</p>
 
     {
-      /* No "Source" link: the title already links the repo. The links here
-         name their project, which is what a screen reader's link list needs. */
+      /* No "Source" link: the title already links the repo. Each aria-label
+         names the project, so the links stay distinct in a screen reader. */
       (demo || links.length > 0) && (
         <p class="bom-row__links">
           {demo && (

@@ -1,8 +1,6 @@
 import { parse } from "yaml";
-// `cv-public.yaml` is exported from the private cv-system repo by
-// `just public-export`; never hand-edit it here. The schema in cvSchema.ts is
-// the contract between the two repos: a build fails loudly if an export drops
-// or renames a field, rather than silently rendering an empty section.
+// `cv-public.yaml` comes from the private cv-system repo (`just public-export`).
+// Do not hand-edit it.
 import raw from "./cv-public.yaml?raw";
 import { CvSchema } from "./cvSchema.ts";
 
@@ -13,12 +11,10 @@ export const cv = CvSchema.parse(parse(raw));
 export const cvPdf = "/files/simon-van-lierde-cv.pdf";
 
 /**
- * The author's profiles, in the order a reader vets them: code first, then the
- * academic record, then the professional and institutional pages. One list, so
- * the hero and the title block cannot drift apart. GitHub and LinkedIn come
- * from the export; ORCID and the Leiden page have no export field yet and are
- * kept by hand.
- * NOTE: move ORCID and the Leiden URL into the private repo's public export.
+ * Author profiles in the order a reader vets them, shared by the hero and the
+ * title block so they cannot drift apart.
+ * NOTE: ORCID and the Leiden URL have no export field yet. Move them into the
+ * private repo's public export.
  */
 export const profiles = [
   { label: "GitHub", href: cv.basics.links.github },

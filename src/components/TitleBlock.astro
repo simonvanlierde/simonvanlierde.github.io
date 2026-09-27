@@ -1,9 +1,6 @@
 ---
-// ISO 7200 title block: the document's own footer, one per sheet. Carries
-// real provenance (who, what, which sheet, when it was generated, the site
-// version linking the source) and, once per sheet, how to reach the author.
-// Nothing decorative, nothing invented: there is no scale cell because
-// nothing on a web page is drawn to scale.
+// ISO 7200 title block, one per sheet. Every cell is real provenance. There is
+// no scale cell: nothing on a web page is drawn to scale.
 import { version } from "../../package.json";
 import { cv, profiles } from "../data/cv.ts";
 import { formatIsoDate } from "./cvPeriod.ts";
@@ -21,7 +18,7 @@ interface Props {
 const { title, docType, sheet, dated } = Astro.props;
 const datedLabel = dated ? formatIsoDate(dated) : null;
 
-// The address, then the profiles from the one shared list the hero also reads.
+// Email first, then the same profile list the hero uses.
 const { basics } = cv;
 const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []), ...profiles];
 ---

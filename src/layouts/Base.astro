@@ -27,19 +27,18 @@ const ogImage = new URL("og.png", Astro.site);
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {/* Browser chrome only takes a literal colour. The literal is the light
-        paper --bg; the theme script below rewrites it from the computed
-        background once the stylesheet is in, so it always matches --bg. */}
+    {/* Light --bg as a fallback; the script at the end of body syncs it to the
+        active theme. */}
     <meta name="theme-color" content="#f8f7f3" />
     <meta name="color-scheme" content="light dark" />
 
-    {/* The drafting lettering carries the first paint of every heading. */}
+    {/* Every heading uses osifont on first paint. */}
     <link rel="preload" href="/fonts/osifont.woff2" as="font" type="font/woff2" crossorigin />
 
     {/* Apply the saved theme before paint to avoid a flash. */}
     <script is:inline>
-      // Storage throws where it is blocked (sandboxed iframe, strict privacy
-      // modes). The theme then just falls back to the system preference.
+      // Storage throws where blocked (sandboxed iframe, strict privacy modes);
+      // the system preference applies instead.
       try {
         const t = localStorage.getItem("theme");
         if (t) document.documentElement.dataset.theme = t;
@@ -56,8 +55,6 @@ const ogImage = new URL("og.png", Astro.site);
     <meta property="og:locale" content="en_US" />
 
     {
-      /* Structured data: lets a publication be read as a publication rather
-         than as a heading. */
       jsonLd && (
         <script
           type="application/ld+json"
@@ -76,8 +73,7 @@ const ogImage = new URL("og.png", Astro.site);
       const meta = document.querySelector('meta[name="theme-color"]');
       const media = matchMedia("(prefers-color-scheme: dark)");
 
-      // Same guard as the head script: a blocked store must not stop the
-      // toggle from applying the theme, only from remembering it.
+      // Blocked storage stops the toggle remembering the theme, not applying it.
       const saved = () => {
         try {
           return localStorage.getItem("theme");
@@ -96,12 +92,21 @@ const ogImage = new URL("og.png", Astro.site);
           ? document.documentElement.dataset.theme === "dark"
           : media.matches;
 
-      // Keep browser chrome and the toggle icon in step with the active theme.
-      // btn is optional: this layout may wrap a page without a toggle.
+      // Computed styles serialise --bg as oklch(), which theme-color parsers
+      // may not accept. A 1px canvas converts it to plain sRGB.
+      const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+      const toRgb = (color) => {
+        if (!ctx) return color;
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 1, 1);
+        const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+        return `rgb(${r}, ${g}, ${b})`;
+      };
+
+      // btn is optional: some pages have no toggle.
       const sync = () => {
         const dark = isDark();
-        // The chrome colour is whatever --bg resolved to; no literal to drift.
-        meta.content = getComputedStyle(document.body).backgroundColor;
+        meta.content = toRgb(getComputedStyle(document.body).backgroundColor);
         btn?.setAttribute("aria-pressed", String(dark));
       };
 
