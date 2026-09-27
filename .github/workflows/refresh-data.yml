@@ -1,11 +1,10 @@
 name: Refresh RELab stats
 
 # Pulls fresh figures from the RELab /stats endpoint into src/data/stats.json,
-# then builds and deploys so the new numbers reach the live site.
+# commits them, then dispatches deploy.yml so the new numbers reach the live site.
 #
-# We deploy within this run rather than relying on the commit to trigger
-# deploy.yml: pushes made with the default GITHUB_TOKEN do not trigger other
-# workflows, so an auto-commit would otherwise never redeploy.
+# Pushes made with the default GITHUB_TOKEN do not trigger other workflows,
+# but workflow_dispatch is the exception, so the deploy is dispatched explicitly.
 
 on:
   schedule:
@@ -14,38 +13,30 @@ on:
 
 permissions:
   contents: write # commit the refreshed snapshot
-  pages: write # deploy to Pages
-  id-token: write # OIDC for deploy-pages
-
-# Serialise with deploy.yml (same group) so deploys don't race; don't cancel an
-# in-progress deployment.
-concurrency:
-  group: pages
-  cancel-in-progress: false
+  actions: write # dispatch deploy.yml
 
 jobs:
-  build:
+  refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
+      # fetch-stats uses only Node built-ins, so no dependency install.
       - name: Set up pnpm and Node.js
         uses: pnpm/setup@v2
         with:
           runtime: node@26
-          cache: true
           install: false
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Fetch stats
         run: pnpm fetch:stats
 
-      - name: Commit refreshed snapshot if changed
-        run: |
+      - name: Commit refreshed snapshot and deploy if changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |-
           if git diff --quiet -- src/data/stats.json; then
             echo "No change in src/data/stats.json."
             exit 0
@@ -57,23 +48,4 @@ jobs:
           # Rebase onto any commits that landed while this job ran, then push.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
-
-      - name: Build with Astro
-        run: pnpm build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: ./dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+          gh workflow run deploy.yml --ref "${GITHUB_REF_NAME}"

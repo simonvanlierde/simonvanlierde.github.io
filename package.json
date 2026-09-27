@@ -10,10 +10,8 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro",
     "prepare": "lefthook install",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",

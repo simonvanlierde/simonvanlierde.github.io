@@ -11,9 +11,8 @@ permissions:
   pages: write
   id-token: write
 
-# Serialise with refresh-data.yml (same group) so deploys queue instead of
-# racing; don't cancel an in-progress run (a push must not abort the weekly
-# stats refresh mid-commit).
+# Deploys queue instead of racing, including the ones refresh-data.yml
+# dispatches; an in-progress deploy is never cancelled.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -26,14 +25,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up pnpm and Node.js
-        uses: pnpm/setup@v2
-        with:
-          runtime: node@26
-          install: false
-
+      # The action sets up pnpm and Node itself; its Node default (24) is below engines.
       - name: Build with Astro
         uses: withastro/action@v6
+        with:
+          node-version: 26
 
   deploy:
     needs: build

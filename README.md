@@ -108,8 +108,9 @@ Checked two ways in CI on every pull request (see [ci.yml](.github/workflows/ci.
 Pushing to `main` triggers [deploy.yml](.github/workflows/deploy.yml): GitHub Actions builds
 the site and publishes to GitHub Pages, live at
 [simonvanlierde.github.io](https://simonvanlierde.github.io). Pages source must be set to
-**GitHub Actions** (Settings → Pages). A shared `pages` concurrency group keeps deploys and the
-weekly [refresh-data.yml](.github/workflows/refresh-data.yml) refresh from racing.
+**GitHub Actions** (Settings → Pages). The weekly
+[refresh-data.yml](.github/workflows/refresh-data.yml) refresh commits new stats and dispatches
+deploy.yml. A `pages` concurrency group queues deploys instead of racing them.
 
 ## Content
 

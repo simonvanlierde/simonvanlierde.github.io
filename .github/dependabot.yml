@@ -1,11 +1,18 @@
 version: 2
+
+# One monthly pull request covers both ecosystems.
+multi-ecosystem-groups:
+  deps:
+    schedule:
+      interval: "monthly"
+
 updates:
   - package-ecosystem: "npm"
     directory: "/"
-    schedule:
-      interval: "weekly"
+    multi-ecosystem-group: "deps"
+    patterns: ["*"]
     cooldown:
-      default-days: 3
+      default-days: 7
     ignore:
       # `astro check` (pnpm typecheck, pnpm build) drives TypeScript's
       # programmatic API, which the native compiler in 7.0 does not ship:
@@ -14,10 +21,7 @@ updates:
       - dependency-name: "typescript"
         versions: ["7.0.x"]
     groups:
-      "npm deps":
-        patterns:
-          - "*"
-      # Advisories arrive outside the weekly window and ignore the groups above,
+      # Advisories arrive outside the monthly window and ignore the group above,
       # so without this each one opens its own pull request and its own CI run.
       npm-security:
         applies-to: security-updates
@@ -26,11 +30,7 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    schedule:
-      interval: "weekly"
+    multi-ecosystem-group: "deps"
+    patterns: ["*"]
     cooldown:
-      default-days: 3
-    groups:
-      "github actions":
-        patterns:
-          - "*"
+      default-days: 7
