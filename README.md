@@ -119,8 +119,8 @@ open while public repos with new commits are missing from this site or the profi
 either links a repo that was renamed, archived or deleted. List repos to skip in
 `.github/drift-ignore`.
 
-Dependabot PRs merge themselves once CI passes, then trigger a deploy. A PR with a new major
-version of anything waits for a manual merge.
+[Renovate](renovate.json5) opens one PR a month for minor and patch updates and merges it once
+CI passes, which triggers a deploy. Major updates get their own PRs and wait for a manual merge.
 
 ## Content
 
