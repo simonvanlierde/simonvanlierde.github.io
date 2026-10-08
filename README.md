@@ -119,6 +119,9 @@ open while public repos with new commits are missing from this site or the profi
 either links a repo that was renamed, archived or deleted. List repos to skip in
 `.github/drift-ignore`.
 
+Dependabot PRs merge themselves once CI passes, then trigger a deploy. A PR with a new major
+version of anything waits for a manual merge.
+
 ## Content
 
 Projects are markdown files under [src/content/projects/](src/content/projects/), validated against
