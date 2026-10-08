@@ -1,0 +1,3 @@
+# Public repos scripts/check-drift.sh should never ask to list, one name per line.
+advent-of-code
+roadmap-sh-file-integrity-checker

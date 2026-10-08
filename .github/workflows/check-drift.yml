@@ -1,0 +1,41 @@
+name: Check page drift
+
+# Keeps one open issue listing what scripts/check-drift.sh finds, and closes it
+# once the homepage and profile README have caught up.
+
+on:
+  schedule:
+    - cron: "30 6 * * 1" # Mondays 06:30 UTC, after refresh-data.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Open, update or close the drift issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: Homepage or profile README is behind the repos
+        run: |-
+          report=$(scripts/check-drift.sh)
+          issue=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number,title \
+            --jq '.[] | select(.title == env.TITLE) | .number' | head -n1)
+          if [ -z "$report" ]; then
+            [ -n "$issue" ] && gh issue close "$issue" --comment "Nothing behind any more."
+            exit 0
+          fi
+          body="$report
+          Repos to leave off both pages go in \`.github/drift-ignore\`, one name per line."
+          if [ -n "$issue" ]; then
+            gh issue edit "$issue" --body "$body"
+          else
+            gh issue create --title "$TITLE" --body "$body"
+          fi
