@@ -143,14 +143,23 @@
       "mass_kg": 0,
       "images": 0,
       "users": 1
+    },
+    {
+      "period": "2026-10",
+      "label": "Oct 2026",
+      "teardowns": 1,
+      "parts": 0,
+      "mass_kg": 2.63,
+      "images": 5,
+      "users": 0
     }
   ],
   "totals": {
-    "teardowns": 93,
+    "teardowns": 94,
     "parts": 1779,
-    "mass_kg": 44.53,
-    "images": 4450,
+    "mass_kg": 47.17,
+    "images": 4455,
     "users": 34
   },
-  "as_of": "2026-09-21"
+  "as_of": "2026-10-12"
 }
