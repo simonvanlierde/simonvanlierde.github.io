@@ -23,7 +23,7 @@ const balloon = (y, n) =>
   `<line x1="${X + 70}" y1="${y}" x2="${X + 108}" y2="${y}" stroke="${frame}" stroke-width="1.5"/>
    <circle cx="${X + 120}" cy="${y}" r="12" fill="${bg}" stroke="${frame}" stroke-width="2"/>
    <text x="${X + 120}" y="${y + 5}" font-family="${draft}" font-size="15" text-anchor="middle" fill="${ink}" stroke="none">${n}</text>`;
-const relab = `
+const r9lab = `
   <g stroke="${ink}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <line x1="${X}" y1="48" x2="${X}" y2="590" stroke="${frame}" stroke-width="1.5" stroke-dasharray="18 7 3 7"/>
     <!-- 1 camera rig -->
@@ -73,7 +73,7 @@ const relab = `
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <rect width="${W}" height="${H}" fill="${bg}"/>
   <rect x="18" y="18" width="${W - 36}" height="${H - 36}" fill="none" stroke="${frame}" stroke-width="3"/>
-  ${relab}
+  ${r9lab}
   <g font-family="${draft}">
     <text x="80" y="200" font-size="84" letter-spacing="4" fill="${ink}">SIMON VAN LIERDE</text>
     <text x="82" y="274" font-size="30" fill="${ink}">PhD researcher and research software engineer</text>

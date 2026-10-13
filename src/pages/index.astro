@@ -101,13 +101,13 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     <section class="container" aria-labelledby="work-heading">
       <h2 id="work-heading">Selected work</h2>
       <div class="bom">
-        <article class="bom-row relab-row" id="relab">
+        <article class="bom-row r9lab-row" id="relab">
           <p class="bom-row__pos">Research platform</p>
           <div class="bom-row__body">
-            <h3 class="bom-row__title relab-row__title">
+            <h3 class="bom-row__title r9lab-row__title">
               <a href="https://github.com/CMLPlatform/r9lab">R9lab</a>
             </h3>
-            <div class="relab-row__intro prose">
+            <div class="r9lab-row__intro prose">
               <p>
                 Industrial ecology is short of data on what products are made
                 of. R9lab helps fill that gap: it records how durable goods come
@@ -148,7 +148,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
               <p class="notes__foot draft">As counted {asOfLabel}.</p>
             </section>
 
-            <div class="relab__chart">
+            <div class="r9lab__chart">
               <DisassemblyChart caption="Fig. 2: R9lab running totals" client:visible />
             </div>
           </div>
@@ -345,17 +345,17 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
   }
 
   /* R9lab's title outranks the repo names below it. */
-  .relab-row__title {
+  .r9lab-row__title {
     font-size: var(--step-2);
   }
 
-  .relab-row__intro {
+  .r9lab-row__intro {
     color: var(--text-muted);
   }
 
   /* An inline-size container cannot size from its content, so it needs an
      explicit width: the plot's 30rem cap (see DisassemblyChart.css). */
-  .relab__chart {
+  .r9lab__chart {
     container: chart / inline-size;
     width: 100%;
     max-width: 30rem;

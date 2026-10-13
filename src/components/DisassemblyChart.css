@@ -280,7 +280,7 @@
    picks which). Hide the y-axis text: the end label gives the magnitude.
 
    A container query, because the plot is also narrow in a half-width column.
-   The `chart` container is declared on .relab__chart. */
+   The `chart` container is declared on .r9lab__chart. */
 @container chart (max-width: 26rem) {
   .chart__controls-row--primary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
