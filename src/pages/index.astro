@@ -42,7 +42,7 @@ const name = basics.name;
 const lead = "PhD researcher and research software engineer";
 
 const tagline =
-  "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy, currently around product disassembly.";
+  "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy. My current work is on taking products apart.";
 
 // Puts dated evidence on the first screen; the notes below have the full counts.
 const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
@@ -109,11 +109,12 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
             </h3>
             <div class="relab-row__intro prose">
               <p>
-                ReLab closes a product-data gap in industrial ecology by
-                recording how durable goods come apart, component by component.
-                I designed and built the platform now used at CML: a FastAPI
-                backend, a PostgreSQL data model for life-cycle assessment, and
-                an Expo / React Native capture app.
+                Industrial ecology is short of data on what products are made
+                of. ReLab helps fill that gap: it records how durable goods come
+                apart, component by component. I designed and built the
+                platform, which CML now uses. It has a FastAPI backend, a
+                PostgreSQL data model for life-cycle assessment, and an Expo /
+                React Native capture app.
               </p>
               <p>In use at CML since {firstTeardown}, including two teardown workshops.</p>
             </div>
@@ -169,7 +170,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
       </div>
 
       <p class="upstream-note">
-        Currently prototyping an <a href="https://github.com/simonvanlierde/ai4ie-demo">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes upstream to tools I build on, mostly in the FastAPI and open-LCA ecosystems, such as <a href="https://github.com/sabuhish/fastapi-mail/pull/283">fastapi-mail</a> and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2">sentier_data_tools</a>.
+        I'm currently prototyping an <a href="https://github.com/simonvanlierde/ai4ie-demo">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes back to the tools I build on, mostly projects around FastAPI and open LCA, such as <a href="https://github.com/sabuhish/fastapi-mail/pull/283">fastapi-mail</a> and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2">sentier_data_tools</a>.
       </p>
 
       <details class="disclosure personal" open>
