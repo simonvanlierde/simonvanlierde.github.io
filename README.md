@@ -91,9 +91,9 @@ pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
 
-Unit tests ([tests/unit/](tests/unit/)) cover the chart scale, step outline, running totals, CV date
-formatting, and the publication listing rule. The browser suite ([tests/](tests/)) runs the
-accessibility and behaviour checks below.
+Unit tests ([tests/unit/](tests/unit/)) cover the chart scale, step outline, running totals, count
+formatting, CV date formatting, the CV export schema, and the publication listing rule and schema.
+The browser suite ([tests/](tests/)) runs the accessibility and behaviour checks below.
 
 ## Accessibility
 
@@ -115,11 +115,11 @@ the site and publishes it to GitHub Pages, live at
 must be set to **GitHub Actions** (Settings → Pages).
 
 The weekly [refresh-data.yml](.github/workflows/refresh-data.yml) workflow commits new stats and
-starts deploy.yml. Deploys share a `pages` concurrency group, so they queue instead of racing
-each other.
+starts deploy.yml. deploy.yml holds a `pages` concurrency group, so deploys queue instead of
+racing each other.
 
-[check-drift.yml](.github/workflows/check-drift.yml) runs right after refresh-data.yml. It keeps
-one issue open while either of these is true:
+[check-drift.yml](.github/workflows/check-drift.yml) runs on its own schedule, 30 minutes after
+refresh-data.yml starts. It keeps one issue open while either of these is true:
 
 - public repos with new commits are missing from this site or the profile README;
 - either of them links a repo that was renamed, archived or deleted.

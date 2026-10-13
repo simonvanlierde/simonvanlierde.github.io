@@ -34,7 +34,7 @@ If the API is unavailable, blocked, or returns an unexpected shape, the script e
 
 ## Deployment and checks
 
-Pull requests run `pnpm check`, a production Astro build, and Playwright tests with axe accessibility scans. Merges to `main` deploy through GitHub Pages. The refresh and deploy workflows share one Pages concurrency group, so deployments queue instead of racing.
+Pull requests run `pnpm check`, a production Astro build, and Playwright tests with axe accessibility scans. Merges to `main` deploy through GitHub Pages. The refresh workflow starts the deploy workflow with `gh workflow run`, and the deploy workflow holds the `pages` concurrency group, so deployments queue instead of racing.
 
 ## Non-goals
 
