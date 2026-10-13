@@ -98,16 +98,11 @@ Light mode is ink linework on warm drafting paper. Dark mode is the same sheet
 as a cyanotype: pale lines on a Prussian-blue ground, with the roles swapped.
 Colour is never the sole signal.
 
-Every figure is real and dated. The general notes show running counts from the
-stats export. The title block shows the package version and the export dates.
-The exploded view shows the six real parts of ReLab and is labelled schematic.
-
 **How to read this document.** The named rules are binding: they define what
-makes a page belong to this set. Everything else describes the current sheets,
-so a new one can be drawn in the same hand. Specific values live in
-`src/styles/global.css` and in the frontmatter above. They are settings, not
-commitments. A new size, figure part, section, or sheet is welcome as long as
-the rules still hold.
+makes a page belong to this set. Everything else describes the current sheets.
+Specific values live in `src/styles/global.css` and in the frontmatter above.
+They are settings, not commitments. A new size, figure part, section, or sheet
+is welcome as long as the rules still hold.
 
 **Key Characteristics:**
 
@@ -120,11 +115,9 @@ the rules still hold.
 
 ### Colors
 
-Design in roles, not in hex. The palette has two grounds, one working ink,
-engineer's blue for the working accents, and checker's green for the single
-stamp. Every pair is one `light-dark()` OKLCH token. Every text pair clears
-4.5:1 on its ground, verified by the axe suite in CI. A new colour must be a new role
-with a reason, or one of these tokens reused.
+Design in roles, not in hex. Every pair is one `light-dark()` OKLCH token.
+Every text pair clears 4.5:1 on its ground, verified by the axe suite in CI. A
+new colour must be a new role with a reason, or one of these tokens reused.
 
 #### Primary
 
@@ -179,17 +172,14 @@ every contrast floor.
 
 Two faces, one job each. osifont (ISO 3098 technical lettering, vendored and
 subset, weight 400 only) is the drafting hand, with a Segoe UI and system-ui
-fallback. The system sans (`ui-sans-serif` stack) is the reading face.
-`--font-mono` aliases `--font-draft`, so anything asking for mono gets the
-drafting hand.
-
-The drafting hand carries what a draughtsman letters: headings, labels, dates,
-dimensions, data. Prose stays on the system sans, so long text reads as text.
+fallback. It carries what a draughtsman letters: headings, labels, dates,
+dimensions, data. The system sans (`ui-sans-serif` stack) is the reading face
+for prose. `--font-mono` aliases `--font-draft`, so anything asking for mono
+gets the drafting hand.
 
 #### Hierarchy
 
-Seven roles, on one fluid scale. The steps are tokens, so retuning the scale
-retunes the set.
+Seven roles, on one fluid scale of step tokens.
 
 | Role | Step | Used for |
 |---|---|---|
@@ -201,10 +191,9 @@ retunes the set.
 | Body | `--step-0` | Prose, capped at `--measure` |
 | Label | `--step--1` | Nav links, tags, title-block cells, periods, figure labels |
 
-A zone label is set smaller than the content it labels. The drafting hand stays
-at weight 400. Hierarchy comes from size, tracking, case, and rules. The one
-exception is the CV's role line, set in the system sans at 650, because osifont
-has no bold.
+A zone label is set smaller than the content it labels. Hierarchy comes from
+size, tracking, case, and rules. The one exception is the CV's role
+line, set in the system sans at 650, because osifont has no bold.
 
 #### Named Rules
 
@@ -221,8 +210,8 @@ in rem, near 70 characters.
 
 The page is one tall sheet. `body::before` draws the trim frame around the
 document, not the viewport, so the line never crosses scrolling text. The frame
-is screen only. Print gets the plain document. Every page of the site carries
-this chrome.
+is screen only. Print gets the plain document. Every page of the site, the 404
+included, carries this chrome: frame, sheet nav, title block.
 
 One container width governs the sheet. It fits the rail, the gutter, and the
 prose measure, so rules end where the writing ends. Sections stack on the
@@ -243,10 +232,9 @@ transition. In-page jumps scroll smoothly, `auto` under reduced motion.
 
 ### Elevation & Depth
 
-No shadows, anywhere. Line weight, lettering size, and the two-step ground
-(`--bg` against the barely lighter `--surface`) carry hierarchy. Chrome that
-floats over the sheet, such as the sticky nav, uses a solid ground and a rule to
-separate itself.
+Line weight, lettering size, and the two-step ground (`--bg` against the barely
+lighter `--surface`) carry hierarchy. Chrome that floats over the sheet, such
+as the sticky nav, uses a solid ground and a rule to separate itself.
 
 #### Named Rules
 
@@ -266,15 +254,11 @@ marks are the only exceptions:
 - **The datum mark**, a square box, carries lettered references: the general
   notes (A–D) and the zone index.
 
-A future figure may add balloons and a register of its own. Nothing else is a
-circle.
-
 ### Components
 
-A component belongs to this set when rules and lettering carry it. It consumes
-tokens by their kept names, answers state with a tint, a fill swap, or a line,
-and needs no colour to be understood. Build a new one against the rules above.
-The current sheets use these:
+A new component consumes tokens by their kept names, answers state with a tint,
+a fill swap, or a line, and needs no colour to be understood. The current
+sheets use these:
 
 | Component | What governs it |
 |---|---|
@@ -287,7 +271,7 @@ The current sheets use these:
 | Title block | ISO 7200 provenance and contact; the profile links repeat, muted, under each sheet's header |
 | Exploded view | The signature figure; see below |
 | General notes | Datum-lettered running totals, sitting with the platform they describe |
-| Chart island | Kept token names only, a stepped outline over section hatching; see below |
+| Chart island | Kept token names only; see below |
 
 The chart island draws its running totals as a stepped outline over section
 hatching. It uses the general notes' measure names, drafting numerals, and a
@@ -300,10 +284,10 @@ so the glyph stays in place.
 
 #### The signature figure
 
-The exploded view is authored SVG linework of a real system, taken apart along
-a dash-dot centreline. It is drawn in flat front elevation, with part strokes
-heavier than fine lines. Each part carries a balloon on a short leader, and a
-register keys the numbers to part names.
+The exploded view is authored SVG linework of ReLab's six real parts, taken
+apart along a dash-dot centreline. It is drawn in flat front elevation, with
+part strokes heavier than fine lines. Each part carries a balloon on a short
+leader, and a register keys the numbers to part names.
 
 Each part and its label form one link to the real thing, with an accessible
 name. A drawn arrow in the register shows that a row is a link before hover.
@@ -330,29 +314,16 @@ placeholder figure ever ships.
 
 ### Do's and Don'ts
 
+The named rules above are the checklist. Two more:
+
 #### Do
 
-- **Do** consume the kept token names for every new surface, so both themes
-  work without extra styles.
-- **Do** set every figure, date, and label in the drafting hand with
-  `font-variant-numeric: tabular-nums` (`.draft` / `.tag` / `time`).
-- **Do** draw hierarchy with the two rule weights and the zone-label h2.
-- **Do** make hit targets 44px with padding plus negative margin.
-- **Do** keep the sheet chrome on every page, the 404 included: frame, sheet
-  nav, title block. A wrong URL is still a sheet of the set.
 - **Do** add sheets, sections, figures, and components. The set is meant to
   grow, and the rules keep a new part legible beside the old ones.
 
 #### Don't
 
-- **Don't** add a second stamp to a sheet; one stamp, everything else
-  engineer's blue.
-- **Don't** round a corner (`--radius` is 0px); the only circle is a figure's
-  item balloon.
-- **Don't** use shadows, blur, or translucent fills; state answers with
-  `--surface`, a fill swap, or a line.
 - **Don't** hardcode a colour: every colour is a `light-dark()` token. The one
   literal is the theme-color meta in Base.astro, which holds light `--bg` for
   the first paint. The theme script then rewrites it from the computed `--bg`.
   Change the literal when light `--bg` changes.
-- **Don't** letter prose in osifont, and don't cap the measure in `ch`.
