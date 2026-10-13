@@ -51,6 +51,15 @@ test("bare years, `YYYY-MM` and `present` are all accepted", () => {
   assert.equal(cv.education[0].start, "2018");
 });
 
+test("a project needs a summary or highlights; its link is optional", () => {
+  const withProjects = (projects: unknown[]) => CvSchema.parse({ ...minimal(), projects });
+  assert.ok(withProjects([{ name: "A", url: "https://example.com", summary: "One line." }]));
+  assert.deepEqual(withProjects([{ name: "B", highlights: ["Fixed a bug."] }]).projects[0].highlights, [
+    "Fixed a bug.",
+  ]);
+  assert.throws(() => withProjects([{ name: "C" }]), /summary or highlights/);
+});
+
 test("a malformed email or link fails rather than rendering a dead mailto", () => {
   const base = minimal();
   assert.throws(() => CvSchema.parse({ ...base, basics: { ...base.basics, email: "not-an-address" } }));

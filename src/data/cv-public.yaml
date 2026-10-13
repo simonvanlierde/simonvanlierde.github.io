@@ -55,6 +55,12 @@ projects:
   - name: Public web apps
     url: https://simonvanlierde.github.io/
     summary: I maintain a CRediT authorship-statement generator and other open-source web apps. All are tested in CI and deploy automatically to GitHub Pages and Cloudflare.
+  - name: Open-source contributions
+    highlights:
+      - "flodym (PIK's material-flow framework): fixed lifetime extension overwriting the model's own parameters, and made it about 9× faster (0.83 s to 0.092 s, 201 years × 12 regions × 8 goods)."
+      - "lca_algebraic: fixed truncated-normal and lognormal sampling and method lookup, and halved parameter expansion time (0.76 s to 0.40 s at 20k processes)."
+      - "Activity Browser: kept parameter amounts editable and explained invalid names; loaded scenario files with empty keys and kept a Monte Carlo seed of 0."
+      - "Also merged in fastapi-mail (Redis connection handling) and sentier.dev's data tools."
 education:
   - institution: Leiden University & TU Delft
     degree: MSc Industrial Ecology
@@ -66,11 +72,23 @@ education:
     start: 2014
     end: 2018
     details: Focus on mathematics, theoretical physics, and programming. Exchange semester at the National University of Singapore.
+publications:
+  - authors: "Rankin, K. H., Donati, F., Tu, Q., Ward-Bond, J., Reitz, N., Hiser, B., van Lierde, S., Suh, S., Saxe, S., Posen, I. D., & Hawes, J. K"
+    title: A call to ensure reproducibility of machine learning applications in industrial ecology
+    venue: Research Square
+    year: 2026
+    doi: 10.21203/rs.3.rs-9270723/v1
+    status: preprint
+  - authors: "van Lierde, S."
+    title: "R9lab: data collection platform (software, v0.5.0)"
+    venue: Zenodo
+    year: 2026
+    doi: 10.5281/zenodo.16637742
 professional_development:
   - "Conference talks: NWO NAC 2026, Brightcon 2025, and ISIE 2025."
   - BMVA Computer Vision Summer School (2026)
   - "HPC Spring School: distributed and GPU computing, Utrecht University (2026)"
-  - "Autumn School on inventory modelling at scale, Départ de Sentier (2025): my pull request to sentier.dev's open LCA-data libraries was merged"
+  - "Autumn School on inventory modelling at scale, Départ de Sentier (2025)"
   - PhD Summer School on AI, machine learning and neural networks, Utrecht University (2024)
 skills:
   - group: Programming
@@ -93,4 +111,4 @@ interests:
   - Climbing
   - Hiking
   - Cooking
-exported: "2026-08-18T21:33:49Z"
+exported: "2026-10-13T22:29:29Z"
