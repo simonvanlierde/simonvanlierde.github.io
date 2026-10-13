@@ -1,6 +1,6 @@
-name: Refresh RELab stats
+name: Refresh R9lab stats
 
-# Commits fresh RELab figures to src/data/stats.json, then dispatches deploy.yml:
+# Commits fresh R9lab figures to src/data/stats.json, then dispatches deploy.yml:
 # a push with the default GITHUB_TOKEN triggers no other workflow.
 
 on:
@@ -41,7 +41,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add src/data/stats.json
-          git commit -m "chore: refresh RELab stats"
+          git commit -m "chore: refresh R9lab stats"
           # Rebase onto commits that landed while this job ran.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"

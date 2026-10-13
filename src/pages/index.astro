@@ -45,7 +45,7 @@ const tagline =
   "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy. My current work is on taking products apart.";
 
 // Puts dated evidence on the first screen; the notes below have the full counts.
-const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
+const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
 ---
 
 <Base
@@ -105,12 +105,12 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
           <p class="bom-row__pos">Research platform</p>
           <div class="bom-row__body">
             <h3 class="bom-row__title relab-row__title">
-              <a href="https://github.com/CMLPlatform/relab">ReLab</a>
+              <a href="https://github.com/CMLPlatform/r9lab">R9lab</a>
             </h3>
             <div class="relab-row__intro prose">
               <p>
                 Industrial ecology is short of data on what products are made
-                of. ReLab helps fill that gap: it records how durable goods come
+                of. R9lab helps fill that gap: it records how durable goods come
                 apart, component by component. I designed and built the
                 platform, which CML now uses. It has a FastAPI backend, a
                 PostgreSQL data model for life-cycle assessment, and an Expo /
@@ -119,10 +119,10 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
               <p>In use at CML since {firstTeardown}, including two teardown workshops.</p>
             </div>
             <ul class="bom-row__links link-list">
-              <li><a href="https://app.cml-relab.org">Live platform</a></li>
-              <li><a href="https://docs.cml-relab.org">Documentation</a></li>
+              <li><a href="https://app.r9lab.io">Live platform</a></li>
+              <li><a href="https://docs.r9lab.io">Documentation</a></li>
               <li>
-                <a href="https://github.com/CMLPlatform/relab-rpi-cam-plugin">
+                <a href="https://github.com/CMLPlatform/r9cam">
                   Raspberry Pi camera plugin
                 </a>
               </li>
@@ -149,7 +149,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
             </section>
 
             <div class="relab__chart">
-              <DisassemblyChart caption="Fig. 2: ReLab running totals" client:visible />
+              <DisassemblyChart caption="Fig. 2: R9lab running totals" client:visible />
             </div>
           </div>
         </article>
@@ -344,7 +344,7 @@ const proof = `ReLab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     color: var(--text-muted);
   }
 
-  /* ReLab's title outranks the repo names below it. */
+  /* R9lab's title outranks the repo names below it. */
   .relab-row__title {
     font-size: var(--step-2);
   }

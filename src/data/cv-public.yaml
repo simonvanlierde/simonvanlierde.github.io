@@ -11,14 +11,14 @@ render:
   contact: [email, location, github, linkedin, website]
   font: nunito
 profile: >-
-  I'm a full-stack research software engineer with three years of professional experience in software, data, and solution architecture. I'm now halfway through a PhD in Industrial Ecology at CML, Leiden University. I build open-source tools and data infrastructure that turn environmental research into software people can rely on and find easy to use. As lead developer of ReLab, I own the platform end to end. I also build dashboards and interactive visualizations that make research readable for people outside the field. I work in the open throughout and follow the FAIR principles (findable, accessible, interoperable, reusable).
+  I'm a full-stack research software engineer with three years of professional experience in software, data, and solution architecture. I'm now halfway through a PhD in Industrial Ecology at CML, Leiden University. I build open-source tools and data infrastructure that turn environmental research into software people can rely on and find easy to use. As lead developer of R9lab, I own the platform end to end. I also build dashboards and interactive visualizations that make research readable for people outside the field. I work in the open throughout and follow the FAIR principles (findable, accessible, interoperable, reusable).
 experience:
   - organization: CML, Leiden University
     role: PhD Researcher in Industrial Ecology
     start: 2024-04
     end: present
     highlights:
-      - "Lead developer of ReLab, responsible for the whole software lifecycle: a FastAPI/PostgreSQL backend with OAuth and Alembic migrations, React/TypeScript and Expo front-ends, CI/CD, Cloudflare networking, restic backups, and security hardening guided by OWASP ASVS."
+      - "Lead developer of R9lab, responsible for the whole software lifecycle: a FastAPI/PostgreSQL backend with OAuth and Alembic migrations, React/TypeScript and Expo front-ends, CI/CD, Cloudflare networking, restic backups, and security hardening guided by OWASP ASVS."
       - Ran two data-collection workshops (135 participants) and deployed the platform in a lab. The pilot recorded 78 products, 1,331 components, and 3,610 images.
       - Designed and deployed a central observability stack that CML's research software shares (OpenTelemetry, Grafana, infrastructure managed with OpenTofu).
       - Built a Raspberry Pi camera plugin that captures images automatically. It has an OpenAPI spec and is released on PyPI.
@@ -43,8 +43,8 @@ experience:
     highlights:
       - Built environmental-impact models (LCA, MFA) in Python for sustainability consulting projects, with clients in industry, NGOs, and government.
 projects:
-  - name: ReLab
-    url: https://github.com/CMLPlatform/relab
+  - name: R9lab
+    url: https://github.com/CMLPlatform/r9lab
     summary: Open-source platform for research on taking products apart, the circular economy, and computer vision.
   - name: Computer-vision taxonomy visual
     url: https://simonvanlierde.github.io/cv-ie-taxonomy/

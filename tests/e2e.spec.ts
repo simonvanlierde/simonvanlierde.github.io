@@ -114,12 +114,12 @@ test("the exploded view becomes one compact, touch-sized system on mobile", asyn
 // Each balloon's href is hand-written in the SVG, so copy-paste slips are likely.
 // This list is the independent check.
 const PART_DESTINATIONS = [
-  ["Camera rig", "https://github.com/CMLPlatform/relab-rpi-cam-plugin"],
-  ["Capture app", "https://github.com/CMLPlatform/relab"],
-  ["Web app", "https://app.cml-relab.org"],
-  ["API", "https://github.com/CMLPlatform/relab"],
-  ["Database", "https://github.com/CMLPlatform/relab"],
-  ["Docs", "https://docs.cml-relab.org"],
+  ["Camera rig", "https://github.com/CMLPlatform/r9cam"],
+  ["Capture app", "https://github.com/CMLPlatform/r9lab"],
+  ["Web app", "https://app.r9lab.io"],
+  ["API", "https://github.com/CMLPlatform/r9lab"],
+  ["Database", "https://github.com/CMLPlatform/r9lab"],
+  ["Docs", "https://docs.r9lab.io"],
 ];
 
 for (const [variant, width] of [

@@ -9,7 +9,7 @@ Personal website for Simon van Lierde, research software engineer and PhD resear
 University. It has two pages, a landing page for my work and a CV. I build it with Astro and deploy
 it to GitHub Pages at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 
-The site is drawn as one ISO technical drawing set, with a chart of ReLab's disassembly data that refreshes weekly.
+The site is drawn as one ISO technical drawing set, with a chart of R9lab's disassembly data that refreshes weekly.
 
 ## Local development
 
