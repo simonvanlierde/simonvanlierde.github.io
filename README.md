@@ -1,6 +1,7 @@
 # simonvanlierde.github.io
 
 [![CI](https://github.com/simonvanlierde/simonvanlierde.github.io/actions/workflows/ci.yml/badge.svg)](https://github.com/simonvanlierde/simonvanlierde.github.io/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/simonvanlierde/simonvanlierde.github.io/branch/main/graph/badge.svg)](https://codecov.io/gh/simonvanlierde/simonvanlierde.github.io)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsimonvanlierde.github.io)](https://simonvanlierde.github.io)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
