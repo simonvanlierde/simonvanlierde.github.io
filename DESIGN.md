@@ -163,13 +163,13 @@ Hairline and Frame Line are the only two rule weights on the set.
 #### Named Rules
 
 **The One Stamp Rule.** Exactly one checker's-green stamp per sheet. It marks
-the one thing to do next; a second stamp demotes both. Every other action is an
+the one thing to do next. A second stamp demotes both. Every other action is an
 engineer's-blue link.
 
 **The Kept Names Rule.** The custom property names (`--bg`, `--text`,
 `--accent`, `--chart-bar`, and the rest) come from the previous design system.
 They are kept so every consumer, the Preact chart island included, rethemes
-without edits. Retheme by changing what a name resolves to; never fork a parallel palette.
+without edits. To retheme, change what a name resolves to. Never fork a parallel palette.
 
 **The Uniform Chroma Rule.** On `@media (color-gamut: p3)`, the chromatic tokens raise their chroma
 by one uniform factor. Lightness never changes. A display that claims P3 and clamps still clears
@@ -202,7 +202,7 @@ retunes the set.
 | Label | `--step--1` | Nav links, tags, title-block cells, periods, figure labels |
 
 A zone label is set smaller than the content it labels. The drafting hand stays
-at weight 400; hierarchy comes from size, tracking, case, and rules. The one
+at weight 400. Hierarchy comes from size, tracking, case, and rules. The one
 exception is the CV's role line, set in the system sans at 650, because osifont
 has no bold.
 
@@ -211,7 +211,7 @@ has no bold.
 **The Drafting Hand Rule.** Figures and data (counts, dates, versions, periods,
 chart numerals) are always set in osifont with `font-variant-numeric:
 tabular-nums` (the `.draft`, `.tag`, and `time` selectors). A number in the body
-face is prose; a number in the drafting hand is data.
+face is prose. A number in the drafting hand is data.
 
 **The Measured Line Rule.** `--measure` is set in rem, not `ch`: `ch` measures
 the zero glyph and overshoots by about 20 characters in a system sans. Cap prose
@@ -221,7 +221,7 @@ in rem, near 70 characters.
 
 The page is one tall sheet. `body::before` draws the trim frame around the
 document, not the viewport, so the line never crosses scrolling text. The frame
-is screen only; print gets the plain document. Every page of the site carries
+is screen only. Print gets the plain document. Every page of the site carries
 this chrome.
 
 One container width governs the sheet. It fits the rail, the gutter, and the

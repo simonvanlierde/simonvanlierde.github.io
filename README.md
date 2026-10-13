@@ -6,14 +6,14 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Personal website for Simon van Lierde, research software engineer and PhD researcher at CML, Leiden
-University. A landing page for my work and a CV page, built with Astro and deployed to GitHub Pages
-at [simonvanlierde.github.io](https://simonvanlierde.github.io).
+University. It has two pages, a landing page for my work and a CV. I build it with Astro and deploy
+it to GitHub Pages at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 
 ## Stack
 
 - [Astro](https://astro.build) (static output) with TypeScript in strict mode
 - One Preact island ([DisassemblyChart](src/components/DisassemblyChart.tsx)) for the interactive
-  data visualisation; everything else ships as zero-JS HTML
+  data visualisation. Everything else ships as plain HTML with no JavaScript
 - A typed content collection ([src/content.config.ts](src/content.config.ts)) for the project rows
   (the parts list)
 - One Zod-validated YAML export ([src/data/cv.ts](src/data/cv.ts)) behind
@@ -84,16 +84,16 @@ pnpm gen:og       # regenerate public/og.png (the social-card image)
 
 ## Testing
 
-Both layers run locally and gate every pull request:
+Both suites run locally, and every pull request has to pass them:
 
 ```sh
 pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
 
-Unit tests ([tests/unit/](tests/unit/)) cover the chart scale, step outline, running totals, CV date
-formatting, and the publication listing rule. The browser suite ([tests/](tests/)) runs the
-accessibility and behaviour checks below.
+Unit tests ([tests/unit/](tests/unit/)) cover the chart scale, step outline, running totals, count
+formatting, CV date formatting, the CV export schema, and the publication listing rule and schema.
+The browser suite ([tests/](tests/)) runs the accessibility and behaviour checks below.
 
 ## Accessibility
 
@@ -109,19 +109,25 @@ CI checks accessibility in two ways on every pull request (see [ci.yml](.github/
 
 ## Deployment
 
-Pushing to `main` triggers [deploy.yml](.github/workflows/deploy.yml): GitHub Actions builds
-the site and publishes to GitHub Pages, live at
-[simonvanlierde.github.io](https://simonvanlierde.github.io). Pages source must be set to
-**GitHub Actions** (Settings → Pages). The weekly
-[refresh-data.yml](.github/workflows/refresh-data.yml) workflow commits new stats and dispatches
-deploy.yml. A `pages` concurrency group queues deploys instead of racing them.
-[check-drift.yml](.github/workflows/check-drift.yml) runs right after it and keeps one issue
-open while public repos with new commits are missing from this site or the profile README, or
-either links a repo that was renamed, archived or deleted. List repos to skip in
-`.github/drift-ignore`.
+Pushing to `main` triggers [deploy.yml](.github/workflows/deploy.yml). GitHub Actions builds
+the site and publishes it to GitHub Pages, live at
+[simonvanlierde.github.io](https://simonvanlierde.github.io). For this to work, the Pages source
+must be set to **GitHub Actions** (Settings → Pages).
+
+The weekly [refresh-data.yml](.github/workflows/refresh-data.yml) workflow commits new stats and
+starts deploy.yml. deploy.yml holds a `pages` concurrency group, so deploys queue instead of
+racing each other.
+
+[check-drift.yml](.github/workflows/check-drift.yml) runs on its own schedule, 30 minutes after
+refresh-data.yml starts. It keeps one issue open while either of these is true:
+
+- public repos with new commits are missing from this site or the profile README;
+- either of them links a repo that was renamed, archived or deleted.
+
+To skip a repo, list it in `.github/drift-ignore`.
 
 [Renovate](renovate.json5) opens one PR a month for minor and patch updates and merges it once
-CI passes, which triggers a deploy. Major updates get their own PRs and wait for a manual merge.
+CI passes, which triggers a deploy. Major updates get their own PRs and wait for me to merge them.
 
 ## Content
 
@@ -130,8 +136,8 @@ the schema in [src/content.config.ts](src/content.config.ts).
 
 [/cv/](https://simonvanlierde.github.io/cv/) renders from
 [src/data/cv-public.yaml](src/data/cv-public.yaml). The landing page reads only the contact details
-from it and links to the CV. That file and the CV PDF are exported from a separate private repo and
-committed here, so a clean checkout builds without access to it.
+from it and links to the CV. I export that file and the CV PDF from a separate private repo and
+commit them here, so a clean checkout builds without access to that repo.
 
 [src/data/cv.ts](src/data/cv.ts) validates the export against a Zod schema at build time, so a
 broken export fails the build instead of rendering an empty page. Optional sections (publications,
