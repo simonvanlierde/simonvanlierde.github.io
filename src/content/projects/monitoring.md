@@ -1,6 +1,6 @@
 ---
 title: monitoring
-description: "Centralised observability for CML's research platforms: logs, traces, and metrics cross-referenced on one host, so a failing research service can be traced from one place."
+description: "Shared monitoring for CML's research platforms. Logs, traces, and metrics sit on one host and link to each other, so you can follow a failing research service from one place."
 repo: https://github.com/CMLPlatform/monitoring
 kind: observability stack
 tags:

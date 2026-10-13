@@ -1,6 +1,6 @@
 ---
 title: credit-matrix
-description: "Draft CRediT contribution statements with your co-authors, then export the grid as a contribution heatmap alongside JATS4R XML, CSV, JSON, or Markdown. Runs client-side in nine languages and works offline."
+description: "Write CRediT contribution statements (who did what on a paper) with your co-authors. Export the grid as a contribution heatmap, and as JATS4R XML, CSV, JSON, or Markdown. It runs in your browser, in nine languages, and works offline."
 repo: https://github.com/simonvanlierde/credit-matrix
 demo: https://credit.duinlab.nl
 kind: web app
