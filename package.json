@@ -17,8 +17,9 @@
     "lint:fix": "biome check --write .",
     "typecheck": "astro check",
     "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-exclude='tests/**' --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=lcov.info",
     "test:e2e": "playwright test",
-    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test:coverage",
     "gen:og": "node scripts/gen-og.mjs",
     "fetch:stats": "node scripts/fetch-stats.mjs"
   },

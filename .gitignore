@@ -8,6 +8,9 @@ node_modules/
 # generated types
 .astro/
 
+# unit-test coverage
+lcov.info
+
 # playwright
 test-results/
 playwright-report/
