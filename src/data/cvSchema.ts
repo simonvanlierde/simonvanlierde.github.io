@@ -34,7 +34,20 @@ export const CvSchema = z.object({
     }),
   ),
   publications: z.array(PublicationSchema).default([]),
-  projects: z.array(z.object({ name: z.string(), url: z.url(), summary: z.string() })).default([]),
+  // Same contract as the PDF template: a project's text is a one-line `summary`
+  // or a list of `highlights`, and a project with neither fails the build.
+  projects: z
+    .array(
+      z
+        .object({
+          name: z.string(),
+          url: z.url().optional(),
+          summary: z.string().optional(),
+          highlights: z.array(z.string()).default([]),
+        })
+        .refine((p) => p.summary || p.highlights.length > 0, "a project needs a summary or highlights"),
+    )
+    .default([]),
   education: z.array(
     z.object({
       institution: z.string(),

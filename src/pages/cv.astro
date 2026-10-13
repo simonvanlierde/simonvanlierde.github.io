@@ -219,9 +219,16 @@ const contact = [
               <article class="cv-entry cv-entry--railless">
                 <div class="cv-entry__body">
                   <h3 class="cv-entry__role">
-                    <a href={project.url}>{project.name}</a>
+                    {project.url ? <a href={project.url}>{project.name}</a> : project.name}
                   </h3>
-                  <p class="cv-entry__org">{project.summary}</p>
+                  {project.summary && <p class="cv-entry__org">{project.summary}</p>}
+                  {project.highlights.length > 0 && (
+                    <ul class="cv-highlights">
+                      {project.highlights.map((h) => (
+                        <li>{h}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </article>
             ))}
