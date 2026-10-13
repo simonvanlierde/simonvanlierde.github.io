@@ -1,4 +1,4 @@
-// Refreshes src/data/stats.json from the ReLab public API (`pnpm fetch:stats`).
+// Refreshes src/data/stats.json from the R9lab public API (`pnpm fetch:stats`).
 // If the API is down or Cloudflare blocks a request, the script warns and exits 0
 // without touching the committed snapshot, so the site keeps the last good figures.
 
@@ -8,7 +8,7 @@ import process from "node:process";
 
 const out = resolve(import.meta.dirname, "../src/data/stats.json");
 
-const base = (process.env.RELAB_API_URL || "https://api.cml-relab.org").replace(/\/$/, "");
+const base = (process.env.R9LAB_API_URL || "https://api.r9lab.io").replace(/\/$/, "");
 const seriesUrl = `${base}/v1/stats/series?granularity=month`;
 const totalsUrl = `${base}/v1/stats/totals`;
 

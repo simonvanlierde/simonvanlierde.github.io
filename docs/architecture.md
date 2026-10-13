@@ -10,7 +10,7 @@ flowchart LR
   astro --> dist[dist/ static site]
   dist --> pages[GitHub Pages]
 
-  relab[ReLab stats API] --> refresh[refresh-data workflow]
+  r9lab[R9lab stats API] --> refresh[refresh-data workflow]
   refresh --> stats
   refresh --> pages
 
@@ -22,7 +22,7 @@ flowchart LR
 
 - Astro renders the pages statically, with TypeScript in strict mode.
 - Project rows (the parts list) are markdown files under `src/content/projects/`, validated against the schema in `src/content.config.ts`.
-- The only client-side island is `DisassemblyChart.tsx`. It hydrates when it scrolls into view, so users can switch between ReLab measures. It also renders a visually hidden table, so the same data is available without reading the SVG.
+- The only client-side island is `DisassemblyChart.tsx`. It hydrates when it scrolls into view, so users can switch between R9lab measures. It also renders a visually hidden table, so the same data is available without reading the SVG.
 
 ## The CV
 
@@ -32,7 +32,7 @@ flowchart LR
 
 ## Data refresh
 
-`src/data/stats.json` is committed because GitHub Pages serves a static build. The weekly `refresh-data.yml` workflow runs `scripts/fetch-stats.mjs`. The script checks that the public ReLab `/stats` response still has the fields the chart reads. The workflow commits the new snapshot if it changed, then deploys.
+`src/data/stats.json` is committed because GitHub Pages serves a static build. The weekly `refresh-data.yml` workflow runs `scripts/fetch-stats.mjs`. The script checks that the public R9lab `/stats` response still has the fields the chart reads. The workflow commits the new snapshot if it changed, then deploys.
 
 If the API is unavailable, blocked, or returns an unexpected shape, the script exits successfully without touching the snapshot. That keeps the last known-good build online, instead of quietly rendering zeros.
 

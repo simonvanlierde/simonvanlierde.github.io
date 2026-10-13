@@ -3,7 +3,7 @@ import "./DisassemblyChart.css";
 import data from "../data/stats.json" with { type: "json" };
 import { buildScale, formatCount, runningTotals, stepPaths } from "./chartScale";
 
-// Pre-aggregated figures from the ReLab /stats endpoint, baked in at build time
+// Pre-aggregated figures from the R9lab /stats endpoint, baked in at build time
 // (see scripts/fetch-stats.mjs). Shape mirrors that endpoint's response.
 type SeriesRow = {
   period: string;
@@ -135,7 +135,7 @@ export default function DisassemblyChart({
   );
 
   const summary =
-    `Running total of ${measure.noun} in ReLab: ${measure.format(first.value)} by ${first.label}, ` +
+    `Running total of ${measure.noun} in R9lab: ${measure.format(first.value)} by ${first.label}, ` +
     `${measure.format(last.value)} by ${last.label}. Monthly figures are in the table below.`;
 
   const secondaryMeasureActive = secondaryMeasures.some((m) => m.key === measure.key);
@@ -153,7 +153,7 @@ export default function DisassemblyChart({
 
   return (
     <figure className="chart">
-      {/* No total tiles: the ReLab notes show the totals from the same data. */}
+      {/* No total tiles: the R9lab notes show the totals from the same data. */}
 
       <fieldset className="chart__controls">
         <legend className="visually-hidden">Measure</legend>

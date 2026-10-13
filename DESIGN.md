@@ -284,7 +284,7 @@ so the glyph stays in place.
 
 #### The signature figure
 
-The exploded view is authored SVG linework of ReLab's six real parts, taken
+The exploded view is authored SVG linework of R9lab's six real parts, taken
 apart along a dash-dot centreline. It is drawn in flat front elevation, with
 part strokes heavier than fine lines. Each part carries a balloon on a short
 leader, and a register keys the numbers to part names.
@@ -309,7 +309,7 @@ is the finished state, never a missing one.
 
 **The Real Figures Rule.** Every number on the sheet is a real, dated count or
 version from the product. Counts come from the stats export (`stats.json`),
-which a scheduled workflow refreshes from the live ReLab API. No sample or
+which a scheduled workflow refreshes from the live R9lab API. No sample or
 placeholder figure ever ships.
 
 ### Do's and Don'ts
