@@ -47,7 +47,7 @@ Pull requests run `pnpm check`, a production Astro build, and Playwright tests. 
 
 Pushing to `main` triggers `deploy.yml`, which builds the site and publishes it to GitHub Pages. For this to work, the Pages source must be set to **GitHub Actions** (Settings → Pages). The refresh workflow starts the deploy workflow with `gh workflow run`, and the deploy workflow holds the `pages` concurrency group, so deployments queue instead of racing.
 
-`check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site or the profile README, or while either of them links a repo that was renamed, archived or deleted. To skip a repo, list it in `.github/drift-ignore`.
+`check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted. To skip a repo, list it in `.github/drift-ignore`.
 
 Renovate opens one PR a month for minor and patch updates and merges it once CI passes, which triggers a deploy. Major updates get their own PRs and wait for me to merge them.
 
