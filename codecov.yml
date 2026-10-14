@@ -1,0 +1,3 @@
+# Comment only when total coverage went down. Any drop counts, however small.
+comment:
+  require_changes: "coverage_drop"
