@@ -1,6 +1,6 @@
 ---
 title: cv-ie-taxonomy
-description: "A visual to go with an upcoming paper: a computer-vision taxonomy for industrial ecology, drawn as an interactive exploded teardown."
+description: "An interactive map of how computer vision can be used in industrial ecology, drawn as a product taken apart. It goes with an upcoming paper."
 repo: https://github.com/simonvanlierde/cv-ie-taxonomy
 demo: https://simonvanlierde.github.io/cv-ie-taxonomy/
 kind: interactive visual
