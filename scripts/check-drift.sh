@@ -42,12 +42,12 @@ last_human_commit() {
 }
 
 report=""
-section() { # title, page date, page text
+section() { # title, page date, page text, "links-only" to skip the unlinked-repo check
   local out="" name d linked
   # Exact names, so a link to tide-app does not count as one to tide. A dot that
   # ends a sentence is not part of the name.
   linked=$(grep -oiE "github\.com/$owner/[A-Za-z0-9_.-]+" <<<"$3" | sed 's#.*/##; s/\.git$//; s/\.*$//' | sort -fu || true)
-  for name in $repos; do
+  [[ ${4:-} == links-only ]] || for name in $repos; do
     grep -qixF "$name" <<<"$linked" && continue
     d=$(last_human_commit "$name")
     [[ -n $d && $d > $2 ]] && out+="- [$name](https://github.com/$owner/$name): commits up to ${d:0:10}, not linked"$'\n'
@@ -68,5 +68,6 @@ section() { # title, page date, page text
 }
 
 section "Homepage projects and landing page" "$site_date" "$site_text"
-section "GitHub profile README" "$profile_date" "$profile_text"
+# The profile README is a short pointer to the site, so it only must not link dead repos.
+section "GitHub profile README" "$profile_date" "$profile_text" links-only
 printf '%s' "$report"
