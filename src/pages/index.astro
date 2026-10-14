@@ -9,6 +9,7 @@ import TitleBlock from "../components/TitleBlock.astro";
 import { cv, profiles } from "../data/cv.ts";
 import { personJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
+import { upstream } from "../data/upstream.ts";
 import Base from "../layouts/Base.astro";
 
 // The history lives on /cv/; this sheet reads only the basics and the date.
@@ -37,6 +38,7 @@ const workProjects = allProjects.filter((p) => p.data.category === "work");
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
 
 const name = basics.name;
+const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
 
 // Matches the start of the CV headline.
 const lead = "PhD researcher and research software engineer";
@@ -170,8 +172,31 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
       </div>
 
       <p class="upstream-note">
-        I'm currently prototyping an <a href="https://github.com/simonvanlierde/ai4ie-demo">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes back to the tools I build on, mostly projects around FastAPI and open LCA, such as <a href="https://github.com/sabuhish/fastapi-mail/pull/283">fastapi-mail</a> and <a href="https://github.com/sentier-dev/sentier_data_tools/pull/2">sentier_data_tools</a>.
+        I'm currently prototyping an <a href="https://github.com/simonvanlierde/awesome-ai4ie">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes back to the tools I build on, mostly open LCA and industrial-ecology libraries.
       </p>
+
+      <details class="disclosure upstream">
+        <summary>
+          <h3>Merged upstream ({upstreamCount} pull requests)</h3>
+        </summary>
+        <ul class="upstream-list">
+          {
+            upstream.map((u) => (
+              <li>
+                <a href={`https://github.com/${u.repo}`}>{u.name}</a>: {u.what}
+                {" ("}
+                {u.prs.map((n, i) => (
+                  <>
+                    {i > 0 && ", "}
+                    <a href={`https://github.com/${u.repo}/pull/${n}`}>#{n}</a>
+                  </>
+                ))}
+                {")"}
+              </li>
+            ))
+          }
+        </ul>
+      </details>
 
       <details class="disclosure personal" open>
         <summary>
@@ -371,6 +396,12 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
 
   .disclosure {
     margin-top: var(--space-xl);
+  }
+
+  .upstream-list {
+    max-width: var(--measure);
+    font-size: var(--step--1);
+    padding-inline-start: var(--space-m);
   }
 
   .disclosure summary {
