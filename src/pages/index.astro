@@ -44,14 +44,14 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
 const lead = "PhD researcher and research software engineer";
 
 const tagline =
-  "At CML, Leiden University, I build open, reproducible research infrastructure for industrial ecology and the circular economy. My current work is on taking products apart.";
+  "At CML, Leiden University, I write open software and collect open data for industrial ecology and the circular economy. Most of my time goes into R9lab, where we take products apart to record what they're made of.";
 
 // Puts dated evidence on the first screen; the notes below have the full counts.
 const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
 ---
 
 <Base
-  title={`${name} | PhD researcher & Research Software Engineer`}
+  title={`${name} | PhD researcher & research software engineer`}
   description={tagline}
   jsonLd={personJsonLd}
 >
@@ -111,10 +111,10 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
             </h3>
             <div class="r9lab-row__intro prose">
               <p>
-                Industrial ecology is short of data on what products are made
-                of. R9lab helps fill that gap: it records how durable goods come
-                apart, component by component. I designed and built the
-                platform, which CML now uses. It has a FastAPI backend, a
+                Industrial ecology has little data on what products are made
+                of. R9lab records it by taking durable goods apart, component
+                by component. I designed and built the platform, and CML now
+                uses it. It has a FastAPI backend, a
                 PostgreSQL data model for life-cycle assessment, and an Expo /
                 React Native capture app.
               </p>
@@ -172,7 +172,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
       </div>
 
       <p class="upstream-note">
-        I'm currently prototyping an <a href="https://github.com/simonvanlierde/awesome-ai4ie">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML. I also send fixes back to the tools I build on, mostly open LCA and industrial-ecology libraries.
+        I'm also building an <a href="https://github.com/simonvanlierde/awesome-ai4ie">AI4IE resource hub</a> and a <a href="https://github.com/CMLPlatform/cml-gallery">project gallery</a> for CML, and I send fixes back to the open LCA and industrial-ecology libraries I use.
       </p>
 
       <details class="disclosure upstream">
