@@ -1,6 +1,6 @@
 ---
 title: msc-thesis-ie
-description: "My MSc Industrial Ecology thesis (Leiden / TU Delft). It models how much cooling the buildings in The Hague need, and the life-cycle impacts of that cooling, from the bottom up. It combines BAG building data (the Dutch building register), an hourly heat-balance model, and life-cycle assessment. An interactive dashboard maps the demand across the city's 112 neighbourhoods."
+description: "My MSc Industrial Ecology thesis (Leiden / TU Delft): how much cooling The Hague's buildings need, and the life-cycle impact of that cooling, worked out building by building. It joins the Dutch building register (BAG) with an hourly heat-balance model and life-cycle assessment. A dashboard maps the demand across the city's 112 neighbourhoods."
 repo: https://github.com/simonvanlierde/msc-thesis-ie
 demo: https://simonvanlierde.github.io/msc-thesis-ie
 kind: thesis + dashboard
