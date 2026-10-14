@@ -1,3 +1,6 @@
 # Public repos scripts/check-drift.sh should never ask to list, one name per line.
 advent-of-code
+locale-en-nl-macos
 roadmap-sh-file-integrity-checker
+# Off the site until its mass balance closes (it loses about 99% of the input mass).
+batterway
