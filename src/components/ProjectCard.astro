@@ -1,26 +1,59 @@
 ---
 // One parts-list row. Only the title links the repo, so the description
-// stays selectable.
+// stays selectable. A grouped row has no repo of its own: each of its `parts`
+// links its repo by name instead.
 interface Props {
   title: string;
   description: string;
-  repo: string;
+  repo?: string;
   kind: string;
   demo?: string;
   tags?: string[];
   links?: { label: string; url: string }[];
+  parts?: { name: string; what: string; repo: string; demo?: string; ci?: string }[];
 }
 
-const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.props;
+const { title, description, repo, kind, demo, tags = [], links = [], parts = [] } = Astro.props;
 ---
 
 <article class="bom-row">
   <p class="bom-row__pos">{kind}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
-      <a href={repo}>{title}</a>
+      {repo ? <a href={repo}>{title}</a> : title}
     </h3>
     <p class="bom-row__desc">{description}</p>
+
+    {
+      parts.length > 0 && (
+        <ul class="bom-parts">
+          {parts.map((part) => (
+            <li class="bom-parts__item">
+              <p>
+                <a class="bom-parts__name" href={part.repo}>
+                  {part.name}
+                </a>
+                : {part.what}
+              </p>
+              {(part.demo || part.ci) && (
+                <p class="bom-row__links">
+                  {part.demo && (
+                    <a href={part.demo} aria-label={`Live demo of ${part.name}`}>
+                      Live demo
+                    </a>
+                  )}
+                  {part.ci && (
+                    <a href={part.ci} aria-label={`CI runs for ${part.name}`}>
+                      CI runs
+                    </a>
+                  )}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )
+    }
 
     {
       /* No "Source" link: the title already links the repo. Each aria-label
