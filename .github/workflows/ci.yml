@@ -23,10 +23,12 @@ jobs:
       id-token: write # Codecov upload via OIDC, no token secret
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Set up pnpm and Node.js
-        uses: pnpm/setup@v3
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3
         with:
           runtime: node@26
           cache: true
@@ -40,7 +42,7 @@ jobs:
 
       # Unit tests only: pnpm check writes lcov.info; the Playwright specs below add none.
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           use_oidc: true
           files: lcov.info
