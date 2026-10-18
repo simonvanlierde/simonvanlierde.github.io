@@ -36,6 +36,8 @@ const notes = [
 const allProjects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
 const workProjects = allProjects.filter((p) => p.data.category === "work");
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
+// A grouped row counts each of its repos.
+const personalCount = personalProjects.reduce((n, p) => n + (p.data.parts.length || 1), 0);
 
 const name = basics.name;
 const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
@@ -200,7 +202,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
 
       <details class="disclosure personal" open>
         <summary>
-          <h3>Personal projects ({personalProjects.length})</h3>
+          <h3>Personal projects ({personalCount})</h3>
         </summary>
         <div class="bom">
           {
@@ -213,6 +215,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
                 demo={p.data.demo}
                 tags={p.data.tags}
                 links={p.data.links}
+                parts={p.data.parts}
               />
             ))
           }

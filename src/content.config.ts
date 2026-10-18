@@ -9,7 +9,8 @@ const projects = defineCollection({
     title: z.string(),
     // One or two honest sentences, plain text.
     description: z.string(),
-    repo: z.url(),
+    // Optional for a row that groups several repos in `parts`.
+    repo: z.url().optional(),
     demo: z.url().optional(),
     // The kind of artefact in two or three words ("pre-commit hook"). Fills the
     // plate's left rail.
@@ -17,6 +18,18 @@ const projects = defineCollection({
     tags: z.array(z.string()).default([]),
     // Extra labelled links (publications, datasets, etc.).
     links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+    // Sub-rows of a grouped row, one per repo.
+    parts: z
+      .array(
+        z.object({
+          name: z.string(),
+          what: z.string(),
+          repo: z.url(),
+          demo: z.url().optional(),
+          ci: z.url().optional(),
+        }),
+      )
+      .default([]),
     // Card group: academic or professional ("work"), or a side project ("personal").
     category: z.enum(["work", "personal"]).default("work"),
     // Lowest first, within the category.

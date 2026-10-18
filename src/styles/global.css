@@ -636,6 +636,26 @@ main > section.container > h2 {
   margin-block: -0.3rem;
 }
 
+.bom-parts {
+  list-style: none;
+  max-width: var(--measure);
+}
+
+.bom-parts__item {
+  padding-block: var(--space-2xs);
+  color: var(--text-muted);
+}
+
+.bom-parts__item + .bom-parts__item {
+  border-top: var(--border-width) solid var(--border);
+}
+
+.bom-parts__name {
+  font-family: var(--font-draft);
+  color: var(--text);
+  text-underline-offset: 0.18em;
+}
+
 .tag-list {
   display: flex;
   flex-wrap: wrap;
