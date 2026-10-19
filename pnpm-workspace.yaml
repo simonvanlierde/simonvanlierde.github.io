@@ -1,3 +1,5 @@
+minimumReleaseAge: 10080 # minutes (7 days), as in renovate.json5; blocks installing very fresh (often compromised) releases
+
 allowBuilds:
   esbuild: true
   lefthook: false
