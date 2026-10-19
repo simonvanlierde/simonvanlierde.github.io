@@ -30,6 +30,8 @@ for (const colorScheme of ["light", "dark"] as const) {
   for (const path of ["/", "/cv/", "/no-such-page/"]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
+      // The sheet defaults to dark; light comes from the toggle's stored choice.
+      await page.addInitScript((t) => localStorage.setItem("theme", t), colorScheme);
       await page.goto(path);
       await expectNoViolations(page);
     });
@@ -37,7 +39,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 }
 
 // Scan states a first-paint scan never reaches: a toggled disclosure, another
-// chart measure, and the blueprint theme.
+// chart measure, and the light theme reached through the toggle.
 test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
 
@@ -64,8 +66,8 @@ test("no axe violations after interaction", async ({ page }) => {
   }
 
   await page.locator(".theme-toggle").click();
-  // A fresh context starts light, so anything but "true" means the toggle is broken.
-  await expect(page.locator(".theme-toggle")).toHaveAttribute("aria-pressed", "true");
+  // A fresh context starts dark, so anything but "false" means the toggle is broken.
+  await expect(page.locator(".theme-toggle")).toHaveAttribute("aria-pressed", "false");
 
   await expectNoViolations(page);
 });

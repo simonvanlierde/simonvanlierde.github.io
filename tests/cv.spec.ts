@@ -134,6 +134,7 @@ test("the CV sheet stamps when its data was exported, and marks itself current",
   const block = page.getByRole("region", { name: "Document title block" });
   await expect(block.getByText("Curriculum vitae", { exact: true })).toBeVisible();
   await expect(block.getByText("2 OF 2", { exact: true })).toBeVisible();
+  await expect(block.getByRole("link", { name: "2 OF 2, go to sheet 1, index" })).toHaveAttribute("href", "/");
 
   // A generated sheet is dated, not attributed.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();

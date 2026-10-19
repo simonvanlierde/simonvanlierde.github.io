@@ -27,6 +27,7 @@ const projects = defineCollection({
           repo: z.url(),
           demo: z.url().optional(),
           ci: z.url().optional(),
+          links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
         }),
       )
       .default([]),

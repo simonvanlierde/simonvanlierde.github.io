@@ -54,16 +54,23 @@ test("skip link is the first tab stop and lands before the h1", async ({ page })
   await expect(page.locator("#main").getByRole("heading", { level: 1 })).toHaveCount(1);
 });
 
-test("theme toggle flips the theme and persists across reload", async ({ page }) => {
+test("the sheet starts dark, even on a light system, and the toggle's light choice persists", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/");
   const html = page.locator("html");
   const toggle = page.getByRole("button", { name: "Dark mode" });
+  const bg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  const dark = await bg();
 
   await toggle.click();
-  await expect(html).toHaveAttribute("data-theme", "dark");
-  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(html).toHaveAttribute("data-theme", "light");
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  expect(await bg()).not.toBe(dark);
 
   await page.reload();
-  await expect(html).toHaveAttribute("data-theme", "dark");
+  await expect(html).toHaveAttribute("data-theme", "light");
 });
 
 test("the personal-projects disclosure ships open and still collapses", async ({ page }) => {
@@ -83,7 +90,8 @@ test("the web apps share one row, in alphabetical order, each with a demo and CI
     await expect(page.getByRole("link", { name: `Live demo of ${name}` })).toHaveCount(1);
     await expect(page.getByRole("link", { name: `CI runs for ${name}` })).toHaveCount(1);
   }
-  await expect(page.locator("details.disclosure.personal summary")).toContainText("(4)");
+  // One row, so no count: "(4)" read as four rows.
+  await expect(page.locator("details.disclosure.personal summary")).toHaveText("Personal projects");
 });
 
 test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
@@ -179,6 +187,9 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   const rev = block.getByRole("link", { name: /^Site version / });
   await expect(rev).toHaveAttribute("href", "https://github.com/simonvanlierde/simonvanlierde.github.io");
   await expect(rev).toHaveText(/^v\d+\.\d+\.\d+/);
+  // The sheet number turns the page.
+  await block.getByRole("link", { name: "1 OF 2, go to sheet 2, CV" }).click();
+  await expect(page).toHaveURL(/\/cv\/$/);
 });
 
 test("a sheet with nothing generated is attributed rather than dated", async ({ page }) => {
