@@ -13,9 +13,11 @@ interface Props {
   sheet: string; // e.g. "1 OF 2"
   /** ISO date the sheet's data was last generated, if known. */
   dated?: string;
+  /** The other sheet in the set: makes the sheet number turn the page. */
+  turn?: { href: string; label: string; dir: "next" | "prev" };
 }
 
-const { title, docType, sheet, dated } = Astro.props;
+const { title, docType, sheet, dated, turn } = Astro.props;
 const datedLabel = dated ? formatIsoDate(dated) : null;
 
 // Email first, then the same profile list the hero uses.
@@ -35,7 +37,24 @@ const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basi
     </div>
     <div class="title-block__cell">
       <span class="title-block__label">Sheet</span>
-      <span class="title-block__value">{sheet}</span>
+      <span class="title-block__value">
+        {
+          turn ? (
+            <a
+              class:list={["title-block__turn", `title-block__turn--${turn.dir}`]}
+              href={turn.href}
+              aria-label={`${sheet}, go to ${turn.label}`}
+            >
+              {sheet}
+              <svg class="title-block__arrow" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                <path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+            </a>
+          ) : (
+            sheet
+          )
+        }
+      </span>
     </div>
     <div class="title-block__cell">
       <span class="title-block__label">{dated ? "Dated" : "Drawn by"}</span>

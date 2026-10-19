@@ -27,10 +27,10 @@ const ogImage = new URL("og.png", Astro.site);
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {/* Light --bg as a fallback; the script at the end of body syncs it to the
-        active theme. */}
-    <meta name="theme-color" content="#f8f7f3" />
-    <meta name="color-scheme" content="light dark" />
+    {/* Dark --bg (the default theme) as a fallback; the script at the end of
+        body syncs it to the active theme. */}
+    <meta name="theme-color" content="#19263f" />
+    <meta name="color-scheme" content="dark light" />
 
     {/* Every heading uses osifont on first paint. */}
     <link rel="preload" href="/fonts/osifont.woff2" as="font" type="font/woff2" crossorigin />
@@ -38,7 +38,7 @@ const ogImage = new URL("og.png", Astro.site);
     {/* Apply the saved theme before paint to avoid a flash. */}
     <script is:inline>
       // Storage throws where blocked (sandboxed iframe, strict privacy modes);
-      // the system preference applies instead.
+      // the default dark theme applies instead.
       try {
         const t = localStorage.getItem("theme");
         if (t) document.documentElement.dataset.theme = t;
@@ -71,26 +71,16 @@ const ogImage = new URL("og.png", Astro.site);
     <script is:inline>
       const btn = document.querySelector(".theme-toggle");
       const meta = document.querySelector('meta[name="theme-color"]');
-      const media = matchMedia("(prefers-color-scheme: dark)");
 
       // Blocked storage stops the toggle remembering the theme, not applying it.
-      const saved = () => {
-        try {
-          return localStorage.getItem("theme");
-        } catch {
-          return null;
-        }
-      };
       const remember = (v) => {
         try {
           localStorage.setItem("theme", v);
         } catch {}
       };
 
-      const isDark = () =>
-        document.documentElement.dataset.theme
-          ? document.documentElement.dataset.theme === "dark"
-          : media.matches;
+      // Dark unless the visitor picked light; global.css sets the same default.
+      const isDark = () => document.documentElement.dataset.theme !== "light";
 
       // Computed styles serialise --bg as oklch(), which theme-color parsers
       // may not accept. A 1px canvas converts it to plain sRGB.
@@ -115,11 +105,6 @@ const ogImage = new URL("og.png", Astro.site);
         document.documentElement.dataset.theme = next;
         remember(next);
         sync();
-      });
-
-      // Follow system changes only while the user hasn't picked a theme.
-      media.addEventListener("change", () => {
-        if (!saved()) sync();
       });
 
       sync();
