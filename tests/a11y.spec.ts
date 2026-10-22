@@ -46,10 +46,8 @@ for (const colorScheme of ["light", "dark"] as const) {
 test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
 
-  // Personal projects ships open; fold and reopen it so the scan sees the toggled state.
-  const personal = page.locator("details.disclosure.personal summary");
-  await personal.click();
-  await personal.click();
+  // Both lists ship open; fold one so the scan sees a closed list and its count.
+  await page.locator("details.disclosure.personal summary").click();
 
   const parts = page.getByRole("button", { name: "Components" });
   if ((await parts.count()) > 0) {

@@ -178,9 +178,9 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
         When an industrial-ecology library I use gets something wrong or runs slowly, I fix it upstream:
       </p>
 
-      <details class="disclosure upstream">
+      <details class="disclosure upstream" open>
         <summary>
-          <h3>Merged upstream ({upstreamCount} pull requests)</h3>
+          <h3>Merged upstream<span class="disclosure__count"> ({upstreamCount} pull requests)</span></h3>
         </summary>
         <ul class="upstream-list">
           {
@@ -203,7 +203,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
 
       <details class="disclosure personal" open>
         <summary>
-          <h3>Personal projects</h3>
+          <h3>Personal projects<span class="disclosure__count"> ({personalProjects.length})</span></h3>
         </summary>
         <div class="bom">
           {
@@ -408,13 +408,13 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     margin-top: var(--space-xl);
   }
 
-  /* The note ends on "merged so far:", so the list it introduces sits close. */
+  /* The note ends on a colon, so the list it introduces sits close. */
   .upstream-note + .disclosure {
     margin-top: var(--space-s);
   }
 
+  /* Full sheet width: short lines of small type, so the measure would only add height. */
   .upstream-list {
-    max-width: var(--measure);
     font-size: var(--step--1);
     padding-inline-start: var(--space-m);
   }
@@ -465,6 +465,11 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     font-size: var(--step-0);
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  /* The count says what a closed list holds; once open, the list says it. */
+  .disclosure[open] .disclosure__count {
+    display: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
