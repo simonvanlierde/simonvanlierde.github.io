@@ -17,8 +17,9 @@ const projects = defineCollection({
     tags: z.array(z.string()).default([]),
     // Extra labelled links (publications, datasets, etc.).
     links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
-    // Card group: academic or professional ("work"), or a side project ("personal").
-    category: z.enum(["work", "personal"]).default("work"),
+    // Card group: academic or professional ("work"), a side project ("personal"), or a
+    // smaller piece shown as one line under the work rows ("minor").
+    category: z.enum(["work", "personal", "minor"]).default("work"),
     // Lowest first, within the category.
     order: z.number().default(0),
   }),
