@@ -73,14 +73,23 @@ test("the sheet starts dark, even on a light system, and the toggle's light choi
   await expect(html).toHaveAttribute("data-theme", "light");
 });
 
-test("the personal-projects disclosure ships open and still collapses", async ({ page }) => {
-  const details = page.locator("details.disclosure.personal");
-  await expect(details).toHaveJSProperty("open", true);
-  await details.locator("summary").click();
-  await expect(details).toHaveJSProperty("open", false);
-  await details.locator("summary").click();
-  await expect(details).toHaveJSProperty("open", true);
-});
+for (const [name, count] of [
+  ["upstream", /^ \(\d+ pull requests\)$/],
+  ["personal", /^ \(\d+\)$/],
+] as const) {
+  test(`the ${name} disclosure ships open and shows its count only when closed`, async ({ page }) => {
+    const details = page.locator(`details.disclosure.${name}`);
+    const counter = details.locator("summary .disclosure__count");
+    await expect(details).toHaveJSProperty("open", true);
+    await expect(counter).toBeHidden();
+    await details.locator("summary").click();
+    await expect(details).toHaveJSProperty("open", false);
+    await expect(counter).toBeVisible();
+    await expect(counter).toHaveText(count);
+    await details.locator("summary").click();
+    await expect(details).toHaveJSProperty("open", true);
+  });
+}
 
 test("each personal web app has its own row with a live demo", async ({ page }) => {
   const personal = page.locator("details.disclosure.personal");
