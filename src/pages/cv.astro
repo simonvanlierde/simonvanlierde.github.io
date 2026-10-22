@@ -59,7 +59,7 @@ const contact = [
   {/* Skip target: the skip link passes only the sheet nav. */}
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
-    <h1>{basics.name}</h1>
+    <h1 class="sheet-name">{basics.name}</h1>
     <p class="lead">{headlineLead}</p>
     {headlineRest.length > 0 && <p class="tagline prose">{headlineRest.join(" · ")}</p>}
 
@@ -343,8 +343,12 @@ const contact = [
     text-transform: uppercase;
   }
 
+  /* A register of fixed columns: with space-between, a wrapped second row
+     spread its two entries to opposite edges. */
   @media (min-width: 60rem) {
     .cv-index__list {
+      display: grid;
+      grid-template-columns: repeat(4, max-content);
       justify-content: space-between;
       letter-spacing: 0.03em;
     }

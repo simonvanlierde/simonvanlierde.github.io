@@ -8,5 +8,5 @@ tags:
   - Grafana stack
   - Docker Compose
   - OpenTofu
-order: 2
+order: 6
 ---

@@ -16,11 +16,14 @@ async function settle(page: Page) {
     });
 }
 
+// The claim in docs/accessibility.md: WCAG 2.2 A and AA, plus axe's best practices.
+const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"];
+
 // Assert on violations only. axe reports SVG `<text>` contrast (chart axis labels)
 // as `incomplete` because it cannot resolve SVG backgrounds; that is not a failure.
 async function expectNoViolations(page: Page) {
   await settle(page);
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const { violations } = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
   const summary = violations.map((v) => `${v.id} (${v.nodes.length}): ${v.help}`).join("\n");
   expect(violations, `axe violations:\n${summary}`).toEqual([]);
 }
@@ -43,10 +46,8 @@ for (const colorScheme of ["light", "dark"] as const) {
 test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
 
-  // Personal projects ships open; fold and reopen it so the scan sees the toggled state.
-  const personal = page.locator("details.disclosure.personal summary");
-  await personal.click();
-  await personal.click();
+  // Both lists ship open; fold one so the scan sees a closed list and its count.
+  await page.locator("details.disclosure.personal summary").click();
 
   const parts = page.getByRole("button", { name: "Components" });
   if ((await parts.count()) > 0) {

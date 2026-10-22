@@ -7,5 +7,8 @@ tags:
   - Python
   - asv
   - LCA
-order: 6
+links:
+  - label: Benchmark history
+    url: https://simonvanlierde.github.io/brightway-benchmarks/
+order: 2
 ---

@@ -267,8 +267,7 @@ sheets use these:
 | Balloon / datum | Notation marks only, `--border-strong` stroke on a `--bg` fill, drafting hand with tabular numerals |
 | Tags | Read-only spec callouts, hairline and transparent, never interactive filters |
 | Work row | A parts-list row, not a card: a top rule, no background, no hover tint, the part name as the target |
-| Sub-assembly | A grouped row's parts as a ruled table under a Frame Line: name, one line of what it does, drafting-hand links with the demo in accent; columns align across lines on wide rows and stack on narrow ones |
-| Sheet nav | Sticky, solid ground, hairline rule; current sheet marked with `aria-current="page"` and ink, not colour alone |
+| Sheet nav | Sticky, solid ground, hairline rule; current sheet marked with `aria-current="page"` and ink, not colour alone. The SVL monogram stays hidden while the sheet's name heading is in view, like a reference mark that appears once the title is out of sight; on the index it scrolls back to the top |
 | Title block | ISO 7200 provenance and contact; the profile links repeat, muted, under each sheet's header. The sheet number links to the other sheet, with an arrow that points the way |
 | Exploded view | The signature figure; see below |
 | General notes | Datum-lettered running totals, sitting with the platform they describe |
@@ -304,7 +303,8 @@ Every figure on the set uses one caption style: under the figure, starting with
 **The Drafting Motion Rule.** Motion is drafting-derived behaviour, never
 decoration. Parts settle apart from an assembled stack, a chart's total is
 traced in from the left, and fills swap on the `--dur-fast`/`--dur-base` clock.
-Reveal motion runs once, on load. Every animation has a
+Reveal motion runs once, on load. The one scroll-linked exception is the
+sheet nav's monogram, which fades in as the name heading leaves view. Every animation has a
 `prefers-reduced-motion` block in the file that declares it. The reduced state
 is the finished state, never a missing one.
 
