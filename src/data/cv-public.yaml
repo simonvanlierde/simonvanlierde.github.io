@@ -1,6 +1,6 @@
 basics:
   name: Simon van Lierde
-  headline: PhD researcher and research software engineer · Open research infrastructure for sustainability science
+  headline: PhD researcher and research software engineer · Open software and data for industrial ecology
   location: The Hague, Netherlands
   email: simonvanlierde@gmail.com
   links:
@@ -11,7 +11,7 @@ render:
   contact: [email, location, github, linkedin, website]
   font: nunito
 profile: >-
-  I'm a full-stack research software engineer with three years of professional experience in software, data, and solution architecture. I'm now halfway through a PhD in Industrial Ecology at CML, Leiden University. I build open-source tools and data infrastructure that turn environmental research into software people can rely on and find easy to use. As lead developer of R9lab, I own the platform end to end. I also build dashboards and interactive visualizations that make research readable for people outside the field. I work in the open throughout and follow the FAIR principles (findable, accessible, interoperable, reusable).
+  I'm a full-stack research software engineer with three years of professional experience in software, data, and solution architecture, now halfway through a PhD in Industrial Ecology at CML, Leiden University. I lead the development of R9lab, a platform that records what products are made of, and I own it end to end. I also build dashboards and interactive visualizations so that people outside the field can read the research. My code and data are open and follow the FAIR principles (findable, accessible, interoperable, reusable).
 experience:
   - organization: CML, Leiden University
     role: PhD Researcher in Industrial Ecology
@@ -19,7 +19,7 @@ experience:
     end: present
     highlights:
       - "Lead developer of R9lab, responsible for the whole software lifecycle: a FastAPI/PostgreSQL backend with OAuth and Alembic migrations, React/TypeScript and Expo front-ends, CI/CD, Cloudflare networking, restic backups, and security hardening guided by OWASP ASVS."
-      - Ran two data-collection workshops (135 participants) and deployed the platform in a lab. The pilot recorded 78 products, 1,331 components, and 3,610 images.
+      - Ran two data-collection workshops (135 participants) and deployed the platform in a lab. By October 2026 it held 94 products, 1,779 components, and 4,455 images.
       - Designed and deployed a central observability stack that CML's research software shares (OpenTelemetry, Grafana, infrastructure managed with OpenTofu).
       - Built a Raspberry Pi camera plugin that captures images automatically. It has an OpenAPI spec and is released on PyPI.
   - organization: Nationale Milieudatabase (Dutch Environmental Database)
@@ -34,8 +34,8 @@ experience:
     start: 2022-08
     end: 2023-09
     highlights:
-      - Shaped the technical design of tools for LCA (life-cycle assessment) and sustainability reporting, and was their product owner. Guided how the division's projects applied LCA, EEIOA (environmentally extended input-output analysis), and MFA (material flow analysis).
-      - Product owner and domain expert for automated sustainability-reporting tools (FastAPI, Vue). They replaced static Excel models with REST APIs and web applications.
+      - Designed tools for LCA (life-cycle assessment) and sustainability reporting. Advised the division's projects on how to apply LCA, EEIOA (environmentally extended input-output analysis), and MFA (material flow analysis).
+      - Product owner and domain expert for automated sustainability-reporting tools (FastAPI, Vue) that replaced static Excel models with REST APIs and web applications.
   - organization: Metabolic
     role: Consultant & Data Analyst, Sustainable Industries
     start: 2021-02
@@ -45,22 +45,29 @@ experience:
 projects:
   - name: R9lab
     url: https://github.com/CMLPlatform/r9lab
-    summary: Open-source platform for research on taking products apart, the circular economy, and computer vision.
-  - name: Computer-vision taxonomy visual
-    url: https://simonvanlierde.github.io/cv-ie-taxonomy/
-    summary: Interactive React/SVG map of a computer-vision taxonomy, drawn as an exploded teardown. A prototype visual to go with an upcoming paper.
-  - name: MSc-thesis cooling dashboard
-    url: https://simonvanlierde.github.io/msc-thesis-ie
-    summary: Interactive dashboard for a model of cooling demand in The Hague and its life-cycle impacts, with Nivo (D3-based) charts and MapLibre maps.
-  - name: Public web apps
-    url: https://simonvanlierde.github.io/
-    summary: I maintain a CRediT authorship-statement generator and other open-source web apps. All are tested in CI and deploy automatically to GitHub Pages and Cloudflare.
+    summary: Open-source platform that records what products are made of by taking them apart, and collects the photos that computer-vision research needs.
   - name: Open-source contributions
     highlights:
+      - "lca_algebraic: fixed truncated-normal and lognormal sampling, method lookup and cache checks across time zones; halved parameter expansion time (0.76 s to 0.40 s at 20k processes) and made Sobol analysis about 20× faster when second-order indices are not needed (3.13 s to 0.16 s, 20 parameters)."
+      - "Brightway (bw2calc, bw2data, stats_arrays) and pymrio: fixed wrong LCA scores, cleared two security advisories, made importing Brightway about 0.3 s faster, and sped up pymrio's account calculation 26× (6.1 s to 0.23 s)."
       - "flodym (PIK's material-flow framework): fixed lifetime extension overwriting the model's own parameters, and made it about 9× faster (0.83 s to 0.092 s, 201 years × 12 regions × 8 goods)."
-      - "lca_algebraic: fixed truncated-normal and lognormal sampling and method lookup, and halved parameter expansion time (0.76 s to 0.40 s at 20k processes)."
-      - "Activity Browser: kept parameter amounts editable and explained invalid names; loaded scenario files with empty keys and kept a Monte Carlo seed of 0."
-      - "Also merged in fastapi-mail (Redis connection handling) and sentier.dev's data tools."
+      - "premise and Activity Browser: fixed unreported scenario bugs in premise; kept Activity Browser's parameter amounts editable, loaded scenario files with empty keys and kept a Monte Carlo seed of 0."
+      - "Also merged in CodeMeta, Boavizta, SchemaStore, pyOpenSci and fastapi-mail: 29 pull requests in 15 repositories."
+  - name: RaMa-Scene explorer
+    url: https://simonvanlierde.github.io/ramascene-explorer/
+    summary: "Map of where a country's consumption causes emissions, jobs and metal-ore extraction, over 153 RaMa-Scene runs on EXIOBASE (Svelte, D3). It loads under 1 MB of a 51.5 MB Parquet file by range request. Zenodo DOI."
+  - name: jsonvet
+    url: https://github.com/simonvanlierde/jsonvet
+    summary: "Pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and three other dialects, released on PyPI and crates.io. Matches the Python original on 40,228 test runs, survived a billion fuzzing inputs, up to 1,407× faster."
+  - name: Public web apps
+    url: https://simonvanlierde.github.io/
+    summary: "credit-matrix, a CRediT authorship-statement tool with a Zenodo DOI, and four personal web apps, among them a multiplayer game whose one-CPU server holds about 200 rooms of 6 players under load."
+  - name: Research visuals
+    url: https://simonvanlierde.github.io/cv-ie-taxonomy/
+    summary: "An interactive map of computer vision in industrial ecology, drawn as an exploded teardown for an upcoming paper (React, SVG), and a dashboard of cooling demand in The Hague and its life-cycle impacts from my MSc thesis (Nivo, MapLibre)."
+  - name: File integrity checker
+    url: https://github.com/simonvanlierde/roadmap-sh-file-integrity-checker
+    summary: "One command-line tool written in bash, Python and Rust, sharing a signed store format and tested against each other on random file trees, with a written threat model."
 education:
   - institution: Leiden University & TU Delft
     degree: MSc Industrial Ecology
@@ -79,36 +86,33 @@ publications:
     year: 2026
     doi: 10.21203/rs.3.rs-9270723/v1
     status: preprint
-  - authors: "van Lierde, S."
+  - authors: "van Lierde, S"
     title: "R9lab: data collection platform (software, v0.5.0)"
     venue: Zenodo
     year: 2026
     doi: 10.5281/zenodo.16637742
 professional_development:
-  - "Conference talks: NWO NAC 2026, Brightcon 2025, and ISIE 2025."
-  - BMVA Computer Vision Summer School (2026)
-  - "HPC Spring School: distributed and GPU computing, Utrecht University (2026)"
-  - "Autumn School on inventory modelling at scale, Départ de Sentier (2025)"
-  - PhD Summer School on AI, machine learning and neural networks, Utrecht University (2024)
+  - "Talks: Open Science Festival 2026 (lightning talk), NWO NAC 2026, Brightcon 2025, and ISIE 2025."
+  - "Schools: BMVA Computer Vision (2026); distributed and GPU computing, Utrecht University (2026); inventory modelling at scale, Départ de Sentier (2025); AI, machine learning and neural networks, Utrecht University (2024)."
 skills:
   - group: Programming
-    items: [Python, TypeScript/JavaScript, SQL]
+    items: [Python, TypeScript/JavaScript, Rust, SQL, Bash]
   - group: Front-end
-    items: [React, Expo/React Native, Nivo (D3), MapLibre, "accessibility (WCAG AA, axe-core)"]
+    items: [React, Svelte, Vue, Astro, Expo/React Native, D3, MapLibre, "WCAG 2.2 AA (axe-core)"]
   - group: Back-end
-    items: [FastAPI, REST/OpenAPI, OAuth, PostgreSQL, Alembic]
+    items: [FastAPI, REST/OpenAPI, WebSockets, OAuth, PostgreSQL, Alembic]
   - group: DevOps
-    items: [Docker, GitHub Actions, OpenTofu/Terraform (IaC), Cloudflare, Grafana, uv, pnpm, devcontainers]
+    items: [Docker, GitHub Actions, OpenTofu/Terraform (IaC), Cloudflare, Grafana, uv, pnpm]
   - group: Practices
-    items: [Git/GitHub, pytest, Playwright, PyPI packaging, documentation, reproducible workflows, FAIR and open science, OWASP ASVS]
+    items: [Git/GitHub, pytest, Playwright, benchmarking, fuzzing, PyPI and crates.io releases, reproducible workflows, FAIR (Zenodo, CodeMeta), OWASP ASVS]
   - group: Data science & ML
-    items: [PyTorch, Pandas]
+    items: [PyTorch, NumPy/SciPy, Pandas, Parquet]
   - group: Domain modeling
-    items: [LCA, MFA, EEIOA, GIS, circular economy]
+    items: [LCA (Brightway), MFA, EEIOA (EXIOBASE), GIS, circular economy]
   - group: Languages
     items: [Dutch (native), English (fluent), French (B1), Chinese (A2)]
 interests:
   - Climbing
   - Hiking
   - Cooking
-exported: "2026-10-13T22:29:29Z"
+exported: "2026-10-22T09:08:33Z"
