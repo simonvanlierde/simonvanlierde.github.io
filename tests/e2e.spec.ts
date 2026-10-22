@@ -82,16 +82,12 @@ test("the personal-projects disclosure ships open and still collapses", async ({
   await expect(details).toHaveJSProperty("open", true);
 });
 
-test("the web apps share one row, in alphabetical order, each with a demo and CI link", async ({ page }) => {
-  const listed = await page.locator("details.disclosure.personal .bom-parts__name").allTextContents();
-  expect(listed).toHaveLength(4);
-  expect(listed).toEqual([...listed].sort());
-  for (const name of listed) {
-    await expect(page.getByRole("link", { name: `Live demo of ${name}` })).toHaveCount(1);
-    await expect(page.getByRole("link", { name: `CI runs for ${name}` })).toHaveCount(1);
+test("each personal web app has its own row with a live demo", async ({ page }) => {
+  const personal = page.locator("details.disclosure.personal");
+  for (const name of ["6-second-scribbles", "tide", "bikespot", "scattergories"]) {
+    await expect(personal.getByRole("heading", { level: 3, name, exact: true })).toHaveCount(1);
+    await expect(personal.getByRole("link", { name: `Live demo of ${name}` })).toHaveCount(1);
   }
-  // One row, so no count: "(4)" read as four rows.
-  await expect(page.locator("details.disclosure.personal summary")).toHaveText("Personal projects");
 });
 
 test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {

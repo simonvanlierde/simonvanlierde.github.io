@@ -7,5 +7,5 @@ tags:
   - Python
   - CodeMeta
   - metadata
-order: 8
+order: 7
 ---
