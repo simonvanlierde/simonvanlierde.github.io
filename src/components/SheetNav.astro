@@ -12,7 +12,14 @@ const { current } = Astro.props;
 
 <nav class="sheet-nav" aria-label="Primary">
   <div class="container sheet-nav__inner">
-    <a class="sheet-nav__mark" href="/" aria-label="SVL, home">SVL</a>
+    {/* On the index, the monogram scrolls back up instead of reloading the page. */}
+    {
+      current === "index" ? (
+        <a class="sheet-nav__mark" href="#top" aria-label="SVL, back to top">SVL</a>
+      ) : (
+        <a class="sheet-nav__mark" href="/" aria-label="SVL, home">SVL</a>
+      )
+    }
     <div class="sheet-nav__actions">
       <a class="sheet-nav__link" href="/" aria-current={current === "index" ? "page" : undefined}>
         Sheet 1: Index
