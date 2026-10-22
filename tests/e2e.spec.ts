@@ -99,6 +99,16 @@ test("each personal web app has its own row with a live demo", async ({ page }) 
   }
 });
 
+test("the monogram scrolls the index back up, and leads home from the CV", async ({ page }) => {
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.getByRole("link", { name: "SVL, back to top" }).click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  expect(new URL(page.url()).pathname).toBe("/");
+
+  await page.goto("/cv/");
+  await expect(page.getByRole("link", { name: "SVL, home" })).toHaveAttribute("href", "/");
+});
+
 test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
   // The header allows one stamp, and it goes to the CV. An exported address sits
   // beside it as a plain link.
