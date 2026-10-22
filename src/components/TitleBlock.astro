@@ -1,7 +1,6 @@
 ---
 // ISO 7200 title block, one per sheet. Every cell is real provenance. There is
 // no scale cell: nothing on a web page is drawn to scale.
-import { version } from "../../package.json";
 import { cv, profiles } from "../data/cv.ts";
 import { formatIsoDate } from "./cvPeriod.ts";
 
@@ -22,6 +21,10 @@ const datedLabel = dated ? formatIsoDate(dated) : null;
 
 // Email first, then the same profile list the hero uses.
 const { basics } = cv;
+
+// The commit this build came from, set in astro.config.mjs.
+const sha: string = import.meta.env.SITE_SHA;
+const repoUrl = "https://github.com/simonvanlierde/simonvanlierde.github.io";
 const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []), ...profiles];
 ---
 
@@ -75,12 +78,13 @@ const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basi
       </ul>
     </div>
     <div class="title-block__cell">
-      {/* "Site rev", not "Rev": on the CV sheet a bare revision number reads
-          as the CV's own version. */}
+      {/* "Site rev", not "Rev": on the CV sheet a bare revision reads as the
+          CV's own version. Every push to main deploys, so the commit is the
+          revision. */}
       <span class="title-block__label">Site rev</span>
       <span class="title-block__value">
-        <a href="https://github.com/simonvanlierde/simonvanlierde.github.io" aria-label={`Site version ${version}, view source on GitHub`}>
-          v{version}
+        <a href={`${repoUrl}/commit/${sha}`} aria-label={`Site revision ${sha.slice(0, 7)}, view the commit on GitHub`}>
+          {sha.slice(0, 7)}
         </a>
       </span>
     </div>

@@ -38,10 +38,10 @@ If the API is unavailable, blocked, or returns an unexpected shape, the script e
 
 ## Checks
 
-Pull requests run `pnpm check`, a production Astro build, and Playwright tests. Accessibility is checked twice:
+Pull requests and pushes to `main` run `pnpm check`, a production Astro build, and Playwright tests. Accessibility is checked twice (what that covers is in [accessibility.md](accessibility.md)):
 
 - **Static**: Biome's `a11y` rules (`pnpm lint`) flag missing `alt` text, misused ARIA, and click handlers without keyboard equivalents.
-- **Runtime**: Playwright runs axe-core over the built page (`tests/a11y.spec.ts`) in both colour schemes and after interaction. `tests/e2e.spec.ts` checks the skip link, theme-toggle persistence, and the chart's `aria-pressed` toggles.
+- **Runtime**: Playwright runs axe-core over the built page (`tests/a11y.spec.ts`) with the WCAG 2.2 A and AA and best-practice rules, in both colour schemes and after interaction. `tests/e2e.spec.ts` checks the skip link, theme-toggle persistence, and the chart's `aria-pressed` toggles.
 
 ## Deployment
 
@@ -55,4 +55,4 @@ Renovate opens one PR a month for minor and patch updates and merges it once CI 
 
 - No backend for the portfolio site.
 - No runtime database. Research datasets and platform data live in their own repositories and services.
-- No release changelog for the site itself. Git history and pull requests record the changes.
+- No releases or changelog for the site itself. Every push to `main` deploys, so the commit is the version: the title block's "Site rev" names it and links to it. Git history and pull requests record the changes.

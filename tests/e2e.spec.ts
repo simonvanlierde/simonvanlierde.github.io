@@ -180,9 +180,12 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   const latest = [cv.exported.slice(0, 10), stats.as_of].sort().at(-1) ?? "";
   await expect(block.locator("time")).toHaveAttribute("datetime", latest);
 
-  const rev = block.getByRole("link", { name: /^Site version / });
-  await expect(rev).toHaveAttribute("href", "https://github.com/simonvanlierde/simonvanlierde.github.io");
-  await expect(rev).toHaveText(/^v\d+\.\d+\.\d+/);
+  const rev = block.getByRole("link", { name: /^Site revision / });
+  await expect(rev).toHaveAttribute(
+    "href",
+    /^https:\/\/github\.com\/simonvanlierde\/simonvanlierde\.github\.io\/commit\/[0-9a-f]{40}$/,
+  );
+  await expect(rev).toHaveText(/^[0-9a-f]{7}$/);
   // The sheet number turns the page.
   await block.getByRole("link", { name: "1 OF 2, go to sheet 2, CV" }).click();
   await expect(page).toHaveURL(/\/cv\/$/);
