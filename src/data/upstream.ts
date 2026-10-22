@@ -46,7 +46,7 @@ export const upstream: UpstreamProject[] = [
   {
     name: "premise",
     repo: "polca/premise",
-    what: "kept every efficiency variable's exclusions in external scenarios, and made market efficiency filters behave like production pathways",
+    what: "fixed two bugs in how external scenarios apply efficiency changes, one of which scaled flows they were meant to leave alone",
     prs: [316, 317],
   },
   {
@@ -58,13 +58,13 @@ export const upstream: UpstreamProject[] = [
   {
     name: "Brightway (bw2data)",
     repo: "brightway-lca/brightway2-data",
-    what: "moved to a deepdiff release without two security advisories, keeping the project revision format readable",
+    what: "upgraded deepdiff past two security advisories without breaking saved project revisions",
     prs: [295],
   },
   {
     name: "Boavizta API",
     repo: "Boavizta/boaviztapi",
-    what: "returned use-phase values for six impact criteria that answered 'not implemented'",
+    what: "made the use phase return values for six impact criteria that said 'not implemented'",
     prs: [583],
   },
   {
