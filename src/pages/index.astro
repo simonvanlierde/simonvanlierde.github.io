@@ -238,7 +238,13 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
 
 <style>
   .hero {
-    padding-block: var(--space-l) var(--space-xl);
+    padding-block: var(--space-l) var(--space-m);
+  }
+
+  /* The title block's own top margin already spaces the last section from
+     the footer. */
+  main > section:last-child {
+    padding-bottom: 0;
   }
 
   .hero__grid {
