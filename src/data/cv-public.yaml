@@ -62,9 +62,12 @@ projects:
   - name: RaMa-Scene explorer
     url: https://simonvanlierde.github.io/ramascene-explorer/
     summary: "Map of where a country's consumption causes emissions, jobs and metal-ore extraction, over 153 RaMa-Scene runs on EXIOBASE (Svelte, D3). It loads under 1 MB of a 51.5 MB Parquet file by range request. Zenodo DOI."
-  - name: Research visuals
+  - name: Computer-vision taxonomy visual
     url: https://simonvanlierde.github.io/cv-ie-taxonomy/
-    summary: "An interactive map of computer vision in industrial ecology, drawn as an exploded teardown for an upcoming paper (React, SVG), and a dashboard of cooling demand in The Hague and its life-cycle impacts from my MSc thesis (Nivo, MapLibre)."
+    summary: "Interactive React/SVG map of computer vision in industrial ecology, drawn as an exploded teardown, for an upcoming paper."
+  - name: MSc-thesis cooling dashboard
+    url: https://simonvanlierde.github.io/msc-thesis-ie
+    summary: "A dashboard of cooling demand in The Hague and its life-cycle impacts, from my MSc thesis (Nivo, MapLibre)."
 education:
   - institution: Leiden University & TU Delft
     degree: MSc Industrial Ecology
@@ -112,4 +115,4 @@ interests:
   - Climbing
   - Hiking
   - Cooking
-exported: "2026-10-22T09:42:59Z"
+exported: "2026-10-22T10:02:24Z"
