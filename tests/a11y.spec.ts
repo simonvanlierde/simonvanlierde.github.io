@@ -16,11 +16,14 @@ async function settle(page: Page) {
     });
 }
 
+// The claim in docs/accessibility.md: WCAG 2.2 A and AA, plus axe's best practices.
+const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"];
+
 // Assert on violations only. axe reports SVG `<text>` contrast (chart axis labels)
 // as `incomplete` because it cannot resolve SVG backgrounds; that is not a failure.
 async function expectNoViolations(page: Page) {
   await settle(page);
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const { violations } = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
   const summary = violations.map((v) => `${v.id} (${v.nodes.length}): ${v.help}`).join("\n");
   expect(violations, `axe violations:\n${summary}`).toEqual([]);
 }
