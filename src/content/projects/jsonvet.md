@@ -7,5 +7,5 @@ tags:
   - Rust
   - pre-commit
   - PyPI
-order: 2
+order: 1
 ---
