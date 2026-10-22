@@ -130,10 +130,10 @@ test("the exploded view becomes one compact, touch-sized system on mobile", asyn
 // This list is the independent check.
 const PART_DESTINATIONS = [
   ["Camera rig", "https://github.com/CMLPlatform/r9cam"],
-  ["Capture app", "https://github.com/CMLPlatform/r9lab"],
+  ["Capture app", "https://github.com/CMLPlatform/r9lab/tree/main/app"],
   ["Web app", "https://app.r9lab.io"],
-  ["API", "https://github.com/CMLPlatform/r9lab"],
-  ["Database", "https://github.com/CMLPlatform/r9lab"],
+  ["API", "https://docs.r9lab.io/api-reference/"],
+  ["Database", "https://docs.r9lab.io/architecture/datamodel/"],
   ["Docs", "https://docs.r9lab.io"],
 ];
 
@@ -145,6 +145,8 @@ for (const [variant, width] of [
     await page.setViewportSize({ width, height: 844 });
     const links = page.locator(`.exploded__svg--${variant} a`);
     await expect(links).toHaveCount(PART_DESTINATIONS.length);
+    // No two parts share a destination.
+    expect(new Set(PART_DESTINATIONS.map(([, href]) => href)).size).toBe(PART_DESTINATIONS.length);
 
     for (const [i, [name, href]] of PART_DESTINATIONS.entries()) {
       await expect(links.nth(i)).toHaveAttribute("href", href);

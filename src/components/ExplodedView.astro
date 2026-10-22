@@ -2,7 +2,6 @@
 // Fig. 1: R9lab as an exploded view. Each part links to its repo, app, or docs
 // and has a balloon keyed to the left register. On load the parts move apart
 // from the assembled stack.
-const repo = "https://github.com/CMLPlatform/r9lab";
 const parts = [
   {
     id: "rig",
@@ -10,10 +9,15 @@ const parts = [
     href: "https://github.com/CMLPlatform/r9cam",
     to: "RPi camera plugin on GitHub",
   },
-  { id: "app", name: "Capture app", href: repo, to: "R9lab source on GitHub" },
+  {
+    id: "app",
+    name: "Capture app",
+    href: "https://github.com/CMLPlatform/r9lab/tree/main/app",
+    to: "capture app source on GitHub",
+  },
   { id: "web", name: "Web app", href: "https://app.r9lab.io", to: "the live platform" },
-  { id: "api", name: "API", href: repo, to: "R9lab source on GitHub" },
-  { id: "db", name: "Database", href: repo, to: "R9lab source on GitHub" },
+  { id: "api", name: "API", href: "https://docs.r9lab.io/api-reference/", to: "R9lab API reference" },
+  { id: "db", name: "Database", href: "https://docs.r9lab.io/architecture/datamodel/", to: "R9lab data model" },
   { id: "docs", name: "Docs", href: "https://docs.r9lab.io", to: "R9lab documentation" },
 ];
 // Throw on an unknown id: a fallback would silently link the wrong part.
@@ -30,7 +34,7 @@ const link = (id: string) => {
     class="exploded__svg exploded__svg--desktop"
     viewBox="0 0 340 486"
     role="group"
-    aria-label="Exploded view of R9lab; each part links to its source, app, or docs"
+    aria-label="Exploded view of R9lab. Each part links to its code, app or docs."
     fill="none"
     stroke-linecap="round"
     stroke-linejoin="round"
@@ -198,7 +202,7 @@ const link = (id: string) => {
     class="exploded__svg exploded__svg--mobile"
     viewBox="0 0 340 336"
     role="group"
-    aria-label="Compact exploded view of R9lab; six numbered parts link to the app, source, or docs"
+    aria-label="Compact exploded view of R9lab. Each of the six numbered parts links to its code, app or docs."
     fill="none"
     stroke-linecap="round"
     stroke-linejoin="round"
@@ -321,8 +325,7 @@ const link = (id: string) => {
 
   <figcaption id="exploded-caption">
     Fig. 1: <a href="#relab">R9lab</a>, an open research platform for taking
-    products apart, drawn as an exploded view. A schematic: each numbered part
-    opens its code, app, or docs.
+    products apart, drawn as an exploded view.
   </figcaption>
 </figure>
 
