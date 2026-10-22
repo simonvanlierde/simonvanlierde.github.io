@@ -343,8 +343,12 @@ const contact = [
     text-transform: uppercase;
   }
 
+  /* A register of fixed columns: with space-between, a wrapped second row
+     spread its two entries to opposite edges. */
   @media (min-width: 60rem) {
     .cv-index__list {
+      display: grid;
+      grid-template-columns: repeat(4, max-content);
       justify-content: space-between;
       letter-spacing: 0.03em;
     }

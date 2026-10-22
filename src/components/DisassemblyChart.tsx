@@ -107,7 +107,7 @@ export default function DisassemblyChart({
   if (series.length === 0) {
     return (
       <figure className="chart">
-        <p className="chart__empty">No disassembly data available yet.</p>
+        <p className="chart__empty">No teardown data yet.</p>
       </figure>
     );
   }

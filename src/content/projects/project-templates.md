@@ -7,5 +7,5 @@ tags:
   - Copier
   - GitHub Actions
   - just
-order: 5
+order: 7
 ---

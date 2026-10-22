@@ -24,13 +24,14 @@ pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
 
-Every pull request has to pass `pnpm check` and `pnpm test:e2e`.
+Every pull request and push to `main` runs `pnpm check` and `pnpm test:e2e`.
 
 ## More
 
 - [docs/architecture.md](docs/architecture.md): how the site is built, where the CV and chart data
   come from, the checks, and the deploy
 - [DESIGN.md](DESIGN.md): the design system
+- [docs/accessibility.md](docs/accessibility.md): the accessibility statement and what the checks cover
 
 ## Licence and credits
 

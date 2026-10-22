@@ -82,16 +82,12 @@ test("the personal-projects disclosure ships open and still collapses", async ({
   await expect(details).toHaveJSProperty("open", true);
 });
 
-test("the web apps share one row, in alphabetical order, each with a demo and CI link", async ({ page }) => {
-  const listed = await page.locator("details.disclosure.personal .bom-parts__name").allTextContents();
-  expect(listed).toHaveLength(4);
-  expect(listed).toEqual([...listed].sort());
-  for (const name of listed) {
-    await expect(page.getByRole("link", { name: `Live demo of ${name}` })).toHaveCount(1);
-    await expect(page.getByRole("link", { name: `CI runs for ${name}` })).toHaveCount(1);
+test("each personal web app has its own row with a live demo", async ({ page }) => {
+  const personal = page.locator("details.disclosure.personal");
+  for (const name of ["6-second-scribbles", "tide", "bikespot", "scattergories"]) {
+    await expect(personal.getByRole("heading", { level: 3, name, exact: true })).toHaveCount(1);
+    await expect(personal.getByRole("link", { name: `Live demo of ${name}` })).toHaveCount(1);
   }
-  // One row, so no count: "(4)" read as four rows.
-  await expect(page.locator("details.disclosure.personal summary")).toHaveText("Personal projects");
 });
 
 test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
@@ -134,10 +130,10 @@ test("the exploded view becomes one compact, touch-sized system on mobile", asyn
 // This list is the independent check.
 const PART_DESTINATIONS = [
   ["Camera rig", "https://github.com/CMLPlatform/r9cam"],
-  ["Capture app", "https://github.com/CMLPlatform/r9lab"],
+  ["Capture app", "https://github.com/CMLPlatform/r9lab/tree/main/app"],
   ["Web app", "https://app.r9lab.io"],
-  ["API", "https://github.com/CMLPlatform/r9lab"],
-  ["Database", "https://github.com/CMLPlatform/r9lab"],
+  ["API", "https://docs.r9lab.io/api-reference/"],
+  ["Database", "https://docs.r9lab.io/architecture/datamodel/"],
   ["Docs", "https://docs.r9lab.io"],
 ];
 
@@ -149,6 +145,8 @@ for (const [variant, width] of [
     await page.setViewportSize({ width, height: 844 });
     const links = page.locator(`.exploded__svg--${variant} a`);
     await expect(links).toHaveCount(PART_DESTINATIONS.length);
+    // No two parts share a destination.
+    expect(new Set(PART_DESTINATIONS.map(([, href]) => href)).size).toBe(PART_DESTINATIONS.length);
 
     for (const [i, [name, href]] of PART_DESTINATIONS.entries()) {
       await expect(links.nth(i)).toHaveAttribute("href", href);
@@ -184,9 +182,12 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   const latest = [cv.exported.slice(0, 10), stats.as_of].sort().at(-1) ?? "";
   await expect(block.locator("time")).toHaveAttribute("datetime", latest);
 
-  const rev = block.getByRole("link", { name: /^Site version / });
-  await expect(rev).toHaveAttribute("href", "https://github.com/simonvanlierde/simonvanlierde.github.io");
-  await expect(rev).toHaveText(/^v\d+\.\d+\.\d+/);
+  const rev = block.getByRole("link", { name: /^Site revision / });
+  await expect(rev).toHaveAttribute(
+    "href",
+    /^https:\/\/github\.com\/simonvanlierde\/simonvanlierde\.github\.io\/commit\/[0-9a-f]{40}$/,
+  );
+  await expect(rev).toHaveText(/^[0-9a-f]{7}$/);
   // The sheet number turns the page.
   await block.getByRole("link", { name: "1 OF 2, go to sheet 2, CV" }).click();
   await expect(page).toHaveURL(/\/cv\/$/);

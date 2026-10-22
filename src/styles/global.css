@@ -291,7 +291,6 @@ time {
 .sheet-nav__link:focus-visible,
 .link-list a:focus-visible,
 .bom-row__links a:focus-visible,
-.bom-parts__links a:focus-visible,
 .title-block__value a:focus-visible {
   outline-offset: -2px;
 }
@@ -638,106 +637,6 @@ main > section.container > h2 {
   margin-block: -0.3rem;
 }
 
-/* A grouped row's sub-assembly: a ruled table of parts. On a wide row the
-   links take a right-hand column, aligned across lines through subgrid. */
-.bom-row__body {
-  container-type: inline-size;
-}
-
-.bom-parts {
-  list-style: none;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  border-top: var(--border-width) solid var(--border-strong);
-}
-
-.bom-parts__item {
-  display: grid;
-  grid-column: 1 / -1;
-  padding-block: var(--space-s);
-  border-bottom: var(--border-width) solid var(--border);
-}
-
-.bom-parts__name {
-  justify-self: start;
-  font-family: var(--font-draft);
-  letter-spacing: 0.02em;
-  line-height: 1.4;
-  color: var(--text);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.18em;
-  transition: color var(--dur-fast) ease;
-}
-
-.bom-parts__name:hover {
-  color: var(--accent);
-}
-
-.bom-parts__what {
-  color: var(--text-muted);
-}
-
-/* Drafting-hand callouts, like the sheet nav: set apart from the prose. */
-.bom-parts__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-m);
-  font-family: var(--font-draft);
-  font-size: var(--step--1);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* 44px targets; the negative margin keeps the row tight around them. */
-.bom-parts__links a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  margin-block: -0.4rem;
-  color: var(--text-muted);
-  text-underline-offset: 0.25em;
-  transition: color var(--dur-fast) ease;
-}
-
-/* The demo is the part's primary action; CI and the load test back it up. */
-.bom-parts__links a.bom-parts__demo {
-  color: var(--accent);
-}
-
-.bom-parts__links a:hover {
-  color: var(--accent-strong);
-}
-
-@container (min-width: 34rem) {
-  .bom-parts {
-    grid-template-columns: minmax(0, 1fr) max-content;
-    column-gap: var(--space-l);
-  }
-
-  .bom-parts__item {
-    grid-template-columns: subgrid;
-    grid-template-areas:
-      "name links"
-      "what links";
-    align-items: center;
-  }
-
-  .bom-parts__name {
-    grid-area: name;
-  }
-
-  .bom-parts__what {
-    grid-area: what;
-  }
-
-  .bom-parts__links {
-    grid-area: links;
-    /* Start-aligned so every part's demo link sits in one column. */
-    justify-content: start;
-    margin-block: 0;
-  }
-}
-
 .tag-list {
   display: flex;
   flex-wrap: wrap;
@@ -762,9 +661,7 @@ main > section.container > h2 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bom-row__title a,
-  .bom-parts__name,
-  .bom-parts__links a {
+  .bom-row__title a {
     transition: none;
   }
 }
@@ -903,6 +800,11 @@ main > section.container > h2 {
   color: var(--text);
   text-transform: uppercase;
   overflow-wrap: anywhere;
+}
+
+/* A commit hash is lowercase on GitHub; uppercased it no longer matches. */
+.title-block__value--sha {
+  text-transform: none;
 }
 
 /* Underlined: the surrounding cells are plain data. */

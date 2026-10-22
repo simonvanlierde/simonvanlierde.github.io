@@ -46,7 +46,7 @@
       }
     },
     {
-      "includes": ["scripts/**", "tests/**", "**/*.config.ts"],
+      "includes": ["scripts/**", "tests/**", "**/*.config.ts", "**/*.config.mjs"],
       "linter": {
         "rules": {
           "correctness": {
