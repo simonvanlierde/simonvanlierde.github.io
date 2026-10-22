@@ -59,7 +59,7 @@ const contact = [
   {/* Skip target: the skip link passes only the sheet nav. */}
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
-    <h1>{basics.name}</h1>
+    <h1 class="sheet-name">{basics.name}</h1>
     <p class="lead">{headlineLead}</p>
     {headlineRest.length > 0 && <p class="tagline prose">{headlineRest.join(" · ")}</p>}
 

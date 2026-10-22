@@ -445,6 +445,46 @@ main > section.container > h2 {
   color: var(--accent);
 }
 
+/* While the name heading is in view, the monogram stays hidden: the title is
+   already on the sheet. It fades in as the name slides under the nav (the 4rem
+   inset). Hidden means `visibility`, so it also leaves the tab order. A page
+   without a .sheet-name (the 404), a browser without scroll-driven animations,
+   and reduced motion all keep the monogram showing, the finished state. */
+html {
+  timeline-scope: --sheet-name;
+}
+
+.sheet-name {
+  view-timeline: --sheet-name block;
+  view-timeline-inset: 4rem 0;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Longhands: the build's minifier folds a timeline into the `animation`
+       shorthand, which browsers reject, and the whole rule is lost. */
+    .sheet-nav__mark {
+      animation-name: sheet-mark-in;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --sheet-name;
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+
+@keyframes sheet-mark-in {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
 .sheet-nav__actions {
   display: flex;
   align-items: center;

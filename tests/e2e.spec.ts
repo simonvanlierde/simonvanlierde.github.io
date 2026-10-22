@@ -99,6 +99,22 @@ test("each personal web app has its own row with a live demo", async ({ page }) 
   }
 });
 
+for (const path of ["/", "/cv/"]) {
+  test(`the monogram hides while the name is in view (${path})`, async ({ page }) => {
+    await page.goto(path);
+    const mark = page.locator(".sheet-nav__mark");
+    await expect(mark).toBeHidden();
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await expect(mark).toBeVisible();
+  });
+}
+
+test("under reduced motion the monogram always shows", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator(".sheet-nav__mark")).toBeVisible();
+});
+
 test("the monogram scrolls the index back up, and leads home from the CV", async ({ page }) => {
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await page.getByRole("link", { name: "SVL, back to top" }).click();
@@ -106,7 +122,10 @@ test("the monogram scrolls the index back up, and leads home from the CV", async
   expect(new URL(page.url()).pathname).toBe("/");
 
   await page.goto("/cv/");
-  await expect(page.getByRole("link", { name: "SVL, home" })).toHaveAttribute("href", "/");
+  // Hidden at the top of the sheet, so not in the accessibility tree: check the element.
+  const mark = page.locator(".sheet-nav__mark");
+  await expect(mark).toHaveAttribute("href", "/");
+  await expect(mark).toHaveAttribute("aria-label", "SVL, home");
 });
 
 test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
