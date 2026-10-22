@@ -109,6 +109,11 @@ for (const path of ["/", "/cv/"]) {
   });
 }
 
+test("the 404 has no name heading, so its monogram always shows", async ({ page }) => {
+  await page.goto("/no-such-page/");
+  await expect(page.locator(".sheet-nav__mark")).toBeVisible();
+});
+
 test("under reduced motion the monogram always shows", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
