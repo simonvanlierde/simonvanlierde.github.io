@@ -402,21 +402,36 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
     margin-top: var(--space-xl);
   }
 
+  /* The note ends on "merged so far:", so the list it introduces sits close. */
+  .upstream-note + .disclosure {
+    margin-top: var(--space-s);
+  }
+
   .upstream-list {
     max-width: var(--measure);
     font-size: var(--step--1);
     padding-inline-start: var(--space-m);
   }
 
+  .upstream-list li + li {
+    margin-top: var(--space-2xs);
+  }
+
+  /* Start-aligned, so the chevron stays on the first line when the heading wraps. */
   .disclosure summary {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-xs);
     cursor: pointer;
     list-style: none;
     color: var(--text-muted);
     min-height: 44px;
     padding-block: var(--space-s);
+    transition: color var(--dur-fast) ease;
+  }
+
+  .disclosure summary:hover {
+    color: var(--accent-strong);
   }
 
   .disclosure summary::-webkit-details-marker {
@@ -425,8 +440,10 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
 
   .disclosure summary::before {
     content: "";
+    flex: none;
     width: 0.45em;
     height: 0.45em;
+    margin-top: 0.3em;
     border-right: 2px solid currentColor;
     border-bottom: 2px solid currentColor;
     transform: rotate(-45deg);

@@ -802,6 +802,11 @@ main > section.container > h2 {
   overflow-wrap: anywhere;
 }
 
+/* A commit hash is lowercase on GitHub; uppercased it no longer matches. */
+.title-block__value--sha {
+  text-transform: none;
+}
+
 /* Underlined: the surrounding cells are plain data. */
 .title-block__value a {
   display: inline-flex;

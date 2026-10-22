@@ -82,7 +82,7 @@ const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basi
           CV's own version. Every push to main deploys, so the commit is the
           revision. */}
       <span class="title-block__label">Site rev</span>
-      <span class="title-block__value">
+      <span class="title-block__value title-block__value--sha">
         <a href={`${repoUrl}/commit/${sha}`} aria-label={`Site revision ${sha.slice(0, 7)}, view the commit on GitHub`}>
           {sha.slice(0, 7)}
         </a>
