@@ -55,4 +55,4 @@ Renovate opens one PR a month for minor and patch updates and merges it once CI 
 
 - No backend for the portfolio site.
 - No runtime database. Research datasets and platform data live in their own repositories and services.
-- No releases or changelog for the site itself. Every push to `main` deploys, so the commit is the version: the title block's "Site rev" names it and links to it. Git history and pull requests record the changes.
+- No changelog, and no release per deploy. Every push to `main` deploys, so the commit is the version: the title block's "Site rev" names it and links to it. A tagged release (`package.json` version plus a GitHub release) marks a milestone only: a new sheet, a redesign, or a large content change.
