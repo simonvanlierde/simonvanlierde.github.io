@@ -1,13 +1,9 @@
 ---
 title: io-notebook
-description: "A browser-only marimo course on environmentally extended input-output analysis, on a seeded 9-sector economy. Self-checks rerun on every interaction, and one lesson covers the Woodbury low-rank update. Nothing to install: the notebook runs in Python in the browser."
+description: "a marimo course on environmentally extended input-output analysis that runs in the browser, with self-checks that rerun as you move the sliders."
 repo: https://github.com/simonvanlierde/io-notebook
 demo: https://simonvanlierde.github.io/io-notebook/
 kind: teaching notebook
-tags:
-  - marimo
-  - Pyodide
-  - Input-output analysis
-  - NumPy
-order: 9
+category: minor
+order: 3
 ---
