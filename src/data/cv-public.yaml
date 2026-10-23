@@ -52,7 +52,7 @@ projects:
       - "Brightway and pymrio: fixed wrong LCA scores, cleared two security advisories, made importing Brightway about 0.3 s faster, and sped up pymrio's account calculation 26× (6.1 s to 0.23 s)."
       - "flodym: stopped lifetime extension overwriting model parameters, and made it 9× faster (0.83 s to 0.092 s)."
       - "premise and Activity Browser: fixed unreported scenario bugs in premise, and parameter, scenario-file and Monte Carlo bugs in Activity Browser."
-      - "Also merged: CodeMeta, Boavizta, SchemaStore, pyOpenSci and fastapi-mail (29 pull requests in all)."
+      - "Also merged: CodeMeta, Boavizta, SchemaStore, pyOpenSci, wanderer and fastapi-mail (30 pull requests in all)."
   - name: jsonvet
     url: https://github.com/simonvanlierde/jsonvet
     summary: "Pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and three other dialects, released on PyPI and crates.io. Matches the Python original on 40,228 test runs, survived a billion fuzzing inputs, up to 1,407× faster."
@@ -115,4 +115,4 @@ interests:
   - Multi-day treks in the mountains
   - Fermenting (kimchi, kombucha, tempeh) and cooking for friends
   - Climbing and via ferrata
-exported: "2026-10-22T10:34:36Z"
+exported: "2026-10-23T21:08:59Z"
