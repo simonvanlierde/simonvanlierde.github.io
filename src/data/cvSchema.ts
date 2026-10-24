@@ -20,7 +20,7 @@ export const CvSchema = z.object({
       linkedin: z.url(),
       github: z.url(),
       website: z.url(),
-      orcid: z.url(),
+      orcid: z.url().regex(/^https:\/\/orcid\.org\/\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/),
       leiden: z.url(),
     }),
   }),

@@ -69,6 +69,10 @@ test("a malformed email or link fails rather than rendering a dead mailto", () =
   const badLink = minimal();
   badLink.basics.links.github = "github.com/x";
   assert.throws(() => CvSchema.parse(badLink));
+
+  const badOrcid = minimal();
+  badOrcid.basics.links.orcid = "https://orcid.org/0009-0006-6953";
+  assert.throws(() => CvSchema.parse(badOrcid));
 });
 
 test("the export stamp accepts a UTC or an offset timestamp, and rejects a bare date", () => {
