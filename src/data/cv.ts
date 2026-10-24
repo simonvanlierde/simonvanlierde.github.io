@@ -13,15 +13,10 @@ export const cvPdf = "/files/simon-van-lierde-cv.pdf";
 /**
  * Author profiles in the order a reader vets them, shared by the hero and the
  * title block so they cannot drift apart.
- * NOTE: ORCID and the Leiden URL have no export field yet. Move them into the
- * private repo's public export.
  */
 export const profiles = [
   { label: "GitHub", href: cv.basics.links.github },
-  { label: "ORCID", href: "https://orcid.org/0009-0006-6953-909X" },
+  { label: "ORCID", href: cv.basics.links.orcid },
   { label: "LinkedIn", href: cv.basics.links.linkedin },
-  {
-    label: "Leiden profile",
-    href: "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
-  },
+  { label: "Leiden profile", href: cv.basics.links.leiden },
 ];

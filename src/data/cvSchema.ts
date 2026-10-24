@@ -20,6 +20,8 @@ export const CvSchema = z.object({
       linkedin: z.url(),
       github: z.url(),
       website: z.url(),
+      orcid: z.url(),
+      leiden: z.url(),
     }),
   }),
   profile: z.string(),

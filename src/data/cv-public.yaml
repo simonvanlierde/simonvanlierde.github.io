@@ -7,6 +7,8 @@ basics:
     linkedin: https://www.linkedin.com/in/simon-van-lierde/
     github: https://github.com/simonvanlierde
     website: https://simonvanlierde.github.io/
+    orcid: https://orcid.org/0009-0006-6953-909X
+    leiden: https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde
 render:
   contact: [email, location, github, linkedin, website]
   font: nunito

@@ -12,6 +12,8 @@ const minimal = () => ({
       linkedin: "https://linkedin.com/in/x",
       github: "https://github.com/x",
       website: "https://example.com",
+      orcid: "https://orcid.org/0000-0000-0000-0000",
+      leiden: "https://example.com/staff/x",
     },
   },
   profile: "One paragraph.",
