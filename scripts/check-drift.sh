@@ -5,7 +5,9 @@
 # Prints a Markdown report and exits 0 either way; prints nothing when clean.
 # Needs gh (authenticated; GITHUB_TOKEN is enough) and jq.
 # DRIFT_OFFLINE=1 runs only the checks that need no gh call; DRIFT_STATS_FILE
-# points the stats check at another file (both are for the tests).
+# points the stats check at another file, and DRIFT_PINNED_JSON replaces the
+# pinned-repos query with a JSON list of {nameWithOwner, isArchived} (all three
+# are for the tests).
 set -euo pipefail
 
 owner=simonvanlierde
@@ -42,6 +44,25 @@ if ((stats_age > stats_max_days)); then
   stats_state="is from $stats_as_of, $stats_age days ago (limit $stats_max_days)"
   [[ -n $stats_as_of ]] || stats_state="has no as_of date"
   report+="### R9lab stats"$'\n\n'"- \`src/data/stats.json\` $stats_state. Check the refresh-data workflow."$'\n\n'
+fi
+
+# Pinned repos on the GitHub profile: each must be live and have a card here.
+pinned=${DRIFT_PINNED_JSON:-}
+if [[ -z $pinned && ${DRIFT_OFFLINE:-} != 1 ]]; then
+  # shellcheck disable=SC2016 # $login is a GraphQL variable, not shell
+  pinned=$(gh api graphql -f login="$owner" -f query='
+    query($login: String!) { user(login: $login) { pinnedItems(first: 6, types: REPOSITORY) {
+      nodes { ... on Repository { nameWithOwner isArchived } } } } }' \
+    --jq '.data.user.pinnedItems.nodes')
+fi
+if [[ -n $pinned ]]; then
+  pin_out=""
+  while read -r name archived; do
+    [[ $archived == true ]] && pin_out+="- pinned \`$name\` is archived"$'\n'
+    grep -qiE "^repo: https://github.com/$name/?$" "$root"/src/content/projects/*.md ||
+      pin_out+="- pinned \`$name\` has no card in src/content/projects"$'\n'
+  done < <(jq -r '.[] | "\(.nameWithOwner) \(.isArchived)"' <<<"$pinned")
+  [[ -n $pin_out ]] && report+="### Pinned repos"$'\n\n'"$pin_out"$'\n'
 fi
 
 if [[ ${DRIFT_OFFLINE:-} == 1 ]]; then
