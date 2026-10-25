@@ -60,6 +60,7 @@ if [[ -n $pinned ]]; then
   while read -r name archived; do
     [[ $archived == true ]] && pin_out+="- pinned \`$name\` is archived"$'\n'
     grep -qiE "^repo: https://github.com/$name/?$" "$root"/src/content/projects/*.md ||
+      grep -qixF "${name#*/}" <<<"$ignore"$'\n'"$owner"$'\n'"$owner.github.io" ||
       pin_out+="- pinned \`$name\` has no card in src/content/projects"$'\n'
   done < <(jq -r '.[] | "\(.nameWithOwner) \(.isArchived)"' <<<"$pinned")
   [[ -n $pin_out ]] && report+="### Pinned repos"$'\n\n'"$pin_out"$'\n'

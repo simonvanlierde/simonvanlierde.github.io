@@ -24,3 +24,14 @@ test("the drift check stays quiet for a live pinned repo that has a card", async
   const { stdout } = await runDrift(1, pinned({ nameWithOwner: "simonvanlierde/tide", isArchived: false }));
   assert.equal(stdout, "");
 });
+
+test("a pinned repo listed in .github/drift-ignore, or the site repo itself, needs no card", async () => {
+  const { stdout } = await runDrift(
+    1,
+    pinned(
+      { nameWithOwner: "simonvanlierde/advent-of-code", isArchived: false },
+      { nameWithOwner: "simonvanlierde/simonvanlierde.github.io", isArchived: false },
+    ),
+  );
+  assert.equal(stdout, "");
+});
