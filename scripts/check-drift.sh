@@ -4,12 +4,17 @@
 # page does not link yet, and links to repos that are gone, renamed or archived.
 # Prints a Markdown report and exits 0 either way; prints nothing when clean.
 # Needs gh (authenticated; GITHUB_TOKEN is enough) and jq.
+# DRIFT_OFFLINE=1 runs only the checks that need no gh call; DRIFT_STATS_FILE
+# points the stats check at another file (both are for the tests).
 set -euo pipefail
 
 owner=simonvanlierde
 site_repo=$owner/$owner.github.io
 profile_repo=$owner/$owner
 root=$(cd "$(dirname "$0")/.." && pwd)
+
+stats_max_days=21
+stats_file=${DRIFT_STATS_FILE:-$root/src/data/stats.json}
 
 # One repo name per line; # starts a comment.
 ignore=$(sed 's/#.*//; /^[[:space:]]*$/d' "$root/.github/drift-ignore" 2>/dev/null || true)
@@ -24,6 +29,23 @@ last_edit() {
   done
   echo "$latest"
 }
+
+report=""
+
+# The weekly refresh keeps the old snapshot when the API fails, so a stale
+# as_of is the only sign that the figures stopped moving.
+stats_as_of=$(jq -r '.as_of // empty' "$stats_file")
+# An empty date would parse as today and pass, so it counts as stale.
+stats_age=9999
+[[ -n $stats_as_of ]] && stats_age=$((($(date -u +%s) - $(date -u -d "$stats_as_of" +%s)) / 86400))
+if ((stats_age > stats_max_days)); then
+  report+="### R9lab stats"$'\n\n'"- \`src/data/stats.json\` is from $stats_as_of, $stats_age days ago (limit $stats_max_days). Check the refresh-data workflow."$'\n\n'
+fi
+
+if [[ ${DRIFT_OFFLINE:-} == 1 ]]; then
+  printf '%s' "$report"
+  exit 0
+fi
 
 site_text=$(cat "$root"/src/content/projects/*.md "$root/src/pages/index.astro")
 site_date=$(last_edit "$site_repo" src/content/projects src/pages/index.astro)
@@ -41,7 +63,6 @@ last_human_commit() {
     --jq '[.[] | select((.author.type // "User") != "Bot" and (.author.login // "" | endswith("[bot]") | not))][0].commit.committer.date // empty' 2>/dev/null || true
 }
 
-report=""
 section() { # title, page date, page text, "links-only" to skip the unlinked-repo check
   local out="" name d linked
   # Exact names, so a link to tide-app does not count as one to tide. A dot that
