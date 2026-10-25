@@ -12,7 +12,7 @@ const dir = resolve(import.meta.dirname, "../../src/content/projects");
 const cards: ProjectCard[] = readdirSync(dir)
   .filter((f) => f.endsWith(".md"))
   .map((f) => {
-    const data = parse(readFileSync(join(dir, f), "utf8").split("---")[1]);
+    const data = parse(readFileSync(join(dir, f), "utf8").match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "");
     return { id: f.replace(/\.md$/, ""), data: { tags: [], links: [], ...data } };
   });
 
@@ -42,6 +42,8 @@ test("only cards with a dataset link yield a Dataset, with name, description and
   assert.ok(withDataset.length > 0, "no card links a dataset any more: the Dataset path is untested");
   const datasets = ofType("Dataset");
   assert.equal(datasets.length, withDataset.length);
+  // A fixed card, so a wrong label pattern cannot pass by agreeing with itself.
+  assert.ok(datasets.some((n) => n["@id"] === "https://simonvanlierde.github.io/#dataset-msc-thesis-ie"));
   for (const node of datasets) {
     for (const key of ["name", "description", "url"]) assert.ok(node[key], `Dataset lacks ${key}`);
   }
