@@ -39,7 +39,9 @@ stats_as_of=$(jq -r '.as_of // empty' "$stats_file")
 stats_age=9999
 [[ -n $stats_as_of ]] && stats_age=$((($(date -u +%s) - $(date -u -d "$stats_as_of" +%s)) / 86400))
 if ((stats_age > stats_max_days)); then
-  report+="### R9lab stats"$'\n\n'"- \`src/data/stats.json\` is from $stats_as_of, $stats_age days ago (limit $stats_max_days). Check the refresh-data workflow."$'\n\n'
+  stats_state="is from $stats_as_of, $stats_age days ago (limit $stats_max_days)"
+  [[ -n $stats_as_of ]] || stats_state="has no as_of date"
+  report+="### R9lab stats"$'\n\n'"- \`src/data/stats.json\` $stats_state. Check the refresh-data workflow."$'\n\n'
 fi
 
 if [[ ${DRIFT_OFFLINE:-} == 1 ]]; then
