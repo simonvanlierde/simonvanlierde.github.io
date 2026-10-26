@@ -1,6 +1,6 @@
 ---
 title: ramascene-explorer
-description: "A map of where a country's consumption causes greenhouse-gas emissions, jobs and metal-ore extraction, split by {sections} industry sections. It reads precomputed RaMa-Scene runs on EXIOBASE {base_year}: a baseline and {runs} scenarios, three named interventions and {scenarios} material-efficiency scenarios. The browser fetches only the parts of a {parquet_size} MB Parquet file it needs, about {first_load} MB on first load. Every number comes from a checked engine run, and none of it is a forecast."
+description: "A map of where a country's consumption causes greenhouse-gas emissions, jobs and metal-ore extraction, split by {sections} industry sections. It reads precomputed RaMa-Scene runs on EXIOBASE {base_year}: a baseline and {runs} scenarios, {interventions} named interventions and {scenarios} material-efficiency scenarios. The browser fetches only the parts of a {parquet_size} MB Parquet file it needs, about {first_load} MB on first load. Every number comes from a checked engine run, and none of it is a forecast."
 repo: https://github.com/simonvanlierde/ramascene-explorer
 demo: https://simonvanlierde.github.io/ramascene-explorer/
 kind: interactive map
@@ -37,5 +37,9 @@ figures:
   first_load:
     value: "0.98"
     source: https://github.com/simonvanlierde/ramascene-explorer/blob/main/docs/page.md#first-load-size
+    as_of: "2026-10-26"
+  interventions:
+    value: "three"
+    source: https://github.com/simonvanlierde/ramascene-explorer
     as_of: "2026-10-26"
 ---
