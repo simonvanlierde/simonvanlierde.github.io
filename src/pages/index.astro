@@ -7,7 +7,7 @@ import ProjectCard from "../components/ProjectCard.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, profiles } from "../data/cv.ts";
-import { personJsonLd } from "../data/schemaOrg.ts";
+import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import { upstream } from "../data/upstream.ts";
 import Base from "../layouts/Base.astro";
@@ -54,7 +54,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
 <Base
   title={`${name} | PhD researcher & research software engineer`}
   description={tagline}
-  jsonLd={personJsonLd}
+  jsonLd={homeJsonLd(allProjects)}
 >
   <SheetNav current="index" />
 
