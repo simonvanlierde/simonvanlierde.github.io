@@ -42,11 +42,13 @@ for (const colorScheme of ["light", "dark"] as const) {
 }
 
 // Narrow screens get their own layout, such as the compact Fig. 1 plate.
-test("no axe violations on a phone", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  await expectNoViolations(page);
-});
+for (const path of ["/", "/cv/"]) {
+  test(`no axe violations on a phone (${path})`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(path);
+    await expectNoViolations(page);
+  });
+}
 
 // Scan states a first-paint scan never reaches: a toggled disclosure, another
 // chart measure, and the light theme reached through the toggle.
