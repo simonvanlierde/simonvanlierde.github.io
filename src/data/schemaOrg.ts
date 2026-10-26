@@ -1,17 +1,16 @@
 import { cv, profiles } from "./cv.ts";
+import { type ProjectCard, personId, projectNodes, site } from "./projectSchema.ts";
 import { listablePublications } from "./publications.ts";
 
 // Structured data for both pages. It reads the CV export, so it claims nothing
 // the visible page does not.
-
-const site = "https://simonvanlierde.github.io";
 
 /** Profiles that identify the same person elsewhere. */
 const sameAs = profiles.map((p) => p.href);
 
 const person = {
   "@type": "Person",
-  "@id": `${site}/#person`,
+  "@id": personId,
   name: cv.basics.name,
   jobTitle: cv.basics.headline,
   description: cv.profile,
@@ -26,11 +25,11 @@ const person = {
   knowsAbout: cv.skills.flatMap((group) => group.items),
 };
 
-/** The landing page: the person only. */
-export const personJsonLd = {
+/** The landing page: the person plus a SoftwareSourceCode (and, for datasets, a Dataset) node per project card. */
+export const homeJsonLd = (cards: ProjectCard[]) => ({
   "@context": "https://schema.org",
-  ...person,
-};
+  "@graph": [person, ...projectNodes(cards)],
+});
 
 /** The CV page: the person plus exactly the publications the page lists. */
 export const cvJsonLd = {

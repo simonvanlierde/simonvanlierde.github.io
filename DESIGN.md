@@ -315,12 +315,15 @@ placeholder figure ever ships.
 
 ### Do's and Don'ts
 
-The named rules above are the checklist. Two more:
+The named rules above are the checklist. A few more:
 
 #### Do
 
 - **Do** add sheets, sections, figures, and components. The set is meant to
   grow, and the rules keep a new part legible beside the old ones.
+- **Do** open the personal projects on `/` by default. It lengthens the
+  one-minute read, and that is the intended trade.
+- **Do** spell the lab "R9lab".
 
 #### Don't
 
@@ -328,3 +331,7 @@ The named rules above are the checklist. Two more:
   literal is the theme-color meta in Base.astro, which holds dark `--bg` for
   the first paint. The theme script then rewrites it from the computed `--bg`.
   Change the literal when dark `--bg` changes.
+- **Don't** add a derived "Now: role, org" line to the CV header: it repeats
+  the headline. Put the current affiliation in the CV headline itself.
+- **Don't** draw Fig. 2 as bars. It is a running total, drawn as a stepped
+  outline over hatching, and bars would read as per-month amounts.
