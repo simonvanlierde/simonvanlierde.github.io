@@ -1,6 +1,6 @@
 ---
 title: jsonvet
-description: "A pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and three other JSON dialects for syntax errors and duplicate keys. I rewrote it from Python in Rust and released {version} on PyPI and crates.io. It gives the same verdicts as the Python version on all {runs} file-by-file comparisons with version 1.4.1."
+description: "A pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and other JSON dialects for syntax errors and duplicate keys. I rewrote it from Python in Rust and released {version} on PyPI and crates.io. It gives the same verdicts as the Python version on all {runs} file-by-file comparisons with version 1.4.1."
 repo: https://github.com/simonvanlierde/jsonvet
 kind: pre-commit hook
 tags:

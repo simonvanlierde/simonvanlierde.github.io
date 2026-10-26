@@ -366,7 +366,21 @@ test.describe("disassembly chart", () => {
 
 // Digit-bearing names the regions contain, not counts. Drop an entry once the
 // name leaves the page.
-const names = ["Vue 3", "R9lab", "JSON5", "JATS4R", "AI4IE", "SHA-256", "1.4.1"];
+const names = [
+  "Vue 3",
+  "R9lab",
+  "JSON5",
+  "JATS4R",
+  "AI4IE",
+  "SHA-256",
+  "1.4.1",
+  // The sentence lists the three itself.
+  "written three times: in bash, Python and Rust",
+  "All three",
+];
+
+// Number words count as numbers too. "one" is left out on purpose: every use is idiom.
+const NUMBER_WORD = "(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozen|hundreds?|thousands?|million)";
 
 test("every number in the hero, Notes A-D, the project cards and the smaller-projects list has a source and a date", async ({
   page,
@@ -377,7 +391,7 @@ test("every number in the hero, Notes A-D, the project cards and the smaller-pro
   await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);
 
   for (const figure of await regions.locator("[data-source]").all()) {
-    await expect(figure).toHaveText(/^\s*\d[\d.,\s]*%?\s*$/);
+    await expect(figure).toHaveText(new RegExp(`^\\s*(?:\\d[\\d.,\\s]*%?|${NUMBER_WORD})\\s*$`, "i"));
     await expect(figure).toHaveAttribute("data-source", /^https:\/\/\S+$/);
     await expect(figure).toHaveAttribute("data-as-of", /^\d{4}-\d{2}-\d{2}$/);
   }
@@ -394,5 +408,5 @@ test("every number in the hero, Notes A-D, the project cards and the smaller-pro
   ).join("\n");
   for (const name of names) expect(rest, `"${name}" is gone: drop it from the list`).toContain(name);
   const bare = names.reduce((text, name) => text.replaceAll(name, ""), rest);
-  expect(bare.match(/\d[\d,.]*/g) ?? []).toEqual([]);
+  expect(bare.match(new RegExp(`\\d[\\d,.]*|\\b${NUMBER_WORD}\\b`, "gi")) ?? []).toEqual([]);
 });

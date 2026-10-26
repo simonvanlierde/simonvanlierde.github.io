@@ -1,6 +1,6 @@
 ---
 title: tide
-description: "A period tracker you install from the browser, with no accounts, no network and no analytics: the data never leaves the device. Backtested on an open cohort of {people} people, its next-period prediction is off by {tide_error} days on average after six cycles, against {fixed_error} days for a fixed {fixed_cycle}-day cycle."
+description: "A period tracker you install from the browser, with no accounts, no network and no analytics: the data never leaves the device. Backtested on an open cohort of {people} people, its next-period prediction is off by {tide_error} days on average after {cycles} cycles, against {fixed_error} days for a fixed {fixed_cycle}-day cycle."
 repo: https://github.com/simonvanlierde/tide
 demo: https://tide.duinlab.nl
 kind: web app
@@ -30,4 +30,8 @@ figures:
     value: "28"
     source: https://github.com/simonvanlierde/tide/blob/main/docs/backtest.md
     as_of: "2026-10-12"
+  cycles:
+    value: "six"
+    source: https://github.com/simonvanlierde/tide/blob/main/docs/backtest.md#results
+    as_of: "2026-10-18"
 ---
