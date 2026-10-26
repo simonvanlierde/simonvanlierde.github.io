@@ -363,3 +363,34 @@ test.describe("disassembly chart", () => {
     await expect(page.getByRole("button", { name: /Mass selected\. Show more measures/ })).toBeVisible();
   });
 });
+
+// Numbers a card states without a source, by the phrase that holds them: a
+// version in a product name, and a claim no source states. Drop an entry once
+// its number moves into the card's `figures`.
+const unsourced = ["Vue 3", "under 1 MB on first load"];
+
+test("every number in the hero, Notes A-D and the project cards has a source and a date", async ({ page }) => {
+  const regions = page.locator(".hero__proof, .notes__list, .bom-row__desc");
+  await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);
+
+  for (const figure of await regions.locator("[data-source]").all()) {
+    await expect(figure).toHaveText(/\d/);
+    await expect(figure).toHaveAttribute("data-source", /^https:\/\/\S+$/);
+    await expect(figure).toHaveAttribute("data-as-of", /^\d{4}-\d{2}-\d{2}$/);
+  }
+
+  // Text left once the sourced figures and the dates are taken out. A digit
+  // after a letter and a hyphen is part of a name (SHA-256), not a count.
+  const rest = (
+    await regions.evaluateAll((els) =>
+      els.map((el) => {
+        const copy = el.cloneNode(true) as Element;
+        for (const n of copy.querySelectorAll("[data-source], time")) n.remove();
+        return copy.textContent ?? "";
+      }),
+    )
+  ).join("\n");
+  for (const phrase of unsourced) expect(rest, `"${phrase}" is gone: drop it from the list`).toContain(phrase);
+  const bare = unsourced.reduce((text, phrase) => text.replaceAll(phrase, ""), rest);
+  expect(bare.match(/(?<![\w-])\d[\d,.]*/g) ?? []).toEqual([]);
+});

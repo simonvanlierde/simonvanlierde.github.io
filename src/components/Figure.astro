@@ -1,0 +1,11 @@
+---
+import type { Figure } from "../data/projectSchema.ts";
+
+// A number with its source and date on the element, so tests/e2e.spec.ts can
+// check that every number on the sheet has both.
+type Props = Figure;
+
+const { value, source, as_of } = Astro.props;
+---
+
+<span data-source={source} data-as-of={as_of}>{value}</span>

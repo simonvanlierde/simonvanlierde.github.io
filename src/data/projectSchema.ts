@@ -14,8 +14,41 @@ export interface ProjectCard {
     demo?: string;
     tags: string[];
     links: { label: string; url: string }[];
+    figures?: Record<string, Figure>;
   };
 }
+
+/** A number on the page, with where it comes from and the date it holds for. */
+export interface Figure {
+  value: string;
+  source: string;
+  as_of: string;
+}
+
+/**
+ * Splits a card description on its `{key}` placeholders, each replaced by the
+ * figure of that name. Throws on a placeholder with no figure, or a figure no
+ * placeholder uses, so a typo fails the build instead of shipping "{rooms}".
+ */
+export function figureParts(text: string, figures: Record<string, Figure> = {}): (string | Figure)[] {
+  const used = new Set<string>();
+  const parts = text.split(/\{(\w+)\}/).map((part, i) => {
+    if (i % 2 === 0) return part;
+    const figure = Object.hasOwn(figures, part) ? figures[part] : undefined;
+    if (!figure) throw new Error(`"{${part}}" has no entry in figures`);
+    used.add(part);
+    return figure;
+  });
+  const unused = Object.keys(figures).filter((key) => !used.has(key));
+  if (unused.length) throw new Error(`figures not used in the description: ${unused.join(", ")}`);
+  return parts.filter((part) => part !== "");
+}
+
+/** The description as plain text, figures filled in. */
+export const figureText = (text: string, figures?: Record<string, Figure>) =>
+  figureParts(text, figures)
+    .map((part) => (typeof part === "string" ? part : part.value))
+    .join("");
 
 /**
  * A card is a dataset when one of its links is labelled "dataset". The card
@@ -31,7 +64,8 @@ const datasetLink = (card: ProjectCard) => card.data.links.find((l) => /dataset/
  */
 export function projectNodes(cards: ProjectCard[]) {
   return cards.flatMap((card) => {
-    const { title, description, repo, demo, tags } = card.data;
+    const { title, repo, demo, tags } = card.data;
+    const description = figureText(card.data.description, card.data.figures);
     const author = { "@id": personId };
     const code = {
       "@type": "SoftwareSourceCode",

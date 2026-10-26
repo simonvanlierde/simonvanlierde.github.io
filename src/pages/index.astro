@@ -3,10 +3,13 @@ import { getCollection } from "astro:content";
 import { formatCount as fmt } from "../components/chartScale.ts";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ExplodedView from "../components/ExplodedView.astro";
+import Figure from "../components/Figure.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, profiles } from "../data/cv.ts";
+import { participants, statsSource } from "../data/figures.ts";
+import { figureText } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import { upstream } from "../data/upstream.ts";
@@ -24,13 +27,12 @@ const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
   year: "numeric",
   timeZone: "UTC",
 });
-// NOTE: not in the /stats payload; counted at the two workshops, kept by hand.
-const participants = 135;
+const counted = (n: number) => ({ value: fmt(n), source: statsSource, as_of: counts.as_of });
 const notes = [
-  { ref: "A", label: "Products documented", value: fmt(counts.teardowns) },
-  { ref: "B", label: "Components catalogued", value: fmt(counts.parts) },
-  { ref: "C", label: "Images captured", value: fmt(counts.images) },
-  { ref: "D", label: "Workshop participants", value: fmt(participants) },
+  { ref: "A", label: "Products documented", figure: counted(counts.teardowns) },
+  { ref: "B", label: "Components catalogued", figure: counted(counts.parts) },
+  { ref: "C", label: "Images captured", figure: counted(counts.images) },
+  { ref: "D", label: "Workshop participants", figure: participants },
 ];
 
 const allProjects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
@@ -46,9 +48,6 @@ const lead = "PhD researcher and research software engineer";
 
 const tagline =
   "At CML, Leiden University, I write open software and collect open data for industrial ecology and the circular economy. Most of my time goes into R9lab, where we take products apart to record what they're made of.";
-
-// Puts dated evidence on the first screen; the notes below have the full counts.
-const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${fmt(counts.parts)} components catalogued (${asOfLabel}).`;
 ---
 
 <Base
@@ -66,7 +65,14 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
         <h1 class="sheet-name">{name}</h1>
         <p class="lead">{lead}</p>
         <p class="tagline prose">{tagline}</p>
-        <p class="hero__proof draft"><a href="#relab">{proof}</a></p>
+        {/* Dated evidence on the first screen; the notes below have the full counts. */}
+        <p class="hero__proof draft">
+          <a href="#relab">
+            R9lab to date: <Figure {...notes[0].figure} /> products taken apart,{" "}
+            <Figure {...notes[1].figure} /> components catalogued
+            (<time datetime={counts.as_of}>{asOfLabel}</time>).
+          </a>
+        </p>
 
         <div class="hero__actions">
           <a class="stamp" href="/cv/">
@@ -151,13 +157,17 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
                       <span class="datum" aria-hidden="true">
                         {n.ref}
                       </span>
-                      <span class="notes__value draft">{n.value}</span>
+                      <span class="notes__value draft" data-source={n.figure.source} data-as-of={n.figure.as_of}>
+                        {n.figure.value}
+                      </span>
                       <span class="notes__label">{n.label}</span>
                     </li>
                   ))
                 }
               </ol>
-              <p class="notes__foot draft">As counted {asOfLabel}.</p>
+              <p class="notes__foot draft">
+                A–C as counted <time datetime={counts.as_of}>{asOfLabel}</time>; D at the two pilot workshops.
+              </p>
             </section>
 
             <div class="r9lab__chart">
@@ -176,6 +186,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
               demo={p.data.demo}
               tags={p.data.tags}
               links={p.data.links}
+              figures={p.data.figures}
             />
           ))
         }
@@ -186,7 +197,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
         {
           minorProjects.map((p) => (
             <li>
-              <a href={p.data.repo}>{p.data.title}</a>: {p.data.description}
+              <a href={p.data.repo}>{p.data.title}</a>: {figureText(p.data.description, p.data.figures)}
               {p.data.demo && (
                 <>
                   {" ("}
@@ -243,6 +254,7 @@ const proof = `R9lab to date: ${fmt(counts.teardowns)} products taken apart, ${f
                 demo={p.data.demo}
                 tags={p.data.tags}
                 links={p.data.links}
+                figures={p.data.figures}
               />
             ))
           }
