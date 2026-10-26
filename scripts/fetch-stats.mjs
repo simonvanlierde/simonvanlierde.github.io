@@ -1,5 +1,5 @@
 // Refreshes src/data/stats.json from the R9lab public API (`pnpm fetch:stats`).
-// If the API is down or Cloudflare blocks a request, the script warns and exits 0
+// If the API is down or Cloudflare blocks a request, the script prints a ::warning:: and exits 0
 // without touching the committed snapshot, so the site keeps the last good figures.
 
 import { readFile, writeFile } from "node:fs/promises";
@@ -13,7 +13,8 @@ const seriesUrl = `${base}/v1/stats/series?granularity=month`;
 const totalsUrl = `${base}/v1/stats/totals`;
 
 function skip(reason) {
-  console.warn(`fetch-stats: ${reason}. Keeping existing src/data/stats.json.`);
+  // ::warning:: shows as an annotation on the workflow run.
+  console.log(`::warning::fetch-stats: ${reason}. Keeping existing src/data/stats.json.`);
   process.exit(0);
 }
 
