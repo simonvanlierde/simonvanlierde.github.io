@@ -17,6 +17,10 @@ const projects = defineCollection({
     tags: z.array(z.string()).default([]),
     // Extra labelled links (publications, datasets, etc.).
     links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+    // Every number in the description, written there as `{key}`: the text shown,
+    // the page it comes from, and the date the source gives for it (or, when it
+    // gives none, the date of the source version it was checked against).
+    figures: z.record(z.string(), z.object({ value: z.string(), source: z.url(), as_of: z.iso.date() })).default({}),
     // Card group: academic or professional ("work"), a side project ("personal"), or a
     // smaller piece shown as one line under the work rows ("minor").
     category: z.enum(["work", "personal", "minor"]).default("work"),

@@ -310,8 +310,9 @@ is the finished state, never a missing one.
 
 **The Real Figures Rule.** Every number on the sheet is a real, dated count or
 version from the product. Counts come from the stats export (`stats.json`),
-which a scheduled workflow refreshes from the live R9lab API. No sample or
-placeholder figure ever ships.
+which a scheduled workflow refreshes from the live R9lab API. Every other
+figure names its source and date in the data it renders from (a card's
+`figures`, `src/data/figures.ts`). No sample or placeholder figure ever ships.
 
 ### Do's and Don'ts
 

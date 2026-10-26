@@ -1,4 +1,7 @@
 ---
+import { type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
+import Figure from "./Figure.astro";
+
 // One parts-list row. Only the title links the repo, so the description
 // stays selectable.
 interface Props {
@@ -9,9 +12,10 @@ interface Props {
   demo?: string;
   tags?: string[];
   links?: { label: string; url: string }[];
+  figures?: Record<string, FigureData>;
 }
 
-const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.props;
+const { title, description, repo, kind, demo, tags = [], links = [], figures } = Astro.props;
 ---
 
 <article class="bom-row">
@@ -20,7 +24,13 @@ const { title, description, repo, kind, demo, tags = [], links = [] } = Astro.pr
     <h3 class="bom-row__title">
       <a href={repo}>{title}</a>
     </h3>
-    <p class="bom-row__desc">{description}</p>
+    <p class="bom-row__desc">
+      {
+        figureParts(description, figures).map((part) =>
+          typeof part === "string" ? part : <Figure {...part} />,
+        )
+      }
+    </p>
 
 
     {

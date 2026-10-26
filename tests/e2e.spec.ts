@@ -363,3 +363,36 @@ test.describe("disassembly chart", () => {
     await expect(page.getByRole("button", { name: /Mass selected\. Show more measures/ })).toBeVisible();
   });
 });
+
+// Digit-bearing names the regions contain, not counts. Drop an entry once the
+// name leaves the page.
+const names = ["Vue 3", "R9lab", "JSON5", "JATS4R", "AI4IE", "SHA-256", "1.4.1"];
+
+test("every number in the hero, Notes A-D, the project cards and the smaller-projects list has a source and a date", async ({
+  page,
+}) => {
+  const selectors = [".hero__proof", ".notes__list", ".bom-row__desc", ".minor-list"];
+  for (const sel of selectors) await expect(page.locator(sel).first()).toBeVisible();
+  const regions = page.locator(selectors.join(", "));
+  await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);
+
+  for (const figure of await regions.locator("[data-source]").all()) {
+    await expect(figure).toHaveText(/^\s*\d[\d.,\s]*%?\s*$/);
+    await expect(figure).toHaveAttribute("data-source", /^https:\/\/\S+$/);
+    await expect(figure).toHaveAttribute("data-as-of", /^\d{4}-\d{2}-\d{2}$/);
+  }
+
+  // Text left once the sourced figures and the dates are taken out.
+  const rest = (
+    await regions.evaluateAll((els) =>
+      els.map((el) => {
+        const copy = el.cloneNode(true) as Element;
+        for (const n of copy.querySelectorAll("[data-source], time[datetime]")) n.remove();
+        return copy.textContent ?? "";
+      }),
+    )
+  ).join("\n");
+  for (const name of names) expect(rest, `"${name}" is gone: drop it from the list`).toContain(name);
+  const bare = names.reduce((text, name) => text.replaceAll(name, ""), rest);
+  expect(bare.match(/\d[\d,.]*/g) ?? []).toEqual([]);
+});

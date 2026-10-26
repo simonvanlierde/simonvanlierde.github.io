@@ -30,11 +30,18 @@ test("every card yields a SoftwareSourceCode node with name, description and cod
     );
     assert.ok(node, `${card.id} has no SoftwareSourceCode node`);
     assert.equal(node.name, card.data.title);
-    assert.equal(node.description, card.data.description);
     assert.equal(node.codeRepository, card.data.repo);
     assert.ok(node.author);
   }
   assert.equal(ofType("SoftwareSourceCode").length, cards.length);
+});
+
+test("a card's description has its figures filled in", () => {
+  const jsonvet = nodes.find((n) => n["@id"] === "https://simonvanlierde.github.io/#project-jsonvet");
+  assert.equal(
+    jsonvet?.description,
+    "A pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and three other JSON dialects for syntax errors and duplicate keys. I rewrote it from Python in Rust and released 2.0 on PyPI and crates.io. It gives the same verdicts as the Python version on all 40,228 file-by-file comparisons with version 1.4.1.",
+  );
 });
 
 test("only cards with a dataset link yield a Dataset, with name, description and url", () => {
