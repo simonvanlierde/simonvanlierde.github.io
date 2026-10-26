@@ -33,12 +33,11 @@ for (const width of [320, 390, 900, 1200]) {
 
 test("the title block's contact links point at the right destinations", async ({ page }) => {
   const footer = page.getByRole("contentinfo");
-  // ORCID and Leiden have no export field yet, so they are hard-coded here too.
   const expected: Record<string, string> = {
     GitHub: cv.basics.links.github,
     LinkedIn: cv.basics.links.linkedin,
-    ORCID: "https://orcid.org/0009-0006-6953-909X",
-    "Leiden profile": "https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde",
+    ORCID: cv.basics.links.orcid,
+    "Leiden profile": cv.basics.links.leiden,
   };
   for (const [name, href] of Object.entries(expected)) {
     await expect(footer.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
