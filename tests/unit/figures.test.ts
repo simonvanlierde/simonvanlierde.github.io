@@ -18,6 +18,10 @@ test("a figure the text never uses fails", () => {
   assert.throws(() => figureParts("holds 200 rooms", { rooms }), /rooms/);
 });
 
+test("a stray brace fails", () => {
+  assert.throws(() => figureParts("holds {rooms rooms", { rooms }), /stray brace in "holds \{rooms rooms"/);
+});
+
 test("a placeholder named like an Object property is not a figure", () => {
   assert.throws(() => figureParts("{constructor}"), /\{constructor\}/);
 });

@@ -28,12 +28,16 @@ export interface Figure {
 /**
  * Splits a card description on its `{key}` placeholders, each replaced by the
  * figure of that name. Throws on a placeholder with no figure, or a figure no
- * placeholder uses, so a typo fails the build instead of shipping "{rooms}".
+ * placeholder uses, or a stray brace, so a typo fails the build instead of
+ * shipping "{rooms}".
  */
 export function figureParts(text: string, figures: Record<string, Figure> = {}): (string | Figure)[] {
   const used = new Set<string>();
   const parts = text.split(/\{(\w+)\}/).map((part, i) => {
-    if (i % 2 === 0) return part;
+    if (i % 2 === 0) {
+      if (/[{}]/.test(part)) throw new Error(`stray brace in "${part}"`);
+      return part;
+    }
     const figure = Object.hasOwn(figures, part) ? figures[part] : undefined;
     if (!figure) throw new Error(`"{${part}}" has no entry in figures`);
     used.add(part);

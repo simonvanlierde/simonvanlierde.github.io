@@ -21,7 +21,7 @@ flowchart LR
 ## Runtime shape
 
 - Astro renders the pages statically, with TypeScript in strict mode.
-- Project rows (the parts list) are markdown files under `src/content/projects/`, validated against the schema in `src/content.config.ts`. A number in a card description is written as `{key}` and defined in the card's `figures` field, with its value, a source URL and an `as_of` date. The card renders each one with `data-source` and `data-as-of` attributes, and `tests/e2e.spec.ts` fails on a number in the hero, Notes A–D or a card description that has neither.
+- Project rows (the parts list) are markdown files under `src/content/projects/`, validated against the schema in `src/content.config.ts`. A number in a card description is written as `{key}` and defined in the card's `figures` field, with its value, a source URL and an `as_of` date. The card renders each one with `data-source` and `data-as-of` attributes, and `tests/e2e.spec.ts` fails on a number that has neither, in the hero, Notes A–D, the project cards or the smaller-projects list.
 - The only client-side island is `DisassemblyChart.tsx`. It hydrates when it scrolls into view, so users can switch between R9lab measures. It also renders a visually hidden table, so the same data is available without reading the SVG.
 
 ## The CV

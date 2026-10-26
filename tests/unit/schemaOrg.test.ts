@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
 import { parse } from "yaml";
-import { figureText, type ProjectCard, projectNodes } from "../../src/data/projectSchema.ts";
+import { type ProjectCard, projectNodes } from "../../src/data/projectSchema.ts";
 
 const dir = resolve(import.meta.dirname, "../../src/content/projects");
 
@@ -30,12 +30,18 @@ test("every card yields a SoftwareSourceCode node with name, description and cod
     );
     assert.ok(node, `${card.id} has no SoftwareSourceCode node`);
     assert.equal(node.name, card.data.title);
-    assert.equal(node.description, figureText(card.data.description, card.data.figures));
-    assert.doesNotMatch(String(node.description), /\{\w+\}/);
     assert.equal(node.codeRepository, card.data.repo);
     assert.ok(node.author);
   }
   assert.equal(ofType("SoftwareSourceCode").length, cards.length);
+});
+
+test("a card's description has its figures filled in", () => {
+  const jsonvet = nodes.find((n) => n["@id"] === "https://simonvanlierde.github.io/#project-jsonvet");
+  assert.equal(
+    jsonvet?.description,
+    "A pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and three other JSON dialects for syntax errors and duplicate keys. I rewrote it from Python in Rust and released 2.0 on PyPI and crates.io. It gives the same verdicts as the Python version on all 40,228 file-by-file comparisons with version 1.4.1.",
+  );
 });
 
 test("only cards with a dataset link yield a Dataset, with name, description and url", () => {

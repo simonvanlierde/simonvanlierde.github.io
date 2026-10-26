@@ -9,7 +9,7 @@ import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, profiles } from "../data/cv.ts";
 import { participants, statsSource } from "../data/figures.ts";
-import { figureText } from "../data/projectSchema.ts";
+import { figureParts } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import { upstream } from "../data/upstream.ts";
@@ -28,9 +28,11 @@ const asOfLabel = new Date(counts.as_of).toLocaleDateString("en-US", {
   timeZone: "UTC",
 });
 const counted = (n: number) => ({ value: fmt(n), source: statsSource, as_of: counts.as_of });
+const products = counted(counts.teardowns);
+const components = counted(counts.parts);
 const notes = [
-  { ref: "A", label: "Products documented", figure: counted(counts.teardowns) },
-  { ref: "B", label: "Components catalogued", figure: counted(counts.parts) },
+  { ref: "A", label: "Products documented", figure: products },
+  { ref: "B", label: "Components catalogued", figure: components },
   { ref: "C", label: "Images captured", figure: counted(counts.images) },
   { ref: "D", label: "Workshop participants", figure: participants },
 ];
@@ -68,8 +70,8 @@ const tagline =
         {/* Dated evidence on the first screen; the notes below have the full counts. */}
         <p class="hero__proof draft">
           <a href="#relab">
-            R9lab to date: <Figure {...notes[0].figure} /> products taken apart,{" "}
-            <Figure {...notes[1].figure} /> components catalogued
+            R9lab to date: <Figure {...products} /> products taken apart,{" "}
+            <Figure {...components} /> components catalogued
             (<time datetime={counts.as_of}>{asOfLabel}</time>).
           </a>
         </p>
@@ -157,8 +159,8 @@ const tagline =
                       <span class="datum" aria-hidden="true">
                         {n.ref}
                       </span>
-                      <span class="notes__value draft" data-source={n.figure.source} data-as-of={n.figure.as_of}>
-                        {n.figure.value}
+                      <span class="notes__value draft">
+                        <Figure {...n.figure} />
                       </span>
                       <span class="notes__label">{n.label}</span>
                     </li>
@@ -166,7 +168,7 @@ const tagline =
                 }
               </ol>
               <p class="notes__foot draft">
-                A–C as counted <time datetime={counts.as_of}>{asOfLabel}</time>; D at the two pilot workshops.
+                Products, components and images as counted <time datetime={counts.as_of}>{asOfLabel}</time>; participants at the two pilot workshops.
               </p>
             </section>
 
@@ -193,11 +195,13 @@ const tagline =
       </div>
 
       <h3 class="minor-heading">Smaller projects</h3>
-      <ul class="upstream-list">
+      <ul class="upstream-list minor-list">
         {
           minorProjects.map((p) => (
             <li>
-              <a href={p.data.repo}>{p.data.title}</a>: {figureText(p.data.description, p.data.figures)}
+              <a href={p.data.repo}>{p.data.title}</a>: {figureParts(p.data.description, p.data.figures).map((part) =>
+                typeof part === "string" ? part : <Figure {...part} />,
+              )}
               {p.data.demo && (
                 <>
                   {" ("}
