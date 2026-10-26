@@ -13,6 +13,6 @@ order: 4
 figures:
   languages:
     value: "seven"
-    source: https://github.com/simonvanlierde/bikespot/blob/main/src/lib/i18n.ts#L10
+    source: https://github.com/simonvanlierde/bikespot/blob/main/src/lib/i18n.ts
     as_of: "2026-10-21"
 ---

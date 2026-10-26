@@ -16,6 +16,6 @@ order: 3
 figures:
   languages:
     value: "nine"
-    source: https://github.com/simonvanlierde/credit-matrix/blob/main/src/core/credit-i18n/index.ts#L40
+    source: https://github.com/simonvanlierde/credit-matrix/blob/main/src/core/credit-i18n/index.ts
     as_of: "2026-10-13"
 ---

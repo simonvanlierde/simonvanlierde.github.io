@@ -13,6 +13,6 @@ order: 5
 figures:
   languages:
     value: "nine"
-    source: https://github.com/simonvanlierde/scattergories/blob/main/src/i18n/locales/registry.json#L3
+    source: https://github.com/simonvanlierde/scattergories/blob/main/src/i18n/locales/registry.json
     as_of: "2026-10-19"
 ---
