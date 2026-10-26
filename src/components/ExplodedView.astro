@@ -26,6 +26,8 @@ const link = (id: string) => {
   if (!part) throw new Error(`ExplodedView: no part "${id}"`);
   return part;
 };
+// Starts with the balloon number, so the name contains the visible text (WCAG 2.5.3).
+const label = (id: string) => `${parts.indexOf(link(id)) + 1} ${link(id).name}: ${link(id).to}`;
 ---
 
 <figure class="exploded" aria-labelledby="exploded-caption" aria-describedby="exploded-instruction">
@@ -42,7 +44,7 @@ const link = (id: string) => {
     <line class="axis" x1="220" y1="8" x2="220" y2="478" stroke-dasharray="14 5 2 5"></line>
 
     {/* 1 Camera rig: the Raspberry Pi board with its camera module */}
-    <a href={link("rig").href} aria-label={`${link("rig").name}: ${link("rig").to}`}>
+    <a href={link("rig").href} aria-label={label("rig")}>
       <g class="part part--rig">
         <rect x="170" y="16" width="100" height="56"></rect>
         <g class="fine">
@@ -62,6 +64,7 @@ const link = (id: string) => {
           <text class="fig-num" x="314" y="47.5" text-anchor="middle">1</text>
         </g>
       </g>
+      {" "}
       <g class="label label--rig">
           <text class="fig-label" x="12" y="48">CAMERA RIG</text>
           <path class="ext" d="M133 47 140 40 M135.5 40 H140 V44.5"></path>
@@ -69,7 +72,7 @@ const link = (id: string) => {
     </a>
 
     {/* 2 Capture app: the phone, viewfinder open */}
-    <a href={link("app").href} aria-label={`${link("app").name}: ${link("app").to}`}>
+    <a href={link("app").href} aria-label={label("app")}>
       <g class="part part--app">
         <rect x="186" y="90" width="68" height="96"></rect>
         <g class="fine">
@@ -90,6 +93,7 @@ const link = (id: string) => {
           <text class="fig-num" x="314" y="141.5" text-anchor="middle">2</text>
         </g>
       </g>
+      {" "}
       <g class="label label--app">
           <text class="fig-label" x="12" y="142">CAPTURE APP</text>
           <path class="ext" d="M133 141 140 134 M135.5 134 H140 V138.5"></path>
@@ -97,7 +101,7 @@ const link = (id: string) => {
     </a>
 
     {/* 3 Web app: a browser window over a table */}
-    <a href={link("web").href} aria-label={`${link("web").name}: ${link("web").to}`}>
+    <a href={link("web").href} aria-label={label("web")}>
       <g class="part part--web">
         <rect x="150" y="204" width="140" height="72"></rect>
         <g class="fine">
@@ -117,6 +121,7 @@ const link = (id: string) => {
           <text class="fig-num" x="314" y="243.5" text-anchor="middle">3</text>
         </g>
       </g>
+      {" "}
       <g class="label label--web">
           <text class="fig-label" x="12" y="244">WEB APP</text>
           <path class="ext" d="M133 243 140 236 M135.5 236 H140 V240.5"></path>
@@ -124,7 +129,7 @@ const link = (id: string) => {
     </a>
 
     {/* 4 API: one rack unit */}
-    <a href={link("api").href} aria-label={`${link("api").name}: ${link("api").to}`}>
+    <a href={link("api").href} aria-label={label("api")}>
       <g class="part part--api">
         <rect x="160" y="294" width="120" height="36"></rect>
         <g class="fine">
@@ -140,6 +145,7 @@ const link = (id: string) => {
           <text class="fig-num" x="314" y="315.5" text-anchor="middle">4</text>
         </g>
       </g>
+      {" "}
       <g class="label label--api">
           <text class="fig-label" x="12" y="316">API</text>
           <path class="ext" d="M133 315 140 308 M135.5 308 H140 V312.5"></path>
@@ -147,7 +153,7 @@ const link = (id: string) => {
     </a>
 
     {/* 5 Database: the cylinder */}
-    <a href={link("db").href} aria-label={`${link("db").name}: ${link("db").to}`}>
+    <a href={link("db").href} aria-label={label("db")}>
       <g class="part part--db">
         <ellipse cx="220" cy="358" rx="42" ry="10"></ellipse>
         <line x1="178" y1="358" x2="178" y2="394"></line>
@@ -163,6 +169,7 @@ const link = (id: string) => {
           <text class="fig-num" x="314" y="379.5" text-anchor="middle">5</text>
         </g>
       </g>
+      {" "}
       <g class="label label--db">
           <text class="fig-label" x="12" y="380">DATABASE</text>
           <path class="ext" d="M133 379 140 372 M135.5 372 H140 V376.5"></path>
@@ -170,7 +177,7 @@ const link = (id: string) => {
     </a>
 
     {/* 6 Docs: a bound sheet */}
-    <a href={link("docs").href} aria-label={`${link("docs").name}: ${link("docs").to}`}>
+    <a href={link("docs").href} aria-label={label("docs")}>
       <g class="part part--docs">
         <rect x="180" y="422" width="80" height="48"></rect>
         <g class="fine">
@@ -188,6 +195,7 @@ const link = (id: string) => {
           <text class="fig-num" x="314" y="449.5" text-anchor="middle">6</text>
         </g>
       </g>
+      {" "}
       <g class="label label--docs">
           <text class="fig-label" x="12" y="450">DOCS</text>
           <path class="ext" d="M133 449 140 442 M135.5 442 H140 V446.5"></path>
@@ -209,7 +217,7 @@ const link = (id: string) => {
   >
     <path class="axis" d="M170 8V328 M150 48H190 M150 160H190 M150 272H190" stroke-dasharray="14 5 2 5"></path>
 
-    <a class="mobile-part" href={link("rig").href} aria-label={`${link("rig").name}: ${link("rig").to}`}>
+    <a class="mobile-part" href={link("rig").href} aria-label={label("rig")}>
       <rect class="hit-area" x="0" y="0" width="166" height="108"></rect>
       <g class="part">
         <rect x="54" y="22" width="58" height="38"></rect>
@@ -222,12 +230,13 @@ const link = (id: string) => {
         <circle cx="18" cy="18" r="10"></circle>
         <text class="fig-num" x="18" y="21.5" text-anchor="middle">1</text>
       </g>
+      {" "}
       <text class="mobile-label" x="12" y="91">CAMERA RIG</text>
       <path class="mobile-underline" d="M12 97H130"></path>
       <path class="ext" d="M145 93 152 86 M147.5 86H152V90.5"></path>
     </a>
 
-    <a class="mobile-part" href={link("app").href} aria-label={`${link("app").name}: ${link("app").to}`}>
+    <a class="mobile-part" href={link("app").href} aria-label={label("app")}>
       <rect class="hit-area" x="174" y="0" width="166" height="108"></rect>
       <g class="part">
         <rect x="236" y="14" width="44" height="58"></rect>
@@ -239,12 +248,13 @@ const link = (id: string) => {
         <circle cx="192" cy="18" r="10"></circle>
         <text class="fig-num" x="192" y="21.5" text-anchor="middle">2</text>
       </g>
+      {" "}
       <text class="mobile-label" x="186" y="91">CAPTURE APP</text>
       <path class="mobile-underline" d="M186 97H304"></path>
       <path class="ext" d="M319 93 326 86 M321.5 86H326V90.5"></path>
     </a>
 
-    <a class="mobile-part" href={link("web").href} aria-label={`${link("web").name}: ${link("web").to}`}>
+    <a class="mobile-part" href={link("web").href} aria-label={label("web")}>
       <rect class="hit-area" x="0" y="112" width="166" height="108"></rect>
       <g class="part">
         <rect x="43" y="132" width="80" height="51"></rect>
@@ -259,12 +269,13 @@ const link = (id: string) => {
         <circle cx="18" cy="130" r="10"></circle>
         <text class="fig-num" x="18" y="133.5" text-anchor="middle">3</text>
       </g>
+      {" "}
       <text class="mobile-label" x="12" y="203">WEB APP</text>
       <path class="mobile-underline" d="M12 209H130"></path>
       <path class="ext" d="M145 205 152 198 M147.5 198H152V202.5"></path>
     </a>
 
-    <a class="mobile-part" href={link("api").href} aria-label={`${link("api").name}: ${link("api").to}`}>
+    <a class="mobile-part" href={link("api").href} aria-label={label("api")}>
       <rect class="hit-area" x="174" y="112" width="166" height="108"></rect>
       <g class="part">
         <rect x="215" y="145" width="86" height="27"></rect>
@@ -278,12 +289,13 @@ const link = (id: string) => {
         <circle cx="192" cy="130" r="10"></circle>
         <text class="fig-num" x="192" y="133.5" text-anchor="middle">4</text>
       </g>
+      {" "}
       <text class="mobile-label" x="186" y="203">API</text>
       <path class="mobile-underline" d="M186 209H304"></path>
       <path class="ext" d="M319 205 326 198 M321.5 198H326V202.5"></path>
     </a>
 
-    <a class="mobile-part" href={link("db").href} aria-label={`${link("db").name}: ${link("db").to}`}>
+    <a class="mobile-part" href={link("db").href} aria-label={label("db")}>
       <rect class="hit-area" x="0" y="224" width="166" height="108"></rect>
       <g class="part">
         <ellipse cx="83" cy="247" rx="28" ry="7"></ellipse>
@@ -296,12 +308,13 @@ const link = (id: string) => {
         <circle cx="18" cy="242" r="10"></circle>
         <text class="fig-num" x="18" y="245.5" text-anchor="middle">5</text>
       </g>
+      {" "}
       <text class="mobile-label" x="12" y="315">DATABASE</text>
       <path class="mobile-underline" d="M12 321H130"></path>
       <path class="ext" d="M145 317 152 310 M147.5 310H152V314.5"></path>
     </a>
 
-    <a class="mobile-part" href={link("docs").href} aria-label={`${link("docs").name}: ${link("docs").to}`}>
+    <a class="mobile-part" href={link("docs").href} aria-label={label("docs")}>
       <rect class="hit-area" x="174" y="224" width="166" height="108"></rect>
       <g class="part">
         <rect x="228" y="242" width="60" height="48"></rect>
@@ -317,6 +330,7 @@ const link = (id: string) => {
         <circle cx="192" cy="242" r="10"></circle>
         <text class="fig-num" x="192" y="245.5" text-anchor="middle">6</text>
       </g>
+      {" "}
       <text class="mobile-label" x="186" y="315">DOCS</text>
       <path class="mobile-underline" d="M186 321H304"></path>
       <path class="ext" d="M319 317 326 310 M321.5 310H326V314.5"></path>

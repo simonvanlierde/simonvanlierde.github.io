@@ -193,7 +193,7 @@ for (const [variant, width] of [
     for (const [i, [name, href]] of PART_DESTINATIONS.entries()) {
       await expect(links.nth(i)).toHaveAttribute("href", href);
       // The label names the part, so a swapped balloon fails here.
-      await expect(links.nth(i)).toHaveAttribute("aria-label", new RegExp(`^${name}:`));
+      await expect(links.nth(i)).toHaveAttribute("aria-label", new RegExp(`^${i + 1} ${name}:`));
     }
   });
 }
