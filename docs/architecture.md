@@ -28,7 +28,7 @@ flowchart LR
 
 [/cv/](https://simonvanlierde.github.io/cv/) renders from `src/data/cv-public.yaml`. The landing page reads only the contact details from it and links to the CV. I export that file and the CV PDF from a separate private repo and commit them here, so a clean checkout builds without access to that repo.
 
-`src/data/cv.ts` validates the export against a Zod schema at build time, so a broken export fails the build instead of rendering an empty page. `src/data/schemaOrg.ts` builds the JSON-LD (structured data for search engines) from the same object. The landing page also gets a `SoftwareSourceCode` node per project card, and a `Dataset` node for each card with a link labelled "dataset" (`src/data/projectSchema.ts`, tested in `tests/unit/schemaOrg.test.ts`). Optional sections (publications, skills, projects, talks and training, interests) render only when the export carries them. An unaccepted publication stays hidden until it has a preprint DOI to link to.
+`src/data/cv.ts` validates the export against a Zod schema at build time, so a broken export fails the build instead of rendering an empty page. `src/data/schemaOrg.ts` builds the JSON-LD (structured data for search engines) from the same object. Optional sections (publications, skills, projects, talks and training, interests) render only when the export carries them. An unaccepted publication stays hidden until it has a preprint DOI to link to.
 
 ## Data refresh
 
@@ -47,7 +47,7 @@ Pull requests and pushes to `main` run `pnpm check`, a production Astro build, a
 
 Pushing to `main` triggers `deploy.yml`, which builds the site and publishes it to GitHub Pages. For this to work, the Pages source must be set to **GitHub Actions** (Settings → Pages). The refresh workflow starts the deploy workflow with `gh workflow run`, and the deploy workflow holds the `pages` concurrency group, so deployments queue instead of racing.
 
-`check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted, or while `stats.json` is more than 21 days old. To skip a repo, list it in `.github/drift-ignore`.
+`check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted, while `stats.json` is more than 21 days old, or while a pinned repo on the GitHub profile is archived or has no card on this site (card means a `repo:` URL in `src/content/projects`). To skip a repo, list it in `.github/drift-ignore`.
 
 Renovate opens one PR a month for minor and patch updates and merges it once CI passes, which triggers a deploy. Major updates get their own PRs and wait for me to merge them.
 
