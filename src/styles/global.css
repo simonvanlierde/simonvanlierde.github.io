@@ -899,7 +899,8 @@ html {
 .title-block__contact {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 var(--space-m);
+  /* The row gap keeps wrapped links 24px apart on a phone (WCAG 2.5.8). */
+  gap: var(--space-2xs) var(--space-m);
   list-style: none;
   text-transform: none;
 }

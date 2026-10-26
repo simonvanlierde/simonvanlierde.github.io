@@ -13,7 +13,7 @@ level the European standard EN 301 549 (v4.1.1) adopts.
 Every pull request and every push to `main` runs these checks:
 
 - **axe-core in a real browser** (`tests/a11y.spec.ts`). Playwright runs axe on all three pages, in
-  the light and the dark colour scheme, and again after folding a list, switching the
+  the light and the dark colour scheme, on the home page at phone width, and again after folding a list, switching the
   chart's measure and toggling the theme. The scan uses the WCAG 2.0, 2.1 and 2.2 A and AA rules
   plus axe's best-practice rules. Any violation fails the run.
 - **Behaviour tests** (`tests/e2e.spec.ts`): the skip link is the first tab stop, the theme
