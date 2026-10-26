@@ -93,10 +93,10 @@
     {
       "period": "2026-04",
       "label": "Apr 2026",
-      "teardowns": 9,
+      "teardowns": 8,
       "parts": 102,
-      "mass_kg": 5.66,
-      "images": 233,
+      "mass_kg": 5.62,
+      "images": 232,
       "users": 1
     },
     {
@@ -155,11 +155,11 @@
     }
   ],
   "totals": {
-    "teardowns": 94,
+    "teardowns": 93,
     "parts": 1779,
-    "mass_kg": 47.17,
-    "images": 4455,
+    "mass_kg": 47.13,
+    "images": 4454,
     "users": 34
   },
-  "as_of": "2026-10-12"
+  "as_of": "2026-10-26"
 }
