@@ -1,5 +1,8 @@
-# Public repos scripts/check-drift.sh should never ask to list, one name per line.
+# Repos scripts/check-drift.sh should never flag as unlisted or as a pin without a card, one name per line.
 advent-of-code
 locale-en-nl-macos
 # Off the site until its mass balance closes (it loses about 99% of the input mass).
 batterway
+# Pinned on the profile and shown in the home page hero, not as a card.
+r9lab
+r9cam
