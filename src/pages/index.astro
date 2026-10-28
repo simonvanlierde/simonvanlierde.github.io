@@ -4,6 +4,7 @@ import { formatCount as fmt } from "../components/chartScale.ts";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ExplodedView from "../components/ExplodedView.astro";
 import Figure from "../components/Figure.astro";
+import Portrait from "../components/Portrait.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
@@ -64,7 +65,10 @@ const tagline =
   <header class="container hero">
     <div class="hero__grid">
       <div class="hero__intro">
-        <h1 class="sheet-name">{name}</h1>
+        <div class="sheet-head">
+          <Portrait />
+          <h1 class="sheet-name">{name}</h1>
+        </div>
         <p class="lead">{lead}</p>
         <p class="tagline prose">{tagline}</p>
         {/* Dated evidence on the first screen; the notes below have the full counts. */}

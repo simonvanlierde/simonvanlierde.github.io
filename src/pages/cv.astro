@@ -1,5 +1,6 @@
 ---
 import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
+import Portrait from "../components/Portrait.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, cvPdf as pdf, profiles } from "../data/cv.ts";
@@ -59,7 +60,10 @@ const contact = [
   {/* Skip target: the skip link passes only the sheet nav. */}
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
-    <h1 class="sheet-name">{basics.name}</h1>
+    <div class="sheet-head">
+      <Portrait />
+      <h1 class="sheet-name">{basics.name}</h1>
+    </div>
     <p class="lead">{headlineLead}</p>
     {headlineRest.length > 0 && <p class="tagline prose">{headlineRest.join(" · ")}</p>}
 

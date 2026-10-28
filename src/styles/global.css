@@ -454,6 +454,14 @@ html {
   timeline-scope: --sheet-name;
 }
 
+/* The portrait above the name, the same on both sheets: beside it, the
+   index's narrow hero column wraps the name and the sheets no longer align. */
+.sheet-head {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-m);
+}
+
 .sheet-name {
   view-timeline: --sheet-name block;
   view-timeline-inset: 4rem 0;

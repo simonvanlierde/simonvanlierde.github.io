@@ -1,0 +1,19 @@
+---
+import { Image } from "astro:assets";
+import portrait from "../assets/portrait.jpg";
+import { cv } from "../data/cv.ts";
+---
+
+{/* Width in CSS px; densities ship a 2x file for sharp screens. */}
+<Image class="portrait" src={portrait} width={96} densities={[1, 2]} alt={`Portrait of ${cv.basics.name}`} loading="eager" />
+
+<style>
+  /* A hairline frame and no radius: the only circle on the sheet is a balloon. */
+  .portrait {
+    width: 6rem;
+    height: auto;
+    aspect-ratio: 1;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+  }
+</style>
