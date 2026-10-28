@@ -1,10 +1,10 @@
 {
   // PR previews only: CI's preview job uploads each PR's build as a version of
-  // this Worker. The live site stays on GitHub Pages (deploy.yml), and this
-  // Worker is never deployed, so its workers.dev address serves nothing.
+  // this Worker. The live site stays on GitHub Pages (deploy.yml). The only
+  // deploy is the placeholder page the preview job creates the Worker with.
   //
-  // To rename, rename the Worker in the Cloudflare dashboard first: an upload
-  // under a new name creates an empty Worker that blocks the rename.
+  // To rename, rename the Worker in the Cloudflare dashboard first: a preview
+  // under a new name creates a new Worker, which then blocks the rename.
   "name": "simonvanlierde-site-preview",
   "compatibility_date": "2026-10-01",
   "assets": {
