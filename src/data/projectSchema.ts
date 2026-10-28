@@ -2,7 +2,7 @@
 // unit tests can import it: that file reads the CV export through a Vite-only
 // `?raw` import.
 
-export const site = "https://simonvanlierde.github.io";
+export const site = "https://simonvanlierde.com";
 export const personId = `${site}/#person`;
 
 export interface ProjectCard {

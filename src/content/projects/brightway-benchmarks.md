@@ -9,6 +9,6 @@ tags:
   - LCA
 links:
   - label: Benchmark history
-    url: https://simonvanlierde.github.io/brightway-benchmarks/
+    url: https://simonvanlierde.com/brightway-benchmarks/
 order: 2
 ---

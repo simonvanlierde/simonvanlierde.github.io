@@ -6,7 +6,7 @@ basics:
   links:
     linkedin: https://www.linkedin.com/in/simon-van-lierde/
     github: https://github.com/simonvanlierde
-    website: https://simonvanlierde.github.io/
+    website: https://simonvanlierde.com/
     orcid: https://orcid.org/0009-0006-6953-909X
     leiden: https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde
 render:
@@ -59,16 +59,16 @@ projects:
     url: https://github.com/simonvanlierde/jsonvet
     summary: "Pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and three other dialects, released on PyPI and crates.io. Matches the Python original on 40,228 test runs, survived a billion fuzzing inputs, up to 1,395× faster."
   - name: Public web apps
-    url: https://simonvanlierde.github.io/
+    url: https://simonvanlierde.com/
     summary: "credit-matrix, a CRediT authorship-statement tool with a Zenodo DOI, and four personal web apps, among them a multiplayer game whose one-CPU server holds about 200 rooms of 6 players under load."
   - name: RaMa-Scene explorer
-    url: https://simonvanlierde.github.io/ramascene-explorer/
+    url: https://simonvanlierde.com/ramascene-explorer/
     summary: "Map of where a country's consumption causes emissions, jobs and metal-ore extraction, over a baseline and 153 RaMa-Scene scenarios on EXIOBASE (Svelte, D3). It loads under 1 MB of a 51.5 MB Parquet file by range request. Zenodo DOI."
   - name: Computer-vision taxonomy visual
-    url: https://simonvanlierde.github.io/cv-ie-taxonomy/
+    url: https://simonvanlierde.com/cv-ie-taxonomy/
     summary: "Interactive React/SVG map of computer vision in industrial ecology, drawn as an exploded teardown, for an upcoming paper."
   - name: MSc-thesis cooling dashboard
-    url: https://simonvanlierde.github.io/msc-thesis-ie
+    url: https://simonvanlierde.com/msc-thesis-ie
     summary: "A dashboard of cooling demand in The Hague and its life-cycle impacts, from my MSc thesis (Nivo, MapLibre)."
 education:
   - institution: Leiden University & TU Delft
@@ -117,4 +117,4 @@ interests:
   - Multi-day treks in the mountains
   - Fermenting (kimchi, kombucha, tempeh) and cooking for friends
   - Climbing and via ferrata
-exported: "2026-10-28T15:08:42Z"
+exported: "2026-10-28T19:04:21Z"

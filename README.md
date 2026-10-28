@@ -2,12 +2,12 @@
 
 [![CI](https://github.com/simonvanlierde/simonvanlierde.github.io/actions/workflows/ci.yml/badge.svg)](https://github.com/simonvanlierde/simonvanlierde.github.io/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/simonvanlierde/simonvanlierde.github.io/branch/main/graph/badge.svg)](https://codecov.io/gh/simonvanlierde/simonvanlierde.github.io)
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fsimonvanlierde.github.io)](https://simonvanlierde.github.io)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fsimonvanlierde.com)](https://simonvanlierde.com)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Personal website for Simon van Lierde, research software engineer and PhD candidate at CML, Leiden
 University. It has two pages, a landing page for my work and a CV. I build it with Astro and deploy
-it to GitHub Pages at [simonvanlierde.github.io](https://simonvanlierde.github.io).
+it to GitHub Pages at [simonvanlierde.com](https://simonvanlierde.com).
 
 The site is drawn as one ISO technical drawing set, with a chart of R9lab's disassembly data that refreshes weekly.
 

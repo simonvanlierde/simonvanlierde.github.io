@@ -20,7 +20,7 @@ const sha = buildSha();
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://simonvanlierde.github.io",
+  site: "https://simonvanlierde.com",
   base: "/",
   // Preact, not React: the one island needs two hooks, not a 57KB runtime.
   integrations: [preact()],

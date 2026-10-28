@@ -26,7 +26,7 @@ test("there are cards to check", () => {
 test("every card yields a SoftwareSourceCode node with name, description and codeRepository", () => {
   for (const card of cards) {
     const node = ofType("SoftwareSourceCode").find(
-      (n) => n["@id"] === `https://simonvanlierde.github.io/#project-${card.id}`,
+      (n) => n["@id"] === `https://simonvanlierde.com/#project-${card.id}`,
     );
     assert.ok(node, `${card.id} has no SoftwareSourceCode node`);
     assert.equal(node.name, card.data.title);
@@ -37,7 +37,7 @@ test("every card yields a SoftwareSourceCode node with name, description and cod
 });
 
 test("a card's description has its figures filled in", () => {
-  const jsonvet = nodes.find((n) => n["@id"] === "https://simonvanlierde.github.io/#project-jsonvet");
+  const jsonvet = nodes.find((n) => n["@id"] === "https://simonvanlierde.com/#project-jsonvet");
   assert.equal(
     jsonvet?.description,
     "A pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and other JSON dialects for syntax errors and duplicate keys. I rewrote it from Python in Rust and released 2.0 on PyPI and crates.io. It gives the same verdicts as the Python version on all 40,228 file-by-file comparisons with version 1.4.1.",
@@ -50,7 +50,7 @@ test("only cards with a dataset link yield a Dataset, with name, description and
   const datasets = ofType("Dataset");
   assert.equal(datasets.length, withDataset.length);
   // A fixed card, so a wrong label pattern cannot pass by agreeing with itself.
-  assert.ok(datasets.some((n) => n["@id"] === "https://simonvanlierde.github.io/#dataset-msc-thesis-ie"));
+  assert.ok(datasets.some((n) => n["@id"] === "https://simonvanlierde.com/#dataset-msc-thesis-ie"));
   for (const node of datasets) {
     for (const key of ["name", "description", "url"]) assert.ok(node[key], `Dataset lacks ${key}`);
   }
