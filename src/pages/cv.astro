@@ -1,8 +1,9 @@
 ---
 import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
+import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, cvPdf as pdf, profiles } from "../data/cv.ts";
+import { cv, cvPdf as pdf } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
 import Base from "../layouts/Base.astro";
@@ -24,9 +25,6 @@ const publications = listablePublications(cv.publications);
 
 const exportedLabel = exported ? formatIsoDate(exported) : null;
 
-// Split at the interpunct: the first part is the lead, the rest the tagline.
-const [headlineLead, ...headlineRest] = basics.headline.split(" · ");
-
 // Letters follow the rendered sections, so hidden sections leave no gaps.
 // Each section heading shows the same letter as the zone index.
 const sections = [
@@ -42,11 +40,6 @@ const sections = [
   .filter((s) => s.show)
   .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
 const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
-
-const contact = [
-  { label: basics.location, href: null },
-  ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
-];
 ---
 
 <Base
@@ -59,30 +52,9 @@ const contact = [
   {/* Skip target: the skip link passes only the sheet nav. */}
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
-    <h1 class="sheet-name">{basics.name}</h1>
-    <p class="lead">{headlineLead}</p>
-    {headlineRest.length > 0 && <p class="tagline prose">{headlineRest.join(" · ")}</p>}
+    <SheetHead />
 
-    <ul class="link-list cv-contact">
-      {
-        contact.map((c) => (
-          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft cv-contact__plain">{c.label}</span>}</li>
-        ))
-      }
-    </ul>
-
-    {/* The same profile links as the landing hero, so a peer finds ORCID up top. */}
-    <ul class="link-list cv-profiles draft" aria-label="Profiles">
-      {
-        profiles.map((p) => (
-          <li>
-            <a href={p.href}>{p.label}</a>
-          </li>
-        ))
-      }
-    </ul>
-
-    <a class="stamp cv-download" href={pdf} download>
+    <a class="stamp sheet-stamp" href={pdf} download>
       <svg
         viewBox="0 0 24 24"
         width="18"
@@ -297,65 +269,45 @@ const contact = [
     padding-block: var(--space-l) var(--space-m);
   }
 
-  .cv-contact {
-    margin-top: var(--space-m);
-    font-size: var(--step--1);
-    color: var(--text-muted);
-  }
-
-  .cv-profiles {
-    margin-top: var(--space-xs);
-    font-size: var(--step--1);
-    letter-spacing: 0.03em;
-    gap: 0 var(--space-m);
-  }
-
-  .cv-profiles a {
-    color: var(--text-muted);
-  }
-
-  .cv-profiles a:hover {
-    color: var(--accent-strong);
-  }
-
-  /* Matches the links' box so the row sits on one baseline. */
-  .cv-contact__plain {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0.65rem 0.25rem;
-    margin: -0.3rem -0.25rem;
-  }
-
   .cv-index {
     margin-top: var(--space-m);
   }
 
+  /* A register of fixed columns at every width: two on a phone, four once
+     they fit, so each row starts on the same line instead of wherever the
+     previous label ran out. */
   .cv-index__list {
     list-style: none;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-s);
+    display: grid;
+    /* Shrinkable, so on the narrowest phones a long label wraps in its
+       column instead of pushing the second column off the sheet. */
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    gap: var(--space-2xs) var(--space-m);
     font-family: var(--font-draft);
     font-size: var(--step--1);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
   }
 
-  /* A register of fixed columns: with space-between, a wrapped second row
-     spread its two entries to opposite edges. */
+  @media (min-width: 42rem) {
+    .cv-index__list {
+      grid-template-columns: repeat(4, max-content);
+      column-gap: var(--space-l);
+    }
+
+    .cv-index__list a {
+      white-space: nowrap;
+    }
+  }
+
   @media (min-width: 60rem) {
     .cv-index__list {
-      display: grid;
-      grid-template-columns: repeat(4, max-content);
       justify-content: space-between;
-      letter-spacing: 0.03em;
     }
   }
 
   .cv-index__list a {
-    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -373,10 +325,6 @@ const contact = [
   .cv-index__list a:hover .datum {
     border-color: var(--accent);
     color: var(--accent);
-  }
-
-  .cv-download {
-    margin-top: var(--space-m);
   }
 
   main h2 .datum {
@@ -488,7 +436,7 @@ const contact = [
     }
 
     /* Without the zone index, the heading letters point at nothing. */
-    .cv-download,
+    .sheet-stamp,
     .cv-index,
     .cv-download-utility,
     main h2 .datum {

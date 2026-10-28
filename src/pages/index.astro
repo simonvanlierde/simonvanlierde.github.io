@@ -5,9 +5,10 @@ import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ExplodedView from "../components/ExplodedView.astro";
 import Figure from "../components/Figure.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, profiles } from "../data/cv.ts";
+import { cv, intro } from "../data/cv.ts";
 import { participants, statsSource } from "../data/figures.ts";
 import { figureParts } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
@@ -44,17 +45,11 @@ const minorProjects = allProjects.filter((p) => p.data.category === "minor");
 
 const name = basics.name;
 const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
-
-// Matches the start of the CV headline.
-const lead = "Research software engineer · PhD candidate, Leiden University";
-
-const tagline =
-  "At CML, Leiden University, I write open software and collect open data for industrial ecology and the circular economy. Most of my time goes into R9lab, where we take products apart to record what they're made of.";
 ---
 
 <Base
   title={`${name} | Research software engineer for industrial ecology`}
-  description={tagline}
+  description={intro}
   jsonLd={homeJsonLd(allProjects)}
 >
   <SheetNav current="index" />
@@ -64,42 +59,11 @@ const tagline =
   <header class="container hero">
     <div class="hero__grid">
       <div class="hero__intro">
-        <h1 class="sheet-name">{name}</h1>
-        <p class="lead">{lead}</p>
-        <p class="tagline prose">{tagline}</p>
-        {/* Dated evidence on the first screen; the notes below have the full counts. */}
-        <p class="hero__proof draft">
-          <a href="#relab">
-            R9lab to date: <Figure {...products} /> products taken apart,{" "}
-            <Figure {...components} /> components catalogued
-            (<time datetime={counts.as_of}>{asOfLabel}</time>).
-          </a>
-        </p>
+        <SheetHead />
 
-        <div class="hero__actions">
-          <a class="stamp" href="/cv/">
-            Curriculum vitae<span class="visually-hidden">, sheet 2</span>
-          </a>
-          {
-            basics.email && (
-              <a class="hero__email draft" href={`mailto:${basics.email}`}>
-                {basics.email}
-              </a>
-            )
-          }
-        </div>
-
-        {/* Repeats the title block's profiles, which sit at the end of a long
-            sheet. Muted, so the stamp stays the one primary action. */}
-        <ul class="hero__profiles link-list draft" aria-label="Profiles">
-          {
-            profiles.map((p) => (
-              <li>
-                <a href={p.href}>{p.label}</a>
-              </li>
-            ))
-          }
-        </ul>
+        <a class="stamp sheet-stamp" href="/cv/">
+          Curriculum vitae<span class="visually-hidden">, sheet 2</span>
+        </a>
       </div>
 
       <div class="hero__figure">
@@ -307,58 +271,6 @@ const tagline =
       justify-self: end;
       width: 100%;
     }
-  }
-
-  .hero__actions {
-    margin-top: var(--space-l);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-m);
-  }
-
-  .hero__email {
-    color: var(--text-muted);
-    letter-spacing: 0.03em;
-    overflow-wrap: anywhere;
-    padding-block: 0.65rem; /* 44px target */
-    margin-block: -0.65rem;
-  }
-
-  .hero__email:hover {
-    color: var(--accent-strong);
-  }
-
-  .hero__proof {
-    margin-top: var(--space-m);
-    max-width: var(--measure);
-    font-size: var(--step--1);
-    letter-spacing: 0.03em;
-  }
-
-  .hero__proof a {
-    color: var(--text);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.18em;
-  }
-
-  .hero__proof a:hover {
-    color: var(--accent-strong);
-  }
-
-  .hero__profiles {
-    margin-top: var(--space-s);
-    font-size: var(--step--1);
-    letter-spacing: 0.03em;
-    gap: 0 var(--space-m);
-  }
-
-  .hero__profiles a {
-    color: var(--text-muted);
-  }
-
-  .hero__profiles a:hover {
-    color: var(--accent-strong);
   }
 
   .notes {

@@ -87,5 +87,18 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
   </g>
 </svg>`;
 
-await sharp(Buffer.from(svg)).png().toFile("public/og.png");
+// The portrait sits under the name, clear of the text lines and of the figure.
+const P = { left: 660, top: 400, size: 180 };
+const portrait = await sharp("src/assets/portrait.jpg").resize(P.size, P.size).toBuffer();
+const portraitFrame = `<svg xmlns="http://www.w3.org/2000/svg" width="${P.size}" height="${P.size}">
+  <rect x="1" y="1" width="${P.size - 2}" height="${P.size - 2}" fill="none" stroke="${frame}" stroke-width="2"/>
+</svg>`;
+
+await sharp(Buffer.from(svg))
+  .composite([
+    { input: portrait, left: P.left, top: P.top },
+    { input: Buffer.from(portraitFrame), left: P.left, top: P.top },
+  ])
+  .png()
+  .toFile("public/og.png");
 console.log("Wrote public/og.png");
