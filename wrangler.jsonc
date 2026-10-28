@@ -1,0 +1,17 @@
+{
+  // PR previews only: CI's preview job uploads each PR's build as a version of
+  // this Worker. The live site stays on GitHub Pages (deploy.yml), and this
+  // Worker is never deployed, so its workers.dev address serves nothing.
+  //
+  // To rename, rename the Worker in the Cloudflare dashboard first: an upload
+  // under a new name creates an empty Worker that blocks the rename.
+  "name": "simonvanlierde-site-preview",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  // Preview URLs need both.
+  "preview_urls": true,
+  "workers_dev": true
+}
