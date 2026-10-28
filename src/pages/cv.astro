@@ -273,31 +273,41 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
     margin-top: var(--space-m);
   }
 
+  /* A register of fixed columns at every width: two on a phone, four once
+     they fit, so each row starts on the same line instead of wherever the
+     previous label ran out. */
   .cv-index__list {
     list-style: none;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-s);
+    display: grid;
+    /* Shrinkable, so on the narrowest phones a long label wraps in its
+       column instead of pushing the second column off the sheet. */
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    gap: var(--space-2xs) var(--space-m);
     font-family: var(--font-draft);
     font-size: var(--step--1);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
   }
 
-  /* A register of fixed columns: with space-between, a wrapped second row
-     spread its two entries to opposite edges. */
+  @media (min-width: 42rem) {
+    .cv-index__list {
+      grid-template-columns: repeat(4, max-content);
+      column-gap: var(--space-l);
+    }
+
+    .cv-index__list a {
+      white-space: nowrap;
+    }
+  }
+
   @media (min-width: 60rem) {
     .cv-index__list {
-      display: grid;
-      grid-template-columns: repeat(4, max-content);
       justify-content: space-between;
-      letter-spacing: 0.03em;
     }
   }
 
   .cv-index__list a {
-    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
