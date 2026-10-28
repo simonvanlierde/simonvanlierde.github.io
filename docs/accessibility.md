@@ -1,6 +1,6 @@
 # Accessibility statement
 
-This statement covers [simonvanlierde.github.io](https://simonvanlierde.github.io): the index of
+This statement covers [simonvanlierde.com](https://simonvanlierde.com): the index of
 work (`/`), the CV (`/cv/`), the 404 page and the CV PDF. It was last reviewed on 22 October 2026.
 
 ## Target

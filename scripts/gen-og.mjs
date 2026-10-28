@@ -79,7 +79,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
     <text x="82" y="274" font-size="30" fill="${ink}">Research software engineer · PhD candidate, Leiden</text>
     <text x="82" y="366" font-size="22" letter-spacing="1.2" fill="${muted}">OPEN RESEARCH INFRASTRUCTURE FOR SUSTAINABILITY SCIENCE</text>
     <text x="82" y="408" font-size="18" letter-spacing="2.4" fill="${muted}">CML · LEIDEN UNIVERSITY</text>
-    <text x="82" y="492" font-size="28" letter-spacing="2" fill="${accent}">SIMONVANLIERDE.GITHUB.IO</text>
+    <text x="82" y="492" font-size="28" letter-spacing="2" fill="${accent}">SIMONVANLIERDE.COM</text>
   </g>
   <g font-family="${draft}">
     <rect x="80" y="48" width="165" height="44" fill="none" stroke="${stamp}" stroke-width="3"/>
