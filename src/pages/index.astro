@@ -8,7 +8,7 @@ import ProjectCard from "../components/ProjectCard.astro";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, profiles } from "../data/cv.ts";
+import { cv, intro, profiles } from "../data/cv.ts";
 import { participants, statsSource } from "../data/figures.ts";
 import { figureParts } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
@@ -45,14 +45,11 @@ const minorProjects = allProjects.filter((p) => p.data.category === "minor");
 
 const name = basics.name;
 const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
-
-const tagline =
-  "At CML, Leiden University, I write open software and collect open data for industrial ecology and the circular economy. Most of my time goes into R9lab, where we take products apart to record what they're made of.";
 ---
 
 <Base
   title={`${name} | Research software engineer for industrial ecology`}
-  description={tagline}
+  description={intro}
   jsonLd={homeJsonLd(allProjects)}
 >
   <SheetNav current="index" />
@@ -60,10 +57,9 @@ const tagline =
   {/* Skip target. A div, not <main>: a header inside <main> loses its banner role. */}
   <div id="main">
   <header class="container hero">
-    <SheetHead />
     <div class="hero__grid">
       <div class="hero__intro">
-        <p class="tagline prose">{tagline}</p>
+        <SheetHead />
         {/* Dated evidence on the first screen; the notes below have the full counts. */}
         <p class="hero__proof draft">
           <a href="#relab">
@@ -289,20 +285,14 @@ const tagline =
     padding-bottom: 0;
   }
 
-  /* Starts where the CV's tagline starts, so only the content under the
-     title zone changes between sheets. */
   .hero__grid {
-    margin-top: var(--space-m);
     display: grid;
     gap: var(--space-l);
     align-items: start;
   }
 
-  .hero__intro > .tagline {
-    margin-top: 0;
-  }
-
   @media (min-width: 60rem) {
+    /* Top-aligned, so the name sits at the same height as on the CV. */
     .hero__grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
       align-items: start;

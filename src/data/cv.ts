@@ -22,11 +22,12 @@ export const profiles = [
 ];
 
 // The headline reads "role · focus · affiliation". Both sheets open on the same
-// lead, the role and the affiliation; the CV sets the focus under it.
+// lead, the role and the affiliation; the intro below covers the focus.
 const [role, ...headlineRest] = cv.basics.headline.split(" · ");
 
 /** The lead under the name on both sheets: the role, then the affiliation. */
 export const sheetLead = [role, headlineRest.at(-1)].filter((part) => part !== undefined);
 
-/** The rest of the headline, for the CV's tagline. */
-export const headlineFocus = headlineRest.slice(0, -1).join(" · ");
+/** The sentence under the lead on both sheets, and the index's meta description. */
+export const intro =
+  "At CML, Leiden University, I write open software and collect open data for industrial ecology and the circular economy. Most of my time goes into R9lab, where we take products apart to record what they're made of.";

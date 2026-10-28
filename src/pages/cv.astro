@@ -3,7 +3,7 @@ import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, headlineFocus, cvPdf as pdf, profiles } from "../data/cv.ts";
+import { cv, cvPdf as pdf, profiles } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
 import Base from "../layouts/Base.astro";
@@ -58,7 +58,6 @@ const contact = [
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
     <SheetHead />
-    {headlineFocus && <p class="tagline prose">{headlineFocus}</p>}
 
     <ul class="link-list sheet-contact">
       {

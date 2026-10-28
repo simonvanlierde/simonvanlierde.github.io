@@ -1,23 +1,29 @@
 ---
 import { Image } from "astro:assets";
 import portrait from "../assets/portrait.jpg";
-import { cv, sheetLead } from "../data/cv.ts";
+import { cv, intro, sheetLead } from "../data/cv.ts";
 
-// The sheet's title zone: portrait, name and lead, identical on every sheet,
-// so turning the page changes only what sits under it.
+// The sheet's title zone: portrait, name, lead and intro, identical on every
+// sheet and narrow enough for the index's left column, so turning the page
+// changes only what sits under and beside it.
+
+// Given name over family name, so "van Lierde" never splits.
+const [given, ...family] = cv.basics.name.split(" ");
 ---
 
 <div class="sheet-head">
-  {/* 144 CSS px at most (9rem); densities ship a 2x file for sharp screens. */}
+  {/* 122 CSS px at most; densities ship a 2x file for sharp screens. */}
   <Image
     class="sheet-head__portrait"
     src={portrait}
-    width={144}
+    width={128}
     densities={[1, 2]}
     alt={`Portrait of ${cv.basics.name}`}
     loading="eager"
   />
-  <h1 class="sheet-name sheet-head__name">{cv.basics.name}</h1>
+  <h1 class="sheet-name sheet-head__name">
+    {given} <span class="sheet-head__family">{family.join(" ")}</span>
+  </h1>
   {/* One part per line, so the interpunct never dangles at a wrap; it stays
       in the text for screen readers and copy-paste. */}
   <p class="lead sheet-head__lead">
@@ -30,61 +36,52 @@ import { cv, sheetLead } from "../data/cv.ts";
       ))
     }
   </p>
+  <p class="tagline prose sheet-head__intro">{intro}</p>
 </div>
 
 <style>
-  /* Portrait beside the name and lead. On a narrow screen the lead drops
-     under both, so the name keeps its width. */
+  /* Portrait beside the two-line name, at its height; lead and intro run
+     under both from the sheet's left edge. */
   .sheet-head {
+    max-width: 31rem;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
       "portrait name"
-      "lead lead";
+      "lead lead"
+      "intro intro";
     align-items: center;
-    gap: var(--space-m) var(--space-m);
+    column-gap: var(--space-m);
   }
 
-  /* A hairline frame and no radius: the only circle on the sheet is a balloon. */
+  /* A hairline frame and no radius: the only circle on the sheet is a balloon.
+     Two lines of the h1: its font size times its 1.12 line height. */
   .sheet-head__portrait {
     grid-area: portrait;
-    width: 4.5rem;
+    width: calc(var(--step-3) * 2.24);
     height: auto;
     aspect-ratio: 1;
     border: var(--border-width) solid var(--border-strong);
     background: var(--surface);
   }
 
-  /* The portrait spans the name and lead, at about their height. */
-  @media (min-width: 40rem) {
-    .sheet-head {
-      grid-template-areas:
-        "portrait name"
-        "portrait lead";
-      align-items: end;
-      row-gap: var(--space-s);
-    }
-
-    .sheet-head__lead {
-      align-self: start;
-    }
-
-    .sheet-head__portrait {
-      align-self: center;
-      width: clamp(7rem, 4rem + 5vw, 9rem);
-    }
-  }
-
   .sheet-head__name {
     grid-area: name;
   }
 
+  .sheet-head__family {
+    display: block;
+  }
+
   .sheet-head__lead {
     grid-area: lead;
-    margin-top: 0;
   }
 
   .sheet-head__part {
     display: block;
+  }
+
+  .sheet-head__intro {
+    grid-area: intro;
   }
 </style>
