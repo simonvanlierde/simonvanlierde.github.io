@@ -23,6 +23,16 @@
   // by the Renovate app starts deploy.yml like any push.
   platformAutomerge: false,
 
+  // The preview job runs wrangler through `pnpm dlx`, outside package.json.
+  customManagers: [
+    {
+      customType: "regex",
+      managerFilePatterns: ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      matchStrings: ["pnpm dlx (?<depName>wrangler)@(?<currentValue>[0-9.]+)"],
+      datasourceTemplate: "npm",
+    },
+  ],
+
   packageRules: [
     // Majors stay manual.
     {
