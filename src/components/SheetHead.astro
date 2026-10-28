@@ -1,14 +1,16 @@
 ---
 import { Image } from "astro:assets";
 import portrait from "../assets/portrait.jpg";
-import { cv, intro, sheetLead } from "../data/cv.ts";
+import { cv, intro, profiles, sheetLead } from "../data/cv.ts";
 
-// The sheet's title zone: portrait, name, lead and intro, identical on every
-// sheet and narrow enough for the index's left column, so turning the page
-// changes only what sits under and beside it.
+// The sheet's title zone: portrait, name, lead, intro, contact and profiles,
+// identical on every sheet and narrow enough for the index's left column, so
+// turning the page changes only the stamp and what sits under and beside it.
 
 // Given name over family name, so "van Lierde" never splits.
 const [given, ...family] = cv.basics.name.split(" ");
+
+const { location, email } = cv.basics;
 ---
 
 <div class="sheet-head">
@@ -38,6 +40,29 @@ const [given, ...family] = cv.basics.name.split(" ");
   </p>
   <p class="tagline prose sheet-head__intro">{intro}</p>
 </div>
+
+<ul class="link-list sheet-contact">
+  <li><span class="draft sheet-contact__plain">{location}</span></li>
+  {
+    email && (
+      <li>
+        <a href={`mailto:${email}`}>{email}</a>
+      </li>
+    )
+  }
+</ul>
+
+{/* Repeats the title block's profiles, which sit at the end of a long sheet.
+    Muted, so the stamp stays the one primary action. */}
+<ul class="link-list sheet-profiles draft" aria-label="Profiles">
+  {
+    profiles.map((p) => (
+      <li>
+        <a href={p.href}>{p.label}</a>
+      </li>
+    ))
+  }
+</ul>
 
 <style>
   /* Portrait beside the two-line name, at its height; lead and intro run

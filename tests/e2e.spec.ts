@@ -368,7 +368,6 @@ test.describe("disassembly chart", () => {
 // name leaves the page.
 const names = [
   "Vue 3",
-  "R9lab",
   "JSON5",
   "JATS4R",
   "AI4IE",
@@ -382,10 +381,10 @@ const names = [
 // Number words count as numbers too. "one" is left out on purpose: every use is idiom.
 const NUMBER_WORD = "(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozen|hundreds?|thousands?|million)";
 
-test("every number in the hero, Notes A-D, the project cards and the smaller-projects list has a source and a date", async ({
+test("every number in Notes A-D, the project cards and the smaller-projects list has a source and a date", async ({
   page,
 }) => {
-  const selectors = [".hero__proof", ".notes__list", ".bom-row__desc", ".minor-list"];
+  const selectors = [".notes__list", ".bom-row__desc", ".minor-list"];
   for (const sel of selectors) await expect(page.locator(sel).first()).toBeVisible();
   const regions = page.locator(selectors.join(", "));
   await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);

@@ -3,7 +3,7 @@ import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, cvPdf as pdf, profiles } from "../data/cv.ts";
+import { cv, cvPdf as pdf } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
 import Base from "../layouts/Base.astro";
@@ -40,11 +40,6 @@ const sections = [
   .filter((s) => s.show)
   .map((s, i) => ({ ...s, ref: String.fromCharCode(65 + i) }));
 const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
-
-const contact = [
-  { label: basics.location, href: null },
-  ...(basics.email ? [{ label: basics.email, href: `mailto:${basics.email}` }] : []),
-];
 ---
 
 <Base
@@ -58,25 +53,6 @@ const contact = [
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
     <SheetHead />
-
-    <ul class="link-list sheet-contact">
-      {
-        contact.map((c) => (
-          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft sheet-contact__plain">{c.label}</span>}</li>
-        ))
-      }
-    </ul>
-
-    {/* The same profile links as the landing hero, so a peer finds ORCID up top. */}
-    <ul class="link-list sheet-profiles draft" aria-label="Profiles">
-      {
-        profiles.map((p) => (
-          <li>
-            <a href={p.href}>{p.label}</a>
-          </li>
-        ))
-      }
-    </ul>
 
     <a class="stamp sheet-stamp" href={pdf} download>
       <svg
