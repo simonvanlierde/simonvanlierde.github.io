@@ -59,7 +59,7 @@ test("the page is dated from the export, machine-readably", async ({ page }) => 
 });
 
 test("contact details render only what the export publishes", async ({ page }) => {
-  const contact = page.locator(".cv-contact");
+  const contact = page.locator(".sheet-contact");
   await expect(contact).toContainText(cv.basics.location);
 
   // Without an exported address, the page must carry no mailto at all.

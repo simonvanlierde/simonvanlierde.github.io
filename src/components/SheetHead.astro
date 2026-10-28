@@ -1,0 +1,90 @@
+---
+import { Image } from "astro:assets";
+import portrait from "../assets/portrait.jpg";
+import { cv, sheetLead } from "../data/cv.ts";
+
+// The sheet's title zone: portrait, name and lead, identical on every sheet,
+// so turning the page changes only what sits under it.
+---
+
+<div class="sheet-head">
+  {/* 144 CSS px at most (9rem); densities ship a 2x file for sharp screens. */}
+  <Image
+    class="sheet-head__portrait"
+    src={portrait}
+    width={144}
+    densities={[1, 2]}
+    alt={`Portrait of ${cv.basics.name}`}
+    loading="eager"
+  />
+  <h1 class="sheet-name sheet-head__name">{cv.basics.name}</h1>
+  {/* One part per line, so the interpunct never dangles at a wrap; it stays
+      in the text for screen readers and copy-paste. */}
+  <p class="lead sheet-head__lead">
+    {
+      sheetLead.map((part, i) => (
+        <span class="sheet-head__part">
+          {i > 0 && <span class="visually-hidden"> · </span>}
+          {part}
+        </span>
+      ))
+    }
+  </p>
+</div>
+
+<style>
+  /* Portrait beside the name and lead. On a narrow screen the lead drops
+     under both, so the name keeps its width. */
+  .sheet-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "portrait name"
+      "lead lead";
+    align-items: center;
+    gap: var(--space-m) var(--space-m);
+  }
+
+  /* A hairline frame and no radius: the only circle on the sheet is a balloon. */
+  .sheet-head__portrait {
+    grid-area: portrait;
+    width: 4.5rem;
+    height: auto;
+    aspect-ratio: 1;
+    border: var(--border-width) solid var(--border-strong);
+    background: var(--surface);
+  }
+
+  /* The portrait spans the name and lead, at about their height. */
+  @media (min-width: 40rem) {
+    .sheet-head {
+      grid-template-areas:
+        "portrait name"
+        "portrait lead";
+      align-items: end;
+      row-gap: var(--space-s);
+    }
+
+    .sheet-head__lead {
+      align-self: start;
+    }
+
+    .sheet-head__portrait {
+      align-self: center;
+      width: clamp(7rem, 4rem + 5vw, 9rem);
+    }
+  }
+
+  .sheet-head__name {
+    grid-area: name;
+  }
+
+  .sheet-head__lead {
+    grid-area: lead;
+    margin-top: 0;
+  }
+
+  .sheet-head__part {
+    display: block;
+  }
+</style>

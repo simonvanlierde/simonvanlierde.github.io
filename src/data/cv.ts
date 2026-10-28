@@ -20,3 +20,13 @@ export const profiles = [
   { label: "LinkedIn", href: cv.basics.links.linkedin },
   { label: "Leiden profile", href: cv.basics.links.leiden },
 ];
+
+// The headline reads "role · focus · affiliation". Both sheets open on the same
+// lead, the role and the affiliation; the CV sets the focus under it.
+const [role, ...headlineRest] = cv.basics.headline.split(" · ");
+
+/** The lead under the name on both sheets: the role, then the affiliation. */
+export const sheetLead = [role, headlineRest.at(-1)].filter((part) => part !== undefined);
+
+/** The rest of the headline, for the CV's tagline. */
+export const headlineFocus = headlineRest.slice(0, -1).join(" · ");

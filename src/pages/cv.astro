@@ -1,9 +1,9 @@
 ---
 import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
-import Portrait from "../components/Portrait.astro";
+import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
-import { cv, cvPdf as pdf, profiles } from "../data/cv.ts";
+import { cv, headlineFocus, cvPdf as pdf, profiles } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
 import Base from "../layouts/Base.astro";
@@ -24,9 +24,6 @@ const {
 const publications = listablePublications(cv.publications);
 
 const exportedLabel = exported ? formatIsoDate(exported) : null;
-
-// Split at the interpunct: the first part is the lead, the rest the tagline.
-const [headlineLead, ...headlineRest] = basics.headline.split(" · ");
 
 // Letters follow the rendered sections, so hidden sections leave no gaps.
 // Each section heading shows the same letter as the zone index.
@@ -60,23 +57,19 @@ const contact = [
   {/* Skip target: the skip link passes only the sheet nav. */}
   <header class="container cv-header" id="main">
     {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
-    <div class="sheet-head">
-      <Portrait />
-      <h1 class="sheet-name">{basics.name}</h1>
-    </div>
-    <p class="lead">{headlineLead}</p>
-    {headlineRest.length > 0 && <p class="tagline prose">{headlineRest.join(" · ")}</p>}
+    <SheetHead />
+    {headlineFocus && <p class="tagline prose">{headlineFocus}</p>}
 
-    <ul class="link-list cv-contact">
+    <ul class="link-list sheet-contact">
       {
         contact.map((c) => (
-          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft cv-contact__plain">{c.label}</span>}</li>
+          <li>{c.href ? <a href={c.href}>{c.label}</a> : <span class="draft sheet-contact__plain">{c.label}</span>}</li>
         ))
       }
     </ul>
 
     {/* The same profile links as the landing hero, so a peer finds ORCID up top. */}
-    <ul class="link-list cv-profiles draft" aria-label="Profiles">
+    <ul class="link-list sheet-profiles draft" aria-label="Profiles">
       {
         profiles.map((p) => (
           <li>
@@ -86,7 +79,7 @@ const contact = [
       }
     </ul>
 
-    <a class="stamp cv-download" href={pdf} download>
+    <a class="stamp sheet-stamp" href={pdf} download>
       <svg
         viewBox="0 0 24 24"
         width="18"
@@ -301,36 +294,6 @@ const contact = [
     padding-block: var(--space-l) var(--space-m);
   }
 
-  .cv-contact {
-    margin-top: var(--space-m);
-    font-size: var(--step--1);
-    color: var(--text-muted);
-  }
-
-  .cv-profiles {
-    margin-top: var(--space-xs);
-    font-size: var(--step--1);
-    letter-spacing: 0.03em;
-    gap: 0 var(--space-m);
-  }
-
-  .cv-profiles a {
-    color: var(--text-muted);
-  }
-
-  .cv-profiles a:hover {
-    color: var(--accent-strong);
-  }
-
-  /* Matches the links' box so the row sits on one baseline. */
-  .cv-contact__plain {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0.65rem 0.25rem;
-    margin: -0.3rem -0.25rem;
-  }
-
   .cv-index {
     margin-top: var(--space-m);
   }
@@ -377,10 +340,6 @@ const contact = [
   .cv-index__list a:hover .datum {
     border-color: var(--accent);
     color: var(--accent);
-  }
-
-  .cv-download {
-    margin-top: var(--space-m);
   }
 
   main h2 .datum {
@@ -492,7 +451,7 @@ const contact = [
     }
 
     /* Without the zone index, the heading letters point at nothing. */
-    .cv-download,
+    .sheet-stamp,
     .cv-index,
     .cv-download-utility,
     main h2 .datum {

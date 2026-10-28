@@ -4,8 +4,8 @@ import { formatCount as fmt } from "../components/chartScale.ts";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ExplodedView from "../components/ExplodedView.astro";
 import Figure from "../components/Figure.astro";
-import Portrait from "../components/Portrait.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, profiles } from "../data/cv.ts";
@@ -46,9 +46,6 @@ const minorProjects = allProjects.filter((p) => p.data.category === "minor");
 const name = basics.name;
 const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
 
-// Matches the start of the CV headline.
-const lead = "Research software engineer · PhD candidate, Leiden University";
-
 const tagline =
   "At CML, Leiden University, I write open software and collect open data for industrial ecology and the circular economy. Most of my time goes into R9lab, where we take products apart to record what they're made of.";
 ---
@@ -63,13 +60,9 @@ const tagline =
   {/* Skip target. A div, not <main>: a header inside <main> loses its banner role. */}
   <div id="main">
   <header class="container hero">
+    <SheetHead />
     <div class="hero__grid">
       <div class="hero__intro">
-        <div class="sheet-head">
-          <Portrait />
-          <h1 class="sheet-name">{name}</h1>
-        </div>
-        <p class="lead">{lead}</p>
         <p class="tagline prose">{tagline}</p>
         {/* Dated evidence on the first screen; the notes below have the full counts. */}
         <p class="hero__proof draft">
@@ -80,22 +73,20 @@ const tagline =
           </a>
         </p>
 
-        <div class="hero__actions">
-          <a class="stamp" href="/cv/">
-            Curriculum vitae<span class="visually-hidden">, sheet 2</span>
-          </a>
-          {
-            basics.email && (
-              <a class="hero__email draft" href={`mailto:${basics.email}`}>
-                {basics.email}
-              </a>
-            )
-          }
-        </div>
+        {/* Same order as the CV's header: contact, profiles, then the one stamp. */}
+        {
+          basics.email && (
+            <ul class="link-list sheet-contact">
+              <li>
+                <a href={`mailto:${basics.email}`}>{basics.email}</a>
+              </li>
+            </ul>
+          )
+        }
 
         {/* Repeats the title block's profiles, which sit at the end of a long
             sheet. Muted, so the stamp stays the one primary action. */}
-        <ul class="hero__profiles link-list draft" aria-label="Profiles">
+        <ul class="link-list sheet-profiles draft" aria-label="Profiles">
           {
             profiles.map((p) => (
               <li>
@@ -104,6 +95,10 @@ const tagline =
             ))
           }
         </ul>
+
+        <a class="stamp sheet-stamp" href="/cv/">
+          Curriculum vitae<span class="visually-hidden">, sheet 2</span>
+        </a>
       </div>
 
       <div class="hero__figure">
@@ -294,14 +289,20 @@ const tagline =
     padding-bottom: 0;
   }
 
+  /* Starts where the CV's tagline starts, so only the content under the
+     title zone changes between sheets. */
   .hero__grid {
+    margin-top: var(--space-m);
     display: grid;
     gap: var(--space-l);
     align-items: start;
   }
 
+  .hero__intro > .tagline {
+    margin-top: 0;
+  }
+
   @media (min-width: 60rem) {
-    /* Top-aligned, so the name sits at the same height as on the CV. */
     .hero__grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
       align-items: start;
@@ -311,26 +312,6 @@ const tagline =
       justify-self: end;
       width: 100%;
     }
-  }
-
-  .hero__actions {
-    margin-top: var(--space-l);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-m);
-  }
-
-  .hero__email {
-    color: var(--text-muted);
-    letter-spacing: 0.03em;
-    overflow-wrap: anywhere;
-    padding-block: 0.65rem; /* 44px target */
-    margin-block: -0.65rem;
-  }
-
-  .hero__email:hover {
-    color: var(--accent-strong);
   }
 
   .hero__proof {
@@ -350,20 +331,8 @@ const tagline =
     color: var(--accent-strong);
   }
 
-  .hero__profiles {
-    margin-top: var(--space-s);
-    font-size: var(--step--1);
-    letter-spacing: 0.03em;
-    gap: 0 var(--space-m);
-  }
 
-  .hero__profiles a {
-    color: var(--text-muted);
-  }
 
-  .hero__profiles a:hover {
-    color: var(--accent-strong);
-  }
 
   .notes {
     margin-top: var(--space-l);

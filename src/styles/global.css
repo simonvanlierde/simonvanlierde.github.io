@@ -454,12 +454,40 @@ html {
   timeline-scope: --sheet-name;
 }
 
-/* The portrait above the name, the same on both sheets: beside it, the
-   index's narrow hero column wraps the name and the sheets no longer align. */
-.sheet-head {
-  display: grid;
-  justify-items: start;
-  gap: var(--space-m);
+/* Contact, profiles and the stamp under each sheet's title zone, in the same
+   order and spacing on both sheets. */
+.sheet-contact {
+  margin-top: var(--space-m);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+/* Matches the links' box so the row sits on one baseline. */
+.sheet-contact__plain {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.65rem 0.25rem;
+  margin: -0.3rem -0.25rem;
+}
+
+.sheet-profiles {
+  margin-top: var(--space-xs);
+  font-size: var(--step--1);
+  letter-spacing: 0.03em;
+  gap: 0 var(--space-m);
+}
+
+.sheet-profiles a {
+  color: var(--text-muted);
+}
+
+.sheet-profiles a:hover {
+  color: var(--accent-strong);
+}
+
+.sheet-stamp {
+  margin-top: var(--space-m);
 }
 
 .sheet-name {
