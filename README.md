@@ -5,7 +5,7 @@
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsimonvanlierde.github.io)](https://simonvanlierde.github.io)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Personal website for Simon van Lierde, research software engineer and PhD researcher at CML, Leiden
+Personal website for Simon van Lierde, research software engineer and PhD candidate at CML, Leiden
 University. It has two pages, a landing page for my work and a CV. I build it with Astro and deploy
 it to GitHub Pages at [simonvanlierde.github.io](https://simonvanlierde.github.io).
 

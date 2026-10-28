@@ -76,7 +76,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
   ${r9lab}
   <g font-family="${draft}">
     <text x="80" y="200" font-size="84" letter-spacing="4" fill="${ink}">SIMON VAN LIERDE</text>
-    <text x="82" y="274" font-size="30" fill="${ink}">PhD researcher and research software engineer</text>
+    <text x="82" y="274" font-size="30" fill="${ink}">Research software engineer · PhD candidate, Leiden</text>
     <text x="82" y="366" font-size="22" letter-spacing="1.2" fill="${muted}">OPEN RESEARCH INFRASTRUCTURE FOR SUSTAINABILITY SCIENCE</text>
     <text x="82" y="408" font-size="18" letter-spacing="2.4" fill="${muted}">CML · LEIDEN UNIVERSITY</text>
     <text x="82" y="492" font-size="28" letter-spacing="2" fill="${accent}">SIMONVANLIERDE.GITHUB.IO</text>

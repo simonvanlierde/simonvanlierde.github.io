@@ -4,7 +4,7 @@
   "version": "0.4.0",
   "private": true,
   "packageManager": "pnpm@11.10.0",
-  "description": "Personal website for Simon van Lierde, PhD researcher at CML, Leiden University.",
+  "description": "Personal website for Simon van Lierde, research software engineer and PhD candidate at CML, Leiden University.",
   "engines": {
     "node": ">=26"
   },
