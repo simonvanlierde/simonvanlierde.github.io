@@ -1,6 +1,6 @@
 ---
 title: project-templates
-description: "Copier templates that start a Python, TypeScript, Rust, Go or Docker project with tests, automatic checks and releases that need no stored keys. One command pulls in later template fixes. The data template tags each output row with the download it came from."
+description: "I start new projects from these Copier templates for Python, TypeScript, Rust, Go and Docker. Each gets tests, CI and releases that need no stored keys, and copier update pulls in later template fixes. My tide, bikespot and scattergories apps use them, and so does batterway, an older battery-recycling model I moved over."
 repo: https://github.com/simonvanlierde/project-templates
 kind: project template
 tags:

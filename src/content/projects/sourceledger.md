@@ -1,6 +1,6 @@
 ---
 title: sourceledger
-description: "A Python library for building datasets from public downloads. Each output row records the download it came from: the URL, the time and the file's SHA-256. It spots a file the publisher changed without saying so, and saves the result as a Frictionless Data Package. It needs no other packages, and is on PyPI with a Zenodo DOI."
+description: "Publishers sometimes revise a data file without saying so, and results built on it change. sourceledger, a Python library, stamps each row of a dataset with the download it came from (URL, time and SHA-256) and flags a source that has changed since. It writes Frictionless Data Packages and is on PyPI with a Zenodo DOI."
 repo: https://github.com/simonvanlierde/sourceledger
 demo: https://simonvanlierde.com/sourceledger/
 kind: provenance library

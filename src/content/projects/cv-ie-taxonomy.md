@@ -1,6 +1,6 @@
 ---
 title: cv-ie-taxonomy
-description: "An interactive map of what computer vision can tell about a used product, drawn as a desk fan taken apart, for an upcoming review paper. Reading the label drops from {repair} on repair photos to {recycler} at the recycler."
+description: "Reading a product's label with computer vision scores {repair} on repair photos but {recycler} at the recycler. My upcoming review paper rates what cameras can tell about used products, and on field photos no task reaches the top rating. This interactive page shows it on a desk fan that comes apart as you scroll."
 repo: https://github.com/simonvanlierde/cv-ie-taxonomy
 demo: https://simonvanlierde.com/cv-ie-taxonomy/
 kind: interactive visual

@@ -1,6 +1,6 @@
 ---
 title: ramascene-explorer
-description: "A map of where a country's consumption causes greenhouse-gas emissions, jobs and metal-ore extraction, across {sections} industry sections, for a baseline and {runs} RaMa-Scene scenarios worked out in advance on EXIOBASE {base_year}. The page downloads only what it shows, about {first_load} MB of a {parquet_size} MB file at first. A separate check works out one product's footprint in Brightway, pymrio, pycirk and numpy, and all match the map. None of it is a forecast."
+description: "Pick a country and see where in the world its consumption causes greenhouse-gas emissions, jobs and metal-ore extraction, and how {runs} RaMa-Scene scenarios would have changed that in EXIOBASE's {base_year} economy. The page runs without a server and fetches about {first_load} MB to start. Brightway, pymrio and numpy give the same footprint for a test product."
 repo: https://github.com/simonvanlierde/ramascene-explorer
 demo: https://simonvanlierde.com/ramascene-explorer/
 kind: interactive map
@@ -16,10 +16,6 @@ links:
     url: https://github.com/simonvanlierde/ramascene-explorer/blob/main/brightway-check/README.md
 order: 4
 figures:
-  sections:
-    value: "15"
-    source: https://github.com/simonvanlierde/ramascene-explorer/blob/main/docs/precompute.md#embodied-flows
-    as_of: "2026-10-14"
   runs:
     value: "153"
     source: https://github.com/simonvanlierde/ramascene-explorer/blob/main/docs/precompute.md#the-shipped-run
@@ -27,10 +23,6 @@ figures:
   base_year:
     value: "2011"
     source: https://github.com/simonvanlierde/ramascene-explorer
-    as_of: "2026-10-14"
-  parquet_size:
-    value: "51.5"
-    source: https://github.com/simonvanlierde/ramascene-explorer/blob/main/docs/precompute.md#embodied-flows
     as_of: "2026-10-14"
   first_load:
     value: "0.98"

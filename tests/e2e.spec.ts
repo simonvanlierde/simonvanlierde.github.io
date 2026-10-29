@@ -369,11 +369,13 @@ test.describe("disassembly chart", () => {
 const names = [
   "Vue 3",
   "JSON5",
+  "check-json5",
   "JATS4R",
   "AI4IE",
   "SHA-256",
   "R9lab",
-  "bw_timex 1.3.0",
+  "bw2calc 3.0.0",
+  "3.1.0",
   // The sentence lists the three itself.
   "written three times: in bash, Python and Rust",
   "All three",

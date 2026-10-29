@@ -1,6 +1,6 @@
 ---
 title: jsonvet
-description: "A checker for {dialects} kinds of JSON, from strict JSON to JSON5, that reports syntax errors, duplicate keys and data that breaks the file's rules, by line and column. I rewrote it in Rust from Python and publish it on PyPI and crates.io. It matched the Python version in all {runs} side-by-side comparisons and checks a large JSON5 file {speedup} times faster."
+description: "I rewrote check-json5, a Python tool that checks JSON files for errors, in Rust. It now checks a large JSON5 file {speedup} times faster, and at release it agreed with the Python version in all {runs} side-by-side runs. It reads {dialects} JSON dialects and is on PyPI and crates.io."
 repo: https://github.com/simonvanlierde/jsonvet
 demo: https://simonvanlierde.com/jsonvet/
 kind: JSON linter

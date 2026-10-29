@@ -1,11 +1,12 @@
 ---
 title: brightway-benchmarks
-description: "Times everyday calculations in each release of the Brightway LCA framework and checks every result against an independent calculation. It runs on made-up databases shaped like ecoinvent, so anyone can rerun it. It caught bw_timex 1.3.0 building the time-explicit inventory about {timex} times slower."
+description: "This suite caught Brightway's LCA calculator, bw2calc 3.0.0, running iterative LCA about {slowdown} times slower on machines without PyPardiso. I reported it, and the maintainer's fix shipped in 3.1.0. It tracks speed across Brightway releases and checks each score against an independent calculation, on made-up databases shaped like ecoinvent."
 repo: https://github.com/simonvanlierde/brightway-benchmarks
 kind: benchmark suite
 tags:
   - Python
   - Brightway
+  - LCA
   - asv
   - Docker
 links:
@@ -15,8 +16,8 @@ links:
     url: https://doi.org/10.5281/zenodo.23727602
 order: 2
 figures:
-  timex:
-    value: "19"
-    source: https://github.com/simonvanlierde/brightway-benchmarks#the-other-packages
-    as_of: "2026-10-28"
+  slowdown:
+    value: "five"
+    source: https://github.com/simonvanlierde/brightway-benchmarks#results-so-far
+    as_of: "2026-10-29"
 ---
