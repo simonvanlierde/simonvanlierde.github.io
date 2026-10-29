@@ -266,7 +266,8 @@ sheets use these:
 | Links | Engineer's blue and underlined; utility links drop the underline at rest and answer hover with colour |
 | Balloon / datum | Notation marks only, `--border-strong` stroke on a `--bg` fill, drafting hand with tabular numerals |
 | Tags | Read-only spec callouts, hairline and transparent, never interactive filters |
-| Work row | A parts-list row, not a card: a top rule, no background, no hover tint, the part name as the target |
+| Work row | A parts-list row, not a card: a top rule, no background, no hover tint, the part name as the target. On a wide sheet its links and tags sit in the rail under the kind, like a parts list's material column; the body keeps the name, the description and the cross-references |
+| Cross-reference | "Uses" and "Used by" chips under a work row's description: the tag's hairline box in the accent colour, because they are in-page links and tags are not |
 | Sheet nav | Sticky, solid ground, hairline rule; current sheet marked with `aria-current="page"` and ink, not colour alone. The SVL monogram stays hidden while the sheet's name heading is in view, like a reference mark that appears once the title is out of sight; on the index it scrolls back to the top |
 | Sheet head | The title zone, identical on every sheet and capped at the index's left column: the portrait in a frame-line box beside the name, set as given name over family name at the same height, then the two-line lead (role, then affiliation), the intro, the contact line and the profiles. Only the stamp under it differs per sheet. The index's figure sits beside it |
 | Title block | ISO 7200 provenance and contact; the profile links repeat, muted, under each sheet's header. The sheet number links to the other sheet, with an arrow that points the way |

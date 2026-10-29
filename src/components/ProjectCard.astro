@@ -38,25 +38,36 @@ const relations = [
       }
     </p>
 
+    <div class="bom-row__spec">
+      {
+        /* No "Source" link: the title already links the repo. Each aria-label
+           names the project, so the links stay distinct in a screen reader. */
+        (demo || links.length > 0) && (
+          <p class="bom-row__links">
+            {demo && (
+              <a href={demo} aria-label={`Live demo of ${title}`}>
+                Live demo
+              </a>
+            )}
+            {links.map((l) => (
+              <a href={l.url} aria-label={`${l.label} for ${title}`}>
+                {l.label}
+              </a>
+            ))}
+          </p>
+        )
+      }
 
-    {
-      /* No "Source" link: the title already links the repo. Each aria-label
-         names the project, so the links stay distinct in a screen reader. */
-      (demo || links.length > 0) && (
-        <p class="bom-row__links">
-          {demo && (
-            <a href={demo} aria-label={`Live demo of ${title}`}>
-              Live demo
-            </a>
-          )}
-          {links.map((l) => (
-            <a href={l.url} aria-label={`${l.label} for ${title}`}>
-              {l.label}
-            </a>
-          ))}
-        </p>
-      )
-    }
+      {
+        tags.length > 0 && (
+          <ul class="tag-list" aria-label="Technologies">
+            {tags.map((t) => (
+              <li class="tag">{t}</li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
 
     {
       relations.length > 0 && (
@@ -72,16 +83,6 @@ const relations = [
             </span>
           ))}
         </p>
-      )
-    }
-
-    {
-      tags.length > 0 && (
-        <ul class="tag-list" aria-label="Technologies">
-          {tags.map((t) => (
-            <li class="tag">{t}</li>
-          ))}
-        </ul>
       )
     }
   </div>

@@ -775,6 +775,58 @@ html {
   }
 }
 
+.bom-row__spec {
+  display: grid;
+  gap: var(--space-xs);
+  justify-items: start;
+}
+
+/* On a wide sheet the links and tags drop into the rail
+   under the kind, like a parts list's material column, so the body column
+   holds the name, the description and its cross-references. */
+@media (min-width: 60rem) {
+  .bom-row {
+    row-gap: 0;
+  }
+
+  .bom-row__body {
+    display: contents;
+  }
+
+  .bom-row__pos,
+  .bom-row__spec {
+    grid-column: 1;
+  }
+
+  .bom-row__title,
+  .bom-row__desc,
+  .bom-row .ref-list {
+    grid-column: 2;
+  }
+
+  .bom-row__title {
+    grid-row: 1;
+  }
+
+  .bom-row__desc {
+    grid-row: 2;
+  }
+
+  .bom-row .ref-list {
+    grid-row: 3;
+  }
+
+  .bom-row__spec {
+    grid-row: 2 / span 2;
+    align-content: start;
+  }
+
+  .bom-row__spec .bom-row__links {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bom-row__title a {
     transition: none;
