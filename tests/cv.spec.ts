@@ -115,6 +115,12 @@ for (const path of ["/", "/cv/"]) {
     const person = nodes.find((n) => n["@type"] === "Person");
     expect(person?.name).toBe(cv.basics.name);
     expect(person?.email).toBe(cv.basics.email ? `mailto:${cv.basics.email}` : undefined);
+    // sameAs carries every profile link, the ones the page does not show included.
+    expect([...((person?.sameAs ?? []) as string[])].sort()).toEqual(
+      Object.values(cv.basics.links)
+        .filter((url) => url !== cv.basics.links.website)
+        .sort(),
+    );
 
     // Publications are the only dated works: articles carry a headline, software a name.
     const works = nodes.filter((n) => "datePublished" in n).map((n) => n.headline ?? n.name);
