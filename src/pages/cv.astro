@@ -319,14 +319,23 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
   }
 
   /* Beside the title zone, in the column the index gives its figure, the
-     register runs down one column. */
+     register runs down one column, spaced to the title zone's height as the
+     figure is. */
   @media (min-width: 60rem) {
     .cv-header__grid {
       grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+      align-items: stretch;
+    }
+
+    .cv-index {
+      display: flex;
+      flex-direction: column;
     }
 
     .cv-index__list {
+      flex: 1;
       grid-template-columns: max-content;
+      grid-auto-rows: 1fr;
     }
   }
 
