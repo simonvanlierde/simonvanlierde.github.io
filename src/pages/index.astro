@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { formatCount as fmt } from "../components/chartScale.ts";
+import { isoDay } from "../components/cvPeriod.ts";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ExplodedView from "../components/ExplodedView.astro";
 import Figure from "../components/Figure.astro";
@@ -278,7 +279,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
     docType="Index of work"
     sheet="1 OF 2"
     turn={{ href: "/cv/", label: "sheet 2, CV", dir: "next" }}
-    dated={[exported?.slice(0, 10), stats.as_of].filter(Boolean).sort().at(-1)}
+    dated={[exported && isoDay(exported), stats.as_of].filter(Boolean).sort().at(-1)}
   />
 </Base>
 

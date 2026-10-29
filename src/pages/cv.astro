@@ -1,5 +1,5 @@
 ---
-import { formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
+import { formatIsoDate, formatPeriod, isoDay } from "../components/cvPeriod.ts";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
@@ -267,7 +267,7 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
     docType="Curriculum vitae"
     sheet="2 OF 2"
     turn={{ href: "/", label: "sheet 1, index", dir: "prev" }}
-    dated={exported?.slice(0, 10)}
+    dated={exported && isoDay(exported)}
   />
 </Base>
 
