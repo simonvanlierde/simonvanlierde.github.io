@@ -28,22 +28,27 @@ export function apaAuthors(byline: string): string[] {
 
 /**
  * One publication. `authors` takes a YAML list of full names or an APA byline
- * string. An unknown `status` fails the build. `doi` must be the bare
+ * string; `byline` keeps it as written for the page, `authors` holds full names. An unknown `status` fails the build. `doi` must be the bare
  * identifier, because both consumers prefix the resolver.
  */
-export const PublicationSchema = z.object({
-  authors: z
-    .union([z.string(), z.array(z.string())])
-    .transform((a) => (Array.isArray(a) ? a.map((name) => name.trim()).filter(Boolean) : apaAuthors(a))),
-  title: z.string(),
-  venue: z.string(),
-  year: z.union([z.string(), z.number()]).transform(String),
-  doi: z
-    .string()
-    .regex(/^10\.\d{4,9}\/\S+$/)
-    .optional(),
-  status: z.enum(["published", "in press", "preprint", "under review"]).default("published"),
-});
+export const PublicationSchema = z
+  .object({
+    authors: z.union([z.string(), z.array(z.string())]),
+    title: z.string(),
+    venue: z.string(),
+    year: z.union([z.string(), z.number()]).transform(String),
+    doi: z
+      .string()
+      .regex(/^10\.\d{4,9}\/\S+$/)
+      .optional(),
+    status: z.enum(["published", "in press", "preprint", "under review"]).default("published"),
+  })
+  .transform((p) => ({
+    ...p,
+    // The page shows the byline as given; the structured data needs full names.
+    byline: Array.isArray(p.authors) ? p.authors.join(", ") : p.authors,
+    authors: Array.isArray(p.authors) ? p.authors.map((name) => name.trim()).filter(Boolean) : apaAuthors(p.authors),
+  }));
 
 export type Publication = z.infer<typeof PublicationSchema>;
 

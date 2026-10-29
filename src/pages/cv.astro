@@ -155,7 +155,7 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
                     {pub.doi ? <a href={`https://doi.org/${pub.doi}`}>{pub.title}</a> : pub.title}
                     <span class="visually-hidden">, {pub.year}</span>
                   </h3>
-                  <p class="cv-entry__org">{pub.authors.join(", ")}</p>
+                  <p class="cv-entry__org">{pub.byline}</p>
                   <p class="cv-publication__venue">
                     {pub.venue}
                     {pub.status !== "published" && <span class="tag">{pub.status}</span>}
