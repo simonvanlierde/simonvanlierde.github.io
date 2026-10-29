@@ -44,7 +44,7 @@ test("a card's description has its figures filled in", () => {
   );
 });
 
-test("only cards with a dataset link yield a Dataset, with name, description and url", () => {
+test("only cards with a dataset link yield a Dataset, with name, description, url and license", () => {
   const withDataset = cards.filter((c) => c.data.links.some((l) => /dataset/i.test(l.label)));
   assert.ok(withDataset.length > 0, "no card links a dataset any more: the Dataset path is untested");
   const datasets = ofType("Dataset");
@@ -52,8 +52,22 @@ test("only cards with a dataset link yield a Dataset, with name, description and
   // A fixed card, so a wrong label pattern cannot pass by agreeing with itself.
   assert.ok(datasets.some((n) => n["@id"] === "https://simonvanlierde.com/#dataset-msc-thesis-ie"));
   for (const node of datasets) {
-    for (const key of ["name", "description", "url"]) assert.ok(node[key], `Dataset lacks ${key}`);
+    for (const key of ["name", "description", "url", "license"]) assert.ok(node[key], `Dataset lacks ${key}`);
   }
+});
+
+test("a dataset link without a license fails", () => {
+  const card = {
+    id: "x",
+    data: {
+      title: "x",
+      description: "x",
+      repo: "https://x.test",
+      tags: [],
+      links: [{ label: "dataset", url: "https://x.test" }],
+    },
+  };
+  assert.throws(() => projectNodes([card]), /x: the "dataset" link has no license/);
 });
 
 test("node ids are unique and the output serialises", () => {
