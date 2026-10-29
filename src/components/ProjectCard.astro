@@ -67,7 +67,7 @@ const relations = [
                 <span class="ref-list__group">
                   <span class="ref-list__label">{r.label}</span>
                   {r.cards.map((c) => (
-                    <a class="ref" href={`#project-${c.id}`}>
+                    <a class="ref" href={c.href ?? `#project-${c.id}`}>
                       {c.title}
                     </a>
                   ))}

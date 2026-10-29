@@ -57,6 +57,8 @@ export const figureText = (text: string, figures?: Record<string, Figure>) =>
 export interface CardLink {
   id: string;
   title: string;
+  /** In-page anchor, when the row is not a generated `#project-<id>` card. */
+  href?: string;
 }
 
 /**

@@ -714,11 +714,12 @@ html {
   margin-block: -0.3rem;
 }
 
-/* "Uses" / "Used by": in-page cross-references. Plain underlined links in the
-   lettering, so they read as links next to the boxed tags, which are not. */
+/* "Uses" / "Used by": in-page cross-references on one line. Plain underlined
+   links in the lettering, so they read as links next to the tags, which are not. */
 .ref-list {
-  display: grid;
-  gap: var(--space-2xs);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-m);
   font-family: var(--font-draft);
   font-size: var(--step--1);
   letter-spacing: 0.04em;
@@ -772,47 +773,85 @@ html {
   justify-items: start;
 }
 
-/* On a wide sheet the cross-references and tags drop into the rail under the
-   kind, like a parts list's material column. The body keeps the name, the
-   description and the links to act on. Only generated parts rows: the R9lab
-   row lays out its own body. */
+/* On a wide sheet the tags drop into the rail under the kind, one per line
+   under a hairline, like a parts list's material column. The body keeps the
+   name, the description, the links and one cross-reference line. R9lab's
+   rail holds its notes, its cross-references and its stack. */
 @media (min-width: 60rem) {
-  /* A taller rail grows the empty last row, not the gap above the links. */
-  .bom-row--part {
+  /* 0.04em keeps the longest kind, "consistency checker", on one line in the
+     11rem rail: a wrapped kind would open a gap under the name. */
+  .bom-row__pos {
+    letter-spacing: 0.04em;
+  }
+
+  .tag-list {
+    display: grid;
+    gap: 0;
+    justify-items: start;
+    border-top: var(--border-width) solid var(--border);
+    padding-top: var(--space-2xs);
+    line-height: 1.55;
+  }
+
+  .tag {
+    border: 0;
+    padding: 0;
+  }
+
+  /* A taller rail grows the empty last row, not the gaps in the body. */
+  .bom-row--part,
+  .r9lab-row {
     row-gap: 0;
-    grid-template-rows: auto auto auto 1fr;
+    grid-template-rows: repeat(4, auto) 1fr;
   }
 
-  .bom-row--part .bom-row__body {
+  .bom-row--part .bom-row__body,
+  .bom-row--part .bom-row__spec,
+  .r9lab-row .bom-row__body {
     display: contents;
-  }
-
-  .bom-row--part .bom-row__pos,
-  .bom-row--part .bom-row__spec {
-    grid-column: 1;
   }
 
   .bom-row--part .bom-row__title,
   .bom-row--part .bom-row__desc,
-  .bom-row--part .bom-row__links {
+  .bom-row--part .bom-row__links,
+  .bom-row--part .ref-list,
+  .r9lab-row__title,
+  .r9lab-row__intro,
+  .r9lab-row .bom-row__links,
+  .r9lab__chart {
     grid-column: 2;
   }
 
-  .bom-row--part .bom-row__desc {
+  .bom-row--part .bom-row__desc,
+  .r9lab-row__intro {
     grid-row: 2;
   }
 
-  .bom-row--part .bom-row__links {
+  .bom-row--part .bom-row__links,
+  .r9lab-row .bom-row__links {
     grid-row: 3;
   }
 
-  .bom-row--part .bom-row__spec {
-    grid-row: 2 / 5;
-    align-content: start;
+  .bom-row--part .ref-list,
+  .r9lab__chart {
+    grid-row: 4;
   }
 
-  /* The rail is narrow: each label takes its own line above its links. */
-  .bom-row--part .ref-list__label {
+  /* The spec wrapper no longer spaces it from the body above. */
+  .bom-row--part .ref-list {
+    margin-top: var(--space-s);
+  }
+
+  .bom-row--part .tag-list,
+  .r9lab-row__aside {
+    grid-column: 1;
+    grid-row: 2 / -1;
+    align-self: start;
+    margin-top: var(--space-s);
+  }
+
+  /* The rail is narrow: R9lab's "Uses" takes its own line above its links. */
+  .r9lab-row .ref-list__label {
     flex-basis: 100%;
   }
 }
