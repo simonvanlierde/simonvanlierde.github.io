@@ -14,7 +14,7 @@ links:
     url: https://repository.tudelft.nl/record/uuid:32222863-536f-464a-b8c6-6c2283a7249a
   - label: Zenodo dataset
     url: https://doi.org/10.5281/zenodo.8344580
-    license: https://spdx.org/licenses/GPL-3.0-or-later.html
+    license: https://spdx.org/licenses/CC-BY-4.0.html
 order: 10
 figures:
   buildings:
