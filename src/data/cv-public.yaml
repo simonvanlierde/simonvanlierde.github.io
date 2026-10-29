@@ -106,7 +106,7 @@ skills:
   - group: DevOps
     items: [Docker, GitHub Actions, OpenTofu/Terraform (IaC), Cloudflare, Grafana, uv, pnpm]
   - group: Practices
-    items: [Git/GitHub, pytest, Playwright, benchmarking, fuzzing, PyPI and crates.io releases, reproducible workflows, FAIR (Zenodo, CodeMeta), OWASP ASVS]
+    items: [Git/GitHub, pytest, Playwright, benchmarking, fuzzing, PyPI and crates.io releases, reproducible workflows, "FAIR (Zenodo, CodeMeta)", OWASP ASVS]
   - group: Data science & ML
     items: [PyTorch, NumPy/SciPy, Pandas, DuckDB, Parquet, Snakemake]
   - group: Domain modeling
