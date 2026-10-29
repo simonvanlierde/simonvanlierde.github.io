@@ -51,53 +51,60 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
 
   {/* Skip target: the skip link passes only the sheet nav. */}
   <header class="container cv-header" id="main">
-    {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
-    <SheetHead />
+    {/* Same split as the index's hero: the title zone and the stamp on the
+        left, the section register where the index has its figure. */}
+    <div class="cv-header__grid">
+      <div class="cv-header__intro">
+        {/* The name, not "Curriculum vitae": a print or screenshot has to say whose. */}
+        <SheetHead />
 
-    <a class="stamp sheet-stamp" href={pdf} download>
-      <svg
-        viewBox="0 0 24 24"
-        width="18"
-        height="18"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <path d="M7 10l5 5 5-5"></path>
-        <path d="M12 15V3"></path>
-      </svg>
-      Download as PDF
-    </a>
+        <a class="stamp sheet-stamp" href={pdf} download>
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <path d="M7 10l5 5 5-5"></path>
+            <path d="M12 15V3"></path>
+          </svg>
+          Download as PDF
+        </a>
 
-    {
-      exportedLabel && (
-        <p class="cv-updated">
-          Last updated <time datetime={exported}>{exportedLabel}</time>
-        </p>
-      )
-    }
+        {
+          exportedLabel && (
+            <p class="cv-updated">
+              Last updated <time datetime={exported}>{exportedLabel}</time>
+            </p>
+          )
+        }
+      </div>
+
+      <nav class="cv-index" aria-label="Sections">
+        <p class="cv-index__instruction">Go to any lettered section.</p>
+        <ol class="cv-index__list">
+          {
+            sections.map((sec) => (
+              <li>
+                <a href={`#${sec.id}`}>
+                  <span class="datum" aria-hidden="true">
+                    {sec.ref}
+                  </span>
+                  {sec.label}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+    </div>
   </header>
-
-  <nav class="container cv-index" aria-label="Sections">
-    <ol class="cv-index__list">
-      {
-        sections.map((sec) => (
-          <li>
-            <a href={`#${sec.id}`}>
-              <span class="datum" aria-hidden="true">
-                {sec.ref}
-              </span>
-              {sec.label}
-            </a>
-          </li>
-        ))
-      }
-    </ol>
-  </nav>
 
   <main>
     <section class="container" aria-labelledby="profile-heading">
@@ -269,8 +276,18 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
     padding-block: var(--space-l) var(--space-m);
   }
 
-  .cv-index {
-    margin-top: var(--space-m);
+  .cv-header__grid {
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
+  }
+
+  .cv-index__instruction {
+    margin-bottom: var(--space-xs);
+    color: var(--text-muted);
+    font-family: var(--font-draft);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
   }
 
   /* A register of fixed columns at every width: two on a phone, four once
@@ -301,9 +318,24 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
     }
   }
 
+  /* Beside the title zone, in the column the index gives its figure, the
+     register runs down one column, spaced to the title zone's height as the
+     figure is. */
   @media (min-width: 60rem) {
+    .cv-header__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+      align-items: stretch;
+    }
+
+    .cv-index {
+      display: flex;
+      flex-direction: column;
+    }
+
     .cv-index__list {
-      justify-content: space-between;
+      flex: 1;
+      grid-template-columns: max-content;
+      grid-auto-rows: 1fr;
     }
   }
 
