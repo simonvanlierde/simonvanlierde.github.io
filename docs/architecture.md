@@ -40,13 +40,13 @@ flowchart LR
 
 If the API is unavailable, blocked, or returns an unexpected shape, the script exits successfully without touching the snapshot. That keeps the last known-good build online, instead of quietly rendering zeros. It prints a `::warning::` line, which shows as an annotation on the workflow run.
 
-The same workflow then runs `scripts/fetch-evidence.mjs` (`pnpm fetch:evidence`), which writes three more committed files, each with an `as_of` date:
+The same workflow then runs `scripts/fetch-evidence.mjs` (`pnpm fetch:evidence`), which writes three more committed files, each with the same `as_of` and `fetched_at` dates as `stats.json`:
 
 - `src/data/upstream.json`: my merged pull requests in other people's repos, from one GitHub GraphQL search with the workflow's token. It holds each PR's title, URL, merge date, and the branch it went into.
-- `src/data/dois.json`: for each Zenodo record the cards or the landing page link, its concept DOI (all versions), its latest version DOI, and the version number.
+- `src/data/dois.json`: for each Zenodo record the cards, the landing page or the CV link, its concept DOI (all versions), its latest version DOI, and the version number.
 - `src/data/openalex.json`: the works OpenAlex lists under the ORCID in `cv-public.yaml`.
 
-Each source stands alone: one that fails prints a `::warning::` and keeps its file, and the others still refresh. `as_of` moves only when the content changes, so a quiet week commits nothing. Locally, run it with `GITHUB_TOKEN` set, or the upstream file stays as it is.
+Each source stands alone: one that fails prints a `::warning::` and keeps its file, and the others still refresh. `as_of` moves only when the content changes; `fetched_at` moves on every successful fetch. Locally, run it with `GITHUB_TOKEN` set, or the upstream file stays as it is.
 
 The ranking, grouping and wording of "Merged upstream" stay hand-kept in `src/data/upstream.ts`, which lists each project's PR numbers. The page takes each PR's URL from `upstream.json` and names the branch when a PR went into one that is not the repo's default (lca_algebraic's `dev`, for example), since that work is not on the default branch yet.
 
@@ -69,7 +69,7 @@ Each pull request also gets a preview. Once CI passes, its `preview` job uploads
 
 `check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted, while `stats.json` was last fetched more than 21 days ago, or while a pinned repo on the GitHub profile is archived or has no card on this site (card means a `repo:` URL in `src/content/projects`). To skip a repo, list it in `.github/drift-ignore`.
 
-The same issue lists what `scripts/evidence-drift.mjs` finds in the evidence files: a merged PR that is neither in `src/data/upstream.ts` nor in its `leftOut` list, a listed PR the search no longer finds merged, a Zenodo link to a version that is not the latest (a concept DOI always passes), and a work on OpenAlex whose DOI appears nowhere in the CV export, the cards or the landing page.
+The same issue lists what `scripts/evidence-drift.mjs` finds in the evidence files: a merged PR that is neither in `src/data/upstream.ts` nor in its `leftOut` list, a listed PR the search no longer finds merged, a Zenodo link to a version that is not the latest (a concept DOI always passes), and a work on OpenAlex whose DOI appears nowhere in the CV export, the cards or the landing page, and an evidence file whose `fetched_at` is more than 21 days old.
 
 Renovate opens one PR a month for minor and patch updates and merges it once CI passes, which triggers a deploy. Major updates get their own PRs and wait for me to merge them.
 

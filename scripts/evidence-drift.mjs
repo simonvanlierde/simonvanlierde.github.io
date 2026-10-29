@@ -18,13 +18,19 @@ const sources = [
 ];
 const siteText = (await Promise.all(sources.map((f) => readFile(resolve(root, f), "utf8")))).join("\n");
 
+const files = ["src/data/upstream.json", "src/data/dois.json", "src/data/openalex.json"];
+const data = await Promise.all(files.map(json));
+const [up, dois, openalex] = data;
+
 process.stdout.write(
   evidenceDrift({
     curated: upstream,
     leftOut,
-    merged: (await json("src/data/upstream.json")).prs,
-    dois: (await json("src/data/dois.json")).records,
-    works: (await json("src/data/openalex.json")).works,
+    merged: up.prs,
+    dois: dois.records,
+    works: openalex.works,
     siteText,
+    fetchedAt: Object.fromEntries(files.map((f, i) => [f, data[i].fetched_at])),
+    today: new Date().toISOString().slice(0, 10),
   }),
 );

@@ -1,6 +1,6 @@
 // Refreshes the generated evidence files (`pnpm fetch:evidence`):
 // - src/data/upstream.json: my merged PRs in other people's repos, from one GitHub search (needs GITHUB_TOKEN)
-// - src/data/dois.json: concept and latest-version DOIs of the Zenodo records the pages link, from Zenodo
+// - src/data/dois.json: concept and latest-version DOIs of the Zenodo records the pages and the CV link, from Zenodo
 // - src/data/openalex.json: works under my ORCID, from OpenAlex (only scripts/evidence-drift.mjs reads it)
 // Each source stands alone: if one fails, the script prints a ::warning::, keeps that file as it is and goes on.
 // It always exits 0, so a failed fetch never fails the refresh workflow or the build.
@@ -25,7 +25,8 @@ async function getJson(url, init = {}) {
   // Zenodo answers 403 to Node's default user agent.
   const headers = { accept: "application/json", "user-agent": "simonvanlierde.com data refresh", ...init.headers };
   const request = `${init.method ?? "GET"} ${url}`;
-  const res = await fetch(url, { ...init, headers }).catch((err) => {
+  // A hung source would hold the job until its 10-minute timeout and lose the stats refresh too.
+  const res = await fetch(url, { ...init, headers, signal: AbortSignal.timeout(30_000) }).catch((err) => {
     throw new Error(`${request} failed: ${err.message}`);
   });
   if (!res.ok) throw new Error(`${request} returned ${res.status}`);
@@ -60,7 +61,11 @@ await refresh("src/data/upstream.json", async () => {
 
 await refresh("src/data/dois.json", async () => {
   const dir = resolve(root, "src/content/projects");
-  const files = [resolve(root, "src/pages/index.astro"), ...(await readdir(dir)).map((f) => resolve(dir, f))];
+  const files = [
+    resolve(root, "src/data/cv-public.yaml"),
+    resolve(root, "src/pages/index.astro"),
+    ...(await readdir(dir)).map((f) => resolve(dir, f)),
+  ];
   const ids = zenodoIds((await Promise.all(files.map((f) => readFile(f, "utf8")))).join("\n"));
   const records = {};
   // One at a time: Zenodo allows about 130 requests a minute, and there are a handful.

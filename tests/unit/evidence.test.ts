@@ -95,6 +95,8 @@ test("parseOpenAlex strips the resolver and lower-cases the DOI", () => {
     { doi: "10.5281/zenodo.23461825", title: "jsonvet", year: 2026, type: "software" },
   ]);
   assert.throws(() => parseOpenAlex({ error: "rate limited" }), /no results/);
+  assert.throws(() => parseOpenAlex({ results: [] }), /no works/);
+  assert.throws(() => parseOpenAlex({ ...body, meta: { count: 201 } }), /201/);
 });
 
 test("withAsOf keeps the old date when nothing changed, and moves it when something did", () => {
@@ -102,6 +104,12 @@ test("withAsOf keeps the old date when nothing changed, and moves it when someth
   assert.equal(withAsOf({ as_of: "2026-10-01", ...payload }, payload, "2026-10-28").as_of, "2026-10-01");
   assert.equal(withAsOf({ as_of: "2026-10-01", works: [] }, payload, "2026-10-28").as_of, "2026-10-28");
   assert.equal(withAsOf(null, payload, "2026-10-28").as_of, "2026-10-28");
+});
+
+test("withAsOf stamps fetched_at on every run, so a dead source shows as stale", () => {
+  const payload = { works: [{ doi: "10.1/a" }] };
+  const next = withAsOf({ as_of: "2026-10-01", fetched_at: "2026-10-01", ...payload }, payload, "2026-10-28");
+  assert.deepEqual(next, { as_of: "2026-10-01", fetched_at: "2026-10-28", ...payload });
 });
 
 const facts = (repo: string, number: number, base = "main") => ({
@@ -144,6 +152,12 @@ test("evidenceDrift flags unlisted merged PRs, listed PRs not merged, old Zenodo
       { doi: "10.1/paper", title: "A paper", year: 2026, type: "article" },
     ],
     siteText: "url: https://doi.org/10.5281/Zenodo.100",
+    fetchedAt: {
+      "src/data/dois.json": "2026-10-28",
+      "src/data/openalex.json": "2026-09-01",
+      "src/data/upstream.json": undefined,
+    },
+    today: "2026-10-29",
   });
   assert.match(report, /merged \[a\/new#5\]/);
   assert.doesNotMatch(report, /a\/list#9|a\/b#1\b/);
@@ -152,6 +166,9 @@ test("evidenceDrift flags unlisted merged PRs, listed PRs not merged, old Zenodo
   assert.doesNotMatch(report, /zenodo\.100` is an old/);
   assert.match(report, /article \[A paper\]\(https:\/\/doi\.org\/10\.1\/paper\)/);
   assert.doesNotMatch(report, /\[linked\]/);
+  assert.match(report, /`src\/data\/openalex\.json` was last fetched on 2026-09-01, 58 days ago/);
+  assert.match(report, /`src\/data\/upstream\.json` has no fetched_at date/);
+  assert.doesNotMatch(report, /dois\.json/);
 });
 
 test("evidenceDrift prints nothing when everything matches", () => {
@@ -162,6 +179,8 @@ test("evidenceDrift prints nothing when everything matches", () => {
     dois: { "100": { concept_doi: "10.5281/zenodo.100", latest_doi: "10.5281/zenodo.103" } },
     works: [],
     siteText: "",
+    fetchedAt: { "src/data/dois.json": "2026-10-08" },
+    today: "2026-10-29",
   });
   assert.equal(report, "");
 });

@@ -54,6 +54,12 @@ export function parseZenodo(record) {
 /** OpenAlex works response to bare, lower-case DOIs with title, year and type. */
 export function parseOpenAlex(body) {
   if (!Array.isArray(body?.results)) throw new Error("response has no results");
+  // An empty list means the ORCID lost its works or the index broke, not that there are none.
+  if (body.results.length === 0) throw new Error("OpenAlex lists no works for the ORCID");
+  // shortcut: one page of 200 (OpenAlex's maximum); page with `page=2` once the count passes it.
+  if (body.meta?.count > body.results.length) {
+    throw new Error(`OpenAlex found ${body.meta.count} works but returned ${body.results.length}`);
+  }
   return body.results
     .filter((w) => w.doi)
     .map((w) => ({
@@ -66,21 +72,25 @@ export function parseOpenAlex(body) {
 }
 
 /**
- * Adds as_of: today if the payload changed, else the previous date, so the weekly refresh commits only when a fact
- * moves.
+ * Adds as_of: today if the payload changed, else the previous date, so as_of dates the facts. fetched_at is always
+ * today: a source that keeps failing leaves it behind, which the drift check reports.
  */
 export function withAsOf(previous, payload, today) {
-  const { as_of: previousAsOf, ...rest } = previous ?? {};
+  const { as_of: previousAsOf, fetched_at: _, ...rest } = previous ?? {};
   const unchanged = previousAsOf && JSON.stringify(rest) === JSON.stringify(payload);
-  return { as_of: unchanged ? previousAsOf : today, ...payload };
+  return { as_of: unchanged ? previousAsOf : today, fetched_at: today, ...payload };
 }
+
+/** Days after which a generated file counts as stale; the same limit as stats.json in scripts/check-drift.sh. */
+export const maxFetchAgeDays = 21;
 
 /**
  * Markdown lines for the drift issue.
  * - curated: src/data/upstream.ts `upstream`; leftOut: its "owner/repo#n" list of PRs kept off on purpose.
  * - merged, dois, works: the generated files. siteText: every page source that can name a DOI.
+ * - fetchedAt: each generated file's fetched_at (undefined when missing); today: YYYY-MM-DD.
  */
-export function evidenceDrift({ curated, leftOut, merged, dois, works, siteText }) {
+export function evidenceDrift({ curated, leftOut, merged, dois, works, siteText, fetchedAt, today }) {
   const key = (repo, n) => `${repo}#${n}`.toLowerCase();
   const listed = new Set(curated.flatMap((u) => u.prs.map((n) => key(u.repo, n))));
   const skipped = new Set(leftOut.map((k) => k.toLowerCase()));
@@ -112,12 +122,25 @@ export function evidenceDrift({ curated, leftOut, merged, dois, works, siteText 
       lines.push(`- ${w.type} [${w.title}](https://doi.org/${w.doi}) is on OpenAlex, not here`);
   }
 
+  const openalex = lines.splice(0);
+
+  for (const [file, date] of Object.entries(fetchedAt)) {
+    const days = date ? (Date.parse(today) - Date.parse(date)) / 86_400_000 : Number.NaN;
+    if (!(days <= maxFetchAgeDays)) {
+      const state = date
+        ? `was last fetched on ${date}, ${days} days ago (limit ${maxFetchAgeDays})`
+        : "has no fetched_at date";
+      lines.push(`- \`${file}\` ${state}. Check the refresh-data workflow.`);
+    }
+  }
+
   let report = "";
   const add = (title, items) => {
     if (items.length) report += `### ${title}\n\n${items.join("\n")}\n\n`;
   };
   add("Merged upstream (src/data/upstream.ts)", upstream);
   add("Zenodo links", zenodo);
-  add("Publications on OpenAlex missing from the CV export and the cards", lines);
+  add("Publications on OpenAlex missing from the CV export and the cards", openalex);
+  add("Evidence refresh", lines);
   return report;
 }
