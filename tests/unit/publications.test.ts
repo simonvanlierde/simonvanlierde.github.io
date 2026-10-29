@@ -55,6 +55,11 @@ test("authors accept a YAML list of names or an APA byline", () => {
   assert.deepEqual(pub({ authors: "One, A., " }).authors, ["A. One"]);
   // Full names joined by commas are not APA: fail rather than pair them up wrong.
   assert.throws(() => pub({ authors: "A. One, B. Two" }), /not an APA byline/);
+  // APA 7 elides authors 20 onwards with "...": no full list, so no names.
+  assert.throws(() => pub({ authors: "Rankin, K. H., ... Hawes, J. K" }), /not an APA byline/);
+  // Initials outside ASCII, and initials run together.
+  assert.deepEqual(pub({ authors: "Müller, Ö., & Łukasz, Ł" }).authors, ["Ö. Müller", "Ł. Łukasz"]);
+  assert.deepEqual(pub({ authors: "Hawes, JK" }).authors, ["J. K. Hawes"]);
 });
 
 test("an unrecognised status fails the build rather than rendering a stray label", () => {
