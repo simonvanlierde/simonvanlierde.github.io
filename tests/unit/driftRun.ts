@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import { chmod, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import process from "node:process";
@@ -7,6 +8,15 @@ import { promisify } from "node:util";
 
 const run = promisify(execFile);
 const root = resolve(import.meta.dirname, "../..");
+
+/** A local port nothing listens on. */
+export async function closedPort(): Promise<number> {
+  const server = createServer();
+  await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
+  const { port } = server.address() as { port: number };
+  await new Promise((ok) => server.close(ok));
+  return port;
+}
 
 /**
  * Runs scripts/check-drift.sh offline with a stats.json `days` old (null: no as_of) and a gh that

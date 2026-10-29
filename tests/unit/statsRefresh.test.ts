@@ -1,24 +1,14 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
-import { createServer } from "node:net";
 import { join, resolve } from "node:path";
 import process from "node:process";
 import { test } from "node:test";
 import { promisify } from "node:util";
-import { runDrift } from "./driftRun.ts";
+import { closedPort, runDrift } from "./driftRun.ts";
 
 const run = promisify(execFile);
 const root = resolve(import.meta.dirname, "../..");
-
-/** A local port nothing listens on. */
-async function closedPort(): Promise<number> {
-  const server = createServer();
-  await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
-  const { port } = server.address() as { port: number };
-  await new Promise((ok) => server.close(ok));
-  return port;
-}
 
 test("a failed refresh warns and leaves the snapshot alone", async () => {
   const file = join(root, "src/data/stats.json");

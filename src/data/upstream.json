@@ -1,0 +1,329 @@
+{
+  "as_of": "2026-10-29",
+  "prs": [
+    {
+      "repo": "ASSERT-KTH/awesome-open-science-software",
+      "number": 28,
+      "title": "Add CRediT Matrix to Software Support for Open Science",
+      "url": "https://github.com/ASSERT-KTH/awesome-open-science-software/pull/28",
+      "merged_at": "2026-10-24",
+      "base": "gh-pages",
+      "default_branch": "gh-pages"
+    },
+    {
+      "repo": "Boavizta/boaviztapi",
+      "number": 583,
+      "title": "Return use-phase values for gwppf, odp, pm and lu",
+      "url": "https://github.com/Boavizta/boaviztapi/pull/583",
+      "merged_at": "2026-10-16",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-calc",
+      "number": 167,
+      "title": "Fix stale normalized and weighted scores after a new LCIA",
+      "url": "https://github.com/brightway-lca/brightway2-calc/pull/167",
+      "merged_at": "2026-10-13",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-calc",
+      "number": 168,
+      "title": "Fix fraction cutoff with negative scores and stop reloading weighting data",
+      "url": "https://github.com/brightway-lca/brightway2-calc/pull/168",
+      "merged_at": "2026-10-14",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-data",
+      "number": 295,
+      "title": "Bump deepdiff to >=8.6.2 (closes #294)",
+      "url": "https://github.com/brightway-lca/brightway2-data/pull/295",
+      "merged_at": "2026-10-15",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/stats_arrays",
+      "number": 43,
+      "title": "Import scipy.stats only where it is used",
+      "url": "https://github.com/brightway-lca/stats_arrays/pull/43",
+      "merged_at": "2026-10-20",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "codemeta/codemeta",
+      "number": 505,
+      "title": "Map `name` to the GitHub API's `name`, not `full_name`",
+      "url": "https://github.com/codemeta/codemeta/pull/505",
+      "merged_at": "2026-10-15",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "helenahartmann/awesome-PhD",
+      "number": 51,
+      "title": "Add CRediT Matrix under Crediting",
+      "url": "https://github.com/helenahartmann/awesome-PhD/pull/51",
+      "merged_at": "2026-10-13",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "IndEcol/pymrio",
+      "number": 179,
+      "title": "Fix the development test job",
+      "url": "https://github.com/IndEcol/pymrio/pull/179",
+      "merged_at": "2026-10-13",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "IndEcol/pymrio",
+      "number": 180,
+      "title": "Speed up calc_accounts and set_dom_block",
+      "url": "https://github.com/IndEcol/pymrio/pull/180",
+      "merged_at": "2026-10-13",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "IndEcol/pymrio",
+      "number": 181,
+      "title": "Fix three small bugs (#176, #156, #129)",
+      "url": "https://github.com/IndEcol/pymrio/pull/181",
+      "merged_at": "2026-10-13",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "LCA-ActivityBrowser/activity-browser",
+      "number": 1743,
+      "title": "Parameters: keep amounts editable, and explain invalid names",
+      "url": "https://github.com/LCA-ActivityBrowser/activity-browser/pull/1743",
+      "merged_at": "2026-10-03",
+      "base": "major",
+      "default_branch": "main"
+    },
+    {
+      "repo": "LCA-ActivityBrowser/activity-browser",
+      "number": 1744,
+      "title": "Load CSV scenario files with empty keys, and keep a Monte Carlo seed of 0",
+      "url": "https://github.com/LCA-ActivityBrowser/activity-browser/pull/1744",
+      "merged_at": "2026-10-03",
+      "base": "major",
+      "default_branch": "main"
+    },
+    {
+      "repo": "NLeSC/python-template",
+      "number": 715,
+      "title": "Trim keywords and drop empty ones",
+      "url": "https://github.com/NLeSC/python-template/pull/715",
+      "merged_at": "2026-10-28",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "NLeSC/python-template",
+      "number": 716,
+      "title": "Make tox run the tests in generated packages",
+      "url": "https://github.com/NLeSC/python-template/pull/716",
+      "merged_at": "2026-10-28",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 106,
+      "title": "Fix truncated normal and lognormal sampling",
+      "url": "https://github.com/oie-mines-paristech/lca_algebraic/pull/106",
+      "merged_at": "2026-10-08",
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 107,
+      "title": "Fix findMethods mainCat and method_name for 4-element method keys",
+      "url": "https://github.com/oie-mines-paristech/lca_algebraic/pull/107",
+      "merged_at": "2026-10-08",
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 108,
+      "title": "perf(params): skip per-sample expandParams in _expand_params",
+      "url": "https://github.com/oie-mines-paristech/lca_algebraic/pull/108",
+      "merged_at": "2026-10-08",
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 109,
+      "title": "Fix cache invalidation when a project is opened in another timezone",
+      "url": "https://github.com/oie-mines-paristech/lca_algebraic/pull/109",
+      "merged_at": "2026-10-19",
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 110,
+      "title": "Add second_order option to skip second-order Sobol indices",
+      "url": "https://github.com/oie-mines-paristech/lca_algebraic/pull/110",
+      "merged_at": "2026-10-19",
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "open-wanderer/wanderer",
+      "number": 1417,
+      "title": "fix(web): exclude listed trails in the list editor search itself",
+      "url": "https://github.com/open-wanderer/wanderer/pull/1417",
+      "merged_at": "2026-10-22",
+      "base": "dev",
+      "default_branch": "dev"
+    },
+    {
+      "repo": "open-wanderer/wanderer",
+      "number": 1430,
+      "title": "fix(web): announce toasts to screen readers and close the right one",
+      "url": "https://github.com/open-wanderer/wanderer/pull/1430",
+      "merged_at": "2026-10-25",
+      "base": "dev",
+      "default_branch": "dev"
+    },
+    {
+      "repo": "pik-piam/flodym",
+      "number": 198,
+      "title": "fix: keep lifetime parameters intact under lifetime extension by year, and compute it per year",
+      "url": "https://github.com/pik-piam/flodym/pull/198",
+      "merged_at": "2026-10-09",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "pogopaule/awesome-sustainability-jobs",
+      "number": 21,
+      "title": "Add company",
+      "url": "https://github.com/pogopaule/awesome-sustainability-jobs/pull/21",
+      "merged_at": "2022-09-08",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "polca/premise",
+      "number": 316,
+      "title": "Keep efficiency excludes for every variable in external scenarios",
+      "url": "https://github.com/polca/premise/pull/316",
+      "merged_at": "2026-10-14",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "polca/premise",
+      "number": 317,
+      "title": "Apply market efficiency filters the same way as production pathways",
+      "url": "https://github.com/polca/premise/pull/317",
+      "merged_at": "2026-10-14",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "pyOpenSci/python-package-guide",
+      "number": 823,
+      "title": "docs: use well-known project URL labels in the pyproject.toml tutorial",
+      "url": "https://github.com/pyOpenSci/python-package-guide/pull/823",
+      "merged_at": "2026-10-13",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "pyOpenSci/python-package-guide",
+      "number": 824,
+      "title": "docs: update Poetry dependency groups for PEP 735",
+      "url": "https://github.com/pyOpenSci/python-package-guide/pull/824",
+      "merged_at": "2026-10-14",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "pyOpenSci/python-package-guide",
+      "number": 827,
+      "title": "docs: use a requests version that exists in the pyproject.toml tutorial",
+      "url": "https://github.com/pyOpenSci/python-package-guide/pull/827",
+      "merged_at": "2026-10-16",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "sabuhish/fastapi-mail",
+      "number": 283,
+      "title": "Improve Redis connection handling — flexible auth + proper host override + modern close",
+      "url": "https://github.com/sabuhish/fastapi-mail/pull/283",
+      "merged_at": "2026-08-22",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "sabuhish/fastapi-mail",
+      "number": 284,
+      "title": "feature: Allow passing existing async Redis client to DefaultChecker (reuse connections)",
+      "url": "https://github.com/sabuhish/fastapi-mail/pull/284",
+      "merged_at": "2025-12-08",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "SchemaStore/schemastore",
+      "number": 6522,
+      "title": "Add sourceledger sources.toml to the catalog",
+      "url": "https://github.com/SchemaStore/schemastore/pull/6522",
+      "merged_at": "2026-10-19",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "SchemaStore/schemastore",
+      "number": 6531,
+      "title": "webjob-publish-settings: apply the keywords beside `$ref` under draft-07",
+      "url": "https://github.com/SchemaStore/schemastore/pull/6531",
+      "merged_at": "2026-10-21",
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "sentier-dev/sentier_data_tools",
+      "number": 2,
+      "title": "2024 10 iri improvements",
+      "url": "https://github.com/sentier-dev/sentier_data_tools/pull/2",
+      "merged_at": "2024-10-09",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "streetsidesoftware/cspell-dicts",
+      "number": 5339,
+      "title": "fix: Add '.ipynb' to filetypes dictionary",
+      "url": "https://github.com/streetsidesoftware/cspell-dicts/pull/5339",
+      "merged_at": "2026-03-03",
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "streetsidesoftware/cspell-dicts",
+      "number": 5364,
+      "title": "fix: add new technical terms (fernet, fontawesome, Zensical, etc.)",
+      "url": "https://github.com/streetsidesoftware/cspell-dicts/pull/5364",
+      "merged_at": "2026-03-22",
+      "base": "main",
+      "default_branch": "main"
+    }
+  ]
+}

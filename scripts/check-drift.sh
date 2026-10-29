@@ -2,8 +2,9 @@
 # Reports where the homepage or the GitHub profile README has fallen behind the
 # repos: public repos with new commits since the page was last edited that the
 # page does not link yet, and links to repos that are gone, renamed or archived.
+# Also adds what scripts/evidence-drift.mjs finds in the generated evidence files.
 # Prints a Markdown report and exits 0 either way; prints nothing when clean.
-# Needs gh (authenticated; GITHUB_TOKEN is enough) and jq.
+# Needs gh (authenticated; GITHUB_TOKEN is enough), jq and Node 26.
 # DRIFT_OFFLINE=1 runs only the checks that need no gh call; DRIFT_STATS_FILE
 # points the stats check at another file, and DRIFT_PINNED_JSON replaces the
 # pinned-repos query with a JSON list of {nameWithOwner, isArchived} (all three
@@ -115,4 +116,6 @@ section() { # title, page date, page text, "links-only" to skip the unlinked-rep
 section "Homepage projects and landing page" "$site_date" "$site_text"
 # The profile README is a short pointer to the site, so it only must not link dead repos.
 section "GitHub profile README" "$profile_date" "$profile_text" links-only
+# Unlisted upstream PRs, old Zenodo versions and unlinked works, from the generated evidence files.
+report+=$(node "$root/scripts/evidence-drift.mjs")
 printf '%s' "$report"

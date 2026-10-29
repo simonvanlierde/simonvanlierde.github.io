@@ -1,10 +1,14 @@
 // Merged pull requests in other people's projects, most telling first: wrong
 // results and measured speed-ups in LCA and industrial-ecology libraries lead,
 // tooling and docs follow.
-// shortcut: kept by hand from a GitHub search (author:simonvanlierde is:pr is:merged
-// -user:simonvanlierde -org:CMLPlatform); generate it if the list outgrows a monthly edit.
-// Left out on purpose: list entries for my own projects or employers (awesome-PhD #51,
-// awesome-sustainability-jobs #21).
+// The ranking, grouping and wording are mine. The facts about each PR (URL, branch it went
+// into) come from src/data/upstream.json, which scripts/fetch-evidence.mjs generates; the
+// drift check flags a merged PR that is neither here nor in `leftOut`.
+import merged from "./upstream.json" with { type: "json" };
+
+/** Merged PRs kept off on purpose: list entries for my own projects or employers. */
+export const leftOut = ["helenahartmann/awesome-PhD#51", "pogopaule/awesome-sustainability-jobs#21"];
+
 export interface UpstreamProject {
   name: string;
   repo: string;
@@ -110,3 +114,25 @@ export const upstream: UpstreamProject[] = [
     prs: [2],
   },
 ];
+
+export interface PrLink {
+  number: number;
+  url: string;
+}
+
+/**
+ * A project's PRs in its own order, grouped by the branch they were merged into. The default
+ * branch comes first with `base` unset. A PR merged into another branch (say `dev`) gets the
+ * branch named, since that work is not on the default branch yet. A PR missing from the
+ * snapshot links by its number and counts as the default branch until the next refresh.
+ */
+export function prGroups(project: UpstreamProject, prs = merged.prs): { base?: string; prs: PrLink[] }[] {
+  const groups = new Map<string | undefined, PrLink[]>([[undefined, []]]);
+  for (const number of project.prs) {
+    const pr = prs.find((p) => p.repo.toLowerCase() === project.repo.toLowerCase() && p.number === number);
+    const base = pr && pr.base !== pr.default_branch ? pr.base : undefined;
+    if (!groups.has(base)) groups.set(base, []);
+    groups.get(base)?.push({ number, url: pr?.url ?? `https://github.com/${project.repo}/pull/${number}` });
+  }
+  return [...groups].filter(([, links]) => links.length).map(([base, links]) => ({ base, prs: links }));
+}

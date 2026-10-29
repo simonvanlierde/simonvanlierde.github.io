@@ -24,6 +24,13 @@ jobs:
         with:
           persist-credentials: false
 
+      # scripts/evidence-drift.mjs imports TypeScript, which needs Node 26; it uses no dependencies.
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3
+        with:
+          runtime: node@26
+          install: false
+
       - name: Open, update or close the drift issue
         env:
           GH_TOKEN: ${{ github.token }}
@@ -37,7 +44,8 @@ jobs:
             exit 0
           fi
           body="$report
-          Repos to leave off both pages go in \`.github/drift-ignore\`, one name per line."
+          Repos to leave off both pages go in \`.github/drift-ignore\`, one name per line.
+          Merged PRs to leave off go in \`leftOut\` in \`src/data/upstream.ts\`."
           if [ -n "$issue" ]; then
             gh issue edit "$issue" --body "$body"
           else
