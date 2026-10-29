@@ -714,21 +714,20 @@ html {
   margin-block: -0.3rem;
 }
 
-/* "Uses" / "Used by": in-page cross-references, set as chips like the tags
-   but in the accent colour, because these are links and tags are not. */
+/* "Uses" / "Used by": in-page cross-references. Plain underlined links in the
+   lettering, so they read as links next to the boxed tags, which are not. */
 .ref-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs) var(--space-m);
+  display: grid;
+  gap: var(--space-2xs);
   font-family: var(--font-draft);
   font-size: var(--step--1);
+  letter-spacing: 0.04em;
 }
 
 .ref-list__group {
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2xs) var(--space-xs);
+  gap: 0 var(--space-xs);
 }
 
 .ref-list__label {
@@ -742,14 +741,6 @@ html {
   display: inline-flex;
   align-items: center;
   min-height: 24px;
-  padding: 0.1em 0.55em;
-  border: var(--border-width) solid currentColor;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-}
-
-.ref:hover {
-  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .tag-list {
@@ -777,53 +768,52 @@ html {
 
 .bom-row__spec {
   display: grid;
-  gap: var(--space-xs);
+  gap: var(--space-s);
   justify-items: start;
 }
 
-/* On a wide sheet the links and tags drop into the rail
-   under the kind, like a parts list's material column, so the body column
-   holds the name, the description and its cross-references. */
+/* On a wide sheet the cross-references and tags drop into the rail under the
+   kind, like a parts list's material column. The body keeps the name, the
+   description and the links to act on. Only generated parts rows: the R9lab
+   row lays out its own body. */
 @media (min-width: 60rem) {
-  .bom-row {
+  /* A taller rail grows the empty last row, not the gap above the links. */
+  .bom-row--part {
     row-gap: 0;
+    grid-template-rows: auto auto auto 1fr;
   }
 
-  .bom-row__body {
+  .bom-row--part .bom-row__body {
     display: contents;
   }
 
-  .bom-row__pos,
-  .bom-row__spec {
+  .bom-row--part .bom-row__pos,
+  .bom-row--part .bom-row__spec {
     grid-column: 1;
   }
 
-  .bom-row__title,
-  .bom-row__desc,
-  .bom-row .ref-list {
+  .bom-row--part .bom-row__title,
+  .bom-row--part .bom-row__desc,
+  .bom-row--part .bom-row__links {
     grid-column: 2;
   }
 
-  .bom-row__title {
-    grid-row: 1;
-  }
-
-  .bom-row__desc {
+  .bom-row--part .bom-row__desc {
     grid-row: 2;
   }
 
-  .bom-row .ref-list {
+  .bom-row--part .bom-row__links {
     grid-row: 3;
   }
 
-  .bom-row__spec {
-    grid-row: 2 / span 2;
+  .bom-row--part .bom-row__spec {
+    grid-row: 2 / 5;
     align-content: start;
   }
 
-  .bom-row__spec .bom-row__links {
-    flex-direction: column;
-    gap: 0;
+  /* The rail is narrow: each label takes its own line above its links. */
+  .bom-row--part .ref-list__label {
+    flex-basis: 100%;
   }
 }
 
