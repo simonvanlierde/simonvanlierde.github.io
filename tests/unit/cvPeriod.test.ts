@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { CV_DATE, formatDate, formatPeriod } from "../../src/components/cvPeriod.ts";
+import { CV_DATE, formatDate, formatIsoDate, formatPeriod, isoDay } from "../../src/components/cvPeriod.ts";
 
 test("month precision renders an abbreviated month before the year", () => {
   assert.equal(formatDate("2024-04"), "Apr 2024");
@@ -27,4 +27,10 @@ test("the export contract accepts YYYY, YYYY-MM and present, nothing else", () =
   for (const bad of ["2024-13", "2024-00", "2024-1", "2024-1x", "Present", "24-04", ""]) {
     assert.doesNotMatch(bad, CV_DATE);
   }
+});
+
+test("an export with an offset dates the same UTC day in the title block and the header", () => {
+  const exported = "2026-10-29T00:30:00+02:00";
+  assert.equal(isoDay(exported), "2026-10-28");
+  assert.equal(formatIsoDate(isoDay(exported)), formatIsoDate(exported));
 });

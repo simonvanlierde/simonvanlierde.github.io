@@ -23,7 +23,7 @@ export function formatPeriod(start: string, end: string): string {
 
 /**
  * An ISO timestamp as a long English date, e.g. `18 August 2026`. Always UTC,
- * so it matches `exported.slice(0, 10)` for a build near midnight.
+ * so it names the same day as `isoDay`.
  */
 export function formatIsoDate(value: string): string {
   return new Date(value).toLocaleDateString("en-GB", {
@@ -33,3 +33,9 @@ export function formatIsoDate(value: string): string {
     timeZone: "UTC",
   });
 }
+
+/**
+ * The UTC calendar day of an ISO timestamp, e.g. `2026-08-18`. Not a slice of
+ * the string: `2026-10-29T00:30:00+02:00` is still 28 October in UTC.
+ */
+export const isoDay = (value: string): string => new Date(value).toISOString().slice(0, 10);
