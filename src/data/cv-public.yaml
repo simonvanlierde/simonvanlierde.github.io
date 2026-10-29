@@ -9,6 +9,8 @@ basics:
     website: https://simonvanlierde.com/
     orcid: https://orcid.org/0009-0006-6953-909X
     leiden: https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde
+    openalex: https://openalex.org/authors/A5140578533
+    scholar: https://scholar.google.com/citations?user=N4BJ_GcAAAAJ
 render:
   contact: [email, location, github, linkedin, website]
   font: nunito
@@ -54,7 +56,7 @@ projects:
       - "Brightway and pymrio: fixed wrong LCA scores, cleared two security advisories, made importing Brightway about 0.3 s faster, and sped up pymrio's account calculation 26× (6.1 s to 0.23 s)."
       - "flodym: stopped lifetime extension overwriting model parameters, and made it 9× faster (0.83 s to 0.092 s)."
       - "premise and Activity Browser: fixed unreported scenario bugs in premise, and parameter, scenario-file and Monte Carlo bugs in Activity Browser."
-      - "Also merged: CodeMeta, Boavizta, SchemaStore, pyOpenSci, wanderer and fastapi-mail (30 pull requests in all)."
+      - "Also merged: bw_timex, SALib, CodeMeta, Boavizta, SchemaStore, pyOpenSci, the NLeSC Python template and fastapi-mail (33 pull requests in all)."
   - name: jsonvet
     url: https://github.com/simonvanlierde/jsonvet
     summary: "Pre-commit hook and Rust library that checks JSON, JSONC, JSON5 and three other dialects, released on PyPI and crates.io. Matches the Python original on 40,228 test runs, survived a billion fuzzing inputs, up to 1,395× faster."
@@ -63,13 +65,13 @@ projects:
     summary: "credit-matrix, a CRediT authorship-statement tool with a Zenodo DOI, and four personal web apps, among them a multiplayer game whose one-CPU server holds about 200 rooms of 6 players under load."
   - name: RaMa-Scene explorer
     url: https://simonvanlierde.com/ramascene-explorer/
-    summary: "Map of where a country's consumption causes emissions, jobs and metal-ore extraction, over a baseline and 153 RaMa-Scene scenarios on EXIOBASE (Svelte, D3). It loads under 1 MB of a 51.5 MB Parquet file by range request. Zenodo DOI."
+    summary: "Map of where a country's consumption causes emissions, jobs and metal-ore extraction, over a baseline and 153 RaMa-Scene scenarios on EXIOBASE (Svelte, D3). It loads under 1 MB of a 51.5 MB Parquet file by range request, and Brightway, pymrio and numpy give the same footprint. Zenodo DOI."
   - name: Computer-vision taxonomy visual
     url: https://simonvanlierde.com/cv-ie-taxonomy/
-    summary: "Interactive React/SVG map of computer vision in industrial ecology, drawn as an exploded teardown, for an upcoming paper."
+    summary: "Interactive map of what computer vision can tell about used products, for an upcoming review paper: reading a label drops from 95.7% on repair photos to 39.7% at the recycler. Drawn as an exploded desk fan (React, SVG)."
   - name: MSc-thesis cooling dashboard
     url: https://simonvanlierde.com/msc-thesis-ie
-    summary: "A dashboard of cooling demand in The Hague and its life-cycle impacts, from my MSc thesis (Nivo, MapLibre)."
+    summary: "In The Hague, offices hold 11% of the floor area but cause 79% of the greenhouse-gas emissions from cooling. My MSc thesis model, rebuilt as a Snakemake pipeline: an hourly heat balance for 59,381 buildings from the BAG, then LCA, with a dashboard (Nivo, MapLibre)."
 education:
   - institution: Leiden University & TU Delft
     degree: MSc Industrial Ecology
@@ -112,9 +114,9 @@ skills:
   - group: Domain modeling
     items: [LCA (Brightway), MFA, EEIOA (EXIOBASE), GIS, circular economy]
   - group: Languages
-    items: [Dutch (native), English (fluent), French (B1), Chinese (A2)]
+    items: [Dutch (native), English (fluent), French (B1), Chinese (A2), Korean (elementary)]
 interests:
   - Multi-day treks in the mountains
   - Fermenting (kimchi, kombucha, tempeh) and cooking for friends
   - Climbing and via ferrata
-exported: "2026-10-28T19:04:21Z"
+exported: "2026-10-29T13:16:08Z"
