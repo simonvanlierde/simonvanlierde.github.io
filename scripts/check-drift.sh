@@ -35,14 +35,15 @@ last_edit() {
 report=""
 
 # The weekly refresh keeps the old snapshot when the API fails, so a stale
-# as_of is the only sign that the figures stopped moving.
-stats_as_of=$(jq -r '.as_of // empty' "$stats_file")
+# fetched_at is the only sign that the refresh stopped. as_of only moves when
+# the counts do, so it cannot tell a quiet stretch from a dead refresh.
+stats_as_of=$(jq -r '.fetched_at // empty' "$stats_file")
 # An empty date would parse as today and pass, so it counts as stale.
 stats_age=9999
 [[ -n $stats_as_of ]] && stats_age=$((($(date -u +%s) - $(date -u -d "$stats_as_of" +%s)) / 86400))
 if ((stats_age > stats_max_days)); then
   stats_state="is from $stats_as_of, $stats_age days ago (limit $stats_max_days)"
-  [[ -n $stats_as_of ]] || stats_state="has no as_of date"
+  [[ -n $stats_as_of ]] || stats_state="has no fetched_at date"
   report+="### R9lab stats"$'\n\n'"- \`src/data/stats.json\` $stats_state. Check the refresh-data workflow."$'\n\n'
 fi
 
