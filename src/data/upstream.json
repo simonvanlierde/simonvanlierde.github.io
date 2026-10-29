@@ -1,0 +1,234 @@
+{
+  "as_of": "2026-10-29",
+  "fetched_at": "2026-10-29",
+  "prs": [
+    {
+      "repo": "ASSERT-KTH/awesome-open-science-software",
+      "number": 28,
+      "base": "gh-pages",
+      "default_branch": "gh-pages"
+    },
+    {
+      "repo": "Boavizta/boaviztapi",
+      "number": 583,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-calc",
+      "number": 167,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-calc",
+      "number": 168,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-data",
+      "number": 295,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/bw_timex",
+      "number": 244,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/stats_arrays",
+      "number": 43,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "codemeta/codemeta",
+      "number": 505,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "helenahartmann/awesome-PhD",
+      "number": 51,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "IndEcol/pymrio",
+      "number": 179,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "IndEcol/pymrio",
+      "number": 180,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "IndEcol/pymrio",
+      "number": 181,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "LCA-ActivityBrowser/activity-browser",
+      "number": 1743,
+      "base": "major",
+      "default_branch": "main"
+    },
+    {
+      "repo": "LCA-ActivityBrowser/activity-browser",
+      "number": 1744,
+      "base": "major",
+      "default_branch": "main"
+    },
+    {
+      "repo": "NLeSC/python-template",
+      "number": 715,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "NLeSC/python-template",
+      "number": 716,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 106,
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 107,
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 108,
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 109,
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "oie-mines-paristech/lca_algebraic",
+      "number": 110,
+      "base": "dev",
+      "default_branch": "main"
+    },
+    {
+      "repo": "open-wanderer/wanderer",
+      "number": 1417,
+      "base": "dev",
+      "default_branch": "dev"
+    },
+    {
+      "repo": "open-wanderer/wanderer",
+      "number": 1430,
+      "base": "dev",
+      "default_branch": "dev"
+    },
+    {
+      "repo": "pik-piam/flodym",
+      "number": 198,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "pogopaule/awesome-sustainability-jobs",
+      "number": 21,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "polca/premise",
+      "number": 316,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "polca/premise",
+      "number": 317,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "pyOpenSci/python-package-guide",
+      "number": 823,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "pyOpenSci/python-package-guide",
+      "number": 824,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "pyOpenSci/python-package-guide",
+      "number": 827,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "sabuhish/fastapi-mail",
+      "number": 283,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "sabuhish/fastapi-mail",
+      "number": 284,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "SALib/SALib",
+      "number": 700,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "SchemaStore/schemastore",
+      "number": 6522,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "SchemaStore/schemastore",
+      "number": 6531,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "sentier-dev/sentier_data_tools",
+      "number": 2,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "streetsidesoftware/cspell-dicts",
+      "number": 5339,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "streetsidesoftware/cspell-dicts",
+      "number": 5364,
+      "base": "main",
+      "default_branch": "main"
+    }
+  ]
+}

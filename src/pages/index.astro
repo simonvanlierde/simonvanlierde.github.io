@@ -13,7 +13,7 @@ import { participants, statsSource } from "../data/figures.ts";
 import { figureParts } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
-import { upstream } from "../data/upstream.ts";
+import { prGroups, upstream } from "../data/upstream.ts";
 import Base from "../layouts/Base.astro";
 
 // The history lives on /cv/; this sheet reads only the basics and the date.
@@ -194,10 +194,16 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
               <li>
                 <a href={`https://github.com/${u.repo}`}>{u.name}</a>: {u.what}
                 {" ("}
-                {u.prs.map((n, i) => (
+                {prGroups(u).map((group, g) => (
                   <>
-                    {i > 0 && ", "}
-                    <a href={`https://github.com/${u.repo}/pull/${n}`}>#{n}</a>
+                    {g > 0 && "; "}
+                    {group.prs.map((n, i) => (
+                      <>
+                        {i > 0 && ", "}
+                        <a href={`https://github.com/${u.repo}/pull/${n}`}>#{n}</a>
+                      </>
+                    ))}
+                    {group.base && ` merged into the ${group.base} branch`}
                   </>
                 ))}
                 {")"}

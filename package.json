@@ -21,7 +21,8 @@
     "test:e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm test:coverage",
     "gen:og": "node scripts/gen-og.mjs",
-    "fetch:stats": "node scripts/fetch-stats.mjs"
+    "fetch:stats": "node scripts/fetch-stats.mjs",
+    "fetch:evidence": "node scripts/fetch-evidence.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
