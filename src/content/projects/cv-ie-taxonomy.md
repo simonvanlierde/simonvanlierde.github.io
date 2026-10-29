@@ -9,7 +9,7 @@ tags:
   - TypeScript
   - SVG
   - computer vision
-order: 9
+order: 10
 figures:
   repair:
     value: "95.7%"

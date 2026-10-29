@@ -15,7 +15,9 @@ links:
   - label: Zenodo dataset
     url: https://doi.org/10.5281/zenodo.8344580
     license: https://spdx.org/licenses/CC-BY-4.0.html
-order: 10
+uses:
+  - citesync
+order: 11
 figures:
   buildings:
     value: "59,381"

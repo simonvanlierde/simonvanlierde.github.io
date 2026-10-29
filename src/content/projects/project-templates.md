@@ -14,5 +14,6 @@ links:
 uses:
   - jsonvet
   - sourceledger
+  - citesync
 order: 7
 ---

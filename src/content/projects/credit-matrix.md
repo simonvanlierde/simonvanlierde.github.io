@@ -15,6 +15,8 @@ links:
     url: https://doi.org/10.5281/zenodo.21213659
   - label: CRediT census
     url: https://github.com/simonvanlierde/credit-matrix/blob/main/census/README.md
+uses:
+  - citesync
 order: 3
 figures:
   held_out:
