@@ -116,12 +116,6 @@ export const upstream: UpstreamProject[] = [
     prs: [715, 716],
   },
   {
-    name: "wanderer",
-    repo: "open-wanderer/wanderer",
-    what: "made the list editor's trail search show up to 20 matches ranked by relevance, not three",
-    prs: [1417],
-  },
-  {
     name: "fastapi-mail",
     repo: "sabuhish/fastapi-mail",
     what: "improved Redis connection handling and let it reuse an existing connection",
