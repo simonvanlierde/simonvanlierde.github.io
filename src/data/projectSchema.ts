@@ -13,7 +13,7 @@ export interface ProjectCard {
     repo: string;
     demo?: string;
     tags: string[];
-    links: { label: string; url: string }[];
+    links: { label: string; url: string; license?: string }[];
     figures?: Record<string, Figure>;
   };
 }
@@ -64,7 +64,9 @@ const datasetLink = (card: ProjectCard) => card.data.links.find((l) => /dataset/
 /**
  * One SoftwareSourceCode node per card (name, description and codeRepository
  * are its core properties on schema.org), plus a Dataset node for dataset cards
- * (Google's Dataset rich result requires name and description).
+ * (Google's Dataset rich result requires name and description, and Search
+ * Console flags one without a license). Throws on a dataset link with no
+ * license, so the build fails instead.
  */
 export function projectNodes(cards: ProjectCard[]) {
   return cards.flatMap((card) => {
@@ -83,12 +85,14 @@ export function projectNodes(cards: ProjectCard[]) {
     };
     const link = datasetLink(card);
     if (!link) return [code];
+    if (!link.license) throw new Error(`${card.id}: the "${link.label}" link has no license`);
     const dataset = {
       "@type": "Dataset",
       "@id": `${site}/#dataset-${card.id}`,
       name: `${title}: ${link.label}`,
       description,
       url: link.url,
+      license: link.license,
       creator: author,
       isBasedOn: { "@id": code["@id"] },
     };

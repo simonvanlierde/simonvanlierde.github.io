@@ -15,8 +15,9 @@ const projects = defineCollection({
     // plate's left rail.
     kind: z.string(),
     tags: z.array(z.string()).default([]),
-    // Extra labelled links (publications, datasets, etc.).
-    links: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+    // Extra labelled links (publications, datasets, etc.). A dataset link needs
+    // the license URL its record gives, for the Dataset node.
+    links: z.array(z.object({ label: z.string(), url: z.url(), license: z.url().optional() })).default([]),
     // Every number in the description, written there as `{key}`: the text shown,
     // the page it comes from, and the date the source gives for it (or, when it
     // gives none, the date of the source version it was checked against).
