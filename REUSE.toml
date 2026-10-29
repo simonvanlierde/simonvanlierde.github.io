@@ -19,3 +19,9 @@ SPDX-License-Identifier = "CC-BY-SA-4.0"
 path = ["public/fonts/osifont.woff2", "public/fonts/osifont-LICENSE.txt"]
 SPDX-FileCopyrightText = "The osifont authors <https://github.com/hikikomori82/osifont>"
 SPDX-License-Identifier = "LicenseRef-osifont"
+
+# My portrait, the social card that shows it, and the CV PDF stay all rights reserved.
+[[annotations]]
+path = ["public/portrait.jpg", "src/assets/portrait.jpg", "public/og.png", "public/files/simon-van-lierde-cv.pdf"]
+SPDX-FileCopyrightText = "2026 Simon van Lierde"
+SPDX-License-Identifier = "LicenseRef-all-rights-reserved"
