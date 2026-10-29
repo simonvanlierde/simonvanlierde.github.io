@@ -28,11 +28,33 @@ test("status defaults to published, so an entry is never accidentally hidden", (
   assert.equal(pub().status, "published");
 });
 
-test("authors accept a YAML list or one comma-joined string", () => {
+test("authors accept a YAML list of names or an APA byline", () => {
   assert.deepEqual(pub({ authors: ["A. One", "B. Two"] }).authors, ["A. One", "B. Two"]);
-  assert.deepEqual(pub({ authors: "A. One, B. Two" }).authors, ["A. One", "B. Two"]);
+  // The two bylines the export carries, verbatim.
+  assert.deepEqual(pub({ authors: "van Lierde, S" }).authors, ["S. van Lierde"]);
+  assert.deepEqual(
+    pub({
+      authors:
+        "Rankin, K. H., Donati, F., Tu, Q., Ward-Bond, J., Reitz, N., Hiser, B., van Lierde, S., Suh, S., Saxe, S., Posen, I. D., & Hawes, J. K",
+    }).authors,
+    [
+      "K. H. Rankin",
+      "F. Donati",
+      "Q. Tu",
+      "J. Ward-Bond",
+      "N. Reitz",
+      "B. Hiser",
+      "S. van Lierde",
+      "S. Suh",
+      "S. Saxe",
+      "I. D. Posen",
+      "J. K. Hawes",
+    ],
+  );
   // A trailing separator upstream must not produce an empty byline entry.
-  assert.deepEqual(pub({ authors: "A. One, " }).authors, ["A. One"]);
+  assert.deepEqual(pub({ authors: "One, A., " }).authors, ["A. One"]);
+  // Full names joined by commas are not APA: fail rather than pair them up wrong.
+  assert.throws(() => pub({ authors: "A. One, B. Two" }), /not an APA byline/);
 });
 
 test("an unrecognised status fails the build rather than rendering a stray label", () => {
