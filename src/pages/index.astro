@@ -10,7 +10,7 @@ import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, intro } from "../data/cv.ts";
 import { participants, statsSource } from "../data/figures.ts";
-import { figureParts } from "../data/projectSchema.ts";
+import { figureParts, relatedCards } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import { upstream } from "../data/upstream.ts";
@@ -42,6 +42,7 @@ const allProjects = (await getCollection("projects")).sort((a, b) => a.data.orde
 const workProjects = allProjects.filter((p) => p.data.category === "work");
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
 const minorProjects = allProjects.filter((p) => p.data.category === "minor");
+const related = relatedCards(allProjects);
 
 const name = basics.name;
 const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
@@ -145,6 +146,8 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
         {
           workProjects.map((p) => (
             <ProjectCard
+              id={p.id}
+              related={related.get(p.id)}
               title={p.data.title}
               description={p.data.description}
               repo={p.data.repo}
@@ -162,7 +165,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
       <ul class="upstream-list minor-list">
         {
           minorProjects.map((p) => (
-            <li>
+            <li id={`project-${p.id}`}>
               <a href={p.data.repo}>{p.data.title}</a>: {figureParts(p.data.description, p.data.figures).map((part) =>
                 typeof part === "string" ? part : <Figure {...part} />,
               )}
@@ -215,6 +218,8 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
           {
             personalProjects.map((p) => (
               <ProjectCard
+                id={p.id}
+                related={related.get(p.id)}
                 title={p.data.title}
                 description={p.data.description}
                 repo={p.data.repo}

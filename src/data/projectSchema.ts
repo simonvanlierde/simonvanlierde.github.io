@@ -54,6 +54,30 @@ export const figureText = (text: string, figures?: Record<string, Figure>) =>
     .map((part) => (typeof part === "string" ? part : part.value))
     .join("");
 
+export interface CardLink {
+  id: string;
+  title: string;
+}
+
+/**
+ * Each card's `builtWith` cards and, the other way round, the cards built with
+ * it ("used by"). Throws on a `builtWith` id that is not a card, so a typo
+ * fails the build instead of shipping a dead anchor.
+ */
+export function relatedCards(cards: { id: string; data: { title: string; builtWith: string[] } }[]) {
+  const byId = new Map(cards.map((c) => [c.id, { id: c.id, title: c.data.title }]));
+  const related = new Map(cards.map((c) => [c.id, { builtWith: [] as CardLink[], usedBy: [] as CardLink[] }]));
+  for (const card of cards) {
+    for (const id of card.data.builtWith) {
+      const target = byId.get(id);
+      if (!target) throw new Error(`${card.id}: builtWith "${id}" is not a project card`);
+      related.get(card.id)?.builtWith.push(target);
+      related.get(id)?.usedBy.push({ id: card.id, title: card.data.title });
+    }
+  }
+  return related;
+}
+
 /**
  * A card is a dataset when one of its links is labelled "dataset". The card
  * frontmatter has no other signal: `kind` is free text, and a Zenodo "record"

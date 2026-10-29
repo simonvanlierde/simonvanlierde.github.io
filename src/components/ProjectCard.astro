@@ -1,10 +1,12 @@
 ---
-import { type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
+import { type CardLink, type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
 import Figure from "./Figure.astro";
 
 // One parts-list row. Only the title links the repo, so the description
 // stays selectable.
 interface Props {
+  id: string;
+  related?: { builtWith: CardLink[]; usedBy: CardLink[] };
   title: string;
   description: string;
   repo: string;
@@ -15,10 +17,14 @@ interface Props {
   figures?: Record<string, FigureData>;
 }
 
-const { title, description, repo, kind, demo, tags = [], links = [], figures } = Astro.props;
+const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures } = Astro.props;
+const relations = [
+  { label: "Built with", cards: related?.builtWith ?? [] },
+  { label: "Used by", cards: related?.usedBy ?? [] },
+].filter((r) => r.cards.length > 0);
 ---
 
-<article class="bom-row">
+<article class="bom-row" id={`project-${id}`}>
   <p class="bom-row__pos">{kind}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
@@ -51,6 +57,15 @@ const { title, description, repo, kind, demo, tags = [], links = [], figures } =
         </p>
       )
     }
+
+    {relations.map((r) => (
+      <p class="bom-row__links bom-row__rel">
+        <span class="bom-row__rel-label">{r.label}</span>
+        {r.cards.map((c) => (
+          <a href={`#project-${c.id}`}>{c.title}</a>
+        ))}
+      </p>
+    ))}
 
     {
       tags.length > 0 && (

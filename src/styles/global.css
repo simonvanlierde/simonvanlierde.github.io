@@ -391,6 +391,7 @@ main > section {
 
 #main,
 #relab,
+[id^="project-"],
 main > section,
 main > section > h2,
 main > section > .container > h2 {
@@ -711,6 +712,18 @@ html {
   min-height: 44px;
   padding-block: 0.65rem;
   margin-block: -0.3rem;
+}
+
+/* "Built with" / "Used by": an in-page cross-reference, lettered like a label. */
+.bom-row__rel {
+  align-items: baseline;
+}
+
+.bom-row__rel-label {
+  font-family: var(--font-draft);
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .tag-list {

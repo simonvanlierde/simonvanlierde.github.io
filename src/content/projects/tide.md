@@ -12,6 +12,9 @@ links:
   - label: Backtest
     url: https://github.com/simonvanlierde/tide/blob/main/docs/backtest.md
 category: personal
+builtWith:
+  - project-templates
+  - jsonvet
 order: 3
 figures:
   people:
