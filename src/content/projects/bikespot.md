@@ -9,6 +9,9 @@ tags:
   - TypeScript
   - PWA
 category: personal
+uses:
+  - project-templates
+  - jsonvet
 order: 4
 figures:
   languages:

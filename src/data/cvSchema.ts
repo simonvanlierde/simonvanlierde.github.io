@@ -22,6 +22,9 @@ export const CvSchema = z.object({
       website: z.url(),
       orcid: z.url().regex(/^https:\/\/orcid\.org\/\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/),
       leiden: z.url(),
+      // Linked data only (schema.org sameAs), not shown on the page.
+      openalex: z.url().optional(),
+      scholar: z.url().optional(),
     }),
   }),
   profile: z.string(),

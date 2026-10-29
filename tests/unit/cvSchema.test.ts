@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { parse } from "yaml";
 import { CvSchema } from "../../src/data/cvSchema.ts";
 
 // The minimum valid export. Each test below breaks one thing in it.
@@ -79,4 +81,11 @@ test("the export stamp accepts a UTC or an offset timestamp, and rejects a bare 
   assert.equal(CvSchema.parse({ ...minimal(), exported: "2026-08-18T23:33:49Z" }).exported, "2026-08-18T23:33:49Z");
   assert.ok(CvSchema.parse({ ...minimal(), exported: "2026-08-18T23:33:49+02:00" }).exported);
   assert.throws(() => CvSchema.parse({ ...minimal(), exported: "2026-08-18" }));
+});
+
+test("every skill in the export is one whole item: an unquoted comma in YAML splits it", () => {
+  const raw = readFileSync(new URL("../../src/data/cv-public.yaml", import.meta.url), "utf8");
+  for (const item of CvSchema.parse(parse(raw)).skills.flatMap((g) => g.items)) {
+    assert.equal(item.split("(").length, item.split(")").length, `unbalanced parentheses in "${item}"`);
+  }
 });

@@ -6,9 +6,11 @@ interface Props {
   description: string;
   /** schema.org JSON-LD for this page. Built in src/data/schemaOrg.ts. */
   jsonLd?: object;
+  /** False on pages with no address of their own (the 404 page), so they claim no canonical URL. */
+  canonical?: boolean;
 }
 
-const { title, description, jsonLd } = Astro.props;
+const { title, description, jsonLd, canonical: hasCanonical = true } = Astro.props;
 
 // Astro.site is set in astro.config.mjs (https://simonvanlierde.com).
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -20,7 +22,7 @@ const ogImage = new URL("og.png", Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="canonical" href={canonical} />
+    {hasCanonical && <link rel="canonical" href={canonical} />}
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -49,11 +51,13 @@ const ogImage = new URL("og.png", Astro.site);
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {hasCanonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:site_name" content="Simon van Lierde" />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     {
       jsonLd && (

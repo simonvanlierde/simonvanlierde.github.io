@@ -4,7 +4,9 @@ on:
   # main runs too, so Codecov has a report for the main branch to show on the badge.
   push:
     branches: [main]
+  # ready_for_review too, so a draft gets its preview when it is marked ready.
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -73,8 +75,10 @@ jobs:
   # at a stable pr-<number> URL that the PR shows as its deployment. Fork PRs
   # never get the token, so they skip with a notice, as does a missing secret.
   # The secrets live in the `preview` environment.
+  # Drafts get no preview; preview-retire.yml takes it down when a PR turns
+  # draft or closes.
   preview:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && !github.event.pull_request.draft
     needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 10

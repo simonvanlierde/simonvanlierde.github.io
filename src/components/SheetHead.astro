@@ -1,0 +1,112 @@
+---
+import { Image } from "astro:assets";
+import portrait from "../assets/portrait.jpg";
+import { cv, intro, profiles, sheetLead } from "../data/cv.ts";
+
+// The sheet's title zone: portrait, name, lead, intro, contact and profiles,
+// identical on every sheet and narrow enough for the index's left column, so
+// turning the page changes only the stamp and what sits under and beside it.
+
+// Given name over family name, so "van Lierde" never splits.
+const [given, ...family] = cv.basics.name.split(" ");
+
+const { location, email } = cv.basics;
+---
+
+<div class="sheet-head">
+  {/* 122 CSS px at most; densities ship a 2x file for sharp screens. */}
+  <Image
+    class="sheet-head__portrait"
+    src={portrait}
+    width={128}
+    densities={[1, 2]}
+    alt={`Portrait of ${cv.basics.name}`}
+    loading="eager"
+  />
+  <h1 class="sheet-name sheet-head__name">
+    {given} <span class="sheet-head__family">{family.join(" ")}</span>
+  </h1>
+  {/* One part per line, so the interpunct never dangles at a wrap; it stays
+      in the text for screen readers and copy-paste. */}
+  <p class="lead sheet-head__lead">
+    {
+      sheetLead.map((part, i) => (
+        <span class="sheet-head__part">
+          {i > 0 && <span class="visually-hidden"> · </span>}
+          {part}
+        </span>
+      ))
+    }
+  </p>
+  <p class="tagline prose sheet-head__intro">{intro}</p>
+</div>
+
+<ul class="link-list sheet-contact">
+  <li><span class="draft sheet-contact__plain">{location}</span></li>
+  {
+    email && (
+      <li>
+        <a href={`mailto:${email}`}>{email}</a>
+      </li>
+    )
+  }
+</ul>
+
+{/* Repeats the title block's profiles, which sit at the end of a long sheet.
+    Muted, so the stamp stays the one primary action. */}
+<ul class="link-list sheet-profiles draft" aria-label="Profiles">
+  {
+    profiles.map((p) => (
+      <li>
+        <a href={p.href}>{p.label}</a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  /* Portrait beside the two-line name, at its height; lead and intro run
+     under both from the sheet's left edge. */
+  .sheet-head {
+    max-width: 31rem;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "portrait name"
+      "lead lead"
+      "intro intro";
+    align-items: center;
+    column-gap: var(--space-m);
+  }
+
+  /* A hairline frame and no radius: the only circle on the sheet is a balloon.
+     Two lines of the h1: its font size times its 1.12 line height. */
+  .sheet-head__portrait {
+    grid-area: portrait;
+    width: calc(var(--step-3) * 2.24);
+    height: auto;
+    aspect-ratio: 1;
+    border: var(--border-width) solid var(--border-strong);
+    background: var(--surface);
+  }
+
+  .sheet-head__name {
+    grid-area: name;
+  }
+
+  .sheet-head__family {
+    display: block;
+  }
+
+  .sheet-head__lead {
+    grid-area: lead;
+  }
+
+  .sheet-head__part {
+    display: block;
+  }
+
+  .sheet-head__intro {
+    grid-area: intro;
+  }
+</style>

@@ -54,12 +54,45 @@ export const figureText = (text: string, figures?: Record<string, Figure>) =>
     .map((part) => (typeof part === "string" ? part : part.value))
     .join("");
 
+export interface CardLink {
+  id: string;
+  title: string;
+  /** In-page anchor, when the row is not a generated `#project-<id>` card. */
+  href?: string;
+}
+
+/**
+ * Each card's `uses` cards and, the other way round, the cards that use
+ * it ("used by"). Throws on a `uses` id that is not a card, so a typo
+ * fails the build instead of shipping a dead anchor.
+ */
+export function relatedCards(cards: { id: string; data: { title: string; uses: string[] } }[]) {
+  const byId = new Map(cards.map((c) => [c.id, { id: c.id, title: c.data.title }]));
+  const related = new Map(cards.map((c) => [c.id, { uses: [] as CardLink[], usedBy: [] as CardLink[] }]));
+  for (const card of cards) {
+    for (const id of card.data.uses) {
+      const target = byId.get(id);
+      if (!target) throw new Error(`${card.id}: uses "${id}" is not a project card`);
+      if (id === card.id) throw new Error(`${card.id}: a card cannot use itself`);
+      if (card.data.uses.indexOf(id) !== card.data.uses.lastIndexOf(id)) {
+        throw new Error(`${card.id}: uses "${id}" twice`);
+      }
+      related.get(card.id)?.uses.push(target);
+      related.get(id)?.usedBy.push({ id: card.id, title: card.data.title });
+    }
+  }
+  return related;
+}
+
 /**
  * A card is a dataset when one of its links is labelled "dataset". The card
  * frontmatter has no other signal: `kind` is free text, and a Zenodo "record"
  * can hold software.
  */
 const datasetLink = (card: ProjectCard) => card.data.links.find((l) => /dataset/i.test(l.label));
+
+/** Card tags that name a programming language, lower-cased. */
+const languages = new Set(["python", "rust", "typescript", "javascript", "go", "bash", "shell", "sql"]);
 
 /**
  * One SoftwareSourceCode node per card (name, description and codeRepository
@@ -73,6 +106,9 @@ export function projectNodes(cards: ProjectCard[]) {
     const { title, repo, demo, tags } = card.data;
     const description = figureText(card.data.description, card.data.figures);
     const author = { "@id": personId };
+    const isLanguage = (tag: string) => languages.has(tag.toLowerCase());
+    const programmingLanguage = tags.filter(isLanguage);
+    const keywords = tags.filter((tag) => !isLanguage(tag));
     const code = {
       "@type": "SoftwareSourceCode",
       "@id": `${site}/#project-${card.id}`,
@@ -81,7 +117,8 @@ export function projectNodes(cards: ProjectCard[]) {
       codeRepository: repo,
       author,
       ...(demo ? { url: demo } : {}),
-      ...(tags.length ? { keywords: tags } : {}),
+      ...(programmingLanguage.length ? { programmingLanguage } : {}),
+      ...(keywords.length ? { keywords } : {}),
     };
     const link = datasetLink(card);
     if (!link) return [code];
