@@ -32,7 +32,7 @@ flowchart LR
 
 ## Data refresh
 
-`src/data/stats.json` is committed because GitHub Pages serves a static build. The weekly `refresh-data.yml` workflow runs `scripts/fetch-stats.mjs`. The script checks that the public R9lab `/stats` response still has the fields the chart reads. The workflow commits the new snapshot if it changed, then deploys.
+`src/data/stats.json` is committed because GitHub Pages serves a static build. The weekly `refresh-data.yml` workflow runs `scripts/fetch-stats.mjs`. The script checks that the public R9lab `/stats` response still has the fields the chart reads. The script stamps `fetched_at` on every successful run, so the workflow commits weekly and then deploys; `as_of` still dates the counts.
 
 If the API is unavailable, blocked, or returns an unexpected shape, the script exits successfully without touching the snapshot. That keeps the last known-good build online, instead of quietly rendering zeros. It prints a `::warning::` line, which shows as an annotation on the workflow run.
 
@@ -47,9 +47,11 @@ Pull requests and pushes to `main` run `pnpm check`, a production Astro build, a
 
 Pushing to `main` triggers `deploy.yml`, which builds the site and publishes it to GitHub Pages. For this to work, the Pages source must be set to **GitHub Actions** (Settings → Pages). The refresh workflow starts the deploy workflow with `gh workflow run`, and the deploy workflow holds the `pages` concurrency group, so deployments queue instead of racing.
 
+After a deploy succeeds, the `indexnow` job in `deploy.yml` tells search engines which pages changed (IndexNow). `scripts/indexnow.mjs` maps the files changed since the previous deploy to page URLs: `src/pages/index.astro` is `/`, `src/pages/cv.astro` is `/cv/`, and any other change under `src/` or `public/`, or to the package files or Astro config, counts for both. It posts them to `api.indexnow.org` with the key served from `public/<key>.txt`. The key is public by design. A failed ping only prints a warning.
+
 Each pull request also gets a preview. Once CI passes, its `preview` job uploads the build as a version of a Cloudflare Worker (`wrangler.jsonc`) whose only deployment is a placeholder page, at `https://pr-<number>-simonvanlierde-site-preview.<account>.workers.dev`. The PR links it as its `preview` deployment. Previews send `X-Robots-Tag: noindex`, so search engines keep to simonvanlierde.com. The job needs a `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit) and `CLOUDFLARE_ACCOUNT_ID` in the `preview` environment's secrets; without them, and on fork PRs, it skips with a notice.
 
-`check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted, while `stats.json` is more than 21 days old, or while a pinned repo on the GitHub profile is archived or has no card on this site (card means a `repo:` URL in `src/content/projects`). To skip a repo, list it in `.github/drift-ignore`.
+`check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted, while `stats.json` was last fetched more than 21 days ago, or while a pinned repo on the GitHub profile is archived or has no card on this site (card means a `repo:` URL in `src/content/projects`). To skip a repo, list it in `.github/drift-ignore`.
 
 Renovate opens one PR a month for minor and patch updates and merges it once CI passes, which triggers a deploy. Major updates get their own PRs and wait for me to merge them.
 

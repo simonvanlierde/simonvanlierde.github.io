@@ -36,6 +36,8 @@ jobs:
       - name: Commit refreshed snapshot and deploy if changed
         env:
           GH_TOKEN: ${{ github.token }}
+        # fetched_at changes on every successful run, so this commits weekly. The
+        # drift check reads that stamp to see that the refresh still works.
         run: |-
           if git diff --quiet -- src/data/stats.json; then
             echo "No change in src/data/stats.json."
