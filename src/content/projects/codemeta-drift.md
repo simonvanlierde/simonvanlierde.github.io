@@ -9,6 +9,7 @@ tags:
   - FAIR
 uses:
   - project-templates
+  - citesync
 order: 8
 figures:
   crosswalks:

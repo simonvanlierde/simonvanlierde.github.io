@@ -16,6 +16,7 @@ links:
     url: https://github.com/simonvanlierde/ramascene-explorer/blob/main/brightway-check/README.md
 uses:
   - jsonvet
+  - citesync
 order: 4
 figures:
   runs:

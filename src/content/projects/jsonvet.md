@@ -14,6 +14,8 @@ links:
     url: https://doi.org/10.5281/zenodo.23461825
   - label: Speed figures
     url: https://github.com/simonvanlierde/jsonvet/blob/main/docs/design.md#speed
+uses:
+  - citesync
 order: 1
 figures:
   dialects:
