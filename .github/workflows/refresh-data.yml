@@ -1,7 +1,7 @@
 name: Refresh site data
 
-# Commits fresh R9lab figures to src/data/stats.json and fresh evidence files
-# (scripts/fetch-evidence.mjs), then dispatches deploy.yml:
+# Commits fresh R9lab figures to src/data/stats.json and my merged upstream PRs to
+# src/data/upstream.json, then dispatches deploy.yml:
 # a push with the default GITHUB_TOKEN triggers no other workflow.
 
 on:
@@ -34,8 +34,8 @@ jobs:
       - name: Fetch stats
         run: pnpm fetch:stats
 
-      # Upstream PRs, Zenodo DOIs and OpenAlex works. The GitHub search runs with this token.
-      - name: Fetch evidence
+      # The GitHub search runs with this token.
+      - name: Fetch upstream PRs
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: pnpm fetch:evidence
@@ -43,7 +43,7 @@ jobs:
       - name: Commit refreshed snapshots and deploy if changed
         env:
           GH_TOKEN: ${{ github.token }}
-          FILES: src/data/stats.json src/data/upstream.json src/data/dois.json src/data/openalex.json
+          FILES: src/data/stats.json src/data/upstream.json
         # fetched_at changes on every successful run, so this commits weekly. The
         # drift check reads that stamp to see that the refresh still works.
         run: |-

@@ -22,7 +22,8 @@ function skip(reason) {
 async function getJson(url) {
   let res;
   try {
-    res = await fetch(url, { headers: { accept: "application/json" } });
+    // A hung API would hold the job until its 10-minute timeout.
+    res = await fetch(url, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(30_000) });
   } catch (err) {
     skip(`request to ${url} failed: ${err.message}`);
   }

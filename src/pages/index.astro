@@ -197,10 +197,10 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
                 {prGroups(u).map((group, g) => (
                   <>
                     {g > 0 && "; "}
-                    {group.prs.map((pr, i) => (
+                    {group.prs.map((n, i) => (
                       <>
                         {i > 0 && ", "}
-                        <a href={pr.url}>#{pr.number}</a>
+                        <a href={`https://github.com/${u.repo}/pull/${n}`}>#{n}</a>
                       </>
                     ))}
                     {group.base && ` merged into the ${group.base} branch`}
