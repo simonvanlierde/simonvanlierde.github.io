@@ -32,7 +32,7 @@ flowchart LR
 
 [/cv/](https://simonvanlierde.com/cv/) renders from `src/data/cv-public.yaml`. The landing page reads only the contact details from it and links to the CV. I export that file and the CV PDF from a separate private repo and commit them here, so a clean checkout builds without access to that repo.
 
-`src/data/cv.ts` validates the export against a Zod schema at build time, so a broken export fails the build instead of rendering an empty page. `src/data/schemaOrg.ts` builds the JSON-LD (structured data for search engines) from the same object. Optional sections (publications, skills, projects, talks and training, interests) render only when the export carries them. An unaccepted publication stays hidden until it has a preprint DOI to link to.
+`src/data/cv.ts` validates the export against a Zod schema at build time, so a broken export fails the build instead of rendering an empty page. `src/data/schemaOrg.ts` builds the JSON-LD (structured data for search engines) from the same object. Each page carries a ProfilePage about one Person node; `/` adds the WebSite node that names the site in results. Optional sections (publications, skills, projects, talks and training, interests) render only when the export carries them. An unaccepted publication stays hidden until it has a preprint DOI to link to.
 
 ## Data refresh
 
@@ -56,6 +56,8 @@ Pull requests and pushes to `main` run `pnpm check`, a production Astro build, a
 Pushing to `main` triggers `deploy.yml`, which builds the site and publishes it to GitHub Pages. For this to work, the Pages source must be set to **GitHub Actions** (Settings → Pages). The refresh workflow starts the deploy workflow with `gh workflow run`, and the deploy workflow holds the `pages` concurrency group, so deployments queue instead of racing.
 
 After a deploy succeeds, the `indexnow` job in `deploy.yml` tells search engines which pages changed (IndexNow). `scripts/indexnow.mjs` maps the files changed since the previous deploy to page URLs: `src/pages/index.astro` is `/`, `src/pages/cv.astro` is `/cv/`, and any other change under `src/` or `public/`, or to the package files or Astro config, counts for both. It posts them to `api.indexnow.org` with the key served from `public/<key>.txt`. The key is public by design. A failed ping only prints a warning.
+
+`public/robots.txt` allows every crawler and points at `/sitemap.xml`, which `src/pages/sitemap.xml.ts` writes at build time: both sheets with a `lastmod`, plus the project sites other repos publish under this domain.
 
 Each pull request also gets a preview. Once CI passes, its `preview` job uploads the build as a version of a Cloudflare Worker (`wrangler.jsonc`) whose only deployment is a placeholder page, at `https://pr-<number>-simonvanlierde-site-preview.<account>.workers.dev`. The PR links it as its `preview` deployment. Previews send `X-Robots-Tag: noindex`, so search engines keep to simonvanlierde.com. The job needs a `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit) and `CLOUDFLARE_ACCOUNT_ID` in the `preview` environment's secrets; without them, and on fork PRs, it skips with a notice.
 
