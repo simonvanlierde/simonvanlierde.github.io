@@ -20,6 +20,7 @@ pnpm install      # install dependencies
 pnpm dev          # start the dev server at http://localhost:4321
 pnpm build        # type-check (astro check) and build to dist/
 pnpm gen:og       # regenerate public/og.png (the social-card image)
+pnpm fetch:cards  # copy each card's demo og:image into src/assets/cards/
 pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```

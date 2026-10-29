@@ -714,6 +714,15 @@ html {
   margin-block: -0.3rem;
 }
 
+/* The demo's social card, framed like a detail view on the sheet. */
+.bom-row__image {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  height: auto;
+  border: var(--border-width) solid var(--border);
+}
+
 /* "Uses" / "Used by": in-page cross-references on one line. Plain underlined
    links in the lettering, so they read as links next to the tags, which are not. */
 .ref-list {
@@ -836,6 +845,13 @@ html {
   .bom-row--part .ref-list,
   .r9lab__chart {
     grid-row: 4;
+  }
+
+  /* Under the cross-references, in the row that grows with the rail, so the text keeps its measure. */
+  .bom-row--part .bom-row__image {
+    grid-column: 2;
+    grid-row: 5;
+    margin-top: var(--space-s);
   }
 
   /* The spec wrapper no longer spaces it from the body above. */

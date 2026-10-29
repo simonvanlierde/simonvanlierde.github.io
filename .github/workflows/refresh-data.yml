@@ -24,7 +24,7 @@ jobs:
         # zizmor: ignore[artipacked] the job pushes the refreshed snapshot with this credential
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      # Both fetch scripts use only Node built-ins, so no dependency install.
+      # The fetch scripts use only Node built-ins, so no dependency install.
       - name: Set up pnpm and Node.js
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3
         with:
@@ -40,10 +40,13 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: pnpm fetch:evidence
 
+      - name: Fetch card images
+        run: pnpm fetch:cards
+
       - name: Commit refreshed snapshots and deploy if changed
         env:
           GH_TOKEN: ${{ github.token }}
-          FILES: src/data/stats.json src/data/upstream.json
+          FILES: src/data/stats.json src/data/upstream.json src/data/cardImages.json src/assets/cards
         # fetched_at changes on every successful run, so this commits weekly. The
         # drift check reads that stamp to see that the refresh still works.
         run: |-

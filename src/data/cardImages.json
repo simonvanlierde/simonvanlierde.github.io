@@ -1,0 +1,26 @@
+{
+  "credit-matrix": {
+    "file": "credit-matrix.png",
+    "alt": "",
+    "source": "https://credit.duinlab.nl/opengraph-image.png?opengraph-image.0lvat3a905j7x.png",
+    "fetched_at": "2026-10-29"
+  },
+  "cv-ie-taxonomy": {
+    "file": "cv-ie-taxonomy.png",
+    "alt": "An exploded desk fan annotated with computer-vision detection boxes, dimension call-outs and material tags.",
+    "source": "https://simonvanlierde.com/cv-ie-taxonomy/screenshot.png",
+    "fetched_at": "2026-10-29"
+  },
+  "msc-thesis-ie": {
+    "file": "msc-thesis-ie.png",
+    "alt": "A year of cooling demand in The Hague, drawn as a grid of months by hours.",
+    "source": "https://simonvanlierde.com/msc-thesis-ie/og.png",
+    "fetched_at": "2026-10-29"
+  },
+  "ramascene-explorer": {
+    "file": "ramascene-explorer.png",
+    "alt": "The explorer showing Germany's greenhouse-gas consumption footprint: a sentence summarising it, and a world map with rust-coloured flow bands to the countries where the emissions occur.",
+    "source": "https://simonvanlierde.com/ramascene-explorer/og.png",
+    "fetched_at": "2026-10-29"
+  }
+}

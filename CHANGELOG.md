@@ -6,7 +6,15 @@ each entry sits under the date it went live. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Project cards whose demo has a social card show it under the text: ramascene-explorer, msc-thesis-ie, credit-matrix and cv-ie-taxonomy.
+
 ## 2026-10-29
+
+### Added
+
+- A card for citesync, linked from the seven cards whose repos run it.
 
 ### Changed
 
