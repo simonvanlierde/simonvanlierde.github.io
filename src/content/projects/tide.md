@@ -1,6 +1,6 @@
 ---
 title: tide
-description: "A period tracker you install from the browser, with no accounts, no network and no analytics: the data never leaves the device. Tested on the past records of {people} people in an open dataset, its next-period prediction is off by {tide_error} days on average after {cycles} cycles, against {fixed_error} days for a fixed {fixed_cycle}-day cycle."
+description: "A period tracker you install from the browser, with no accounts, network or analytics: the data never leaves the device. Tested on past records of {people} people in an open dataset, its next-period prediction is off by {tide_error} days on average after {cycles} cycles, against {fixed_error} days for a fixed {fixed_cycle}-day cycle."
 repo: https://github.com/simonvanlierde/tide
 demo: https://tide.duinlab.nl
 kind: web app
