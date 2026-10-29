@@ -87,6 +87,9 @@ export function relatedCards(cards: { id: string; data: { title: string; uses: s
  */
 const datasetLink = (card: ProjectCard) => card.data.links.find((l) => /dataset/i.test(l.label));
 
+/** Card tags that name a programming language, lower-cased. */
+const languages = new Set(["python", "rust", "typescript", "javascript", "go", "bash", "shell", "sql"]);
+
 /**
  * One SoftwareSourceCode node per card (name, description and codeRepository
  * are its core properties on schema.org), plus a Dataset node for dataset cards
@@ -97,6 +100,9 @@ export function projectNodes(cards: ProjectCard[]) {
     const { title, repo, demo, tags } = card.data;
     const description = figureText(card.data.description, card.data.figures);
     const author = { "@id": personId };
+    const isLanguage = (tag: string) => languages.has(tag.toLowerCase());
+    const programmingLanguage = tags.filter(isLanguage);
+    const keywords = tags.filter((tag) => !isLanguage(tag));
     const code = {
       "@type": "SoftwareSourceCode",
       "@id": `${site}/#project-${card.id}`,
@@ -105,7 +111,8 @@ export function projectNodes(cards: ProjectCard[]) {
       codeRepository: repo,
       author,
       ...(demo ? { url: demo } : {}),
-      ...(tags.length ? { keywords: tags } : {}),
+      ...(programmingLanguage.length ? { programmingLanguage } : {}),
+      ...(keywords.length ? { keywords } : {}),
     };
     const link = datasetLink(card);
     if (!link) return [code];

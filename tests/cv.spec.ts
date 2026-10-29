@@ -116,8 +116,13 @@ for (const path of ["/", "/cv/"]) {
     expect(person?.name).toBe(cv.basics.name);
     expect(person?.email).toBe(cv.basics.email ? `mailto:${cv.basics.email}` : undefined);
 
-    const articles = nodes.filter((n) => n["@type"] === "ScholarlyArticle").map((n) => n.headline);
-    expect(articles).toEqual(path === "/cv/" ? publications.map((pub) => pub.title) : []);
+    // Publications are the only dated works: articles carry a headline, software a name.
+    const works = nodes.filter((n) => "datePublished" in n).map((n) => n.headline ?? n.name);
+    expect(works).toEqual(path === "/cv/" ? publications.map((pub) => pub.title) : []);
+
+    const pages = nodes.filter((n) => n["@type"] === "ProfilePage");
+    expect(pages.map((n) => n.url)).toEqual([new URL(path, "https://simonvanlierde.com").href]);
+    expect(nodes.some((n) => n["@type"] === "WebSite")).toBe(path === "/");
   });
 }
 

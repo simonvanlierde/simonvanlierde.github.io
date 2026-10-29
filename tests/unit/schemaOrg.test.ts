@@ -61,3 +61,14 @@ test("node ids are unique and the output serialises", () => {
   assert.equal(new Set(ids).size, ids.length);
   JSON.parse(JSON.stringify(nodes));
 });
+
+test("programming languages leave keywords for programmingLanguage", () => {
+  const jsonvet = nodes.find((n) => n["@id"] === "https://simonvanlierde.com/#project-jsonvet");
+  assert.deepEqual(jsonvet?.programmingLanguage, ["Rust"]);
+  assert.deepEqual(jsonvet?.keywords, ["pre-commit", "PyPI", "fuzzing"]);
+  for (const node of ofType("SoftwareSourceCode")) {
+    for (const lang of ["Python", "Rust", "TypeScript", "bash"]) {
+      assert.ok(!(node.keywords as string[] | undefined)?.includes(lang), `${node["@id"]} keeps ${lang} as a keyword`);
+    }
+  }
+});
