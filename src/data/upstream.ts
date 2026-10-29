@@ -1,10 +1,22 @@
 // Merged pull requests in other people's projects, most telling first: wrong
 // results and measured speed-ups in LCA and industrial-ecology libraries lead,
 // tooling and docs follow.
-// shortcut: kept by hand from a GitHub search (author:simonvanlierde is:pr is:merged
-// -user:simonvanlierde -org:CMLPlatform); generate it if the list outgrows a monthly edit.
-// Left out on purpose: list entries for my own projects or employers (awesome-PhD #51,
-// awesome-sustainability-jobs #21).
+// The ranking, grouping and wording are mine. The branch each PR went into comes from
+// src/data/upstream.json, which scripts/fetch-evidence.mjs generates; the drift check flags
+// a merged PR that is neither here nor in `leftOut`.
+import merged from "./upstream.json" with { type: "json" };
+
+/**
+ * Merged PRs kept off on purpose: `owner/repo#n` for one PR (list entries for my own projects or
+ * employers), `owner/repo` for every PR in a repo I contribute to out of personal interest.
+ */
+export const leftOut = [
+  "ASSERT-KTH/awesome-open-science-software#28",
+  "helenahartmann/awesome-PhD#51",
+  "open-wanderer/wanderer",
+  "pogopaule/awesome-sustainability-jobs#21",
+];
+
 export interface UpstreamProject {
   name: string;
   repo: string;
@@ -44,6 +56,12 @@ export const upstream: UpstreamProject[] = [
     prs: [198],
   },
   {
+    name: "bw_timex",
+    repo: "brightway-lca/bw_timex",
+    what: "made building the time-explicit matrices 3 to 4× faster, with identical matrices and scores",
+    prs: [244],
+  },
+  {
     name: "premise",
     repo: "polca/premise",
     what: "fixed two bugs in how external scenarios apply efficiency changes, one of which scaled flows they were meant to leave alone",
@@ -54,6 +72,12 @@ export const upstream: UpstreamProject[] = [
     repo: "LCA-ActivityBrowser/activity-browser",
     what: "kept parameter amounts editable, loaded scenario files with empty keys, and kept a Monte Carlo seed of 0",
     prs: [1743, 1744],
+  },
+  {
+    name: "SALib",
+    repo: "SALib/SALib",
+    what: "let ProblemSpec take samples and results as plain lists, and gave a clear error for anything that is not numbers",
+    prs: [700],
   },
   {
     name: "Brightway (bw2data)",
@@ -86,10 +110,10 @@ export const upstream: UpstreamProject[] = [
     prs: [823, 824, 827],
   },
   {
-    name: "wanderer",
-    repo: "open-wanderer/wanderer",
-    what: "made the list editor's trail search show up to 20 matches ranked by relevance, not three",
-    prs: [1417],
+    name: "NLeSC Python template",
+    repo: "NLeSC/python-template",
+    what: "trimmed the keywords a new package gets and dropped empty ones, and made tox run the generated package's tests",
+    prs: [715, 716],
   },
   {
     name: "fastapi-mail",
@@ -110,3 +134,20 @@ export const upstream: UpstreamProject[] = [
     prs: [2],
   },
 ];
+
+/**
+ * A project's PRs in its own order, grouped by the branch they were merged into. The default
+ * branch comes first with `base` unset. A PR merged into another branch (say `dev`) gets the
+ * branch named, since that work is not on the default branch yet. A PR missing from the
+ * snapshot counts as the default branch until the next refresh.
+ */
+export function prGroups(project: UpstreamProject, prs = merged.prs): { base?: string; prs: number[] }[] {
+  const groups = new Map<string | undefined, number[]>([[undefined, []]]);
+  for (const number of project.prs) {
+    const pr = prs.find((p) => p.repo.toLowerCase() === project.repo.toLowerCase() && p.number === number);
+    const base = pr && pr.base !== pr.default_branch ? pr.base : undefined;
+    if (!groups.has(base)) groups.set(base, []);
+    groups.get(base)?.push(number);
+  }
+  return [...groups].filter(([, numbers]) => numbers.length).map(([base, numbers]) => ({ base, prs: numbers }));
+}
