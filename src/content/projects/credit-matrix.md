@@ -1,6 +1,6 @@
 ---
 title: credit-matrix
-description: "Write CRediT contribution statements (who did what on a paper) with your co-authors in your browser, and export them as JATS4R XML or a heatmap. A Python pipeline beside it reads the roles from open-access papers; its fine-tuned encoder scores F1 {f1} on {held_out} held-out articles."
+description: "Write a CRediT statement (who did what on a paper) together with your co-authors in the browser, and export it as journal XML (JATS4R) or a heatmap. Beside it, a Python tool reads the roles from open-access papers. Its trained model scores {f1} out of one at naming each author's roles, on {held_out} papers it never saw in training."
 repo: https://github.com/simonvanlierde/credit-matrix
 demo: https://credit.duinlab.nl
 kind: web app

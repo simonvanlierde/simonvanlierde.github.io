@@ -40,7 +40,7 @@ test("a card's description has its figures filled in", () => {
   const jsonvet = nodes.find((n) => n["@id"] === "https://simonvanlierde.com/#project-jsonvet");
   assert.equal(
     jsonvet?.description,
-    "A Rust linter for six JSON dialects, from strict JSON to JSON5, that reports syntax errors, duplicate keys and schema errors by line and column. I rewrote it from Python and release it on PyPI and crates.io. It matched the Python version on all 40,228 file-by-file comparisons, and checks a large JSON5 file 1,395 times faster.",
+    "A checker for six kinds of JSON, from strict JSON to JSON5. It reports syntax errors, duplicate keys and data that breaks the file's schema (the rules for what it may hold), with the line and column. I rewrote it from Python in Rust and publish it on PyPI and crates.io. It gave the same result as the Python version in all 40,228 side-by-side comparisons, and checks a large JSON5 file 1,395 times faster.",
   );
 });
 

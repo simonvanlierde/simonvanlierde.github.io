@@ -1,6 +1,6 @@
 ---
 title: msc-thesis-ie
-description: "My MSc Industrial Ecology thesis (Leiden / TU Delft), now a Snakemake pipeline: how much cooling The Hague's buildings need and the life-cycle impact of that cooling, worked out for {buildings} buildings from the Dutch building register (BAG), an hourly heat-balance model and LCA. Offices have {office_area} of the floor area but cause {office_ghg} of the cooling emissions."
+description: "My MSc Industrial Ecology thesis (Leiden / TU Delft), now rebuilt as a Snakemake pipeline. It works out how much cooling The Hague's buildings need and the life-cycle impact of that cooling, for {buildings} buildings. It combines the Dutch building register (BAG), an hourly model of each building's heat gains and losses, and LCA. Offices have {office_area} of the floor area but cause {office_ghg} of the cooling emissions."
 repo: https://github.com/simonvanlierde/msc-thesis-ie
 demo: https://simonvanlierde.com/msc-thesis-ie
 kind: thesis + dashboard

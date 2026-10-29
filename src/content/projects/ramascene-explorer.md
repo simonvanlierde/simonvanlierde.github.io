@@ -1,6 +1,6 @@
 ---
 title: ramascene-explorer
-description: "A map of where a country's consumption causes greenhouse-gas emissions, jobs and metal-ore extraction, split by {sections} industry sections, over a baseline and {runs} precomputed RaMa-Scene scenarios on EXIOBASE {base_year}. The browser fetches only the parts of a {parquet_size} MB Parquet file it needs, about {first_load} MB on first load. A separate check scores one product in Brightway, pymrio, pycirk and numpy, and all of them give the engine's footprint. None of it is a forecast."
+description: "A map of where a country's consumption causes greenhouse-gas emissions, jobs and metal-ore extraction, split into {sections} industry sections. It shows a baseline and {runs} RaMa-Scene scenarios, worked out in advance on EXIOBASE {base_year}. The page downloads only the data it shows: about {first_load} MB at first, out of a {parquet_size} MB file. A separate check works out one product's footprint in Brightway, pymrio, pycirk and numpy, and each gives the same answer as the map. None of it is a forecast."
 repo: https://github.com/simonvanlierde/ramascene-explorer
 demo: https://simonvanlierde.com/ramascene-explorer/
 kind: interactive map

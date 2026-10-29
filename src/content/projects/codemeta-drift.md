@@ -1,6 +1,6 @@
 ---
 title: codemeta-drift
-description: "Finds where the files of the CodeMeta research-software metadata standard contradict each other: its property list, examples and {crosswalks} crosswalks to other formats. On CodeMeta's main branch it caught all {crosswalks} crosswalks still listing a property the standard had dropped."
+description: "CodeMeta is a standard for describing research software. This tool finds where its own files disagree: the list of fields, the examples, and the {crosswalks} crosswalks that map its fields to other formats. In CodeMeta's latest development version it found all {crosswalks} crosswalks still listing a field the standard had dropped."
 repo: https://github.com/simonvanlierde/codemeta-drift
 kind: consistency checker
 tags:

@@ -1,6 +1,6 @@
 ---
 title: brightway-benchmarks
-description: "Times the everyday calculations of the Brightway LCA framework across its releases and checks every score against an independent reference, on synthetic databases shaped like ecoinvent that anyone can rerun. It caught bw_timex 1.3.0 making the time-explicit LCI about {timex} times slower."
+description: "Measures how fast each release of the Brightway LCA framework runs everyday calculations, and checks every result against an independent calculation. It runs on made-up databases built like ecoinvent, so anyone can rerun it. It caught bw_timex 1.3.0 taking about {timex} times longer to build the time-explicit inventory."
 repo: https://github.com/simonvanlierde/brightway-benchmarks
 kind: benchmark suite
 tags:
