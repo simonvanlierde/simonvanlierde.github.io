@@ -1,0 +1,26 @@
+name: Bug report
+description: A page that is broken, wrong or hard to use
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Report a vulnerability as SECURITY.md says, not here.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, and what you saw instead.
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The address of the page.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      description: For example Firefox 145 on Windows, or Safari on an iPhone, and any assistive technology.
