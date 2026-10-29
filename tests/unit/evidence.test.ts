@@ -39,13 +39,14 @@ test("prGroups names the branch of PRs merged outside the default branch", () =>
 test("evidenceDrift flags unlisted merged PRs, listed PRs not merged and a stale snapshot", () => {
   const report = evidenceDrift({
     curated: [{ name: "x", repo: "a/b", what: "", prs: [1, 2] }],
-    leftOut: ["a/list#9"],
-    merged: [pr("a/b", 1), pr("a/new", 5), pr("a/list", 9)],
+    leftOut: ["a/list#9", "A/Hobby"],
+    merged: [pr("a/b", 1), pr("a/new", 5), pr("a/list", 9), pr("a/list", 10), pr("a/hobby", 3)],
     fetchedAt: "2026-09-01",
     today: "2026-10-29",
   });
   assert.match(report, /merged \[a\/new#5\]\(https:\/\/github\.com\/a\/new\/pull\/5\)/);
-  assert.doesNotMatch(report, /a\/list#9|a\/b#1\b/);
+  assert.match(report, /merged \[a\/list#10\]/);
+  assert.doesNotMatch(report, /a\/list#9|a\/b#1\b|a\/hobby/);
   assert.match(report, /listed `a\/b#2` is not among the merged/);
   assert.match(report, /was last fetched on 2026-09-01, 58 days ago/);
   assert.match(

@@ -61,7 +61,7 @@ Each pull request also gets a preview. Once CI passes, its `preview` job uploads
 
 `check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted, while `stats.json` was last fetched more than 21 days ago, or while a pinned repo on the GitHub profile is archived or has no card on this site (card means a `repo:` URL in `src/content/projects`). To skip a repo, list it in `.github/drift-ignore`.
 
-The same issue lists what `scripts/evidence-drift.mjs` finds in `upstream.json`: a merged PR that is neither in `src/data/upstream.ts` nor in its `leftOut` list, a listed PR the search no longer finds merged, and a `fetched_at` more than 21 days old.
+The same issue lists what `scripts/evidence-drift.mjs` finds in `upstream.json`: a merged PR that is neither in `src/data/upstream.ts` nor in its `leftOut` list (a PR as `owner/repo#n`, or a whole repo as `owner/repo`), a listed PR the search no longer finds merged, and a `fetched_at` more than 21 days old.
 
 Renovate opens one PR a month for minor and patch updates and merges it once CI passes, which triggers a deploy. Major updates get their own PRs and wait for me to merge them.
 

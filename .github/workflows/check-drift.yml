@@ -45,7 +45,7 @@ jobs:
           fi
           body="$report
           Repos to leave off both pages go in \`.github/drift-ignore\`, one name per line.
-          Merged PRs to leave off go in \`leftOut\` in \`src/data/upstream.ts\`."
+          Merged PRs or whole repos to leave off go in \`leftOut\` in \`src/data/upstream.ts\`."
           if [ -n "$issue" ]; then
             gh issue edit "$issue" --body "$body"
           else

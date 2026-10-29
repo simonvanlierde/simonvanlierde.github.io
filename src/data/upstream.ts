@@ -6,8 +6,16 @@
 // a merged PR that is neither here nor in `leftOut`.
 import merged from "./upstream.json" with { type: "json" };
 
-/** Merged PRs kept off on purpose: list entries for my own projects or employers. */
-export const leftOut = ["helenahartmann/awesome-PhD#51", "pogopaule/awesome-sustainability-jobs#21"];
+/**
+ * Merged PRs kept off on purpose: `owner/repo#n` for one PR (list entries for my own projects or
+ * employers), `owner/repo` for every PR in a repo I contribute to out of personal interest.
+ */
+export const leftOut = [
+  "ASSERT-KTH/awesome-open-science-software#28",
+  "helenahartmann/awesome-PhD#51",
+  "open-wanderer/wanderer",
+  "pogopaule/awesome-sustainability-jobs#21",
+];
 
 export interface UpstreamProject {
   name: string;
@@ -48,6 +56,12 @@ export const upstream: UpstreamProject[] = [
     prs: [198],
   },
   {
+    name: "bw_timex",
+    repo: "brightway-lca/bw_timex",
+    what: "made building the time-explicit matrices 3 to 4× faster, with identical matrices and scores",
+    prs: [244],
+  },
+  {
     name: "premise",
     repo: "polca/premise",
     what: "fixed two bugs in how external scenarios apply efficiency changes, one of which scaled flows they were meant to leave alone",
@@ -58,6 +72,12 @@ export const upstream: UpstreamProject[] = [
     repo: "LCA-ActivityBrowser/activity-browser",
     what: "kept parameter amounts editable, loaded scenario files with empty keys, and kept a Monte Carlo seed of 0",
     prs: [1743, 1744],
+  },
+  {
+    name: "SALib",
+    repo: "SALib/SALib",
+    what: "let ProblemSpec take samples and results as plain lists, and gave a clear error for anything that is not numbers",
+    prs: [700],
   },
   {
     name: "Brightway (bw2data)",
@@ -88,6 +108,12 @@ export const upstream: UpstreamProject[] = [
     repo: "pyOpenSci/python-package-guide",
     what: "updated the tutorials for project URL labels and PEP 735 dependency groups, and fixed a version pin that does not exist",
     prs: [823, 824, 827],
+  },
+  {
+    name: "NLeSC Python template",
+    repo: "NLeSC/python-template",
+    what: "trimmed the keywords a new package gets and dropped empty ones, and made tox run the generated package's tests",
+    prs: [715, 716],
   },
   {
     name: "wanderer",

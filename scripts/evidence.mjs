@@ -46,7 +46,8 @@ export const maxFetchAgeDays = 21;
 
 /**
  * Markdown for the drift issue.
- * - curated: src/data/upstream.ts `upstream`; leftOut: its "owner/repo#n" list of PRs kept off on purpose.
+ * - curated: src/data/upstream.ts `upstream`; leftOut: its list of PRs (`owner/repo#n`) and whole repos
+ *   (`owner/repo`) kept off on purpose.
  * - merged: upstream.json's PRs; fetchedAt: its fetched_at (undefined when missing); today: YYYY-MM-DD.
  */
 export function evidenceDrift({ curated, leftOut, merged, fetchedAt, today }) {
@@ -58,7 +59,7 @@ export function evidenceDrift({ curated, leftOut, merged, fetchedAt, today }) {
 
   for (const pr of merged) {
     const k = key(pr.repo, pr.number);
-    if (!listed.has(k) && !skipped.has(k)) {
+    if (!listed.has(k) && !skipped.has(k) && !skipped.has(pr.repo.toLowerCase())) {
       lines.push(`- merged [${pr.repo}#${pr.number}](https://github.com/${pr.repo}/pull/${pr.number}) is not listed`);
     }
   }
