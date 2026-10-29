@@ -35,6 +35,10 @@ Every pull request and push to `main` runs `pnpm check` and `pnpm test:e2e`.
 
 ## Licence and credits
 
-MIT, see [LICENSE](LICENSE). Display and data lettering use a vendored
-[osifont](https://github.com/hikikomori82/osifont) subset (ISO 3098, LGPL+FE), see
-[public/fonts/osifont-LICENSE.txt](public/fonts/osifont-LICENSE.txt).
+MIT, see [LICENSE](LICENSE); [REUSE.toml](REUSE.toml) gives each file's license. Display and
+data lettering use a vendored [osifont](https://github.com/hikikomori82/osifont) subset
+(ISO 3098, LGPL+FE), see [public/fonts/osifont-LICENSE.txt](public/fonts/osifont-LICENSE.txt).
+The Code of Conduct is the Contributor Covenant (CC-BY-SA-4.0).
+
+To report a bug, see [CONTRIBUTING](.github/CONTRIBUTING.md); for a vulnerability,
+[SECURITY](.github/SECURITY.md).

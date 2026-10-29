@@ -4,6 +4,10 @@ pre-commit:
       glob: "*.{js,jsx,ts,tsx,mjs,cjs,json,jsonc,astro,css}"
       run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
+    reuse:
+      # Every file has a copyright and license (REUSE.toml). NOTE: the version is pinned
+      # here by hand; Renovate doesn't read lefthook.yml.
+      run: uvx --quiet reuse@6.2.0 lint --quiet
 
 pre-push:
   commands:
