@@ -73,6 +73,10 @@ export function relatedCards(cards: { id: string; data: { title: string; uses: s
     for (const id of card.data.uses) {
       const target = byId.get(id);
       if (!target) throw new Error(`${card.id}: uses "${id}" is not a project card`);
+      if (id === card.id) throw new Error(`${card.id}: a card cannot use itself`);
+      if (card.data.uses.indexOf(id) !== card.data.uses.lastIndexOf(id)) {
+        throw new Error(`${card.id}: uses "${id}" twice`);
+      }
       related.get(card.id)?.uses.push(target);
       related.get(id)?.usedBy.push({ id: card.id, title: card.data.title });
     }

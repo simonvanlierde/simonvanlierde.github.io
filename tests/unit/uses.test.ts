@@ -16,3 +16,8 @@ test("used by is derived from the other cards' uses", () => {
 test("using an unknown card fails", () => {
   assert.throws(() => relatedCards([card("app", ["lnit"])]), /app.*"lnit"/);
 });
+
+test("a card using itself or the same card twice fails", () => {
+  assert.throws(() => relatedCards([card("app", ["app"])]), /app.*itself/);
+  assert.throws(() => relatedCards([card("app", ["lint", "lint"]), card("lint")]), /app.*"lint".*twice/);
+});

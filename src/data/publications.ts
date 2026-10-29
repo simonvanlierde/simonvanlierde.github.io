@@ -17,11 +17,17 @@ export function apaAuthors(byline: string): string[] {
   const names: string[] = [];
   for (let i = 0; i < parts.length; i += 2) {
     const [surname, initials] = [parts[i], parts[i + 1]];
-    if (!initials || !/^[A-Z][A-Z.\s-]*$/.test(initials)) {
+    // "..." is APA 7's elision of authors 20 onwards: the list is not complete.
+    if (!initials || surname.startsWith("...") || !/^\p{Lu}[\p{Lu}.\s-]*$/u.test(initials)) {
       throw new Error(`"${byline}" is not an APA byline (Surname, I. I., & Surname, I.)`);
     }
-    // APA ends each initial with a period; an export may drop the last one.
-    names.push(`${initials.replace(/([A-Z])(?![.\w])/g, "$1.")} ${surname}`);
+    // APA ends each initial with a period; an export may drop one or run them together.
+    const dotted = initials
+      .replace(/(\p{Lu})(?!\.)/gu, "$1. ")
+      .replace(/\s+/g, " ")
+      .replace(/\. -/g, ".-")
+      .trim();
+    names.push(`${dotted} ${surname}`);
   }
   return names;
 }

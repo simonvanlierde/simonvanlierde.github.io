@@ -784,7 +784,8 @@ html {
     letter-spacing: 0.04em;
   }
 
-  .tag-list {
+  /* Scoped to the work rows: the CV's publication status stays a boxed tag. */
+  .bom-row .tag-list {
     display: grid;
     gap: 0;
     justify-items: start;
@@ -793,7 +794,7 @@ html {
     line-height: 1.55;
   }
 
-  .tag {
+  .bom-row .tag {
     border: 0;
     padding: 0;
   }
