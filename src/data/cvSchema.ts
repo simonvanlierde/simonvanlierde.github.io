@@ -24,6 +24,7 @@ export const CvSchema = z.object({
       leiden: z.url(),
       // Linked data only (schema.org sameAs), not shown on the page.
       openalex: z.url().optional(),
+      scholar: z.url().optional(),
     }),
   }),
   profile: z.string(),

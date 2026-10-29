@@ -6,7 +6,7 @@ import { listablePublications, type Publication } from "./publications.ts";
 // the visible page does not.
 
 /** Profiles that identify the same person elsewhere. */
-const sameAs = [...profiles.map((p) => p.href), cv.basics.links.openalex].filter(Boolean);
+const sameAs = [...profiles.map((p) => p.href), cv.basics.links.openalex, cv.basics.links.scholar].filter(Boolean);
 
 // shortcut: first word is the given name, which holds for "Simon van Lierde"; split
 // it in the export if a name ever needs more.

@@ -10,6 +10,7 @@ basics:
     orcid: https://orcid.org/0009-0006-6953-909X
     leiden: https://www.universiteitleiden.nl/en/staffmembers/simon-van-lierde
     openalex: https://openalex.org/authors/A5140578533
+    scholar: https://scholar.google.com/citations?user=N4BJ_GcAAAAJ
 render:
   contact: [email, location, github, linkedin, website]
   font: nunito
