@@ -1,23 +1,31 @@
 ---
 title: msc-thesis-ie
-description: "My MSc Industrial Ecology thesis (Leiden / TU Delft): how much cooling The Hague's buildings need, and the life-cycle impact of that cooling, worked out building by building. It joins the Dutch building register (BAG) with an hourly heat-balance model and life-cycle assessment. A dashboard maps the demand across the city's {neighbourhoods} neighbourhoods."
+description: "In The Hague, offices have {office_area} of the floor area but cause {office_ghg} of the greenhouse-gas emissions from cooling. I rebuilt the model from my MSc Industrial Ecology thesis (Leiden / TU Delft) as a Snakemake pipeline: an hourly heat balance for {buildings} buildings from the Dutch building register (BAG), followed by LCA."
 repo: https://github.com/simonvanlierde/msc-thesis-ie
 demo: https://simonvanlierde.com/msc-thesis-ie
 kind: thesis + dashboard
 tags:
   - Python
+  - Snakemake
   - LCA
   - Geospatial
-  - TypeScript
 links:
   - label: Thesis manuscript
     url: https://repository.tudelft.nl/record/uuid:32222863-536f-464a-b8c6-6c2283a7249a
   - label: Zenodo dataset
-    url: https://zenodo.org/records/10277791
+    url: https://doi.org/10.5281/zenodo.8344580
 order: 10
 figures:
-  neighbourhoods:
-    value: "112"
+  buildings:
+    value: "59,381"
     source: https://github.com/simonvanlierde/msc-thesis-ie/blob/main/dashboard/README.md
-    as_of: "2026-10-13"
+    as_of: "2026-10-28"
+  office_area:
+    value: "11%"
+    source: https://github.com/simonvanlierde/msc-thesis-ie#key-findings
+    as_of: "2026-10-28"
+  office_ghg:
+    value: "79%"
+    source: https://github.com/simonvanlierde/msc-thesis-ie#key-findings
+    as_of: "2026-10-28"
 ---
