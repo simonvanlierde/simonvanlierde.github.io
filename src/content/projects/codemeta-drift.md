@@ -6,7 +6,7 @@ kind: consistency checker
 tags:
   - Python
   - CodeMeta
-  - metadata
+  - FAIR
 order: 8
 figures:
   crosswalks:

@@ -1,6 +1,6 @@
 ---
 title: monitoring
-description: "Shared monitoring for CML's research platforms. Logs, traces, and metrics sit on one host and link to each other, so you can follow a failing research service from one place."
+description: "Central monitoring for CML's research software: logs, traces and metrics come in through one OpenTelemetry gateway and link to each other in Grafana. An alert fires when a project stops reporting. R9lab reports to it today."
 repo: https://github.com/CMLPlatform/monitoring
 kind: observability stack
 tags:

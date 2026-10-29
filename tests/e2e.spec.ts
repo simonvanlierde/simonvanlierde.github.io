@@ -372,7 +372,9 @@ const names = [
   "JATS4R",
   "AI4IE",
   "SHA-256",
-  "1.4.1",
+  "F1",
+  "R9lab",
+  "bw_timex 1.3.0",
   // The sentence lists the three itself.
   "written three times: in bash, Python and Rust",
   "All three",
