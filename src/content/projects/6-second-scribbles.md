@@ -12,7 +12,7 @@ links:
   - label: Load test
     url: https://github.com/simonvanlierde/6-second-scribbles/blob/main/docs/capacity.md
 category: personal
-builtWith:
+uses:
   - jsonvet
 order: 1
 figures:

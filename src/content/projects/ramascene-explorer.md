@@ -12,7 +12,7 @@ tags:
 links:
   - label: Zenodo record
     url: https://doi.org/10.5281/zenodo.23461260
-builtWith:
+uses:
   - jsonvet
 order: 4
 figures:

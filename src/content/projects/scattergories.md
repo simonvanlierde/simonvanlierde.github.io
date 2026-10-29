@@ -9,7 +9,7 @@ tags:
   - i18next
   - PWA
 category: personal
-builtWith:
+uses:
   - project-templates
   - jsonvet
 order: 5

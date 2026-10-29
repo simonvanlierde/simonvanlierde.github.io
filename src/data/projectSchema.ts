@@ -60,18 +60,18 @@ export interface CardLink {
 }
 
 /**
- * Each card's `builtWith` cards and, the other way round, the cards built with
- * it ("used by"). Throws on a `builtWith` id that is not a card, so a typo
+ * Each card's `uses` cards and, the other way round, the cards that use
+ * it ("used by"). Throws on a `uses` id that is not a card, so a typo
  * fails the build instead of shipping a dead anchor.
  */
-export function relatedCards(cards: { id: string; data: { title: string; builtWith: string[] } }[]) {
+export function relatedCards(cards: { id: string; data: { title: string; uses: string[] } }[]) {
   const byId = new Map(cards.map((c) => [c.id, { id: c.id, title: c.data.title }]));
-  const related = new Map(cards.map((c) => [c.id, { builtWith: [] as CardLink[], usedBy: [] as CardLink[] }]));
+  const related = new Map(cards.map((c) => [c.id, { uses: [] as CardLink[], usedBy: [] as CardLink[] }]));
   for (const card of cards) {
-    for (const id of card.data.builtWith) {
+    for (const id of card.data.uses) {
       const target = byId.get(id);
-      if (!target) throw new Error(`${card.id}: builtWith "${id}" is not a project card`);
-      related.get(card.id)?.builtWith.push(target);
+      if (!target) throw new Error(`${card.id}: uses "${id}" is not a project card`);
+      related.get(card.id)?.uses.push(target);
       related.get(id)?.usedBy.push({ id: card.id, title: card.data.title });
     }
   }

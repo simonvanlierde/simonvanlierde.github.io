@@ -24,9 +24,9 @@ const projects = defineCollection({
     // Card group: academic or professional ("work"), a side project ("personal"), or a
     // smaller piece shown as one line under the work rows ("minor").
     category: z.enum(["work", "personal", "minor"]).default("work"),
-    // Ids (file names) of other cards this project is built with. Each target card
+    // Ids (file names) of other cards this project uses (a tool, a template). Each target card
     // then lists this one under "Used by"; an unknown id fails the build.
-    builtWith: z.array(z.string()).default([]),
+    uses: z.array(z.string()).default([]),
     // Lowest first, within the category.
     order: z.number().default(0),
   }),

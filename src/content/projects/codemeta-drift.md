@@ -7,7 +7,7 @@ tags:
   - Python
   - CodeMeta
   - metadata
-builtWith:
+uses:
   - project-templates
 order: 8
 figures:

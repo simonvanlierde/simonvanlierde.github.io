@@ -10,7 +10,7 @@ tags:
 links:
   - label: Benchmark history
     url: https://simonvanlierde.com/brightway-benchmarks/
-builtWith:
+uses:
   - project-templates
 order: 2
 ---

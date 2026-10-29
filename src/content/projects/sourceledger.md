@@ -11,7 +11,7 @@ tags:
 links:
   - label: Zenodo record
     url: https://doi.org/10.5281/zenodo.23460694
-builtWith:
+uses:
   - project-templates
 order: 5
 ---

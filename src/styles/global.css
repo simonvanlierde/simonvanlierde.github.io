@@ -714,16 +714,42 @@ html {
   margin-block: -0.3rem;
 }
 
-/* "Built with" / "Used by": an in-page cross-reference, lettered like a label. */
-.bom-row__rel {
-  align-items: baseline;
+/* "Uses" / "Used by": in-page cross-references, set as chips like the tags
+   but in the accent colour, because these are links and tags are not. */
+.ref-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-m);
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
 }
 
-.bom-row__rel-label {
-  font-family: var(--font-draft);
+.ref-list__group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs) var(--space-xs);
+}
+
+.ref-list__label {
   color: var(--text-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* 24px tall at least: the WCAG 2.2 AA target size. */
+.ref {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0.1em 0.55em;
+  border: var(--border-width) solid currentColor;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.ref:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .tag-list {

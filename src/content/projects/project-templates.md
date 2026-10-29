@@ -7,7 +7,7 @@ tags:
   - Copier
   - GitHub Actions
   - just
-builtWith:
+uses:
   - jsonvet
   - sourceledger
 order: 7

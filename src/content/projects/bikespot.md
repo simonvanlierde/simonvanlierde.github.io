@@ -9,7 +9,7 @@ tags:
   - TypeScript
   - PWA
 category: personal
-builtWith:
+uses:
   - project-templates
   - jsonvet
 order: 4
