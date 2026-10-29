@@ -14,6 +14,8 @@ links:
     url: https://simonvanlierde.com/brightway-benchmarks/
   - label: Zenodo record
     url: https://doi.org/10.5281/zenodo.23727602
+uses:
+  - project-templates
 order: 2
 figures:
   slowdown:

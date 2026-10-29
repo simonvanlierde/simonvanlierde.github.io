@@ -12,6 +12,8 @@ links:
   - label: Load test
     url: https://github.com/simonvanlierde/6-second-scribbles/blob/main/docs/capacity.md
 category: personal
+uses:
+  - jsonvet
 order: 1
 figures:
   rooms:

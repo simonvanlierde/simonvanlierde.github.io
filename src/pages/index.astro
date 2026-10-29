@@ -10,7 +10,7 @@ import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import { cv, intro } from "../data/cv.ts";
 import { participants, statsSource } from "../data/figures.ts";
-import { figureParts } from "../data/projectSchema.ts";
+import { figureParts, relatedCards } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
 import { prGroups, upstream } from "../data/upstream.ts";
@@ -42,6 +42,14 @@ const allProjects = (await getCollection("projects")).sort((a, b) => a.data.orde
 const workProjects = allProjects.filter((p) => p.data.category === "work");
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
 const minorProjects = allProjects.filter((p) => p.data.category === "minor");
+const related = relatedCards(allProjects);
+// R9lab is written out below, not a content card, so its links are added by hand.
+const r9labUses = ["monitoring", "jsonvet"].map((id) => {
+  related.get(id)?.usedBy.unshift({ id: "relab", title: "R9lab", href: "#relab" });
+  const card = allProjects.find((p) => p.id === id);
+  if (!card) throw new Error(`R9lab uses "${id}", which is not a project card`);
+  return card;
+});
 
 const name = basics.name;
 const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
@@ -112,29 +120,50 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
               </li>
             </ul>
 
-            <section class="notes" aria-labelledby="notes-heading">
-              <h4 id="notes-heading" class="notes__heading">
-                Notes A–D<span class="notes__heading-aside"> · running totals</span>
-              </h4>
-              <ol class="notes__list">
-                {
-                  notes.map((n) => (
-                    <li>
-                      <span class="datum" aria-hidden="true">
-                        {n.ref}
-                      </span>
-                      <span class="notes__value draft">
-                        <Figure {...n.figure} />
-                      </span>
-                      <span class="notes__label">{n.label}</span>
-                    </li>
-                  ))
-                }
-              </ol>
-              <p class="notes__foot draft">
-                Products, components and images as counted <time datetime={counts.as_of}>{asOfLabel}</time>; participants at the two pilot workshops.
-              </p>
-            </section>
+            <div class="r9lab-row__aside">
+              <section class="notes" aria-labelledby="notes-heading">
+                <h4 id="notes-heading" class="notes__heading">
+                  Notes A–D<span class="notes__heading-aside"> · running totals</span>
+                </h4>
+                <ol class="notes__list">
+                  {
+                    notes.map((n) => (
+                      <li>
+                        <span class="datum" aria-hidden="true">
+                          {n.ref}
+                        </span>
+                        <span class="notes__value draft">
+                          <Figure {...n.figure} />
+                        </span>
+                        <span class="notes__label">{n.label}</span>
+                      </li>
+                    ))
+                  }
+                </ol>
+                <p class="notes__foot draft">
+                  Products, components and images as counted <time datetime={counts.as_of}>{asOfLabel}</time>; participants at the two pilot workshops.
+                </p>
+              </section>
+
+              <div class="bom-row__spec">
+                <p class="ref-list">
+                  <span class="ref-list__group">
+                    <span class="ref-list__label">Uses</span>
+                    {r9labUses.map((c) => (
+                      <a class="ref" href={`#project-${c.id}`}>
+                        {c.data.title}
+                      </a>
+                    ))}
+                  </span>
+                </p>
+                <ul class="tag-list" aria-label="Technologies">
+                  <li class="tag">FastAPI</li>
+                  <li class="tag">PostgreSQL</li>
+                  <li class="tag">Expo</li>
+                  <li class="tag">React Native</li>
+                </ul>
+              </div>
+            </div>
 
             <div class="r9lab__chart">
               <DisassemblyChart caption="Fig. 2: R9lab running totals" client:visible />
@@ -145,6 +174,8 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
         {
           workProjects.map((p) => (
             <ProjectCard
+              id={p.id}
+              related={related.get(p.id)}
               title={p.data.title}
               description={p.data.description}
               repo={p.data.repo}
@@ -162,7 +193,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
       <ul class="upstream-list minor-list">
         {
           minorProjects.map((p) => (
-            <li>
+            <li id={`project-${p.id}`}>
               <a href={p.data.repo}>{p.data.title}</a>: {figureParts(p.data.description, p.data.figures).map((part) =>
                 typeof part === "string" ? part : <Figure {...part} />,
               )}
@@ -221,6 +252,8 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
           {
             personalProjects.map((p) => (
               <ProjectCard
+                id={p.id}
+                related={related.get(p.id)}
                 title={p.data.title}
                 description={p.data.description}
                 repo={p.data.repo}
@@ -338,6 +371,31 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
     font-size: var(--step--1);
     letter-spacing: 0.04em;
     color: var(--text-muted);
+  }
+
+  .r9lab-row__aside > * + * {
+    margin-top: var(--space-m);
+  }
+
+  /* In the rail (see global.css), the notes become one column of figures. */
+  @media (min-width: 60rem) {
+    .notes {
+      margin-top: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .notes__heading-aside {
+      display: none;
+    }
+
+    .notes__list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .notes__label {
+      font-size: 0.8rem;
+    }
   }
 
   /* R9lab's title outranks the repo names below it. */

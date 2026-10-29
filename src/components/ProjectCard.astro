@@ -1,10 +1,12 @@
 ---
-import { type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
+import { type CardLink, type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
 import Figure from "./Figure.astro";
 
 // One parts-list row. Only the title links the repo, so the description
 // stays selectable.
 interface Props {
+  id: string;
+  related?: { uses: CardLink[]; usedBy: CardLink[] };
   title: string;
   description: string;
   repo: string;
@@ -15,10 +17,14 @@ interface Props {
   figures?: Record<string, FigureData>;
 }
 
-const { title, description, repo, kind, demo, tags = [], links = [], figures } = Astro.props;
+const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures } = Astro.props;
+const relations = [
+  { label: "Uses", cards: related?.uses ?? [] },
+  { label: "Used by", cards: related?.usedBy ?? [] },
+].filter((r) => r.cards.length > 0);
 ---
 
-<article class="bom-row">
+<article class="bom-row bom-row--part" id={`project-${id}`}>
   <p class="bom-row__pos">{kind}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
@@ -31,7 +37,6 @@ const { title, description, repo, kind, demo, tags = [], links = [], figures } =
         )
       }
     </p>
-
 
     {
       /* No "Source" link: the title already links the repo. Each aria-label
@@ -53,12 +58,35 @@ const { title, description, repo, kind, demo, tags = [], links = [], figures } =
     }
 
     {
-      tags.length > 0 && (
-        <ul class="tag-list" aria-label="Technologies">
-          {tags.map((t) => (
-            <li class="tag">{t}</li>
-          ))}
-        </ul>
+      (relations.length > 0 || tags.length > 0) && (
+      <div class="bom-row__spec">
+        {
+          relations.length > 0 && (
+            <p class="ref-list">
+              {relations.map((r) => (
+                <span class="ref-list__group">
+                  <span class="ref-list__label">{r.label}</span>
+                  {r.cards.map((c) => (
+                    <a class="ref" href={c.href ?? `#project-${c.id}`}>
+                      {c.title}
+                    </a>
+                  ))}
+                </span>
+              ))}
+            </p>
+          )
+        }
+
+        {
+          tags.length > 0 && (
+            <ul class="tag-list" aria-label="Technologies">
+              {tags.map((t) => (
+                <li class="tag">{t}</li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
       )
     }
   </div>

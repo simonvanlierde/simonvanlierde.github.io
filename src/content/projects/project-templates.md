@@ -11,5 +11,8 @@ tags:
 links:
   - label: Zenodo record
     url: https://doi.org/10.5281/zenodo.23701980
+uses:
+  - jsonvet
+  - sourceledger
 order: 7
 ---

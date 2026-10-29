@@ -7,6 +7,8 @@ tags:
   - Python
   - CodeMeta
   - FAIR
+uses:
+  - project-templates
 order: 8
 figures:
   crosswalks:
