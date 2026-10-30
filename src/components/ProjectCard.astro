@@ -1,4 +1,7 @@
 ---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import cardImages from "../data/cardImages.json" with { type: "json" };
 import { type CardLink, type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
 import Figure from "./Figure.astro";
 
@@ -15,21 +18,41 @@ interface Props {
   tags?: string[];
   links?: { label: string; url: string }[];
   figures?: Record<string, FigureData>;
+  featured?: boolean;
 }
 
-const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures } = Astro.props;
+const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures, featured } = Astro.props;
 const relations = [
   { label: "Uses", cards: related?.uses ?? [] },
   { label: "Used by", cards: related?.usedBy ?? [] },
 ].filter((r) => r.cards.length > 0);
+
+// A featured card shows a close-up of its demo, cut by `pnpm fetch:cards` (or made by hand; see
+// docs/architecture.md). Without one it is a plain row like the rest.
+const assets = import.meta.glob<{ default: ImageMetadata }>("../assets/cards/*", { eager: true });
+const image = featured ? (cardImages as Record<string, { file: string }>)[id] : undefined;
+const imageSrc = image && assets[`../assets/cards/${image.file}`]?.default;
+if (image && !imageSrc) throw new Error(`${id}: src/assets/cards/${image.file} is missing; run pnpm fetch:cards`);
+const shot = demo && imageSrc;
 ---
 
-<article class="bom-row bom-row--part" id={`project-${id}`}>
+<article class={shot ? "bom-row bom-row--feature" : "bom-row bom-row--part"} id={`project-${id}`}>
   <p class="bom-row__pos">{kind}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
       <a href={repo}>{title}</a>
     </h3>
+    {
+      /* Under the name when stacked, in its own column when wide. A shortcut
+         to the demo for pointer users, hidden from the keyboard and screen
+         readers: "Live demo" below is the same link, with a name. The files
+         are 480px, twice the 15rem it shows at. */
+      shot && (
+        <a class="bom-row__shot" href={demo} tabindex="-1" aria-hidden="true">
+          <Image src={imageSrc} alt="" width={240} densities={[1, 2]} />
+        </a>
+      )
+    }
     <p class="bom-row__desc">
       {
         figureParts(description, figures).map((part) =>
@@ -44,7 +67,7 @@ const relations = [
       (demo || links.length > 0) && (
         <p class="bom-row__links">
           {demo && (
-            <a href={demo} aria-label={`Live demo of ${title}`}>
+            <a class="bom-row__demo" href={demo} aria-label={`Live demo of ${title}`}>
               Live demo
             </a>
           )}

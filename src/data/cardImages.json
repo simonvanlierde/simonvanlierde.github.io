@@ -1,0 +1,18 @@
+{
+  "credit-matrix": {
+    "file": "credit-matrix.png",
+    "manual": true,
+    "source": "https://credit.duinlab.nl",
+    "fetched_at": "2026-10-30"
+  },
+  "cv-ie-taxonomy": {
+    "file": "cv-ie-taxonomy.png",
+    "source": "https://simonvanlierde.com/cv-ie-taxonomy/screenshot.png",
+    "fetched_at": "2026-10-30"
+  },
+  "ramascene-explorer": {
+    "file": "ramascene-explorer.png",
+    "source": "https://simonvanlierde.com/ramascene-explorer/og.png",
+    "fetched_at": "2026-10-30"
+  }
+}

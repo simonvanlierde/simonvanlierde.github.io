@@ -6,7 +6,15 @@ each entry sits under the date it went live. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Featured projects lead the work list after R9lab: credit-matrix, ramascene-explorer, cv-ie-taxonomy and jsonvet. Each shows a close-up of its demo beside the text, linked to the demo; jsonvet stays a text row until its demo has one.
+
 ## 2026-10-29
+
+### Added
+
+- A card for citesync, linked from the seven cards whose repos run it.
 
 ### Changed
 

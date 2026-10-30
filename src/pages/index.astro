@@ -40,7 +40,10 @@ const notes = [
 ];
 
 const allProjects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
-const workProjects = allProjects.filter((p) => p.data.category === "work");
+// Featured rows lead, after R9lab; sort is stable, so each group keeps its `order`.
+const workProjects = allProjects
+  .filter((p) => p.data.category === "work")
+  .sort((a, b) => Number(b.data.featured) - Number(a.data.featured));
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
 const minorProjects = allProjects.filter((p) => p.data.category === "minor");
 const related = relatedCards(allProjects);
@@ -185,6 +188,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
               tags={p.data.tags}
               links={p.data.links}
               figures={p.data.figures}
+              featured={p.data.featured}
             />
           ))
         }
@@ -263,6 +267,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
                 tags={p.data.tags}
                 links={p.data.links}
                 figures={p.data.figures}
+                featured={p.data.featured}
               />
             ))
           }
