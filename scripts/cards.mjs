@@ -13,10 +13,9 @@ function meta(html, property) {
 
 /**
  * A project page's social card: its og:image as an absolute URL (resolved against the page, since some pages give a
- * relative one) and its og:image:alt, or null when the page has no og:image.
+ * relative one), or null when the page has no og:image.
  */
 export function parseSocialCard(html, pageUrl) {
   const image = meta(html, "og:image");
-  if (!image) return null;
-  return { url: new URL(image, pageUrl).href, alt: meta(html, "og:image:alt") ?? "" };
+  return image ? new URL(image, pageUrl).href : null;
 }

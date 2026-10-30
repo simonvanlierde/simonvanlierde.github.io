@@ -8,7 +8,7 @@ each entry sits under the date it went live. The format is based on
 
 ### Added
 
-- Project cards whose demo has a social card show it under the text as a numbered figure (Fig. 3 to 6), dimmed slightly in the dark theme: ramascene-explorer, msc-thesis-ie, credit-matrix and cv-ie-taxonomy.
+- Featured projects lead the work list after R9lab: credit-matrix, ramascene-explorer, cv-ie-taxonomy and jsonvet. Each shows its demo's social card beside the text, linked to the demo; jsonvet stays a text row until its demo has one.
 
 ## 2026-10-29
 

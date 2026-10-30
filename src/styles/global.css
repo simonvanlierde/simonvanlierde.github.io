@@ -714,27 +714,41 @@ html {
   margin-block: -0.3rem;
 }
 
-/* The demo's social card as a numbered figure. A surface mount inside a
-   hairline keeps a near-white card apart from the paper, and steps the dark
-   ground up to a light card. */
-.bom-row__figure {
+/* A featured row's social card, above the row until the sheet is wide. A
+   surface mount inside a hairline keeps a near-white card apart from the
+   paper, and steps the dark ground up to a light card. */
+.bom-row__shot {
+  grid-column: 1 / -1;
   max-width: 24rem;
-  margin-top: var(--space-m);
+  margin-bottom: var(--space-xs);
 }
 
-.bom-row__figure img {
+.bom-row__shot img {
   width: 100%;
   height: auto;
   padding: var(--space-2xs);
   background: var(--surface);
   border: var(--border-width) solid var(--border);
+  transition:
+    border-color var(--dur-fast) ease,
+    filter var(--dur-fast) ease;
+}
+
+/* Hover answers with a line, like the rest of the sheet: hairline to frame line. */
+.bom-row__shot:hover img {
+  border-color: var(--border-strong);
 }
 
 /* Social cards are drawn for light pages: dim them a little on the
-   cyanotype so they do not glare. Dark is the default theme; print is light. */
+   cyanotype so they do not glare, and lift the dim on hover. Dark is the
+   default theme; print is light. */
 @media screen {
-  :root:not([data-theme="light"]) .bom-row__figure img {
+  :root:not([data-theme="light"]) .bom-row__shot img {
     filter: brightness(0.88);
+  }
+
+  :root:not([data-theme="light"]) .bom-row__shot:hover img {
+    filter: none;
   }
 }
 
@@ -808,8 +822,9 @@ html {
     letter-spacing: 0.04em;
   }
 
-  /* Scoped to the work rows: the CV's publication status stays a boxed tag. */
-  .bom-row .tag-list {
+  /* Scoped to the work rows: the CV's publication status stays a boxed tag,
+     and so do a feature row's tags, which sit under its text. */
+  .bom-row:where(:not(.bom-row--feature)) .tag-list {
     display: grid;
     gap: 0;
     justify-items: start;
@@ -818,7 +833,7 @@ html {
     line-height: 1.55;
   }
 
-  .bom-row .tag {
+  .bom-row:where(:not(.bom-row--feature)) .tag {
     border: 0;
     padding: 0;
   }
@@ -862,10 +877,23 @@ html {
     grid-row: 4;
   }
 
-  /* Under the cross-references, in the row that grows with the rail, so the text keeps its measure. */
-  .bom-row--part .bom-row__figure {
+  /* A feature row: the image on the left, then the stacked row beside it. The
+     text column keeps 32rem of the 54rem sheet, near 65 characters. */
+  .bom-row--feature {
+    grid-template-columns: 20rem minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  .bom-row--feature .bom-row__shot {
+    grid-row: 1 / -1;
+    grid-column: 1;
+    align-self: start;
+    margin-bottom: 0;
+  }
+
+  .bom-row--feature .bom-row__pos,
+  .bom-row--feature .bom-row__body {
     grid-column: 2;
-    grid-row: 5;
   }
 
   /* The spec wrapper no longer spaces it from the body above. */
@@ -888,7 +916,8 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bom-row__title a {
+  .bom-row__title a,
+  .bom-row__shot img {
     transition: none;
   }
 }

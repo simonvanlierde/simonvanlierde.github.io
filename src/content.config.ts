@@ -28,6 +28,8 @@ const projects = defineCollection({
     // Ids (file names) of other cards this project uses (a tool, a template). Each target card
     // then lists this one under "Used by"; an unknown id fails the build.
     uses: z.array(z.string()).default([]),
+    // A featured card leads the work list and shows its demo's social card beside the text.
+    featured: z.boolean().default(false),
     // Lowest first, within the category.
     order: z.number().default(0),
   }),

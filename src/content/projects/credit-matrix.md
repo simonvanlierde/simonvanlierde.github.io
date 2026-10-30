@@ -17,6 +17,7 @@ links:
     url: https://github.com/simonvanlierde/credit-matrix/blob/main/census/README.md
 uses:
   - citesync
+featured: true
 order: 3
 figures:
   held_out:

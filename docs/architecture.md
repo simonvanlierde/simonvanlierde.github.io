@@ -42,7 +42,7 @@ If the API is unavailable, blocked, or returns an unexpected shape, the script e
 
 The same workflow then runs `scripts/fetch-evidence.mjs` (`pnpm fetch:evidence`). It writes `src/data/upstream.json`: my merged pull requests in other people's repos, from one GitHub GraphQL search with the workflow's token, with the branch each went into and the repo's default branch. It keeps the same `as_of` and `fetched_at` dates as `stats.json`, and keeps the file as it is when the search fails. Locally, run it with `GITHUB_TOKEN` set.
 
-Last, it runs `scripts/fetch-cards.mjs` (`pnpm fetch:cards`). For each work or personal card with a demo, it copies the demo page's `og:image` to `src/assets/cards/` and records the file, the page's `og:image:alt` and the fetch date in `src/data/cardImages.json`. The card shows that image under its text; a card whose demo has no `og:image` stays text. A failed fetch keeps that card's last image.
+Last, it runs `scripts/fetch-cards.mjs` (`pnpm fetch:cards`). For each card marked `featured: true` with a demo, it copies the demo page's `og:image` to `src/assets/cards/` and records the file, its URL and the fetch date in `src/data/cardImages.json`. The featured card shows that image beside its text and leads the work list; a featured card whose demo has no `og:image` is a plain text row. A failed fetch keeps that card's last image.
 
 The ranking, grouping and wording of "Merged upstream" stay hand-kept in `src/data/upstream.ts`, which lists each project's PR numbers. The page names the branch when a PR went into one that is not the repo's default (lca_algebraic's `dev`, for example), since that work is not on the default branch yet.
 

@@ -9,6 +9,7 @@ tags:
   - TypeScript
   - SVG
   - computer vision
+featured: true
 order: 10
 figures:
   repair:

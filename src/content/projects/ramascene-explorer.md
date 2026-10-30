@@ -17,6 +17,7 @@ links:
 uses:
   - jsonvet
   - citesync
+featured: true
 order: 4
 figures:
   runs:

@@ -18,24 +18,35 @@ interface Props {
   tags?: string[];
   links?: { label: string; url: string }[];
   figures?: Record<string, FigureData>;
-  /** This card's figure number on the sheet, when it has an image. */
-  fig?: number;
+  featured?: boolean;
 }
 
-const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures, fig } = Astro.props;
+const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures, featured } = Astro.props;
 const relations = [
   { label: "Uses", cards: related?.uses ?? [] },
   { label: "Used by", cards: related?.usedBy ?? [] },
 ].filter((r) => r.cards.length > 0);
 
-// The demo's social card, copied in by `pnpm fetch:cards`; a card without one stays text.
+// A featured card leads with its demo's social card, copied in by `pnpm fetch:cards`. Without one it is a
+// plain row like the rest.
 const assets = import.meta.glob<{ default: ImageMetadata }>("../assets/cards/*", { eager: true });
-const image = (cardImages as Record<string, { file: string; alt: string }>)[id];
+const image = featured ? (cardImages as Record<string, { file: string }>)[id] : undefined;
 const imageSrc = image && assets[`../assets/cards/${image.file}`]?.default;
 if (image && !imageSrc) throw new Error(`${id}: src/assets/cards/${image.file} is missing; run pnpm fetch:cards`);
+const shot = demo && imageSrc;
 ---
 
-<article class="bom-row bom-row--part" id={`project-${id}`}>
+<article class={shot ? "bom-row bom-row--feature" : "bom-row bom-row--part"} id={`project-${id}`}>
+  {
+    /* A shortcut to the demo for pointer users, hidden from the keyboard and
+       screen readers: "Live demo" below is the same link, with a name. 2x
+       densities keep it sharp; it shows at most 24rem wide. */
+    shot && (
+      <a class="bom-row__shot" href={demo} tabindex="-1" aria-hidden="true">
+        <Image src={imageSrc} alt="" width={384} densities={[1, 2]} />
+      </a>
+    )
+  }
   <p class="bom-row__pos">{kind}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
@@ -98,18 +109,6 @@ if (image && !imageSrc) throw new Error(`${id}: src/assets/cards/${image.file} i
           )
         }
       </div>
-      )
-    }
-
-    {
-      /* Last in the row at every width. Not a link: "Live demo" above already
-         is one, and a second would repeat it for screen readers. At most 24rem
-         wide; densities ship a 2x file for sharp screens. */
-      imageSrc && (
-        <figure class="bom-row__figure">
-          <Image src={imageSrc} alt={image.alt} width={384} densities={[1, 2]} />
-          <figcaption>Fig. {fig}: {title}, live demo.</figcaption>
-        </figure>
       )
     }
   </div>

@@ -16,6 +16,7 @@ links:
     url: https://github.com/simonvanlierde/jsonvet/blob/main/docs/design.md#speed
 uses:
   - citesync
+featured: true
 order: 1
 figures:
   dialects:
