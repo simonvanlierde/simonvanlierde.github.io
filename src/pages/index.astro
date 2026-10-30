@@ -9,6 +9,7 @@ import ProjectCard from "../components/ProjectCard.astro";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
+import cardImages from "../data/cardImages.json" with { type: "json" };
 import { cv, intro } from "../data/cv.ts";
 import { participants, statsSource } from "../data/figures.ts";
 import { figureParts, relatedCards } from "../data/projectSchema.ts";
@@ -44,6 +45,10 @@ const workProjects = allProjects.filter((p) => p.data.category === "work");
 const personalProjects = allProjects.filter((p) => p.data.category === "personal");
 const minorProjects = allProjects.filter((p) => p.data.category === "minor");
 const related = relatedCards(allProjects);
+// Card images continue the sheet's figure numbers after Fig. 1 and Fig. 2, in page order.
+const cardFigures = new Map(
+  [...workProjects, ...personalProjects].filter((p) => p.id in cardImages).map((p, i) => [p.id, i + 3]),
+);
 // R9lab is written out below, not a content card, so its links are added by hand.
 const r9labUses = ["monitoring", "jsonvet"].map((id) => {
   related.get(id)?.usedBy.unshift({ id: "relab", title: "R9lab", href: "#relab" });
@@ -185,6 +190,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
               tags={p.data.tags}
               links={p.data.links}
               figures={p.data.figures}
+              fig={cardFigures.get(p.id)}
             />
           ))
         }
@@ -263,6 +269,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
                 tags={p.data.tags}
                 links={p.data.links}
                 figures={p.data.figures}
+                fig={cardFigures.get(p.id)}
               />
             ))
           }

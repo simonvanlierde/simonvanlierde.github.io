@@ -714,13 +714,28 @@ html {
   margin-block: -0.3rem;
 }
 
-/* The demo's social card, framed like a detail view on the sheet. */
-.bom-row__image {
-  display: block;
+/* The demo's social card as a numbered figure. A surface mount inside a
+   hairline keeps a near-white card apart from the paper, and steps the dark
+   ground up to a light card. */
+.bom-row__figure {
+  max-width: 24rem;
+  margin-top: var(--space-m);
+}
+
+.bom-row__figure img {
   width: 100%;
-  max-width: 16rem;
   height: auto;
+  padding: var(--space-2xs);
+  background: var(--surface);
   border: var(--border-width) solid var(--border);
+}
+
+/* Social cards are drawn for light pages: dim them a little on the
+   cyanotype so they do not glare. Dark is the default theme; print is light. */
+@media screen {
+  :root:not([data-theme="light"]) .bom-row__figure img {
+    filter: brightness(0.88);
+  }
 }
 
 /* "Uses" / "Used by": in-page cross-references on one line. Plain underlined
@@ -848,10 +863,9 @@ html {
   }
 
   /* Under the cross-references, in the row that grows with the rail, so the text keeps its measure. */
-  .bom-row--part .bom-row__image {
+  .bom-row--part .bom-row__figure {
     grid-column: 2;
     grid-row: 5;
-    margin-top: var(--space-s);
   }
 
   /* The spec wrapper no longer spaces it from the body above. */

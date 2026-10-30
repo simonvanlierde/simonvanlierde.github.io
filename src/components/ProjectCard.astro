@@ -18,9 +18,11 @@ interface Props {
   tags?: string[];
   links?: { label: string; url: string }[];
   figures?: Record<string, FigureData>;
+  /** This card's figure number on the sheet, when it has an image. */
+  fig?: number;
 }
 
-const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures } = Astro.props;
+const { id, related, title, description, repo, kind, demo, tags = [], links = [], figures, fig } = Astro.props;
 const relations = [
   { label: "Uses", cards: related?.uses ?? [] },
   { label: "Used by", cards: related?.usedBy ?? [] },
@@ -66,9 +68,6 @@ if (image && !imageSrc) throw new Error(`${id}: src/assets/cards/${image.file} i
       )
     }
 
-    {/* At most 16rem wide; densities ship a 2x file for sharp screens. */}
-    {imageSrc && <Image class="bom-row__image" src={imageSrc} alt={image.alt} width={256} densities={[1, 2]} />}
-
     {
       (relations.length > 0 || tags.length > 0) && (
       <div class="bom-row__spec">
@@ -99,6 +98,18 @@ if (image && !imageSrc) throw new Error(`${id}: src/assets/cards/${image.file} i
           )
         }
       </div>
+      )
+    }
+
+    {
+      /* Last in the row at every width. Not a link: "Live demo" above already
+         is one, and a second would repeat it for screen readers. At most 24rem
+         wide; densities ship a 2x file for sharp screens. */
+      imageSrc && (
+        <figure class="bom-row__figure">
+          <Image src={imageSrc} alt={image.alt} width={384} densities={[1, 2]} />
+          <figcaption>Fig. {fig}: {title}, live demo.</figcaption>
+        </figure>
       )
     }
   </div>
