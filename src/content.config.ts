@@ -30,6 +30,12 @@ const projects = defineCollection({
     uses: z.array(z.string()).default([]),
     // A featured card leads the work list and shows its demo's social card beside the text.
     featured: z.boolean().default(false),
+    // Where a featured card's close-up is cut from its demo's social card: the centre as fractions of the card
+    // (x from the left, y from the top) and the zoom, the card's width over the close-up's. Read by
+    // scripts/fetch-cards.mjs; 2.5 keeps a 1200px card's close-up at its 480px file size or more.
+    image_focus: z
+      .object({ x: z.number().min(0).max(1), y: z.number().min(0).max(1), zoom: z.number().min(1).max(2.5).default(1) })
+      .optional(),
     // Lowest first, within the category.
     order: z.number().default(0),
   }),

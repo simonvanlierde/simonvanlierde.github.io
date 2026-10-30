@@ -714,13 +714,12 @@ html {
   margin-block: -0.3rem;
 }
 
-/* A featured row's social card, above the row until the sheet is wide. A
-   surface mount inside a hairline keeps a near-white card apart from the
-   paper, and steps the dark ground up to a light card. */
+/* A featured row's close-up of its demo. A surface mount inside a hairline
+   keeps a near-white close-up apart from the paper, and steps the dark ground
+   up to a light one. */
 .bom-row__shot {
-  grid-column: 1 / -1;
-  max-width: 24rem;
-  margin-bottom: var(--space-xs);
+  display: block;
+  max-width: 15rem;
 }
 
 .bom-row__shot img {
@@ -729,26 +728,28 @@ html {
   padding: var(--space-2xs);
   background: var(--surface);
   border: var(--border-width) solid var(--border);
-  transition:
-    border-color var(--dur-fast) ease,
-    filter var(--dur-fast) ease;
+  transition: border-color var(--dur-fast) ease;
 }
 
-/* Hover answers with a line, like the rest of the sheet: hairline to frame line. */
-.bom-row__shot:hover img {
+/* State answers with a line, like the rest of the sheet: the frame goes from
+   hairline to frame line on hover, and when the "Live demo" link, the same
+   target, is hovered or has keyboard focus. */
+@media (hover: hover) {
+  .bom-row__shot:hover img,
+  .bom-row--feature:has(.bom-row__demo:hover) .bom-row__shot img {
+    border-color: var(--border-strong);
+  }
+}
+
+.bom-row--feature:has(.bom-row__demo:focus-visible) .bom-row__shot img {
   border-color: var(--border-strong);
 }
 
-/* Social cards are drawn for light pages: dim them a little on the
-   cyanotype so they do not glare, and lift the dim on hover. Dark is the
-   default theme; print is light. */
+/* Demo pages are mostly drawn light: dim the close-ups a little on the
+   cyanotype so they do not glare. Dark is the default theme; print is light. */
 @media screen {
   :root:not([data-theme="light"]) .bom-row__shot img {
     filter: brightness(0.88);
-  }
-
-  :root:not([data-theme="light"]) .bom-row__shot:hover img {
-    filter: none;
   }
 }
 
@@ -877,23 +878,28 @@ html {
     grid-row: 4;
   }
 
-  /* A feature row: the image on the left, then the stacked row beside it. The
-     text column keeps 32rem of the 54rem sheet, near 65 characters. */
+  /* A feature row: the close-up in the left column, the stacked row beside
+     it. The text keeps 37rem of the 54rem sheet, its usual measure. A taller
+     close-up grows the empty last row, not the gaps in the text. */
   .bom-row--feature {
-    grid-template-columns: 20rem minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    grid-template-rows: repeat(4, auto) 1fr;
+    row-gap: 0;
+  }
+
+  .bom-row--feature .bom-row__body {
+    display: contents;
+  }
+
+  .bom-row--feature > *,
+  .bom-row--feature .bom-row__body > * {
+    grid-column: 2;
   }
 
   .bom-row--feature .bom-row__shot {
-    grid-row: 1 / -1;
     grid-column: 1;
-    align-self: start;
-    margin-bottom: 0;
-  }
-
-  .bom-row--feature .bom-row__pos,
-  .bom-row--feature .bom-row__body {
-    grid-column: 2;
+    grid-row: 1 / -1;
+    margin-top: 0;
   }
 
   /* The spec wrapper no longer spaces it from the body above. */

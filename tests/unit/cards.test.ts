@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseSocialCard } from "../../scripts/cards.mjs";
+import { closeUp, parseSocialCard } from "../../scripts/cards.mjs";
 
 const page = "https://simonvanlierde.com/msc-thesis-ie/";
 
@@ -21,4 +21,18 @@ test("reads a tag split over lines with content first", () => {
 
 test("does not take og:image:width for og:image", () => {
   assert.equal(parseSocialCard(`<meta property="og:image:width" content="1200">`, page), null);
+});
+
+const card = { width: 1200, height: 630 };
+
+test("a close-up without a focus is the card's centre at 4:3, as tall as the card", () => {
+  assert.deepEqual(closeUp(card), { left: 180, top: 0, width: 840, height: 630 });
+});
+
+test("zoom narrows the close-up around its focus", () => {
+  assert.deepEqual(closeUp(card, { x: 0.5, y: 0.5, zoom: 2 }), { left: 300, top: 90, width: 600, height: 450 });
+});
+
+test("a focus near an edge keeps the close-up inside the card", () => {
+  assert.deepEqual(closeUp(card, { x: 1, y: 0, zoom: 2 }), { left: 600, top: 0, width: 600, height: 450 });
 });

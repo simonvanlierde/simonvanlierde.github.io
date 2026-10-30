@@ -10,6 +10,7 @@ tags:
   - SVG
   - computer vision
 featured: true
+image_focus: { x: 0.32, y: 0.52, zoom: 1.45 }
 order: 10
 figures:
   repair:

@@ -19,3 +19,24 @@ export function parseSocialCard(html, pageUrl) {
   const image = meta(html, "og:image");
   return image ? new URL(image, pageUrl).href : null;
 }
+
+/** The close-up's shape: 4:3, since the telling parts (a heatmap, a fan) are as tall as they are wide. */
+export const CLOSE_UP_ASPECT = 4 / 3;
+
+/**
+ * The region of a card to cut for its close-up, in source pixels. `focus` gives the centre as fractions of the card
+ * (x 0 to 1 from the left, y from the top) and how far to zoom in: the cut is 1/zoom of the card's width, or as much
+ * as the card's height allows. The region stays inside the card, so a focus near an edge slides it inward.
+ */
+export function closeUp({ width, height }, { x = 0.5, y = 0.5, zoom = 1 } = {}) {
+  let w = width / zoom;
+  let h = w / CLOSE_UP_ASPECT;
+  if (h > height) [h, w] = [height, height * CLOSE_UP_ASPECT];
+  const clamp = (v, max) => Math.round(Math.min(Math.max(v, 0), max));
+  return {
+    left: clamp(x * width - w / 2, width - w),
+    top: clamp(y * height - h / 2, height - h),
+    width: Math.round(w),
+    height: Math.round(h),
+  };
+}
