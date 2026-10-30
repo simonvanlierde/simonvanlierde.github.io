@@ -24,7 +24,8 @@ jobs:
         # zizmor: ignore[artipacked] the job pushes the refreshed snapshot with this credential
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      # The fetch scripts use only Node built-ins, so no dependency install.
+      # No install here: fetch:cards needs sharp and yaml, and pnpm 11 installs the
+      # dependencies itself before it runs the first package script.
       - name: Set up pnpm and Node.js
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3
         with:
