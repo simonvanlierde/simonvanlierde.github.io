@@ -8,7 +8,7 @@ each entry sits under the date it went live. The format is based on
 
 ### Added
 
-- Featured projects lead the work list after R9lab: credit-matrix, ramascene-explorer, cv-ie-taxonomy and jsonvet. Each shows a close-up of its demo beside the text, linked to the demo; jsonvet stays a text row until its demo has one.
+- Featured projects lead the work list after R9lab: credit-matrix, ramascene-explorer, cv-ie-taxonomy and jsonvet. Each shows a close-up of its demo beside the text, linked to the demo.
 
 ## 2026-10-29
 
