@@ -46,6 +46,8 @@ jobs:
       - name: Commit refreshed snapshots and deploy if changed
         env:
           GH_TOKEN: ${{ github.token }}
+          # The bot commits fetched data only; the git hooks need tools this runner lacks (uvx for reuse).
+          LEFTHOOK: "0"
           FILES: src/data/stats.json src/data/upstream.json src/data/cardImages.json src/assets/cards
         # fetched_at changes on every successful run, so this commits weekly. The
         # drift check reads that stamp to see that the refresh still works.
