@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /ramascene-explorer/data/
 
 Sitemap: https://simonvanlierde.com/sitemap.xml
