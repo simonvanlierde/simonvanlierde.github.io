@@ -13,6 +13,7 @@ const pages: { path: string; lastmod?: string }[] = [
   { path: "/cv/", lastmod: exported },
   ...[
     "jsonvet",
+    "citesync",
     "sourceledger",
     "ramascene-explorer",
     "cv-ie-taxonomy",
