@@ -10,6 +10,10 @@ each entry sits under the date it went live. The format is based on
 
 - Featured projects lead the work list after R9lab: credit-matrix, ramascene-explorer, cv-ie-taxonomy and jsonvet. Each shows a close-up of its demo beside the text, linked to the demo.
 
+### Changed
+
+- The citesync card links to its browser playground and describes citation file generation.
+
 ## 2026-10-29
 
 ### Added
