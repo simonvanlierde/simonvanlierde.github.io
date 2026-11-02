@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-10-30",
-  "fetched_at": "2026-10-31",
+  "as_of": "2026-11-02",
+  "fetched_at": "2026-11-02",
   "prs": [
     {
       "repo": "ASSERT-KTH/awesome-open-science-software",
@@ -142,6 +142,18 @@
     },
     {
       "repo": "open-wanderer/wanderer",
+      "number": 1423,
+      "base": "dev",
+      "default_branch": "dev"
+    },
+    {
+      "repo": "open-wanderer/wanderer",
+      "number": 1425,
+      "base": "dev",
+      "default_branch": "dev"
+    },
+    {
+      "repo": "open-wanderer/wanderer",
       "number": 1430,
       "base": "dev",
       "default_branch": "dev"
@@ -169,6 +181,12 @@
       "number": 317,
       "base": "master",
       "default_branch": "master"
+    },
+    {
+      "repo": "Pseudomanifold/latex-credits",
+      "number": 13,
+      "base": "main",
+      "default_branch": "main"
     },
     {
       "repo": "pyOpenSci/python-package-guide",
