@@ -28,7 +28,7 @@ figures:
     source: https://github.com/simonvanlierde/jsonvet/pull/34
     as_of: "2026-10-13"
   speedup:
-    value: "1,395"
+    value: "2,201"
     source: https://github.com/simonvanlierde/jsonvet/blob/main/docs/design.md#speed
-    as_of: "2026-10-28"
+    as_of: "2026-11-01"
 ---
