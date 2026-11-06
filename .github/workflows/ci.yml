@@ -142,7 +142,7 @@ jobs:
         run: |
           set -o pipefail
           upload() {
-            pnpm dlx wrangler@4.150.0 versions upload --preview-alias "pr-$PR" --message "PR $PR at $SHA" 2>&1 | tee upload.log
+            pnpm dlx wrangler@4.156.0 versions upload --preview-alias "pr-$PR" --message "PR $PR at $SHA" 2>&1 | tee upload.log
           }
           if ! upload; then
             # Only an existing Worker takes versions. Create it once with a
@@ -151,7 +151,7 @@ jobs:
             mkdir placeholder
             cp dist/_headers placeholder/
             echo 'Pull request previews of simonvanlierde.com live at pr-NUMBER addresses.' > placeholder/index.html
-            pnpm dlx wrangler@4.150.0 deploy --assets placeholder
+            pnpm dlx wrangler@4.156.0 deploy --assets placeholder
             upload
           fi
           url=$(grep 'Version Preview Alias URL:' upload.log | grep -Eo 'https://[^ ]+' || true)
