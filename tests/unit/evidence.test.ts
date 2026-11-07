@@ -6,7 +6,8 @@ import process from "node:process";
 import { test } from "node:test";
 import { promisify } from "node:util";
 import { evidenceDrift, parseUpstream } from "../../scripts/evidence.mjs";
-import { prGroups } from "../../src/data/upstream.ts";
+import snapshot from "../../src/data/upstream.json" with { type: "json" };
+import { alsoMerged, leftOut, prGroups, upstream, upstreamShowcase } from "../../src/data/upstream.ts";
 import { closedPort } from "./driftRun.ts";
 
 const run = promisify(execFile);
@@ -26,6 +27,41 @@ test("parseUpstream refuses an empty, partial or truncated search, so the last g
 });
 
 const pr = (repo: string, number: number, base = "main") => ({ repo, number, base, default_branch: "main" });
+
+test("the six showcase entries and also-merged line account for every curated repository once", () => {
+  assert.deepEqual(
+    upstreamShowcase.map((group) => group.name),
+    ["Brightway", "pymrio", "lca_algebraic", "flodym", "premise", "Activity Browser"],
+  );
+  const projects = [...upstreamShowcase.flatMap((group) => group.projects), ...alsoMerged];
+  assert.equal(new Set(projects.map((project) => project.repo)).size, upstream.length);
+  assert.deepEqual(projects.map((project) => project.repo).sort(), upstream.map((project) => project.repo).sort());
+  assert.deepEqual(
+    upstreamShowcase[0].projects.map((project) => project.repo),
+    [
+      "brightway-lca/brightway2-calc",
+      "brightway-lca/brightway2-data",
+      "brightway-lca/stats_arrays",
+      "brightway-lca/bw_timex",
+    ],
+  );
+});
+
+test("the checked-in upstream evidence has no missing or unmerged contributions", () => {
+  assert.equal(
+    evidenceDrift({
+      curated: upstream,
+      leftOut,
+      merged: snapshot.prs,
+      fetchedAt: snapshot.fetched_at,
+      today: snapshot.fetched_at,
+    }),
+    "",
+  );
+  const algebraic = upstream.find((project) => project.name === "lca_algebraic");
+  assert.ok(algebraic);
+  assert.deepEqual(prGroups(algebraic), [{ base: "dev", prs: [106, 107, 108, 109, 110] }]);
+});
 
 test("prGroups names the branch of PRs merged outside the default branch", () => {
   const project = { name: "x", repo: "Oie/Lca", what: "", prs: [106, 109, 110] };

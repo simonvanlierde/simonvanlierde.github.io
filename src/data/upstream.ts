@@ -1,9 +1,5 @@
-// Merged pull requests in other people's projects, most telling first: wrong
-// results and measured speed-ups in LCA and industrial-ecology libraries lead,
-// tooling and docs follow.
-// The ranking, grouping and wording are mine. The branch each PR went into comes from
-// src/data/upstream.json, which scripts/fetch-evidence.mjs generates; the drift check flags
-// a merged PR that is neither here nor in `leftOut`.
+// Keep repository-level evidence intact when grouping the six showcase entries.
+// The snapshot records merge branches; the drift check requires each PR here or in leftOut.
 import merged from "./upstream.json" with { type: "json" };
 
 /**
@@ -15,6 +11,7 @@ export const leftOut = [
   "helenahartmann/awesome-PhD#51",
   "open-wanderer/wanderer",
   "pogopaule/awesome-sustainability-jobs#21",
+  "typst/packages#6284",
 ];
 
 export interface UpstreamProject {
@@ -28,7 +25,7 @@ export const upstream: UpstreamProject[] = [
   {
     name: "lca_algebraic",
     repo: "oie-mines-paristech/lca_algebraic",
-    what: "fixed truncated-normal and lognormal sampling, method lookup and a cache that went stale across time zones; halved the time to expand parameters, and made Sobol analysis about 20× faster when second-order indices are not needed",
+    what: "fixed truncated-normal and lognormal sampling, method lookup and a cache that went stale across time zones; sped up parameter expansion, and made Sobol analysis about 20× faster in a 20-parameter benchmark when second-order indices are not needed",
     prs: [106, 107, 108, 109, 110],
   },
   {
@@ -40,7 +37,7 @@ export const upstream: UpstreamProject[] = [
   {
     name: "pymrio",
     repo: "IndEcol/pymrio",
-    what: "made one step of the account calculation 26× faster with identical results, fixed three small bugs, and got the development test job passing again",
+    what: "made extension calculations about 4× faster on EXIOBASE-sized tables with the same results, fixed three small bugs, and got the development test job passing again",
     prs: [179, 180, 181],
   },
   {
@@ -76,8 +73,8 @@ export const upstream: UpstreamProject[] = [
   {
     name: "SALib",
     repo: "SALib/SALib",
-    what: "let ProblemSpec take samples and results as plain lists, and gave a clear error for anything that is not numbers",
-    prs: [700],
+    what: "let ProblemSpec take samples and results as plain lists, kept a random seed of 0, and added tests for the sampling and analysis command-line tools",
+    prs: [700, 706, 713],
   },
   {
     name: "Brightway (bw2data)",
@@ -88,7 +85,7 @@ export const upstream: UpstreamProject[] = [
   {
     name: "Boavizta API",
     repo: "Boavizta/boaviztapi",
-    what: "made the use phase return values for six impact criteria that said 'not implemented'",
+    what: "fixed a missing use-phase impact factor and accepted zero-valued bounds for impact criteria that returned 'not implemented'",
     prs: [583],
   },
   {
@@ -112,8 +109,20 @@ export const upstream: UpstreamProject[] = [
   {
     name: "NLeSC Python template",
     repo: "NLeSC/python-template",
-    what: "trimmed the keywords a new package gets and dropped empty ones, and made tox run the generated package's tests",
-    prs: [715, 716],
+    what: "trimmed the keywords a new package gets and dropped empty ones, made tox run the generated package's tests, and fixed tests for quotes in package descriptions",
+    prs: [715, 716, 718],
+  },
+  {
+    name: "latex-credits",
+    repo: "Pseudomanifold/latex-credits",
+    what: "kept escaped characters in author names from breaking compilation or changing the printed name",
+    prs: [13],
+  },
+  {
+    name: "openLCA Python client",
+    repo: "GreenDelta/olca-ipc.py",
+    what: "fixed deletion of data quality systems and JSON-RPC error handling, and released failed calculation results on the server",
+    prs: [48, 49],
   },
   {
     name: "fastapi-mail",
@@ -134,6 +143,34 @@ export const upstream: UpstreamProject[] = [
     prs: [2],
   },
 ];
+
+export const upstreamShowcase = [
+  {
+    name: "Brightway",
+    projects: [
+      "brightway-lca/brightway2-calc",
+      "brightway-lca/brightway2-data",
+      "brightway-lca/stats_arrays",
+      "brightway-lca/bw_timex",
+    ],
+  },
+  { name: "pymrio", projects: ["IndEcol/pymrio"] },
+  { name: "lca_algebraic", projects: ["oie-mines-paristech/lca_algebraic"] },
+  { name: "flodym", projects: ["pik-piam/flodym"] },
+  { name: "premise", projects: ["polca/premise"] },
+  { name: "Activity Browser", projects: ["LCA-ActivityBrowser/activity-browser"] },
+].map((group) => ({
+  name: group.name,
+  projects: group.projects.map((repo) => {
+    const project = upstream.find((entry) => entry.repo === repo);
+    if (!project) throw new Error(`Missing upstream evidence for ${repo}`);
+    return project;
+  }),
+}));
+
+export const alsoMerged = upstream.filter(
+  (project) => !upstreamShowcase.some((group) => group.projects.includes(project)),
+);
 
 /**
  * A project's PRs in its own order, grouped by the branch they were merged into. The default
