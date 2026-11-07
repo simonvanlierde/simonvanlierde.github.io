@@ -437,34 +437,35 @@ const names = [
 // Number words count as numbers too. "one" is left out on purpose: every use is idiom.
 const NUMBER_WORD = "(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozen|hundreds?|thousands?|million)";
 
-test("every number in Notes A-D, the project cards and the smaller-projects list has a source and a date", async ({
-  page,
-}) => {
-  const selectors = [".notes__list", ".bom-row__desc"];
-  for (const sel of selectors) await expect(page.locator(sel).first()).toBeVisible();
-  const regions = page.locator(selectors.join(", "));
-  await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);
+for (const route of ["/", "/archive/"]) {
+  test(`every number in notes and project descriptions on ${route} has a source and a date`, async ({ page }) => {
+    await page.goto(route);
+    const selectors = route === "/" ? [".notes__list", ".bom-row__desc"] : [".bom-row__desc"];
+    for (const sel of selectors) await expect(page.locator(sel).first()).toBeVisible();
+    const regions = page.locator(selectors.join(", "));
+    if (route === "/") await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);
 
-  for (const figure of await regions.locator("[data-source]").all()) {
-    await expect(figure).toHaveText(new RegExp(`^\\s*(?:\\d[\\d.,\\s]*%?|${NUMBER_WORD})\\s*$`, "i"));
-    await expect(figure).toHaveAttribute("data-source", /^https:\/\/\S+$/);
-    await expect(figure).toHaveAttribute("data-as-of", /^\d{4}-\d{2}-\d{2}$/);
-  }
+    for (const figure of await regions.locator("[data-source]").all()) {
+      await expect(figure).toHaveText(new RegExp(`^\\s*(?:\\d[\\d.,\\s]*%?|${NUMBER_WORD})\\s*$`, "i"));
+      await expect(figure).toHaveAttribute("data-source", /^https:\/\/\S+$/);
+      await expect(figure).toHaveAttribute("data-as-of", /^\d{4}-\d{2}-\d{2}$/);
+    }
 
-  // Text left once the sourced figures and the dates are taken out.
-  const rest = (
-    await regions.evaluateAll((els) =>
-      els.map((el) => {
-        const copy = el.cloneNode(true) as Element;
-        for (const n of copy.querySelectorAll("[data-source], time[datetime]")) n.remove();
-        return copy.textContent ?? "";
-      }),
-    )
-  ).join("\n");
+    // Text left once the sourced figures and the dates are taken out.
+    const rest = (
+      await regions.evaluateAll((els) =>
+        els.map((el) => {
+          const copy = el.cloneNode(true) as Element;
+          for (const n of copy.querySelectorAll("[data-source], time[datetime]")) n.remove();
+          return copy.textContent ?? "";
+        }),
+      )
+    ).join("\n");
 
-  const bare = names.reduce((text, name) => text.replaceAll(name, ""), rest);
-  expect(bare.match(new RegExp(`\\d[\\d,.]*|\\b${NUMBER_WORD}\\b`, "gi")) ?? []).toEqual([]);
-});
+    const bare = names.reduce((text, name) => text.replaceAll(name, ""), rest);
+    expect(bare.match(new RegExp(`\\d[\\d,.]*|\\b${NUMBER_WORD}\\b`, "gi")) ?? []).toEqual([]);
+  });
+}
 
 test("archive route, nav and cross references reach real project rows", async ({ page, request }) => {
   expect((await request.get("/archive/")).status()).toBe(200);
@@ -497,3 +498,38 @@ test("featured projects show cached release metadata with named links", async ({
     );
   }
 });
+
+for (const width of [320, 390]) {
+  test(`archive navigation and upstream anchors stay clear at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    for (const theme of ["dark", "light"]) {
+      await page.evaluate((value) => {
+        document.documentElement.dataset.theme = value;
+      }, theme);
+      const archive = page.getByRole("link", { name: "Sheet 3: Archive", exact: true });
+      const target = await archive.evaluate((el) => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const box = range.getBoundingClientRect();
+        return { x: box.right - 1, y: box.top + box.height / 2 };
+      });
+      await page.mouse.click(target.x, target.y);
+      await expect(page).toHaveURL(/\/archive\/$/);
+      await expect(page.locator(".archive-scroll-hint")).toBeVisible();
+      await page.goto("/");
+    }
+    await page.getByRole("link", { name: "5 PRs for Brightway", exact: true }).click();
+    await expect(page).toHaveURL(/\/archive\/#upstream-brightway$/);
+    await expect
+      .poll(() =>
+        page
+          .locator("#upstream-brightway h3")
+          .evaluate(
+            (el) =>
+              el.getBoundingClientRect().top -
+              (document.querySelector(".sheet-nav")?.getBoundingClientRect().bottom ?? 0),
+          ),
+      )
+      .toBeGreaterThanOrEqual(0);
+  });
+}

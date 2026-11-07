@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import process from "node:process";
 import { test } from "node:test";
 import { promisify } from "node:util";
 import { parseCodemeta } from "../../scripts/codemeta.mjs";
@@ -85,7 +86,12 @@ test("refresh updates successes and keeps each failed repository's last good met
     );
     await writeFile(
       join(dir, "mock.mjs"),
-      `globalThis.fetch = async (url) => {
+      `let started = 0;
+    const ready = Promise.withResolvers();
+    const deadline = setTimeout(() => { throw new Error('metadata requests did not overlap'); }, 5000);
+    globalThis.fetch = async (url) => {
+      if (++started === 6) { clearTimeout(deadline); ready.resolve(); }
+      await ready.promise;
       if (url.includes('/success/')) return Response.json({version: '2.0.0'});
       if (url.includes('/malformed/')) return Response.json({license: 'javascript:alert(1)'});
       if (url.includes('/invalid-doi/')) return Response.json({version: '2.0.0', identifier: 'doi:not-a-doi'});
@@ -127,4 +133,37 @@ test("rejects malformed metadata instead of replacing a last good entry", () => 
     parseCodemeta({ identifier: "https://example.org/project", license: "https://spdx.org/licenses/MIT" }),
     { license: "https://spdx.org/licenses/MIT" },
   );
+});
+
+test("Astro rejects a manual DOI supplied by CodeMeta but accepts a different DOI", async () => {
+  const root = resolve(import.meta.dirname, "../..");
+  const dir = await mkdtemp(join(tmpdir(), "codemeta-schema-"));
+  try {
+    await mkdir(join(dir, "src/data"), { recursive: true });
+    await mkdir(join(dir, "src/content/projects"), { recursive: true });
+    await mkdir(join(dir, "src/pages"));
+    await symlink(join(root, "node_modules"), join(dir, "node_modules"));
+    await writeFile(join(dir, "package.json"), '{"type":"module"}');
+    for (const path of ["src/content.config.ts", "src/data/projectSchema.ts", "src/data/codemeta.json"])
+      await cp(join(root, path), join(dir, path));
+    await writeFile(
+      join(dir, "src/pages/index.astro"),
+      '---\nimport { getCollection } from "astro:content";\nconst cards = await getCollection("projects");\n---\n<p>{cards.length}</p>',
+    );
+    const cardPath = join(dir, "src/content/projects/example.md");
+    const card = (doi: string) =>
+      `---\ntitle: Example\ndescription: Example\nkind: Tool\nrepo: https://github.com/simonvanlierde/credit-matrix\nlinks:\n  - label: Paper\n    url: ${doi}\n---\n`;
+    const build = () =>
+      promisify(execFile)(process.execPath, [join(root, "node_modules/astro/bin/astro.mjs"), "build", "--root", dir], {
+        cwd: dir,
+      });
+    await writeFile(cardPath, card("https://dx.doi.org/10.5281/zenodo.21213659/"));
+    await assert.rejects(build, (error: Error & { stdout: string; stderr: string }) =>
+      /DOI is supplied by CodeMeta; remove the duplicate card link/.test(error.stdout + error.stderr),
+    );
+    await writeFile(cardPath, card("https://doi.org/10.5281/zenodo.123"));
+    await build();
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 });

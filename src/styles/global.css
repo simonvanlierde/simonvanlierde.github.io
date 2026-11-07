@@ -396,6 +396,7 @@ main > section {
 #main,
 #relab,
 [id^="project-"],
+[id^="upstream-"],
 main > section,
 main > section > h2,
 main > section > .container > h2 {
@@ -1142,6 +1143,9 @@ html {
   border-bottom: 2px solid var(--border-strong);
   padding-bottom: var(--space-xs);
 }
+.archive-scroll-hint {
+  display: none;
+}
 .archive-table-wrap {
   overflow-x: auto;
   margin-top: var(--space-s);
@@ -1234,11 +1238,19 @@ html {
   margin-top: var(--space-l);
 }
 @media (max-width: 39.99rem) {
+  .archive-scroll-hint {
+    display: inline;
+  }
+  .sheet-nav .theme-toggle {
+    margin-inline: 0;
+  }
   .sheet-nav__inner {
     gap: var(--space-xs);
   }
   .sheet-nav__actions {
     gap: var(--space-xs);
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .sheet-nav__link {
     font-size: 0.75rem;

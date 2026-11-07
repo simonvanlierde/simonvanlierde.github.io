@@ -8,7 +8,10 @@ interface Props {
 const { groups, details = false } = Astro.props;
 ---
 <ul class="upstream-list">
-  {groups.map((group) => (
+  {groups.map((group) => {
+    const count = group.projects.reduce((sum, project) => sum + project.prs.length, 0);
+    const label = `${count} PR${count === 1 ? "" : "s"}`;
+    return (
     <li id={`upstream-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
       <h3>{group.name}</h3>
       {group.projects.map((project) => (
@@ -23,9 +26,9 @@ const { groups, details = false } = Astro.props;
             {part.base && ` merged into the ${part.base} branch`}
           </>)}
         </p>
-      )) : <a class="upstream-count" href={`/archive/#upstream-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} aria-label={`${group.projects.reduce((sum, project) => sum + project.prs.length, 0)} PRs for ${group.name}`}>
-        {group.projects.reduce((sum, project) => sum + project.prs.length, 0)} PRs
+      )) : <a class="upstream-count" href={`/archive/#upstream-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} aria-label={`${label} for ${group.name}`}>
+        {label}
       </a>}
     </li>
-  ))}
+  ); })}
 </ul>
