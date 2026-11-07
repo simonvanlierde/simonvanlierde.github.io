@@ -5,8 +5,7 @@ import cardImages from "../data/cardImages.json" with { type: "json" };
 import { type CardLink, type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
 import Figure from "./Figure.astro";
 
-// One parts-list row. Only the title links the repo, so the description
-// stays selectable.
+// Only the title links the project, so the description stays selectable.
 interface Props {
   id: string;
   related?: { uses: CardLink[]; usedBy: CardLink[] };
@@ -40,7 +39,7 @@ const shot = demo && imageSrc;
   <p class="bom-row__pos">{kind}</p>
   <div class="bom-row__body">
     <h3 class="bom-row__title">
-      <a href={repo}>{title}</a>
+      <a href={demo ?? repo}>{title}</a>
     </h3>
     {
       /* Under the name when stacked, in its own column when wide. A shortcut
@@ -62,14 +61,16 @@ const shot = demo && imageSrc;
     </p>
 
     {
-      /* No "Source" link: the title already links the repo. Each aria-label
-         names the project, so the links stay distinct in a screen reader. */
+      /* Each aria-label names the project, so the links stay distinct in a screen reader. */
       (demo || links.length > 0) && (
         <p class="bom-row__links">
           {demo && (
-            <a class="bom-row__demo" href={demo} aria-label={`Live demo of ${title}`}>
-              Live demo
-            </a>
+            <>
+              <a class="bom-row__demo" href={demo} aria-label={`Live demo of ${title}`}>
+                Live demo
+              </a>
+              <a href={repo} aria-label={`Source for ${title}`}>Source</a>
+            </>
           )}
           {links.map((l) => (
             <a href={l.url} aria-label={`${l.label} for ${title}`}>
