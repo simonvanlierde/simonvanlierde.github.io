@@ -114,10 +114,10 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
 
     <section class="container" aria-labelledby="experience-heading">
       <h2 id="experience-heading"><span class="datum" aria-hidden="true">{ref("experience-heading")}</span>Experience</h2>
-      <div class="cv-entries">
+      <ol class="cv-entries cv-experience">
         {
           experience.map((job) => (
-            <article class="cv-entry">
+            <li class="cv-entry">
               {/* The rail period is hidden from screen readers; the heading
                   carries it instead, so heading navigation hears the dates. */}
               <p class="cv-entry__period" aria-hidden="true">{formatPeriod(job.start, job.end)}</p>
@@ -135,10 +135,10 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
                   </ul>
                 )}
               </div>
-            </article>
+            </li>
           ))
         }
-      </div>
+      </ol>
     </section>
 
     {
@@ -265,7 +265,7 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
   <TitleBlock
     title={basics.name}
     docType="Curriculum vitae"
-    sheet="2 OF 2"
+    sheet="2 OF 3"
     turn={{ href: "/", label: "sheet 1, index", dir: "prev" }}
     dated={exported && isoDay(exported)}
   />
@@ -350,13 +350,17 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
     margin-inline: -0.25rem;
   }
 
+  @media (hover: hover) {
   .cv-index__list a:hover {
     color: var(--accent);
   }
+  }
 
+  @media (hover: hover) {
   .cv-index__list a:hover .datum {
     border-color: var(--accent);
     color: var(--accent);
+  }
   }
 
   main h2 .datum {

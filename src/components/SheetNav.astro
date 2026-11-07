@@ -1,10 +1,10 @@
 ---
-// Header strip shared by both sheets: wordmark, sheet links, theme toggle.
+// Header strip shared by the sheets: wordmark, sheet links, theme toggle.
 import ThemeToggle from "./ThemeToggle.astro";
 
 interface Props {
   /** Current sheet, for aria-current. Omit on other pages (the 404). */
-  current?: "index" | "cv";
+  current?: "index" | "cv" | "archive";
 }
 
 const { current } = Astro.props;
@@ -26,6 +26,9 @@ const { current } = Astro.props;
       </a>
       <a class="sheet-nav__link" href="/cv/" aria-current={current === "cv" ? "page" : undefined}>
         Sheet 2: CV
+      </a>
+      <a class="sheet-nav__link" href="/archive/" aria-current={current === "archive" ? "page" : undefined}>
+        Sheet 3: Archive
       </a>
       <ThemeToggle />
     </div>

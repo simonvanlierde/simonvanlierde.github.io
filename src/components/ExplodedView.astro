@@ -496,20 +496,33 @@ const label = (id: string) => `${parts.indexOf(link(id)) + 1} ${link(id).name}: 
     outline-offset: -2px;
   }
 
-  .exploded a:hover .ext,
   .exploded a:focus-visible .ext {
     stroke: var(--accent-strong);
     translate: 1px -1px;
   }
+  @media (hover: hover) {
+  .exploded a:hover .ext {
+    stroke: var(--accent-strong);
+    translate: 1px -1px;
+  }
+  }
 
-  .exploded a:hover .part,
   .exploded a:focus-visible .part {
     stroke: var(--accent);
   }
+  @media (hover: hover) {
+  .exploded a:hover .part {
+    stroke: var(--accent);
+  }
+  }
 
-  .exploded a:hover .mobile-underline,
   .exploded a:focus-visible .mobile-underline {
     stroke: var(--accent-strong);
+  }
+  @media (hover: hover) {
+  .exploded a:hover .mobile-underline {
+    stroke: var(--accent-strong);
+  }
   }
 
   .exploded a:active .part {
@@ -535,9 +548,13 @@ const label = (id: string) => `${parts.indexOf(link(id)) + 1} ${link(id).name}: 
     }
   }
 
-  .exploded a:hover text,
   .exploded a:focus-visible text {
     fill: var(--accent);
+  }
+  @media (hover: hover) {
+  .exploded a:hover text {
+    fill: var(--accent);
+  }
   }
 
   /* Reduced motion drops the movement. The hover colour change is feedback,

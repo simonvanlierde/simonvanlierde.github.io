@@ -4,6 +4,7 @@ import type { ImageMetadata } from "astro";
 import cardImages from "../data/cardImages.json" with { type: "json" };
 import { type CardLink, type Figure as FigureData, figureParts } from "../data/projectSchema.ts";
 import Figure from "./Figure.astro";
+import ProjectMetadata from "./ProjectMetadata.astro";
 
 // Only the title links the project, so the description stays selectable.
 interface Props {
@@ -81,23 +82,29 @@ const shot = demo && imageSrc;
       )
     }
 
+    <ProjectMetadata repo={repo} />
     {
       (relations.length > 0 || tags.length > 0) && (
       <div class="bom-row__spec">
         {
           relations.length > 0 && (
-            <p class="ref-list">
+            <div class="ref-list">
               {relations.map((r) => (
-                <span class="ref-list__group">
+                <div class="ref-list__group">
                   <span class="ref-list__label">{r.label}</span>
-                  {r.cards.map((c) => (
+                  {r.cards.slice(0, 3).map((c) => (
                     <a class="ref" href={c.href ?? `#project-${c.id}`}>
                       {c.title}
                     </a>
                   ))}
-                </span>
+                  {r.cards.length > 3 && (
+                    <details class="ref-more"><summary aria-label={`${r.cards.length - 3} more ${r.label.toLowerCase()} links for ${title}`}>+{r.cards.length - 3}</summary>
+                      {r.cards.slice(3).map((c) => <a class="ref" href={c.href ?? `#project-${c.id}`}>{c.title}</a>)}
+                    </details>
+                  )}
+                </div>
               ))}
-            </p>
+            </div>
           )
         }
 

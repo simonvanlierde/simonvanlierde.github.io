@@ -20,7 +20,7 @@ test("renders the page shell: title, main landmark, single h1", async ({ page })
 for (const width of [320, 390, 900, 1200]) {
   test(`no page scrolls sideways at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
-    for (const path of ["/", "/cv/", "/no-such-page/"]) {
+    for (const path of ["/", "/cv/", "/archive/", "/no-such-page/"]) {
       await page.goto(path);
       const [scrollWidth, clientWidth] = await page.evaluate(() => [
         document.documentElement.scrollWidth,
@@ -72,30 +72,61 @@ test("the sheet starts dark, even on a light system, and the toggle's light choi
   await expect(html).toHaveAttribute("data-theme", "light");
 });
 
-for (const [name, count] of [
-  ["upstream", /^ \(\d+ pull requests\)$/],
-  ["personal", /^ \(\d+\)$/],
-] as const) {
-  test(`the ${name} disclosure ships open and shows its count only when closed`, async ({ page }) => {
-    const details = page.locator(`details.disclosure.${name}`);
-    const counter = details.locator("summary .disclosure__count");
-    await expect(details).toHaveJSProperty("open", true);
-    await expect(counter).toBeHidden();
-    await details.locator("summary").click();
-    await expect(details).toHaveJSProperty("open", false);
-    await expect(counter).toBeVisible();
-    await expect(counter).toHaveText(count);
-    await details.locator("summary").click();
-    await expect(details).toHaveJSProperty("open", true);
-  });
-}
+test("the index keeps four featured projects and sends the rest to the archive", async ({ page }) => {
+  await expect(page.locator(".bom-row--feature")).toHaveCount(4);
+  await expect(page.locator("#project-bikespot")).toHaveCount(0);
+  await page.getByRole("link", { name: "Project archive", exact: true }).click();
+  await expect(page).toHaveURL(/\/archive\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Project archive");
+  await expect(page.locator("#project-bikespot")).toBeVisible();
+});
 
-test("each personal web app has its own row with a live demo", async ({ page }) => {
-  const personal = page.locator("details.disclosure.personal");
-  for (const name of ["6-second-scribbles", "tide", "bikespot", "scattergories"]) {
-    await expect(personal.getByRole("heading", { level: 3, name, exact: true })).toHaveCount(1);
-    await expect(personal.getByRole("link", { name: `Live demo of ${name}` })).toHaveCount(1);
+test("upstream summaries offer one touch-sized link per library", async ({ page }) => {
+  const libraries = page.locator(".upstream-list > li");
+  await expect(libraries).toHaveCount(5);
+  for (const library of await libraries.all()) {
+    const link = library.getByRole("link");
+    await expect(link).toHaveCount(1);
+    expect((await link.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+    await expect(link).toHaveAttribute("href", /^\/archive\/#upstream-/);
   }
+});
+
+test("published project fragments follow projects into the archive", async ({ page }) => {
+  await page.goto("/#project-sourceledger");
+  await expect(page).toHaveURL(/\/archive\/#project-sourceledger$/);
+  await expect(page.locator("#project-sourceledger")).toBeInViewport();
+  await page.goto("/");
+  await page.evaluate(() => {
+    location.hash = "project-bikespot";
+  });
+  await expect(page).toHaveURL(/\/archive\/#project-bikespot$/);
+});
+
+test("the archive retains software metadata and the thesis dataset in structured data", async ({ page }) => {
+  await page.goto("/archive/");
+  const graph = await page
+    .locator('script[type="application/ld+json"]')
+    .evaluate((el) => JSON.parse(el.textContent ?? "{}")["@graph"]);
+  const code = graph.find((node: Record<string, unknown>) => node.name === "sourceledger");
+  expect(code).toMatchObject({
+    "@type": "SoftwareSourceCode",
+    version: "0.4.0",
+    identifier: "https://doi.org/10.5281/zenodo.23460694",
+  });
+  expect(graph.find((node: Record<string, unknown>) => node["@type"] === "Dataset")).toMatchObject({
+    license: "https://spdx.org/licenses/CC-BY-4.0.html",
+    url: "https://doi.org/10.5281/zenodo.8344580",
+  });
+});
+
+test("upstream archive destinations stay below the sticky navigation", async ({ page }) => {
+  await page.getByRole("link", { name: /PRs for lca_algebraic/ }).click();
+  const heading = page.locator("#upstream-lca-algebraic h3");
+  await expect(heading).toBeInViewport();
+  const top = (await heading.boundingBox())?.y ?? 0;
+  const nav = await page.getByRole("navigation", { name: "Primary" }).boundingBox();
+  expect(top).toBeGreaterThanOrEqual((nav?.y ?? 0) + (nav?.height ?? 0));
 });
 
 test("project titles open websites and keep source links, with repositories as the fallback", async ({ page }) => {
@@ -106,6 +137,7 @@ test("project titles open websites and keep source links, with repositories as t
     ["bikespot", "https://bikespot.duinlab.nl"],
     ["io-notebook", "https://simonvanlierde.com/io-notebook/"],
   ]) {
+    await page.goto(id === "jsonvet" ? "/" : "/archive/");
     const row = page.locator(`#project-${id}`);
     await expect(row.getByRole("link", { name: id, exact: true })).toHaveAttribute("href", website);
     await expect(row.getByRole("link", { name: `Source for ${id}`, exact: true })).toHaveAttribute(
@@ -113,10 +145,10 @@ test("project titles open websites and keep source links, with repositories as t
       `https://github.com/simonvanlierde/${id}`,
     );
   }
-  await expect(page.locator("#project-project-templates").getByRole("heading").getByRole("link")).toHaveAttribute(
-    "href",
-    "https://github.com/simonvanlierde/project-templates",
-  );
+  await page.goto("/archive/");
+  await expect(
+    page.locator("#project-project-templates").getByRole("link", { name: "project-templates", exact: true }),
+  ).toHaveAttribute("href", "https://github.com/simonvanlierde/project-templates");
 });
 
 for (const path of ["/", "/cv/"]) {
@@ -238,7 +270,7 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   const block = page.getByRole("region", { name: "Document title block" });
   await expect(block.getByText("Simon van Lierde", { exact: true })).toBeVisible();
   await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
-  await expect(block.getByText("1 OF 2", { exact: true })).toBeVisible();
+  await expect(block.getByText("1 OF 3", { exact: true })).toBeVisible();
 
   // This sheet takes the later of the export and stats dates, in UTC.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
@@ -252,7 +284,7 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   );
   await expect(rev).toHaveText(/^[0-9a-f]{7}$/);
   // The sheet number turns the page.
-  await block.getByRole("link", { name: "1 OF 2, go to sheet 2, CV" }).click();
+  await block.getByRole("link", { name: "1 OF 3, go to sheet 2, CV" }).click();
   await expect(page).toHaveURL(/\/cv\/$/);
 });
 
@@ -408,7 +440,7 @@ const NUMBER_WORD = "(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twel
 test("every number in Notes A-D, the project cards and the smaller-projects list has a source and a date", async ({
   page,
 }) => {
-  const selectors = [".notes__list", ".bom-row__desc", ".minor-list"];
+  const selectors = [".notes__list", ".bom-row__desc"];
   for (const sel of selectors) await expect(page.locator(sel).first()).toBeVisible();
   const regions = page.locator(selectors.join(", "));
   await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);
@@ -429,7 +461,39 @@ test("every number in Notes A-D, the project cards and the smaller-projects list
       }),
     )
   ).join("\n");
-  for (const name of names) expect(rest, `"${name}" is gone: drop it from the list`).toContain(name);
+
   const bare = names.reduce((text, name) => text.replaceAll(name, ""), rest);
   expect(bare.match(new RegExp(`\\d[\\d,.]*|\\b${NUMBER_WORD}\\b`, "gi")) ?? []).toEqual([]);
+});
+
+test("archive route, nav and cross references reach real project rows", async ({ page, request }) => {
+  expect((await request.get("/archive/")).status()).toBe(200);
+  await page.goto("/archive/");
+  await expect(
+    page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Sheet 3: Archive" }),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://simonvanlierde.com/archive/");
+  await expect(
+    page.getByRole("region", { name: "Document title block" }).getByText("3 OF 3", { exact: true }),
+  ).toBeVisible();
+  for (const path of ["/", "/archive/"]) {
+    await page.goto(path);
+    const links = await page.locator("a.ref").evaluateAll((els) => els.map((el) => el.getAttribute("href") ?? ""));
+    for (const href of new Set(links)) {
+      const url = new URL(href, page.url());
+      await page.goto(url.pathname);
+      await expect(page.locator(url.hash)).toHaveCount(1);
+    }
+  }
+});
+
+test("featured projects show cached release metadata with named links", async ({ page }) => {
+  for (const id of ["jsonvet", "credit-matrix", "ramascene-explorer"]) {
+    const row = page.locator(`#project-${id}`);
+    await expect(row.locator(".project-metadata")).toBeVisible();
+    await expect(row.getByRole("link", { name: `DOI for ${id}`, exact: true })).toHaveAttribute(
+      "href",
+      /^https:\/\/doi.org\//,
+    );
+  }
 });

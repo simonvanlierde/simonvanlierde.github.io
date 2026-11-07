@@ -9,12 +9,13 @@ import ProjectCard from "../components/ProjectCard.astro";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
+import UpstreamList from "../components/UpstreamList.astro";
 import { cv, intro } from "../data/cv.ts";
 import { participants, statsSource } from "../data/figures.ts";
-import { figureParts, relatedCards } from "../data/projectSchema.ts";
+import { relatedCards } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
-import { prGroups, upstream } from "../data/upstream.ts";
+import { upstreamShowcase } from "../data/upstream.ts";
 import Base from "../layouts/Base.astro";
 
 // The history lives on /cv/; this sheet reads only the basics and the date.
@@ -41,30 +42,39 @@ const notes = [
 
 const allProjects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
 // Featured rows lead, after R9lab; sort is stable, so each group keeps its `order`.
-const workProjects = allProjects
-  .filter((p) => p.data.category === "work")
-  .sort((a, b) => Number(b.data.featured) - Number(a.data.featured));
-const personalProjects = allProjects.filter((p) => p.data.category === "personal");
-const minorProjects = allProjects.filter((p) => p.data.category === "minor");
+const workProjects = allProjects.filter((p) => p.data.featured);
+const archivedFragments = allProjects.filter((p) => !p.data.featured).map((p) => `#project-${p.id}`);
 const related = relatedCards(allProjects);
+for (const links of related.values()) {
+  for (const link of [...links.uses, ...links.usedBy]) {
+    link.href = `${workProjects.some((p) => p.id === link.id) ? "/" : "/archive/"}#project-${link.id}`;
+  }
+}
 // R9lab is written out below, not a content card, so its links are added by hand.
 const r9labUses = ["monitoring", "jsonvet"].map((id) => {
-  related.get(id)?.usedBy.unshift({ id: "relab", title: "R9lab", href: "#relab" });
+  related.get(id)?.usedBy.unshift({ id: "relab", title: "R9lab", href: "/#relab" });
   const card = allProjects.find((p) => p.id === id);
   if (!card) throw new Error(`R9lab uses "${id}", which is not a project card`);
   return card;
 });
 
 const name = basics.name;
-const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
 ---
 
 <Base
   title={`${name} | Research software engineer for industrial ecology`}
   description={intro}
-  jsonLd={homeJsonLd(allProjects)}
+  jsonLd={homeJsonLd(workProjects)}
 >
   <SheetNav current="index" />
+  <script define:vars={{ archivedFragments }}>
+    // Published homepage fragments follow projects that moved to the archive.
+    function followArchivedProject() {
+      if (archivedFragments.includes(location.hash)) location.replace(`/archive/${location.hash}`);
+    }
+    followArchivedProject();
+    window.addEventListener("hashchange", followArchivedProject);
+  </script>
 
   {/* Skip target. A div, not <main>: a header inside <main> loses its banner role. */}
   <div id="main">
@@ -154,7 +164,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
                   <span class="ref-list__group">
                     <span class="ref-list__label">Uses</span>
                     {r9labUses.map((c) => (
-                      <a class="ref" href={`#project-${c.id}`}>
+                      <a class="ref" href={`${c.data.featured ? "/" : "/archive/"}#project-${c.id}`}>
                         {c.data.title}
                       </a>
                     ))}
@@ -194,85 +204,11 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
         }
       </div>
 
-      <h3 class="minor-heading">Smaller projects</h3>
-      <ul class="upstream-list minor-list">
-        {
-          minorProjects.map((p) => (
-            <li id={`project-${p.id}`}>
-              <a href={p.data.demo ?? p.data.repo}>{p.data.title}</a>: {figureParts(p.data.description, p.data.figures).map((part) =>
-                typeof part === "string" ? part : <Figure {...part} />,
-              )}
-              {p.data.demo && (
-                <>
-                  {" ("}
-                  <a href={p.data.repo} aria-label={`Source for ${p.data.title}`}>
-                    source
-                  </a>
-                  {")"}
-                </>
-              )}
-            </li>
-          ))
-        }
-      </ul>
-
-      <p class="upstream-note">
-        When an industrial-ecology library I use gets something wrong or runs slowly, I fix it upstream:
-      </p>
-
-      <details class="disclosure upstream" open>
-        <summary>
-          <h3>Merged upstream<span class="disclosure__count"> ({upstreamCount} pull requests)</span></h3>
-        </summary>
-        <ul class="upstream-list">
-          {
-            upstream.map((u) => (
-              <li>
-                <a href={`https://github.com/${u.repo}`}>{u.name}</a>: {u.what}
-                {" ("}
-                {prGroups(u).map((group, g) => (
-                  <>
-                    {g > 0 && "; "}
-                    {group.prs.map((n, i) => (
-                      <>
-                        {i > 0 && ", "}
-                        <a href={`https://github.com/${u.repo}/pull/${n}`}>#{n}</a>
-                      </>
-                    ))}
-                    {group.base && ` merged into the ${group.base} branch`}
-                  </>
-                ))}
-                {")"}
-              </li>
-            ))
-          }
-        </ul>
-      </details>
-
-      <details class="disclosure personal" open>
-        <summary>
-          <h3>Personal projects<span class="disclosure__count"> ({personalProjects.length})</span></h3>
-        </summary>
-        <div class="bom">
-          {
-            personalProjects.map((p) => (
-              <ProjectCard
-                id={p.id}
-                related={related.get(p.id)}
-                title={p.data.title}
-                description={p.data.description}
-                repo={p.data.repo}
-                kind={p.data.kind}
-                demo={p.data.demo}
-                tags={p.data.tags}
-                links={p.data.links}
-                figures={p.data.figures}
-                featured={p.data.featured}
-              />
-            ))
-          }
-        </div>
-      </details>
+      <p class="archive-link"><a href="/archive/">Project archive</a> · More research tools, personal apps and smaller projects.</p>
+      <h2 id="upstream-heading">Merged upstream</h2>
+      <p class="upstream-note">When a library I use gets something wrong or runs slowly, I fix it upstream.</p>
+      <UpstreamList groups={upstreamShowcase.slice(0, 5)} />
+      <p class="archive-link"><a href="/archive/#upstream-heading">All upstream contributions and pull requests</a></p>
     </section>
 
   </main>
@@ -282,7 +218,7 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
   <TitleBlock
     title={name}
     docType="Index of work"
-    sheet="1 OF 2"
+    sheet="1 OF 3"
     turn={{ href: "/cv/", label: "sheet 2, CV", dir: "next" }}
     dated={[exported && isoDay(exported), stats.as_of].filter(Boolean).sort().at(-1)}
   />
@@ -422,115 +358,5 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
     margin-top: var(--space-l);
   }
 
-  .minor-heading {
-    margin-top: var(--space-xl);
-    color: var(--text-muted);
-    font-size: var(--step-0);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
 
-  .upstream-note {
-    margin-top: var(--space-l);
-    max-width: var(--measure);
-    color: var(--text-muted);
-    font-size: var(--step--1);
-  }
-
-  .disclosure {
-    margin-top: var(--space-xl);
-  }
-
-  /* The note ends on a colon, so the list it introduces sits close. */
-  .upstream-note + .disclosure {
-    margin-top: var(--space-s);
-  }
-
-  /* Full sheet width: short lines of small type, so the measure would only add height. */
-  .upstream-list {
-    font-size: var(--step--1);
-    padding-inline-start: var(--space-m);
-  }
-
-  .upstream-list li + li {
-    margin-top: var(--space-2xs);
-  }
-
-  /* Start-aligned, so the chevron stays on the first line when the heading wraps. */
-  .disclosure summary {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-xs);
-    cursor: pointer;
-    list-style: none;
-    color: var(--text-muted);
-    min-height: 44px;
-    padding-block: var(--space-s);
-    transition: color var(--dur-fast) ease;
-  }
-
-  .disclosure summary:hover {
-    color: var(--accent-strong);
-  }
-
-  .disclosure summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .disclosure summary::before {
-    content: "";
-    flex: none;
-    width: 0.45em;
-    height: 0.45em;
-    margin-top: 0.3em;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(-45deg);
-    transition: transform var(--dur-fast) var(--ease-out);
-  }
-
-  .disclosure[open] summary::before {
-    transform: rotate(45deg);
-  }
-
-  .disclosure summary h3 {
-    color: inherit;
-    font-size: var(--step-0);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* The count says what a closed list holds; once open, the list says it. */
-  .disclosure[open] .disclosure__count {
-    display: none;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    @supports (interpolate-size: allow-keywords) {
-      .disclosure {
-        interpolate-size: allow-keywords;
-      }
-
-      .disclosure::details-content {
-        block-size: 0;
-        overflow: hidden;
-        opacity: 0;
-        transition:
-          block-size var(--dur-slow) var(--ease-out),
-          content-visibility var(--dur-slow) allow-discrete,
-          opacity var(--dur-base) ease;
-      }
-
-      .disclosure[open]::details-content {
-        block-size: auto;
-        opacity: 1;
-      }
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .disclosure summary::before {
-      transition: none;
-    }
-  }
 </style>

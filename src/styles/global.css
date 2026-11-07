@@ -249,8 +249,10 @@ a {
   text-underline-offset: 0.18em;
 }
 
-a:hover {
-  color: var(--accent-strong);
+@media (hover: hover) {
+  a:hover {
+    color: var(--accent-strong);
+  }
 }
 
 img,
@@ -351,8 +353,10 @@ time {
   }
 }
 
-.theme-toggle:hover {
-  color: var(--accent);
+@media (hover: hover) {
+  .theme-toggle:hover {
+    color: var(--accent);
+  }
 }
 
 .theme-toggle__sun {
@@ -405,7 +409,7 @@ main > section.container > h2 {
 }
 
 /* ---------------------------------------------------------------------------
-   Sheet header (shared chrome, both pages)
+   Sheet header (shared chrome, all sheets)
    --------------------------------------------------------------------------- */
 
 /* Opaque ground and a rule, never a shadow or blur (the Flat Sheet Rule). */
@@ -442,8 +446,10 @@ main > section.container > h2 {
   transition: color var(--dur-fast) ease;
 }
 
-.sheet-nav__mark:hover {
-  color: var(--accent);
+@media (hover: hover) {
+  .sheet-nav__mark:hover {
+    color: var(--accent);
+  }
 }
 
 /* While the name heading is in view, the monogram stays hidden: the title is
@@ -483,8 +489,10 @@ html {
   color: var(--text-muted);
 }
 
-.sheet-profiles a:hover {
-  color: var(--accent-strong);
+@media (hover: hover) {
+  .sheet-profiles a:hover {
+    color: var(--accent-strong);
+  }
 }
 
 .sheet-stamp {
@@ -552,8 +560,10 @@ html {
   transition: color var(--dur-fast) ease;
 }
 
-.sheet-nav__link:hover {
-  color: var(--accent);
+@media (hover: hover) {
+  .sheet-nav__link:hover {
+    color: var(--accent);
+  }
 }
 
 .sheet-nav__link[aria-current="page"] {
@@ -585,9 +595,11 @@ html {
     transform var(--dur-fast) var(--ease-out);
 }
 
-.stamp:hover {
-  background: var(--stamp);
-  color: var(--stamp-contrast);
+@media (hover: hover) {
+  .stamp:hover {
+    background: var(--stamp);
+    color: var(--stamp-contrast);
+  }
 }
 
 .stamp:active {
@@ -689,8 +701,10 @@ html {
   transition: color var(--dur-fast) ease;
 }
 
-.bom-row__title a:hover {
-  color: var(--accent);
+@media (hover: hover) {
+  .bom-row__title a:hover {
+    color: var(--accent);
+  }
 }
 
 .bom-row__desc {
@@ -812,110 +826,59 @@ html {
   justify-items: start;
 }
 
-/* On a wide sheet the tags drop into the rail under the kind, one per line
-   under a hairline, like a parts list's material column. The body keeps the
-   name, the description, the links and one cross-reference line. R9lab's
-   rail holds its notes, its cross-references and its stack. */
+/* Featured and plain rows use the same rail and metadata position. */
 @media (min-width: 60rem) {
-  /* 0.04em keeps the longest kind, "consistency checker", on one line in the
-     11rem rail: a wrapped kind would open a gap under the name. */
-  .bom-row__pos {
-    letter-spacing: 0.04em;
+  .bom-row {
+    grid-template-columns: 15rem minmax(0, 1fr);
   }
-
-  /* Scoped to the work rows: the CV's publication status stays a boxed tag,
-     and so do a feature row's tags, which sit under its text. */
-  .bom-row:where(:not(.bom-row--feature)) .tag-list {
-    display: grid;
-    gap: 0;
-    justify-items: start;
-    border-top: var(--border-width) solid var(--border);
-    padding-top: var(--space-2xs);
-    line-height: 1.55;
-  }
-
-  .bom-row:where(:not(.bom-row--feature)) .tag {
-    border: 0;
-    padding: 0;
-  }
-
-  /* A taller rail grows the empty last row, not the gaps in the body. */
-  .bom-row--part,
-  .r9lab-row {
-    row-gap: 0;
-    grid-template-rows: repeat(4, auto) 1fr;
-  }
-
   .bom-row--part .bom-row__body,
-  .bom-row--part .bom-row__spec,
+  .bom-row--feature .bom-row__body {
+    display: contents;
+  }
+  .bom-row--part .bom-row__body > *,
+  .bom-row--feature .bom-row__body > * {
+    grid-column: 2;
+  }
+  .bom-row--feature .bom-row__shot {
+    grid-column: 1;
+    grid-row: 2 / 7;
+    margin-top: 0;
+  }
+  .bom-row__pos {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .bom-row__title {
+    grid-row: 1;
+  }
+  .r9lab-row {
+    grid-template-rows: repeat(4, auto) 1fr;
+    row-gap: 0;
+  }
   .r9lab-row .bom-row__body {
     display: contents;
   }
-
-  .bom-row--part .bom-row__title,
-  .bom-row--part .bom-row__desc,
-  .bom-row--part .bom-row__links,
-  .bom-row--part .ref-list,
   .r9lab-row__title,
   .r9lab-row__intro,
   .r9lab-row .bom-row__links,
   .r9lab__chart {
     grid-column: 2;
   }
-
-  .bom-row--part .bom-row__desc,
   .r9lab-row__intro {
     grid-row: 2;
   }
-
-  .bom-row--part .bom-row__links,
   .r9lab-row .bom-row__links {
     grid-row: 3;
   }
-
-  .bom-row--part .ref-list,
   .r9lab__chart {
     grid-row: 4;
   }
-
-  /* A feature row: the close-up in the left column, the stacked row beside
-     it. The text keeps 37rem of the 54rem sheet, its usual measure. A taller
-     close-up grows the empty last row, not the gaps in the text. */
-  .bom-row--feature {
-    grid-template-columns: 15rem minmax(0, 1fr);
-    grid-template-rows: repeat(4, auto) 1fr;
-    row-gap: 0;
-  }
-
-  .bom-row--feature .bom-row__body {
-    display: contents;
-  }
-
-  .bom-row--feature > *,
-  .bom-row--feature .bom-row__body > * {
-    grid-column: 2;
-  }
-
-  .bom-row--feature .bom-row__shot {
-    grid-column: 1;
-    grid-row: 1 / -1;
-    margin-top: 0;
-  }
-
-  /* The spec wrapper no longer spaces it from the body above. */
-  .bom-row--part .ref-list {
-    margin-top: var(--space-s);
-  }
-
-  .bom-row--part .tag-list,
   .r9lab-row__aside {
     grid-column: 1;
     grid-row: 2 / -1;
     align-self: start;
     margin-top: var(--space-s);
   }
-
-  /* The rail is narrow: R9lab's "Uses" takes its own line above its links. */
   .r9lab-row .ref-list__label {
     flex-basis: 100%;
   }
@@ -985,8 +948,10 @@ html {
   padding-block: 0.65rem;
 }
 
-.cv-entry__role a:hover {
-  color: var(--accent-strong);
+@media (hover: hover) {
+  .cv-entry__role a:hover {
+    color: var(--accent-strong);
+  }
 }
 
 .cv-entry__org {
@@ -1080,8 +1045,10 @@ html {
   margin: -0.65rem -0.4rem;
 }
 
-.title-block__value a:hover {
-  color: var(--accent);
+@media (hover: hover) {
+  .title-block__value a:hover {
+    color: var(--accent);
+  }
 }
 
 /* The sheet number turns to the other sheet; the arrow points the way and
@@ -1103,12 +1070,16 @@ html {
   scale: -1 1;
 }
 
-.title-block__turn--next:hover .title-block__arrow {
-  translate: 3px 0;
+@media (hover: hover) {
+  .title-block__turn--next:hover .title-block__arrow {
+    translate: 3px 0;
+  }
 }
 
-.title-block__turn--prev:hover .title-block__arrow {
-  translate: -3px 0;
+@media (hover: hover) {
+  .title-block__turn--prev:hover .title-block__arrow {
+    translate: -3px 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1129,4 +1100,171 @@ html {
 
 .title-block__contact a[href^="mailto:"] {
   color: var(--accent);
+}
+
+.project-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-m);
+  font-size: var(--step--1);
+}
+.project-metadata a {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+.ref-more summary {
+  cursor: pointer;
+  min-height: 24px;
+  color: var(--accent);
+  text-decoration: underline;
+}
+.ref-more[open] {
+  flex-basis: 100%;
+}
+.ref-more .ref {
+  margin-inline-end: var(--space-xs);
+}
+.cv-experience {
+  list-style: none;
+  padding: 0;
+}
+.archive {
+  padding-top: var(--space-l);
+}
+.archive header > p {
+  margin-top: var(--space-m);
+}
+.archive section {
+  margin-top: var(--space-xl);
+}
+:where(.archive section > h2) {
+  border-bottom: 2px solid var(--border-strong);
+  padding-bottom: var(--space-xs);
+}
+.archive-table-wrap {
+  overflow-x: auto;
+  margin-top: var(--space-s);
+}
+.archive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+}
+.archive-note {
+  text-align: left;
+  color: var(--text-muted);
+  font-size: var(--step--1);
+  margin-top: var(--space-l);
+}
+.archive-table th,
+.archive-table td {
+  border-bottom: var(--border-width) solid var(--border);
+  padding: var(--space-s);
+  text-align: left;
+  vertical-align: top;
+}
+.archive-table th {
+  font-weight: 400;
+}
+.archive-table thead th {
+  font-family: var(--font-draft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom-color: var(--border-strong);
+}
+.archive-table th[scope="row"] {
+  min-width: 15rem;
+  width: 55%;
+}
+.archive-table th[scope="row"] > a {
+  font-family: var(--font-draft);
+  font-size: var(--step-0);
+}
+.archive-table td:last-child a {
+  display: block;
+  min-height: 44px;
+}
+.archive-table .bom-row__desc {
+  margin-top: var(--space-xs);
+}
+.archive-table .ref-list,
+.archive-table .project-metadata {
+  margin-top: var(--space-xs);
+}
+.archive-link {
+  margin-block: var(--space-l);
+  color: var(--text-muted);
+  font-size: var(--step--1);
+}
+.upstream-list {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-m);
+}
+:where(.upstream-list > li) {
+  padding-block: var(--space-m);
+  border-bottom: var(--border-width) solid var(--border);
+}
+.upstream-list h3 {
+  font-size: var(--step-0);
+  margin-bottom: var(--space-xs);
+}
+:where(.upstream-list p) {
+  color: var(--text-muted);
+  font-size: var(--step--1);
+  max-width: var(--measure);
+}
+.upstream-list p + p {
+  margin-top: var(--space-xs);
+}
+.upstream-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-draft);
+  font-size: var(--step--1);
+}
+:where(.upstream-prs a) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+.archive-subheading {
+  margin-top: var(--space-l);
+}
+@media (max-width: 39.99rem) {
+  .sheet-nav__inner {
+    gap: var(--space-xs);
+  }
+  .sheet-nav__actions {
+    gap: var(--space-xs);
+  }
+  .sheet-nav__link {
+    font-size: 0.75rem;
+    letter-spacing: 0;
+  }
+  .sheet-nav__mark {
+    font-size: 0.75rem;
+    padding-inline: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+  .title-block {
+    view-transition-name: title-block;
+  }
+}
+
+.also-merged {
+  margin-top: var(--space-m);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+:where(.also-merged a) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
