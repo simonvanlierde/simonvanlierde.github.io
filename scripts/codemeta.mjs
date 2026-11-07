@@ -1,0 +1,43 @@
+// Reads the metadata fields used by cards; contexts remain data and are never fetched or evaluated.
+
+function licenseUrl(value) {
+  const raw = typeof value === "string" ? value : value?.["@id"];
+  const url = new URL(raw);
+  if (url.protocol !== "https:" || url.username || url.password) throw new Error("license must be an HTTPS URL");
+  return url.href;
+}
+
+function doiUrl(identifier) {
+  const value = typeof identifier === "string" ? identifier : (identifier?.value ?? identifier?.["@id"]);
+  if (typeof value !== "string") return undefined;
+  const doi = value.replace(/^(?:https?:\/\/(?:dx\.)?doi\.org\/|doi:\s*)/i, "");
+  if (/^10\.\d{4,9}\/[^\s<>"?#\\]+$/i.test(doi) && !/(?:^|\/)(?:\.|%2e){1,2}(?:\/|$)/i.test(doi)) {
+    return `https://doi.org/${doi}`;
+  }
+  if (/^(?:doi:|10\.)|doi\.org\//i.test(value) || identifier?.propertyID?.toLowerCase() === "doi") {
+    throw new Error("identifier contains an invalid DOI");
+  }
+  return undefined;
+}
+
+/** Version, DOI and licence from a CodeMeta object, or an error for malformed or empty metadata. */
+export function parseCodemeta(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("CodeMeta must be an object");
+  const result = {};
+  if (raw.version !== undefined) {
+    if (typeof raw.version !== "string" || !/^[a-z\d][a-z\d.+_-]{0,99}$/i.test(raw.version)) {
+      throw new Error("version must be a short version string");
+    }
+    result.version = raw.version;
+  }
+  const identifiers = Array.isArray(raw.identifier) ? raw.identifier : [raw.identifier];
+  const dois = identifiers.map(doiUrl).filter(Boolean);
+  if (dois.length) result.doi = dois[0];
+  if (raw.license !== undefined) {
+    const licenses = [...new Set((Array.isArray(raw.license) ? raw.license : [raw.license]).map(licenseUrl))];
+    if (!licenses.length) throw new Error("license must not be empty");
+    result.license = licenses.length === 1 ? licenses[0] : licenses;
+  }
+  if (!Object.keys(result).length) throw new Error("CodeMeta has no version, DOI or licence");
+  return result;
+}

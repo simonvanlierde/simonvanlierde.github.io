@@ -1,0 +1,22 @@
+{
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    {
+      "@vocab": "http://schema.org/"
+    }
+  ],
+  "identifier": [
+    {
+      "@type": "PropertyValue",
+      "propertyID": "DOI",
+      "value": "10.5281/zenodo.123"
+    }
+  ],
+  "version": "1.2.3-rc.1",
+  "license": [
+    {
+      "@id": "https://spdx.org/licenses/MIT"
+    },
+    "https://spdx.org/licenses/Apache-2.0"
+  ]
+}

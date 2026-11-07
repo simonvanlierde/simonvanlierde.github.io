@@ -1,6 +1,17 @@
 // schema.org nodes for the project cards. Kept apart from schemaOrg.ts so the
 // unit tests can import it: that file reads the CV export through a Vite-only
 // `?raw` import.
+import codemeta from "./codemeta.json" with { type: "json" };
+
+export interface ProjectMetadata {
+  version?: string;
+  doi?: string;
+  license?: string | string[];
+  fetched_at: string;
+}
+
+export const projectMetadata = (repo: string): ProjectMetadata | undefined =>
+  (codemeta as Record<string, ProjectMetadata>)[repo];
 
 export const site = "https://simonvanlierde.com";
 export const personId = `${site}/#person`;
@@ -104,6 +115,7 @@ const languages = new Set(["python", "rust", "typescript", "javascript", "go", "
 export function projectNodes(cards: ProjectCard[]) {
   return cards.flatMap((card) => {
     const { title, repo, demo, tags } = card.data;
+    const metadata = projectMetadata(repo);
     const description = figureText(card.data.description, card.data.figures);
     const author = { "@id": personId };
     const isLanguage = (tag: string) => languages.has(tag.toLowerCase());
@@ -117,6 +129,9 @@ export function projectNodes(cards: ProjectCard[]) {
       codeRepository: repo,
       author,
       ...(demo ? { url: demo } : {}),
+      ...(metadata?.version ? { version: metadata.version } : {}),
+      ...(metadata?.doi ? { identifier: metadata.doi } : {}),
+      ...(metadata?.license ? { license: metadata.license } : {}),
       ...(programmingLanguage.length ? { programmingLanguage } : {}),
       ...(keywords.length ? { keywords } : {}),
     };

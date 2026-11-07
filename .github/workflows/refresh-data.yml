@@ -1,7 +1,7 @@
 name: Refresh site data
 
 # Commits fresh R9lab figures to src/data/stats.json and my merged upstream PRs to
-# src/data/upstream.json, then dispatches deploy.yml:
+# src/data/upstream.json, plus project CodeMeta and card images, then dispatches deploy.yml:
 # a push with the default GITHUB_TOKEN triggers no other workflow.
 
 on:
@@ -44,12 +44,15 @@ jobs:
       - name: Fetch card images
         run: pnpm fetch:cards
 
+      - name: Fetch project metadata
+        run: pnpm fetch:codemeta
+
       - name: Commit refreshed snapshots and deploy if changed
         env:
           GH_TOKEN: ${{ github.token }}
           # The bot commits fetched data only; the git hooks need tools this runner lacks (uvx for reuse).
           LEFTHOOK: "0"
-          FILES: src/data/stats.json src/data/upstream.json src/data/cardImages.json src/assets/cards
+          FILES: src/data/stats.json src/data/upstream.json src/data/cardImages.json src/data/codemeta.json src/assets/cards
         # fetched_at changes on every successful run, so this commits weekly. The
         # drift check reads that stamp to see that the refresh still works.
         run: |-

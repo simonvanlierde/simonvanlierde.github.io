@@ -10,8 +10,6 @@ tags:
   - Parquet
   - EXIOBASE
 links:
-  - label: Zenodo record
-    url: https://doi.org/10.5281/zenodo.23461260
   - label: Brightway check
     url: https://github.com/simonvanlierde/ramascene-explorer/blob/main/brightway-check/README.md
 uses:

@@ -1,0 +1,48 @@
+{
+  "https://github.com/simonvanlierde/brightway-benchmarks": {
+    "license": "https://spdx.org/licenses/BSD-3-Clause",
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/citesync": {
+    "doi": "https://doi.org/10.5281/zenodo.23779706",
+    "license": "https://spdx.org/licenses/Apache-2.0",
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/codemeta-drift": {
+    "doi": "https://doi.org/10.5281/zenodo.23774728",
+    "license": "https://spdx.org/licenses/Apache-2.0",
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/credit-matrix": {
+    "version": "0.11.0",
+    "doi": "https://doi.org/10.5281/zenodo.21213659",
+    "license": "https://spdx.org/licenses/MIT",
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/jsonvet": {
+    "doi": "https://doi.org/10.5281/zenodo.23461825",
+    "license": ["https://spdx.org/licenses/MIT", "https://spdx.org/licenses/Apache-2.0"],
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/msc-thesis-ie": {
+    "license": "https://spdx.org/licenses/GPL-3.0-or-later",
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/project-templates": {
+    "doi": "https://doi.org/10.5281/zenodo.23701980",
+    "license": "https://spdx.org/licenses/MIT",
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/ramascene-explorer": {
+    "version": "0.6.0",
+    "doi": "https://doi.org/10.5281/zenodo.23461260",
+    "license": "https://spdx.org/licenses/MIT",
+    "fetched_at": "2026-11-07"
+  },
+  "https://github.com/simonvanlierde/sourceledger": {
+    "version": "0.4.0",
+    "doi": "https://doi.org/10.5281/zenodo.23460694",
+    "license": "https://spdx.org/licenses/MIT",
+    "fetched_at": "2026-11-07"
+  }
+}
