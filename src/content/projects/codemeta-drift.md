@@ -2,6 +2,7 @@
 title: codemeta-drift
 description: "CodeMeta, a standard for describing research software, disagrees with itself. This tool compares its list of fields, its examples and its {crosswalks} mappings to other formats. In the development version, every one of the {crosswalks} mappings still listed a field the standard had dropped, which I raised with the maintainers."
 repo: https://github.com/simonvanlierde/codemeta-drift
+demo: https://simonvanlierde.com/codemeta-drift/
 kind: consistency checker
 tags:
   - Python

@@ -98,6 +98,27 @@ test("each personal web app has its own row with a live demo", async ({ page }) 
   }
 });
 
+test("project titles open websites and keep source links, with repositories as the fallback", async ({ page }) => {
+  for (const [id, website] of [
+    ["jsonvet", "https://simonvanlierde.com/jsonvet/"],
+    ["codemeta-drift", "https://simonvanlierde.com/codemeta-drift/"],
+    ["brightway-benchmarks", "https://simonvanlierde.com/brightway-benchmarks/"],
+    ["bikespot", "https://bikespot.duinlab.nl"],
+    ["io-notebook", "https://simonvanlierde.com/io-notebook/"],
+  ]) {
+    const row = page.locator(`#project-${id}`);
+    await expect(row.getByRole("link", { name: id, exact: true })).toHaveAttribute("href", website);
+    await expect(row.getByRole("link", { name: `Source for ${id}`, exact: true })).toHaveAttribute(
+      "href",
+      `https://github.com/simonvanlierde/${id}`,
+    );
+  }
+  await expect(page.locator("#project-project-templates").getByRole("heading").getByRole("link")).toHaveAttribute(
+    "href",
+    "https://github.com/simonvanlierde/project-templates",
+  );
+});
+
 for (const path of ["/", "/cv/"]) {
   test(`the monogram hides while the name is in view (${path})`, async ({ page }) => {
     await page.goto(path);

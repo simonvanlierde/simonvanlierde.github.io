@@ -199,14 +199,14 @@ const upstreamCount = upstream.reduce((sum, u) => sum + u.prs.length, 0);
         {
           minorProjects.map((p) => (
             <li id={`project-${p.id}`}>
-              <a href={p.data.repo}>{p.data.title}</a>: {figureParts(p.data.description, p.data.figures).map((part) =>
+              <a href={p.data.demo ?? p.data.repo}>{p.data.title}</a>: {figureParts(p.data.description, p.data.figures).map((part) =>
                 typeof part === "string" ? part : <Figure {...part} />,
               )}
               {p.data.demo && (
                 <>
                   {" ("}
-                  <a href={p.data.demo} aria-label={`Live demo of ${p.data.title}`}>
-                    live
+                  <a href={p.data.repo} aria-label={`Source for ${p.data.title}`}>
+                    source
                   </a>
                   {")"}
                 </>
