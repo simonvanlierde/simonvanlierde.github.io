@@ -142,6 +142,11 @@ for (const path of ["/", "/cv/"]) {
 
     const pages = nodes.filter((n) => n["@type"] === "ProfilePage");
     expect(pages.map((n) => n.url)).toEqual([new URL(path, "https://simonvanlierde.com").href]);
+    // The page belongs to the site node, and spoken languages are not subjects of expertise.
+    expect(pages.map((n) => n.isPartOf)).toEqual([{ "@id": "https://simonvanlierde.com/#website" }]);
+    const languages: string[] = cv.skills.find((group: { group: string }) => group.group === "Languages")?.items ?? [];
+    expect(person?.knowsAbout).not.toEqual(expect.arrayContaining(languages.slice(0, 1)));
+    expect(person?.knowsLanguage).toEqual(languages.map((item) => item.replace(/\s*\(.*\)$/, "")));
     expect(nodes.some((n) => n["@type"] === "WebSite")).toBe(path === "/");
   });
 }
