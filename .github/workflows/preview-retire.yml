@@ -48,6 +48,6 @@ jobs:
           cp retired/index.html retired/404.html
           for pr in $PRS; do
             case "$pr" in *[!0-9]*|'') echo "::error::Not a PR number: $pr"; exit 1 ;; esac
-            pnpm dlx wrangler@4.150.0 versions upload --assets retired --preview-alias "pr-$pr" --message "PR $pr closed"
+            pnpm dlx wrangler@4.156.2 versions upload --assets retired --preview-alias "pr-$pr" --message "PR $pr closed"
             echo "Retired pr-$pr" >> "$GITHUB_STEP_SUMMARY"
           done
