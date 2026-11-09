@@ -27,6 +27,10 @@
       }
     }
   },
+  "markdown": {
+    // The 2.6 formatter flattens nested YAML front matter, which breaks the content collections.
+    "formatter": { "enabled": false }
+  },
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
@@ -38,8 +42,9 @@
       "linter": {
         "rules": {
           "correctness": {
-            // Qwik and Solid rules; they misfire on this repo's Preact code.
+            // Qwik, Solid and React Native rules; they misfire on this repo's Preact code.
             "useQwikValidLexicalScope": "off",
+            "noReactNativeRawText": "off",
             "noSolidDestructuredProps": "off"
           }
         }
