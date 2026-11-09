@@ -5,6 +5,7 @@ import { isoDay } from "../components/cvPeriod.ts";
 import DisassemblyChart from "../components/DisassemblyChart.tsx";
 import ExplodedView from "../components/ExplodedView.astro";
 import Figure from "../components/Figure.astro";
+import NoteList from "../components/NoteList.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
@@ -44,6 +45,7 @@ const allProjects = (await getCollection("projects")).sort((a, b) => a.data.orde
 // Featured rows lead, after R9lab; sort is stable, so each group keeps its `order`.
 const workProjects = allProjects.filter((p) => p.data.featured);
 const archivedFragments = allProjects.filter((p) => !p.data.featured).map((p) => `#project-${p.id}`);
+const latestNotes = (await getCollection("notes")).sort((a, b) => b.data.date.localeCompare(a.data.date)).slice(0, 3);
 const related = relatedCards(allProjects);
 for (const links of related.values()) {
   for (const link of [...links.uses, ...links.usedBy]) {
@@ -205,6 +207,9 @@ const name = basics.name;
       </div>
 
       <p class="archive-link"><a href="/archive/">Project archive</a> · More research tools, personal apps and smaller projects.</p>
+      <h2 id="technical-notes-heading">Technical notes</h2>
+      <NoteList notes={latestNotes} />
+      <p class="archive-link"><a href="/notes/">All notes</a> · <a href="/notes/rss.xml">RSS feed</a></p>
       <h2 id="upstream-heading">Merged upstream</h2>
       <p class="upstream-note">When a library I use gets something wrong or runs slowly, I fix it upstream.</p>
       <UpstreamList groups={upstreamShowcase.slice(0, 5)} />
@@ -218,7 +223,7 @@ const name = basics.name;
   <TitleBlock
     title={name}
     docType="Index of work"
-    sheet="1 OF 3"
+    sheet="1 OF 4"
     turn={{ href: "/cv/", label: "sheet 2, CV", dir: "next" }}
     dated={[exported && isoDay(exported), stats.as_of].filter(Boolean).sort().at(-1)}
   />

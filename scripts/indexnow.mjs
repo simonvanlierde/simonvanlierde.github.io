@@ -13,12 +13,14 @@ const endpoint = "https://api.indexnow.org/indexnow";
 const home = `https://${host}/`;
 const cv = `https://${host}/cv/`;
 const archive = `https://${host}/archive/`;
+const notes = `https://${host}/notes/`;
 
 // Files that change one page only. The 404 page is not worth indexing.
 const only = {
   "src/pages/index.astro": [home],
   "src/pages/cv.astro": [cv],
   "src/pages/archive.astro": [archive],
+  "src/pages/notes/index.astro": [notes],
   "src/pages/404.astro": [],
 };
 // Only these paths can change the built pages.
@@ -31,7 +33,7 @@ export function changedUrls(files) {
   for (const file of files) {
     if (file in only) for (const url of only[file]) urls.add(url);
     // Shared layouts, components, styles, data and assets feed every sheet.
-    else if (affectsSite(file) && file !== `public/${key}.txt`) urls.add(home).add(cv).add(archive);
+    else if (affectsSite(file) && file !== `public/${key}.txt`) urls.add(home).add(cv).add(archive).add(notes);
   }
   return [...urls];
 }

@@ -52,5 +52,5 @@ const destination = (id: string) =>
       <p class="also-merged">{alsoMerged.map((project, i) => <>{i > 0 && "; "}<a href={`https://github.com/${project.repo}/pulls?q=is%3Apr+is%3Amerged+author%3Asimonvanlierde`}>{project.name} ({project.prs.length} PR{project.prs.length === 1 ? "" : "s"})</a></>)}</p>
     </section>
   </main>
-  <TitleBlock title={cv.basics.name} docType="Project archive" sheet="3 OF 3" turn={{ href: "/", label: "sheet 1, index", dir: "next" }} dated={cv.exported && isoDay(cv.exported)} />
+  <TitleBlock title={cv.basics.name} docType="Project archive" sheet="3 OF 4" turn={{ href: "/notes/", label: "sheet 4, notes", dir: "next" }} dated={cv.exported && isoDay(cv.exported)} />
 </Base>

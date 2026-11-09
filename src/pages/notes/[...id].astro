@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from "astro:content";
+import { formatIsoDate } from "../../components/cvPeriod.ts";
+import SheetNav from "../../components/SheetNav.astro";
+import TitleBlock from "../../components/TitleBlock.astro";
+import { cv } from "../../data/cv.ts";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  return (await getCollection("notes")).map((entry) => ({ params: { id: entry.id }, props: { note: entry } }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+---
+<Base title={`${note.data.title} | Simon van Lierde`} description={note.data.description}>
+  <SheetNav current="notes" />
+  <main id="main" class="container archive note">
+    <article>
+      <header>
+        <h1>{note.data.title}</h1>
+        <p class="draft"><time datetime={note.data.date}>{formatIsoDate(note.data.date)}</time></p>
+      </header>
+      <div class="prose note__body"><Content /></div>
+    </article>
+    <a class="stamp sheet-stamp" href="/notes/">All notes</a>
+  </main>
+  <TitleBlock title={cv.basics.name} docType="Technical note" sheet="4 OF 4" turn={{ href: "/", label: "sheet 1, index", dir: "next" }} dated={note.data.date} />
+</Base>

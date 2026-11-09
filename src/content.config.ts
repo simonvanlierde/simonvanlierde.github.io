@@ -63,4 +63,15 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { projects };
+// Technical notes: one markdown file per post in src/content/notes/, served at /notes/<id>/.
+const notes = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/notes" }),
+  schema: z.object({
+    title: z.string(),
+    // One sentence, plain text. Feeds the meta description and the RSS item.
+    description: z.string(),
+    date: z.iso.date(),
+  }),
+});
+
+export const collections = { projects, notes };

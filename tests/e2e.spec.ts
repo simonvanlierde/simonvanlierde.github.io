@@ -270,7 +270,7 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   const block = page.getByRole("region", { name: "Document title block" });
   await expect(block.getByText("Simon van Lierde", { exact: true })).toBeVisible();
   await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
-  await expect(block.getByText("1 OF 3", { exact: true })).toBeVisible();
+  await expect(block.getByText("1 OF 4", { exact: true })).toBeVisible();
 
   // This sheet takes the later of the export and stats dates, in UTC.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
@@ -284,7 +284,7 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   );
   await expect(rev).toHaveText(/^[0-9a-f]{7}$/);
   // The sheet number turns the page.
-  await block.getByRole("link", { name: "1 OF 3, go to sheet 2, CV" }).click();
+  await block.getByRole("link", { name: "1 OF 4, go to sheet 2, CV" }).click();
   await expect(page).toHaveURL(/\/cv\/$/);
 });
 
@@ -475,7 +475,7 @@ test("archive route, nav and cross references reach real project rows", async ({
   ).toHaveAttribute("aria-current", "page");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://simonvanlierde.com/archive/");
   await expect(
-    page.getByRole("region", { name: "Document title block" }).getByText("3 OF 3", { exact: true }),
+    page.getByRole("region", { name: "Document title block" }).getByText("3 OF 4", { exact: true }),
   ).toBeVisible();
   for (const path of ["/", "/archive/"]) {
     await page.goto(path);
