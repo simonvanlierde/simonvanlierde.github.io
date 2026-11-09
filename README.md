@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Personal website for Simon van Lierde, research software engineer and PhD candidate at CML, Leiden
-University. It has three pages: selected work, a project archive and a CV. I build it with Astro and deploy
+University. It has four pages: selected work, a CV, a project archive and technical notes (with an RSS feed at `/notes/rss.xml`). I build it with Astro and deploy
 it to GitHub Pages at [simonvanlierde.com](https://simonvanlierde.com).
 
 The site is drawn as one ISO technical drawing set, with a chart of R9lab's disassembly data that refreshes weekly.
@@ -40,7 +40,7 @@ Every pull request and push to `main` runs `pnpm check` and `pnpm test:e2e`.
 MIT, see [LICENSE](LICENSE); [REUSE.toml](REUSE.toml) gives each file's license. Display and
 data lettering use a vendored [osifont](https://github.com/hikikomori82/osifont) subset
 (ISO 3098, LGPL+FE), see [public/fonts/osifont-LICENSE.txt](public/fonts/osifont-LICENSE.txt).
-The Code of Conduct is the Contributor Covenant (CC-BY-SA-4.0). My portrait (also in the social card) and the CV PDF
+The technical notes in `src/content/notes/` are CC-BY-4.0. The Code of Conduct is the Contributor Covenant (CC-BY-SA-4.0). My portrait (also in the social card) and the CV PDF
 are all rights reserved.
 
 To report a bug, see [CONTRIBUTING](.github/CONTRIBUTING.md); for a vulnerability,

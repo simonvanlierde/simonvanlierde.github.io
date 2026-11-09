@@ -25,3 +25,9 @@ SPDX-License-Identifier = "LicenseRef-osifont"
 path = ["public/portrait.jpg", "src/assets/portrait.jpg", "public/og.png", "public/files/simon-van-lierde-cv.pdf"]
 SPDX-FileCopyrightText = "2026 Simon van Lierde"
 SPDX-License-Identifier = "LicenseRef-all-rights-reserved"
+
+# Technical notes are prose I want reused with credit.
+[[annotations]]
+path = "src/content/notes/**"
+SPDX-FileCopyrightText = "2026 Simon van Lierde"
+SPDX-License-Identifier = "CC-BY-4.0"
