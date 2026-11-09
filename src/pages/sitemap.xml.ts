@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 import { isoDay } from "../components/cvPeriod.ts";
 import { cv } from "../data/cv.ts";
+import phd from "../data/phd.json" with { type: "json" };
 import { site } from "../data/projectSchema.ts";
 import stats from "../data/stats.json" with { type: "json" };
 
@@ -19,6 +20,7 @@ const pages: { path: string; lastmod?: string }[] = [
   { path: "/cv/", lastmod: exported },
   { path: "/archive/", lastmod: exported },
   { path: "/notes/", lastmod: latestNote },
+  { path: "/phd/", lastmod: phd.as_of },
   ...notes.map((note) => ({ path: `/notes/${note.id}/`, lastmod: note.data.date })),
   ...[
     "jsonvet",

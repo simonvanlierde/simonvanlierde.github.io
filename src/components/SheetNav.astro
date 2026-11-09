@@ -4,7 +4,7 @@ import ThemeToggle from "./ThemeToggle.astro";
 
 interface Props {
   /** Current sheet, for aria-current. Omit on other pages (the 404). */
-  current?: "index" | "cv" | "archive" | "notes";
+  current?: "index" | "cv" | "archive" | "notes" | "phd";
 }
 
 const { current } = Astro.props;
@@ -32,6 +32,9 @@ const { current } = Astro.props;
       </a>
       <a class="sheet-nav__link" href="/notes/" aria-current={current === "notes" ? "page" : undefined}>
         Sheet 4: Notes
+      </a>
+      <a class="sheet-nav__link" href="/phd/" aria-current={current === "phd" ? "page" : undefined}>
+        Sheet 5: PhD
       </a>
       <ThemeToggle />
     </div>

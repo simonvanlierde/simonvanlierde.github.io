@@ -163,8 +163,8 @@ test("the homepage does not restate the CV timeline", async ({ page }) => {
 test("the CV sheet stamps when its data was exported, and marks itself current", async ({ page }) => {
   const block = page.getByRole("region", { name: "Document title block" });
   await expect(block.getByText("Curriculum vitae", { exact: true })).toBeVisible();
-  await expect(block.getByText("2 OF 4", { exact: true })).toBeVisible();
-  await expect(block.getByRole("link", { name: "2 OF 4, go to sheet 1, index" })).toHaveAttribute("href", "/");
+  await expect(block.getByText("2 OF 5", { exact: true })).toBeVisible();
+  await expect(block.getByRole("link", { name: "2 OF 5, go to sheet 1, index" })).toHaveAttribute("href", "/");
 
   // A generated sheet is dated, not attributed.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();

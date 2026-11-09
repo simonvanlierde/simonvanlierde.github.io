@@ -6,6 +6,7 @@ const home = "https://simonvanlierde.com/";
 const cv = "https://simonvanlierde.com/cv/";
 const archive = "https://simonvanlierde.com/archive/";
 const notes = "https://simonvanlierde.com/notes/";
+const phd = "https://simonvanlierde.com/phd/";
 
 test("a page-only change posts just that page", () => {
   assert.deepEqual(changedUrls(["src/pages/cv.astro"]), [cv]);
@@ -14,8 +15,8 @@ test("a page-only change posts just that page", () => {
 });
 
 test("shared code or assets post every sheet", () => {
-  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv, archive, notes]);
-  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv, archive, notes]);
+  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv, archive, notes, phd]);
+  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv, archive, notes, phd]);
 });
 
 test("changes that cannot alter the built pages post nothing", () => {

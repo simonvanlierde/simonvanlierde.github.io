@@ -1,0 +1,37 @@
+{
+  "as_of": "2026-10-29",
+  "outputs": [
+    {
+      "title": "R9lab: an open-source platform for collaborative product data collection in industrial ecology",
+      "venue": "Journal of Industrial Ecology",
+      "status": "under review"
+    },
+    {
+      "title": "A review of computer vision for end-of-life product data",
+      "venue": "Journal of Industrial Ecology",
+      "status": "in progress"
+    },
+    {
+      "title": "When do photos improve product data for life cycle assessment?",
+      "venue": null,
+      "status": "in progress"
+    },
+    {
+      "title": "A field study of assisted product data capture",
+      "venue": null,
+      "status": "in progress"
+    }
+  ],
+  "repos": [
+    "CMLPlatform/r9cam",
+    "CMLPlatform/r9lab",
+    "simonvanlierde/awesome-ai4ie",
+    "simonvanlierde/brightway-benchmarks",
+    "simonvanlierde/citesync",
+    "simonvanlierde/codemeta-drift",
+    "simonvanlierde/credit-matrix",
+    "simonvanlierde/cv-ie-taxonomy",
+    "simonvanlierde/project-templates",
+    "simonvanlierde/sourceledger"
+  ]
+}
