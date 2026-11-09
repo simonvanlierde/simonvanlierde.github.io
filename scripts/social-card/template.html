@@ -25,10 +25,10 @@
   .foot > :last-child { border-bottom: 0; }
   .value { font-size: 23px; }
   .domain { color: var(--accent); letter-spacing: .5px; }
-  .visual { flex: 1; display: grid; place-items: center; padding: 28px;
+  .visual { flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr); place-items: center; padding: 28px;
             background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
             background-size: 20px 20px; background-position: -1px -1px; opacity: 1; }
-  .shot { max-width: 100%; max-height: 100%; display: block; border: 2px solid var(--frame); background: #fff;
+  .shot { max-width: 100%; max-height: 100%; min-height: 0; display: block; border: 2px solid var(--frame); background: #fff;
           box-shadow: 8px 8px 0 rgba(44,51,61,.14); }
   .cover { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 </style>
@@ -37,11 +37,11 @@
     <div class="cell name"><div class="label">Title</div><div id="name">{{name}}</div></div>
     <div class="cell what"><div class="label">Description</div><p>{{line}}</p></div>
     <div class="foot">
-      <div class="cell"><div class="label">Author</div><div class="value">Simon van Lierde</div></div>
       <div class="row">
+        <div class="cell"><div class="label">Author</div><div class="value">Simon van Lierde</div></div>
         <div class="cell"><div class="label">First published</div><div class="value">{{year}}</div></div>
-        <div class="cell"><div class="label">Domain</div><div class="value domain">{{domain}}</div></div>
       </div>
+      <div class="cell"><div class="label">Domain</div><div class="value domain">{{domain}}</div></div>
       {{doi}}
     </div>
   </section>
