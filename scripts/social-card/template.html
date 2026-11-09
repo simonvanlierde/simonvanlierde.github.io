@@ -12,7 +12,7 @@
   .cell:last-child { border-bottom: 0; }
   .label { font-size: 15px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   .name { padding-top: 30px; }
-  #name { font-size: 76px; line-height: 1.02; letter-spacing: 1px; overflow-wrap: anywhere; }
+  #name { font-size: 76px; line-height: 1.02; letter-spacing: 1px; overflow-wrap: normal; }
   .what { flex: 1; }
   .what p { font-size: 29px; line-height: 1.25; }
   .row { display: flex; padding: 0; }
@@ -48,7 +48,10 @@
   <section class="visual"><img class="shot {{fitclass}}" src="visual.png" alt=""></section>
 </div>
 <script>"use strict";
-  // Shrink long names until they fit the title cell on at most two lines.
-  const n = document.getElementById("name"); let s = 76;
-  while (n.scrollHeight > s * 2.2 && s > 36) { s -= 2; n.style.fontSize = `${s}px`; }
+  // Shrink long names until they fit the title cell, on at most two lines and never split mid-word.
+  // shot.mjs calls this once the font has loaded, since the fallback font measures differently.
+  window.fitName = () => {
+    const n = document.getElementById("name"); let s = 76;
+    while ((n.scrollHeight > s * 2.2 || n.scrollWidth > n.clientWidth) && s > 36) { s -= 2; n.style.fontSize = `${s}px`; }
+  };
 </script>
