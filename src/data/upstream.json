@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-11-02",
-  "fetched_at": "2026-11-02",
+  "as_of": "2026-11-09",
+  "fetched_at": "2026-11-09",
   "prs": [
     {
       "repo": "ASSERT-KTH/awesome-open-science-software",
@@ -47,6 +47,24 @@
     {
       "repo": "codemeta/codemeta",
       "number": 505,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "frankie567/reauth",
+      "number": 34,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "GreenDelta/olca-ipc.py",
+      "number": 48,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "GreenDelta/olca-ipc.py",
+      "number": 49,
       "base": "master",
       "default_branch": "master"
     },
@@ -189,6 +207,12 @@
       "default_branch": "main"
     },
     {
+      "repo": "Pseudomanifold/latex-credits",
+      "number": 14,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
       "repo": "pyOpenSci/python-package-guide",
       "number": 823,
       "base": "main",
@@ -231,6 +255,12 @@
       "default_branch": "main"
     },
     {
+      "repo": "SALib/SALib",
+      "number": 713,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
       "repo": "SchemaStore/schemastore",
       "number": 6522,
       "base": "master",
@@ -257,6 +287,12 @@
     {
       "repo": "streetsidesoftware/cspell-dicts",
       "number": 5364,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "typst/packages",
+      "number": 6284,
       "base": "main",
       "default_branch": "main"
     }
