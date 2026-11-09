@@ -191,13 +191,10 @@ test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
   const primary = page.locator("header .stamp");
   await expect(primary).toHaveCount(1);
   await expect(primary).toHaveAttribute("href", "/cv/");
-  const email = page.locator("header a[href^='mailto:']");
-  if (cv.basics.email) {
-    await expect(email).toHaveAttribute("href", `mailto:${cv.basics.email}`);
-    await expect(email).toHaveText(cv.basics.email);
-  } else {
-    await expect(email).toHaveCount(0);
-  }
+  const emails = await page
+    .locator("header a[href^='mailto:']")
+    .evaluateAll((els) => els.map((el) => ({ href: el.getAttribute("href"), text: el.textContent?.trim() })));
+  expect(emails).toEqual(cv.basics.email ? [{ href: `mailto:${cv.basics.email}`, text: cv.basics.email }] : []);
 });
 
 test("the exploded view becomes one compact, touch-sized system on mobile", async ({ page }) => {
@@ -307,12 +304,8 @@ test("the open sheet is marked current in the nav", async ({ page }) => {
 test("the title block ends with a clear collaboration path", async ({ page }) => {
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByText("Contact Simon")).toBeVisible();
-  if (cv.basics.email) {
-    await expect(footer.getByRole("link", { name: cv.basics.email, exact: true })).toHaveAttribute(
-      "href",
-      `mailto:${cv.basics.email}`,
-    );
-  }
+  const hrefs = await footer.getByRole("link").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
+  expect(hrefs.filter((h) => h?.startsWith("mailto:"))).toEqual(cv.basics.email ? [`mailto:${cv.basics.email}`] : []);
 });
 
 test("an unknown path serves the 404 page with a way back", async ({ page }) => {
@@ -443,7 +436,7 @@ for (const route of ["/", "/archive/"]) {
     const selectors = route === "/" ? [".notes__list", ".bom-row__desc"] : [".bom-row__desc"];
     for (const sel of selectors) await expect(page.locator(sel).first()).toBeVisible();
     const regions = page.locator(selectors.join(", "));
-    if (route === "/") await expect(page.locator(".notes__list [data-source]")).toHaveCount(4);
+    await expect(page.locator(".notes__list [data-source]")).toHaveCount(route === "/" ? 4 : 0);
 
     for (const figure of await regions.locator("[data-source]").all()) {
       await expect(figure).toHaveText(new RegExp(`^\\s*(?:\\d[\\d.,\\s]*%?|${NUMBER_WORD})\\s*$`, "i"));
