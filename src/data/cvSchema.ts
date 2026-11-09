@@ -7,6 +7,18 @@ import { PublicationSchema } from "./publications.ts";
 // YAML reads a bare `2018` as a number: normalise to string, then check the shape.
 const CvDate = z.union([z.string(), z.number()]).transform(String).pipe(z.string().regex(CV_DATE));
 
+// One talk. Only the event is required; `doi` is the bare DOI of the slides
+// deposit and is absent until there is one, so no link renders before then.
+export const TalkSchema = z.object({
+  title: z.string().optional(),
+  event: z.string(),
+  date: CvDate.optional(),
+  doi: z
+    .string()
+    .regex(/^10\.\d{4,9}\/\S+$/)
+    .optional(),
+});
+
 // A missing required field fails the build. Optional sections default to empty
 // and do not render.
 export const CvSchema = z.object({
@@ -62,6 +74,7 @@ export const CvSchema = z.object({
       details: z.string().optional(),
     }),
   ),
+  talks: z.array(TalkSchema).default([]),
   professional_development: z.array(z.string()).default([]),
   interests: z.array(z.string()).default([]),
   // Export timestamp. Optional so older exports still build.

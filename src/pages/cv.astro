@@ -1,5 +1,5 @@
 ---
-import { formatIsoDate, formatPeriod, isoDay } from "../components/cvPeriod.ts";
+import { formatDate, formatIsoDate, formatPeriod, isoDay } from "../components/cvPeriod.ts";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
@@ -15,6 +15,7 @@ const {
   experience,
   projects,
   education,
+  talks,
   professional_development: development,
   interests,
   exported,
@@ -34,7 +35,7 @@ const sections = [
   { id: "education-heading", label: "Education", show: true },
   { id: "projects-heading", label: "Projects", show: projects.length > 0 },
   { id: "skills-heading", label: "Skills", show: skills.length > 0 },
-  { id: "development-heading", label: "Talks and training", show: development.length > 0 },
+  { id: "development-heading", label: "Talks and training", show: talks.length + development.length > 0 },
   { id: "interests-heading", label: "Interests", show: interests.length > 0 },
 ]
   .filter((s) => s.show)
@@ -234,14 +235,32 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
     }
 
     {
-      development.length > 0 && (
+      talks.length + development.length > 0 && (
         <section class="container" aria-labelledby="development-heading">
           <h2 id="development-heading"><span class="datum" aria-hidden="true">{ref("development-heading")}</span>Talks and training</h2>
-          <ul class="prose cv-list cv-aligned">
-            {development.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
+          {talks.length > 0 && (
+            <div class="cv-entries">
+              {talks.map((talk) => (
+                <article class="cv-entry">
+                  <p class="cv-entry__period" aria-hidden="true">{talk.date ? formatDate(talk.date) : ""}</p>
+                  <div class="cv-entry__body">
+                    <h3 class="cv-entry__role">
+                      {talk.doi ? <a href={`https://doi.org/${talk.doi}`}>{talk.title ?? talk.event}</a> : (talk.title ?? talk.event)}
+                      {talk.date && <span class="visually-hidden">, {formatDate(talk.date)}</span>}
+                    </h3>
+                    {talk.title && <p class="cv-entry__org">{talk.event}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+          {development.length > 0 && (
+            <ul class="prose cv-list cv-aligned">
+              {development.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          )}
         </section>
       )
     }
