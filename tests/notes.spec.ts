@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const POST = "/notes/hub-and-spoke-observability/";
+const HOMELAB = "/notes/homelab-as-code/";
 
 test("the feed is valid RSS with the post as an item", async ({ request }) => {
   const res = await request.get("/notes/rss.xml");
@@ -10,6 +11,7 @@ test("the feed is valid RSS with the post as an item", async ({ request }) => {
   expect(xml).toContain('<rss version="2.0"');
   expect(xml).toContain('<atom:link href="https://simonvanlierde.com/notes/rss.xml" rel="self"');
   expect(xml).toContain(`<link>https://simonvanlierde.com${POST}</link>`);
+  expect(xml).toContain(`<link>https://simonvanlierde.com${HOMELAB}</link>`);
   expect(xml).toMatch(/<pubDate>[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} 00:00:00 GMT<\/pubDate>/);
 });
 
@@ -40,4 +42,5 @@ test("the sitemap lists the notes index and each note", async ({ request }) => {
   const xml = await (await request.get("/sitemap.xml")).text();
   expect(xml).toContain("<loc>https://simonvanlierde.com/notes/</loc>");
   expect(xml).toContain(`<loc>https://simonvanlierde.com${POST}</loc>`);
+  expect(xml).toContain(`<loc>https://simonvanlierde.com${HOMELAB}</loc>`);
 });

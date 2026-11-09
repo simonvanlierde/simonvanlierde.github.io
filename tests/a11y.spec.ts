@@ -30,7 +30,15 @@ async function expectNoViolations(page: Page) {
 
 // Each colour scheme has its own tokens, and linting cannot catch contrast.
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/cv/", "/archive/", "/notes/", "/notes/hub-and-spoke-observability/", "/no-such-page/"]) {
+  for (const path of [
+    "/",
+    "/cv/",
+    "/archive/",
+    "/notes/",
+    "/notes/hub-and-spoke-observability/",
+    "/notes/homelab-as-code/",
+    "/no-such-page/",
+  ]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
       // The sheet defaults to dark; light comes from the toggle's stored choice.
@@ -42,7 +50,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 }
 
 // Narrow screens get their own layout, such as the compact Fig. 1 plate.
-for (const path of ["/", "/cv/", "/archive/", "/notes/hub-and-spoke-observability/"]) {
+for (const path of ["/", "/cv/", "/archive/", "/notes/hub-and-spoke-observability/", "/notes/homelab-as-code/"]) {
   test(`no axe violations on a phone (${path})`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(path);
