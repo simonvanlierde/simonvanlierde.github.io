@@ -115,8 +115,14 @@ export const upstream: UpstreamProject[] = [
   {
     name: "latex-credits",
     repo: "Pseudomanifold/latex-credits",
-    what: "kept escaped characters in author names from breaking compilation or changing the printed name",
-    prs: [13],
+    what: "kept escaped characters in author names from breaking compilation or changing the printed name, and prepared the package for CTAN with a manual and an upload bundle",
+    prs: [13, 14],
+  },
+  {
+    name: "reauth",
+    repo: "frankie567/reauth",
+    what: "turned a malformed OAuth2 ID token into the library's own token-exchange error instead of a raw PyJWT one",
+    prs: [34],
   },
   {
     name: "openLCA Python client",
