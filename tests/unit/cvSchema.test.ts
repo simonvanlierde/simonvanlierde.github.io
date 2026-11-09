@@ -89,3 +89,17 @@ test("every skill in the export is one whole item: an unquoted comma in YAML spl
     assert.equal(item.split("(").length, item.split(")").length, `unbalanced parentheses in "${item}"`);
   }
 });
+
+test("talks default to empty, and only the event is required", () => {
+  assert.deepEqual(CvSchema.parse(minimal()).talks, []);
+  const talks = CvSchema.parse({ ...minimal(), talks: [{ event: "Brightcon 2025" }] }).talks;
+  assert.deepEqual(talks, [{ event: "Brightcon 2025" }]);
+  assert.throws(() => CvSchema.parse({ ...minimal(), talks: [{ title: "No event" }] }));
+});
+
+test("a talk's slides DOI is optional and must be a bare DOI", () => {
+  const withDoi = (doi: string) =>
+    CvSchema.parse({ ...minimal(), talks: [{ event: "ISIE 2025", date: "2025-07", doi }] });
+  assert.equal(withDoi("10.5281/zenodo.1234567").talks[0].doi, "10.5281/zenodo.1234567");
+  assert.throws(() => withDoi("https://doi.org/10.5281/zenodo.1234567"));
+});

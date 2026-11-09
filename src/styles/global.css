@@ -1280,3 +1280,23 @@ html {
   align-items: center;
   min-height: 44px;
 }
+
+/* A technical note: the prose column, with its own sub-headings and lists. */
+.note__body {
+  margin-top: var(--space-l);
+}
+:where(.note__body > * + *) {
+  margin-top: var(--space-m);
+}
+:where(.note__body > h2) {
+  margin-top: var(--space-l);
+}
+.note__body ul {
+  padding-inline-start: var(--space-m);
+}
+.note__body li + li {
+  margin-top: var(--space-xs);
+}
+.note > .sheet-stamp {
+  margin-top: var(--space-l);
+}

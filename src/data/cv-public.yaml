@@ -95,8 +95,17 @@ publications:
     venue: Zenodo
     year: 2026
     doi: 10.5281/zenodo.16637742
+talks:
+  - title: Crowdsourcing the circular economy
+    event: Open Science Festival 2026 (lightning talk)
+    date: "2026-10"
+  - event: NWO NAC 2026
+    date: "2026"
+  - event: Brightcon 2025
+    date: "2025-10"
+  - event: ISIE 2025
+    date: "2025-07"
 professional_development:
-  - "Talks: Open Science Festival 2026 (lightning talk), NWO NAC 2026, Brightcon 2025, and ISIE 2025."
   - "Schools: BMVA Computer Vision (2026); distributed and GPU computing, Utrecht University (2026); inventory modelling at scale, Départ de Sentier (2025); AI, machine learning and neural networks, Utrecht University (2024)."
 skills:
   - group: Programming

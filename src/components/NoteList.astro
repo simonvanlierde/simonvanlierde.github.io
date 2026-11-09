@@ -1,0 +1,62 @@
+---
+// Notes, newest first: date in the drafting hand, then title and one line.
+import type { CollectionEntry } from "astro:content";
+import { formatIsoDate } from "./cvPeriod.ts";
+
+interface Props {
+  notes: CollectionEntry<"notes">[];
+}
+
+const { notes } = Astro.props;
+---
+
+<ul class="note-list">
+  {
+    notes.map((note) => (
+      <li>
+        <time class="draft" datetime={note.data.date}>
+          {formatIsoDate(note.data.date)}
+        </time>
+        <div>
+          <a href={`/notes/${note.id}/`}>{note.data.title}</a>
+          <p>{note.data.description}</p>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  /* Same key-and-body grid as the work rows: date rail, then the entry. */
+  .note-list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-m);
+    display: grid;
+    gap: var(--space-m);
+  }
+
+  .note-list li {
+    display: grid;
+    grid-template-columns: minmax(7rem, 9rem) minmax(0, 1fr);
+    gap: var(--space-m);
+    padding-top: var(--space-s);
+    border-top: var(--border-width) solid var(--border);
+  }
+
+  .note-list a {
+    font-size: var(--step-1);
+  }
+
+  .note-list p {
+    margin-top: var(--space-2xs);
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 36rem) {
+    .note-list li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2xs);
+    }
+  }
+</style>

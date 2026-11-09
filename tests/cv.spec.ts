@@ -16,7 +16,7 @@ const optionalSections: [string, unknown[]][] = [
   ["Publications", publications],
   ["Skills", cv.skills ?? []],
   ["Projects", cv.projects ?? []],
-  ["Talks and training", cv.professional_development ?? []],
+  ["Talks and training", [...(cv.talks ?? []), ...(cv.professional_development ?? [])]],
   ["Interests", cv.interests ?? []],
 ];
 
@@ -76,6 +76,20 @@ test("experience entries carry a role, an organisation, and a formatted period",
   const current = page.locator(".cv-entry").filter({ hasText: job.role });
   await expect(current.locator(".cv-entry__period")).toHaveText(formatPeriod(job.start, job.end));
   await expect(current.locator(".cv-entry__org")).toContainText(job.organization);
+});
+
+// A talk links its slides only once the export carries a DOI; no DOI, no link.
+test("each talk lists its event and links slides only when it has a DOI", async ({ page }) => {
+  for (const talk of cv.talks ?? []) {
+    const entry = page.locator(".cv-entry").filter({ hasText: talk.event });
+    await expect(entry).toHaveCount(1);
+    const link = entry.getByRole("link");
+    if (talk.doi) {
+      await expect(link).toHaveAttribute("href", `https://doi.org/${talk.doi}`);
+    } else {
+      await expect(link).toHaveCount(0);
+    }
+  }
 });
 
 // A missing PDF export would ship a download button that 404s.
@@ -149,8 +163,8 @@ test("the homepage does not restate the CV timeline", async ({ page }) => {
 test("the CV sheet stamps when its data was exported, and marks itself current", async ({ page }) => {
   const block = page.getByRole("region", { name: "Document title block" });
   await expect(block.getByText("Curriculum vitae", { exact: true })).toBeVisible();
-  await expect(block.getByText("2 OF 3", { exact: true })).toBeVisible();
-  await expect(block.getByRole("link", { name: "2 OF 3, go to sheet 1, index" })).toHaveAttribute("href", "/");
+  await expect(block.getByText("2 OF 4", { exact: true })).toBeVisible();
+  await expect(block.getByRole("link", { name: "2 OF 4, go to sheet 1, index" })).toHaveAttribute("href", "/");
 
   // A generated sheet is dated, not attributed.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();

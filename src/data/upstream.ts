@@ -25,7 +25,7 @@ export const upstream: UpstreamProject[] = [
   {
     name: "lca_algebraic",
     repo: "oie-mines-paristech/lca_algebraic",
-    what: "fixed truncated-normal and lognormal sampling, method lookup and a cache that went stale across time zones; sped up parameter expansion, and made Sobol analysis about 20× faster in a 20-parameter benchmark when second-order indices are not needed",
+    what: "fixed truncated-normal and lognormal sampling, method lookup and a cache that went stale across time zones; sped up parameter expansion, and cut the Sobol analysis step from 3.13 s to 0.16 s in a 20-parameter benchmark when second-order indices are not needed",
     prs: [106, 107, 108, 109, 110],
   },
   {
@@ -127,7 +127,7 @@ export const upstream: UpstreamProject[] = [
   {
     name: "openLCA Python client",
     repo: "GreenDelta/olca-ipc.py",
-    what: "fixed deletion of data quality systems and JSON-RPC error handling, and released failed calculation results on the server",
+    what: "fixed deletion of data quality systems, and JSON-RPC error handling that crashed get_all and lost a failed simulation's error",
     prs: [48, 49],
   },
   {
