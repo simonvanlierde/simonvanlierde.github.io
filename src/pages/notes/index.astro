@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+import NoteList from "../../components/NoteList.astro";
+import SheetNav from "../../components/SheetNav.astro";
+import TitleBlock from "../../components/TitleBlock.astro";
+import { cv } from "../../data/cv.ts";
+import Base from "../../layouts/Base.astro";
+
+const notes = (await getCollection("notes")).sort((a, b) => b.data.date.localeCompare(a.data.date));
+---
+<Base title="Technical notes | Simon van Lierde" description="Short technical notes on research software, monitoring and infrastructure by Simon van Lierde.">
+  <SheetNav current="notes" />
+  <main id="main" class="container archive">
+    <header>
+      <h1>Technical notes</h1>
+      <p class="prose">Short write-ups of how research software is built and run. <a href="/notes/rss.xml">RSS feed</a>.</p>
+      <a class="stamp sheet-stamp" href="/">Selected work</a>
+    </header>
+    <section aria-labelledby="notes-heading">
+      <h2 id="notes-heading">Notes</h2>
+      <NoteList notes={notes} />
+    </section>
+  </main>
+  <TitleBlock title={cv.basics.name} docType="Technical notes" sheet="4 OF 4" turn={{ href: "/", label: "sheet 1, index", dir: "next" }} dated={notes[0]?.data.date} />
+</Base>
