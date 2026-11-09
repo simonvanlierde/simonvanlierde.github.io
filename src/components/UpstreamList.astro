@@ -1,0 +1,34 @@
+---
+import { prGroups, type UpstreamProject } from "../data/upstream.ts";
+
+interface Props {
+  groups: { name: string; projects: UpstreamProject[] }[];
+  details?: boolean;
+}
+const { groups, details = false } = Astro.props;
+---
+<ul class="upstream-list">
+  {groups.map((group) => {
+    const count = group.projects.reduce((sum, project) => sum + project.prs.length, 0);
+    const label = `${count} PR${count === 1 ? "" : "s"}`;
+    return (
+    <li id={`upstream-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
+      <h3>{group.name}</h3>
+      {group.projects.map((project) => (
+        <p>{group.projects.length > 1 && <span class="draft">{project.name}: </span>}{project.what}</p>
+      ))}
+      {!details && group.projects.map((project) => prGroups(project).filter((part) => part.base).map((part) => <p class="upstream-branch">{group.projects.length > 1 && `${project.name}: `}Merged into the {part.base} branch.</p>))}
+      {details ? group.projects.map((project) => (
+        <p class="upstream-prs"><span class="draft">{project.name}: </span>
+          {prGroups(project).map((part, i) => <>
+            {i > 0 && "; "}
+            {part.prs.map((n, j) => <>{j > 0 && ", "}<a href={`https://github.com/${project.repo}/pull/${n}`}>#{n}</a></>)}
+            {part.base && ` merged into the ${part.base} branch`}
+          </>)}
+        </p>
+      )) : <a class="upstream-count" href={`/archive/#upstream-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} aria-label={`${label} for ${group.name}`}>
+        {label}
+      </a>}
+    </li>
+  ); })}
+</ul>

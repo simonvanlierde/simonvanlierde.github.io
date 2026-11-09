@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Personal website for Simon van Lierde, research software engineer and PhD candidate at CML, Leiden
-University. It has two pages, a landing page for my work and a CV. I build it with Astro and deploy
+University. It has three pages: selected work, a project archive and a CV. I build it with Astro and deploy
 it to GitHub Pages at [simonvanlierde.com](https://simonvanlierde.com).
 
 The site is drawn as one ISO technical drawing set, with a chart of R9lab's disassembly data that refreshes weekly.
@@ -21,6 +21,7 @@ pnpm dev          # start the dev server at http://localhost:4321
 pnpm build        # type-check (astro check) and build to dist/
 pnpm gen:og       # regenerate public/og.png (the social-card image)
 pnpm fetch:cards  # copy each featured card's demo og:image into src/assets/cards/
+pnpm fetch:codemeta # refresh project versions, DOIs and licences from their repositories
 pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```

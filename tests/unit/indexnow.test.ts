@@ -4,15 +4,17 @@ import { buildPayload, changedUrls, send } from "../../scripts/indexnow.mjs";
 
 const home = "https://simonvanlierde.com/";
 const cv = "https://simonvanlierde.com/cv/";
+const archive = "https://simonvanlierde.com/archive/";
 
 test("a page-only change posts just that page", () => {
   assert.deepEqual(changedUrls(["src/pages/cv.astro"]), [cv]);
+  assert.deepEqual(changedUrls(["src/pages/archive.astro"]), [archive]);
   assert.deepEqual(changedUrls(["src/pages/index.astro", "docs/architecture.md"]), [home]);
 });
 
-test("shared code or assets post both pages", () => {
-  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv]);
-  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv]);
+test("shared code or assets post every sheet", () => {
+  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv, archive]);
+  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv, archive]);
 });
 
 test("changes that cannot alter the built pages post nothing", () => {

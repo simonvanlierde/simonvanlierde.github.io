@@ -1,0 +1,15 @@
+---
+import { projectMetadata } from "../data/projectSchema.ts";
+
+interface Props {
+  repo: string;
+}
+const metadata = projectMetadata(Astro.props.repo);
+const name = Astro.props.repo.split("/").at(-1);
+const licenses = metadata?.license ? [metadata.license].flat() : [];
+---
+{metadata && <p class="project-metadata draft">
+  {metadata.version && <span>v{metadata.version}</span>}
+  {metadata.doi && <a href={metadata.doi} aria-label={`DOI for ${name}`}>DOI</a>}
+  {licenses.map((license) => <a href={license} aria-label={`${new URL(license).pathname.split("/").at(-1)?.replace(/\.html$/, "")} licence for ${name}`}>{new URL(license).pathname.split("/").at(-1)?.replace(/\.html$/, "")}</a>)}
+</p>}

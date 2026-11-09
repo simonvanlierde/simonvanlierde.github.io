@@ -30,7 +30,7 @@ async function expectNoViolations(page: Page) {
 
 // Each colour scheme has its own tokens, and linting cannot catch contrast.
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/cv/", "/no-such-page/"]) {
+  for (const path of ["/", "/cv/", "/archive/", "/no-such-page/"]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
       // The sheet defaults to dark; light comes from the toggle's stored choice.
@@ -42,7 +42,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 }
 
 // Narrow screens get their own layout, such as the compact Fig. 1 plate.
-for (const path of ["/", "/cv/"]) {
+for (const path of ["/", "/cv/", "/archive/"]) {
   test(`no axe violations on a phone (${path})`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(path);
@@ -50,13 +50,10 @@ for (const path of ["/", "/cv/"]) {
   });
 }
 
-// Scan states a first-paint scan never reaches: a toggled disclosure, another
+// Scan states a first-paint scan never reaches: another
 // chart measure, and the light theme reached through the toggle.
 test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
-
-  // Both lists ship open; fold one so the scan sees a closed list and its count.
-  await page.locator("details.disclosure.personal summary").click();
 
   const parts = page.getByRole("button", { name: "Components" });
   if ((await parts.count()) > 0) {

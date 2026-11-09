@@ -227,8 +227,7 @@ Below the reading width, a layout may re-compose instead of only stacking. For
 example, the exploded figure becomes a compact assembly map, so all its parts
 stay visible together.
 
-Moving between sheets is a plain page load, with no cross-document view
-transition. In-page jumps scroll smoothly, `auto` under reduced motion.
+Moving between sheets uses a native cross-document view transition when supported. The title block keeps its identity between sheets. Reduced motion uses a plain page load. In-page jumps scroll smoothly, `auto` under reduced motion.
 
 ### Elevation & Depth
 
@@ -266,7 +265,7 @@ sheets use these:
 | Links | Engineer's blue and underlined; utility links drop the underline at rest and answer hover with colour |
 | Balloon / datum | Notation marks only, `--border-strong` stroke on a `--bg` fill, drafting hand with tabular numerals |
 | Tags | Read-only spec callouts, never interactive filters. On a wide sheet a plain list in the rail, one per line in the lettering under a hairline, like a parts list's material column. Stacked under the text, hairline boxes, so they stay apart from the underlined cross-references above |
-| Work row | A parts-list row, not a card: a top rule, no background, no hover tint, the part name as the target. On a wide sheet the rail holds the kind and the tags; the body holds the name, the description, the links and one cross-reference line. Stacked, the order is kind, name, description, links, cross-references, tags. R9lab's rail holds its notes as one column of figures, its cross-references and its stack. A featured row puts a 4:3 close-up of its demo in a 15rem left column, in a surface mount inside a hairline, and stacks the row beside it; stacked, the close-up sits under the name. It links to the demo for pointers only, and its frame answers hover and the "Live demo" link's focus with the frame line |
+| Work row | A parts-list row with a shared kind rail and body for featured and plain projects. Featured rows add a demo close-up below the kind. Names, descriptions, links, release metadata, cross-references and tags stay in the same order; tags appear once below the body |
 | Cross-reference | "Uses" and "Used by": plain underlined in-page links in the lettering, on one line under the links, 24px targets. They read as links beside the tags, which are not |
 | Sheet nav | Sticky, solid ground, hairline rule; current sheet marked with `aria-current="page"` and ink, not colour alone. The SVL monogram stays hidden while the sheet's name heading is in view, like a reference mark that appears once the title is out of sight; on the index it scrolls back to the top |
 | Sheet head | The title zone, identical on every sheet and capped at the index's left column: the portrait in a frame-line box beside the name, set as given name over family name at the same height, then the two-line lead (role, then affiliation), the intro, the contact line and the profiles. Only the stamp under it differs per sheet. The index's figure sits beside it |
@@ -324,8 +323,7 @@ The named rules above are the checklist. A few more:
 
 - **Do** add sheets, sections, figures, and components. The set is meant to
   grow, and the rules keep a new part legible beside the old ones.
-- **Do** open the personal projects on `/` by default. It lengthens the
-  one-minute read, and that is the intended trade.
+- **Do** keep the index focused on R9lab and four featured rows. Personal, smaller and other projects belong to the archive register.
 - **Do** spell the lab "R9lab".
 
 #### Don't

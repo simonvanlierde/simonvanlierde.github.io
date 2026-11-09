@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+import { isoDay } from "../components/cvPeriod.ts";
+import Figure from "../components/Figure.astro";
+import ProjectMetadata from "../components/ProjectMetadata.astro";
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
+import UpstreamList from "../components/UpstreamList.astro";
+import { cv } from "../data/cv.ts";
+import { figureParts, relatedCards } from "../data/projectSchema.ts";
+import { archiveJsonLd } from "../data/schemaOrg.ts";
+import { alsoMerged, upstreamShowcase } from "../data/upstream.ts";
+import Base from "../layouts/Base.astro";
+
+const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+const archived = projects.filter((p) => !p.data.featured);
+const related = relatedCards(projects);
+const destination = (id: string) =>
+  `${projects.find((p) => p.id === id)?.data.featured ? "/" : "/archive/"}#project-${id}`;
+---
+<Base title="Project archive | Simon van Lierde" description="Research tools, personal apps and smaller projects by Simon van Lierde, with the complete list of merged upstream contributions." jsonLd={archiveJsonLd(archived)}>
+  <SheetNav current="archive" />
+  <main id="main" class="container archive">
+    <header>
+      <h1>Project archive</h1>
+      <p class="prose">Research tools, personal apps and smaller projects. <a href="/">Selected work</a> introduces R9lab and the featured projects.</p>
+      <a class="stamp sheet-stamp" href="/">Selected work</a>
+    </header>
+    <section aria-labelledby="projects-heading">
+      <h2 id="projects-heading">Project register</h2>
+      <p class="archive-note" id="archive-note">Projects outside the featured selection. An archive entry does not mean a project is discontinued. <span class="archive-scroll-hint">Scroll sideways for all columns.</span></p>
+      <div class="archive-table-wrap" tabindex="0" role="region" aria-label="Project register, scroll horizontally for all columns">
+        <table class="archive-table" aria-labelledby="projects-heading" aria-describedby="archive-note">
+          <thead><tr><th scope="col">Item</th><th scope="col">Kind</th><th scope="col">Stack</th><th scope="col">Link</th></tr></thead>
+          <tbody>{archived.map((p) => <tr id={`project-${p.id}`}>
+            <th scope="row"><a href={p.data.demo ?? p.data.repo}>{p.data.title}</a><p class="bom-row__desc">{figureParts(p.data.description, p.data.figures).map((part) => typeof part === "string" ? part : <Figure {...part} />)}</p>
+              <ProjectMetadata repo={p.data.repo} />
+              {([['Uses', related.get(p.id)?.uses ?? []], ['Used by', related.get(p.id)?.usedBy ?? []]] as const).map(([label, cards]) => cards.length > 0 && <div class="ref-list"><span class="ref-list__label">{label}</span>{cards.slice(0, 3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}{cards.length > 3 && <details class="ref-more"><summary>+{cards.length - 3}<span class="visually-hidden"> more {label.toLowerCase()} links for {p.data.title}</span></summary>{cards.slice(3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}</details>}</div>)}
+              {p.id === "monitoring" && <p class="ref-list">Used by <a class="ref" href="/#relab">R9lab</a></p>}
+            </th>
+            <td>{p.data.kind}</td>
+            <td>{p.data.tags.join(", ")}</td>
+            <td><a href={p.data.repo} aria-label={`Source for ${p.data.title}`}>Source</a>{p.data.links.map((link) => <a href={link.url} aria-label={`${link.label} for ${p.data.title}`}>{link.label}</a>)}</td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+    <section aria-labelledby="upstream-heading">
+      <h2 id="upstream-heading">Merged upstream</h2>
+      <UpstreamList groups={upstreamShowcase} details />
+      <h3 class="archive-subheading">Also merged</h3>
+      <p class="also-merged">{alsoMerged.map((project, i) => <>{i > 0 && "; "}<a href={`https://github.com/${project.repo}/pulls?q=is%3Apr+is%3Amerged+author%3Asimonvanlierde`}>{project.name} ({project.prs.length} PR{project.prs.length === 1 ? "" : "s"})</a></>)}</p>
+    </section>
+  </main>
+  <TitleBlock title={cv.basics.name} docType="Project archive" sheet="3 OF 3" turn={{ href: "/", label: "sheet 1, index", dir: "next" }} dated={cv.exported && isoDay(cv.exported)} />
+</Base>

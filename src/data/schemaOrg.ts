@@ -2,8 +2,7 @@ import { cv, profiles, sheetLead } from "./cv.ts";
 import { type ProjectCard, personId, projectNodes, site } from "./projectSchema.ts";
 import { listablePublications, type Publication } from "./publications.ts";
 
-// Structured data for both pages. It reads the CV export, so it claims nothing
-// the visible page does not.
+// Structured data uses the same CV, project content and metadata as the visible sheets.
 
 /** Profiles that identify the same person elsewhere. */
 const sameAs = [...profiles.map((p) => p.href), cv.basics.links.openalex, cv.basics.links.scholar].filter(Boolean);
@@ -89,6 +88,22 @@ function publicationNode(pub: Publication) {
 export const homeJsonLd = (cards: ProjectCard[]) => ({
   "@context": "https://schema.org",
   "@graph": [website, profilePage("/"), person, ...projectNodes(cards)],
+});
+
+/** The archive keeps structured metadata beside the projects it lists. */
+export const archiveJsonLd = (cards: ProjectCard[]) => ({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${site}/archive/#webpage`,
+      url: `${site}/archive/`,
+      name: "Project archive",
+      author: { "@id": personId },
+    },
+    person,
+    ...projectNodes(cards),
+  ],
 });
 
 /** The CV page: its profile page, the person, and exactly the publications the page lists. */

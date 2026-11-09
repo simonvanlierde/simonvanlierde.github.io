@@ -9,9 +9,6 @@ tags:
   - PyPI
   - CodeMeta
   - CITATION.cff
-links:
-  - label: Zenodo record
-    url: https://doi.org/10.5281/zenodo.23779706
 uses:
   - codemeta-drift
   - project-templates
