@@ -12,6 +12,12 @@ const sameAs = [...profiles.map((p) => p.href), cv.basics.links.openalex, cv.bas
 const [givenName, ...family] = cv.basics.name.split(" ");
 const familyName = family.join(" ");
 
+// Spoken languages go in knowsLanguage, without their level: "Dutch (native)" is not a subject.
+const isLanguages = (group: { group: string }) => group.group === "Languages";
+const languages = cv.skills
+  .filter(isLanguages)
+  .flatMap((group) => group.items.map((item) => item.replace(/\s*\(.*\)$/, "")));
+
 // "Leiden University & TU Delft" is a joint degree: two schools.
 const schools = [...new Set(cv.education.flatMap((e) => e.institution.split(" & ")))];
 
@@ -40,7 +46,8 @@ const person = {
     url: "https://www.universiteitleiden.nl/en/science/environmental-sciences",
   },
   alumniOf: schools.map((name) => ({ "@type": "CollegeOrUniversity", name })),
-  knowsAbout: cv.skills.flatMap((group) => group.items),
+  knowsAbout: cv.skills.filter((group) => !isLanguages(group)).flatMap((group) => group.items),
+  ...(languages.length ? { knowsLanguage: languages } : {}),
 };
 
 /** Google's profile-page markup: the page, about the person. */
@@ -48,6 +55,7 @@ const profilePage = (path: string) => ({
   "@type": "ProfilePage",
   "@id": `${site}${path}#profilepage`,
   url: `${site}${path}`,
+  isPartOf: { "@id": `${site}/#website` },
   ...(cv.exported ? { dateModified: cv.exported } : {}),
   mainEntity: { "@id": personId },
 });
@@ -99,6 +107,7 @@ export const archiveJsonLd = (cards: ProjectCard[]) => ({
       "@id": `${site}/archive/#webpage`,
       url: `${site}/archive/`,
       name: "Project archive",
+      isPartOf: { "@id": `${site}/#website` },
       author: { "@id": personId },
     },
     person,
