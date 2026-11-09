@@ -1,0 +1,55 @@
+---
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
+import { cv } from "../data/cv.ts";
+import Base from "../layouts/Base.astro";
+
+const { email } = cv.basics;
+---
+<Base title="Privacy | Simon van Lierde" description="What this site collects about visitors, who processes it, why, and for how long.">
+  <SheetNav />
+  <main id="main" class="container archive privacy">
+    <header>
+      <h1>Privacy</h1>
+      <p class="prose">This site sets no cookies, runs no analytics and loads nothing from other sites. Its host and its network provider still see your IP address when you visit. This page says who, why and for how long.</p>
+    </header>
+    <section aria-labelledby="who-heading">
+      <h2 id="who-heading">Who is responsible</h2>
+      <p class="prose">I am Simon van Lierde, a private person in The Hague, Netherlands.{email && <> Write to me at <a href={`mailto:${email}`}>{email}</a>.</>}</p>
+    </section>
+    <section aria-labelledby="visit-heading">
+      <h2 id="visit-heading">When you visit</h2>
+      <p class="prose">The site is hosted on GitHub Pages and served through Cloudflare. When your browser loads a page, both see your IP address, the address you asked for, your browser's user agent and the time. The only figures I look at are the request totals in Cloudflare's dashboard. They include bots.</p>
+      <h3>GitHub (hosting)</h3>
+      <ul class="prose">
+        <li>Purpose: deliver the pages and protect them against abuse.</li>
+        <li>Legal basis: legitimate interest (GDPR Art. 6(1)(f)), in delivering the site securely.</li>
+        <li>Retention: GitHub's <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages">Pages documentation</a> says the visitor's IP address "is logged and stored for security purposes". It does not say for how long. The <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">privacy statement</a> says only that "the retention duration depends on the purpose of data collection and any legal obligations".</li>
+      </ul>
+      <h3>Cloudflare (network)</h3>
+      <ul class="prose">
+        <li>Purpose: cache and deliver the pages, and block attacks. Cloudflare also hosts temporary previews of unpublished changes. Nothing here links to them.</li>
+        <li>Legal basis: legitimate interest (GDPR Art. 6(1)(f)), in delivering the site securely.</li>
+        <li>Retention: Cloudflare's <a href="https://www.cloudflare.com/privacy/">privacy policy</a> names no period for visitor request logs. It says it keeps personal information "for a period of time that is consistent with the business purposes" or as long as the law requires, then deletes it. It acts as my processor for these logs.</li>
+      </ul>
+      <p class="prose">I checked these sources on 9 November 2026.</p>
+    </section>
+    <section aria-labelledby="device-heading">
+      <h2 id="device-heading">What stays in your browser</h2>
+      <p class="prose">When you press the theme toggle, the site saves your choice of dark or light in your browser's local storage, under the key <code>theme</code>. It never leaves your device. Clear it in your browser settings.</p>
+    </section>
+    <section aria-labelledby="none-heading">
+      <h2 id="none-heading">What the site does not do</h2>
+      <p class="prose">No cookies, analytics, adverts, forms, embeds, or scripts and fonts from other hosts. The fonts and scripts come from this domain. Links to GitHub, ORCID, LinkedIn and project demos lead to other sites with their own policies. Project pages such as <a href="/jsonvet/">/jsonvet/</a> are built from their own repositories, and this page does not cover them.</p>
+    </section>
+    <section aria-labelledby="mail-heading">
+      <h2 id="mail-heading">If you email me</h2>
+      <p class="prose">I receive your address and message, and I use them to reply. My address is a Gmail account, so Google handles the mail too. The legal basis is my legitimate interest in answering you. I delete a conversation when it is no longer needed.</p>
+    </section>
+    <section aria-labelledby="rights-heading">
+      <h2 id="rights-heading">Your rights</h2>
+      <p class="prose">Under the GDPR you can ask to see, correct or erase your data, restrict its use, or object to it. I do not hold the request logs and cannot look you up in them, so for those ask GitHub or Cloudflare, or write to me and I will point you the right way. You can also complain to the Dutch data protection authority, the <a href="https://www.autoriteitpersoonsgegevens.nl/en">Autoriteit Persoonsgegevens</a>.</p>
+    </section>
+  </main>
+  <TitleBlock title={cv.basics.name} docType="Privacy" sheet="NOT IN SET" dated="2026-11-09" />
+</Base>

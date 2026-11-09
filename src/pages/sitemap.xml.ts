@@ -19,6 +19,7 @@ const pages: { path: string; lastmod?: string }[] = [
   { path: "/cv/", lastmod: exported },
   { path: "/archive/", lastmod: exported },
   { path: "/notes/", lastmod: latestNote },
+  { path: "/privacy/" },
   ...notes.map((note) => ({ path: `/notes/${note.id}/`, lastmod: note.data.date })),
   ...[
     "jsonvet",
