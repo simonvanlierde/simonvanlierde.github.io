@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: osifont; src: url("osifont.woff2") format("woff2"); }
+  :root { --bg:#f8f7f3; --ink:#181d24; --muted:#49515b; --accent:#234993; --frame:#2c333d; --rule:#e2e1dc; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1200px; height: 630px; background: var(--bg); color: var(--ink);
+         font-family: osifont, "DIN Alternate", "Segoe UI", Roboto, Helvetica, sans-serif; position: relative; overflow: hidden; }
+  .frame { position: absolute; inset: 18px; border: 3px solid var(--frame); display: flex; }
+  .block { width: 478px; display: flex; flex-direction: column; border-right: 3px solid var(--frame); }
+  .cell { padding: 20px 30px; border-bottom: 1.5px solid var(--frame); }
+  .cell:last-child { border-bottom: 0; }
+  .label { font-size: 15px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .name { padding-top: 30px; }
+  #name { font-size: 76px; line-height: 1.02; letter-spacing: 1px; overflow-wrap: anywhere; }
+  .what { flex: 1; }
+  .what p { font-size: 29px; line-height: 1.25; }
+  .row { display: flex; padding: 0; }
+  .row .cell { border-bottom: 0; padding: 14px 30px; }
+  .row .cell + .cell { border-left: 1.5px solid var(--frame); }
+  .foot { border-top: 1.5px solid var(--frame); }
+  .foot .cell { border-bottom: 1.5px solid var(--frame); padding: 12px 30px; }
+  .foot .row .cell { border-bottom: 0; }
+  .foot .row { border-bottom: 1.5px solid var(--frame); }
+  .foot > :last-child { border-bottom: 0; }
+  .value { font-size: 23px; }
+  .domain { color: var(--accent); letter-spacing: .5px; }
+  .visual { flex: 1; display: grid; place-items: center; padding: 28px;
+            background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+            background-size: 20px 20px; background-position: -1px -1px; opacity: 1; }
+  .shot { max-width: 100%; max-height: 100%; display: block; border: 2px solid var(--frame); background: #fff;
+          box-shadow: 8px 8px 0 rgba(44,51,61,.14); }
+  .cover { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+</style>
+<div class="frame">
+  <section class="block">
+    <div class="cell name"><div class="label">Title</div><div id="name">{{name}}</div></div>
+    <div class="cell what"><div class="label">Description</div><p>{{line}}</p></div>
+    <div class="foot">
+      <div class="cell"><div class="label">Author</div><div class="value">Simon van Lierde</div></div>
+      <div class="row">
+        <div class="cell"><div class="label">First published</div><div class="value">{{year}}</div></div>
+        <div class="cell"><div class="label">Domain</div><div class="value domain">{{domain}}</div></div>
+      </div>
+      {{doi}}
+    </div>
+  </section>
+  <section class="visual"><img class="shot {{fitclass}}" src="visual.png" alt=""></section>
+</div>
+<script>"use strict";
+  // Shrink long names until they fit the title cell on at most two lines.
+  const n = document.getElementById("name"); let s = 76;
+  while (n.scrollHeight > s * 2.2 && s > 36) { s -= 2; n.style.fontSize = `${s}px`; }
+</script>
