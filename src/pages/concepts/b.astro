@@ -1,0 +1,783 @@
+---
+// Concept B, "Flow sheet": the drawing becomes one ingredient. The work map is a
+// fanned deck of flat colour planes, one per layer, exploded along a diagonal axis
+// as the reader scrolls, with dependencies drawn as flow bands. A design concept:
+// noindex, outside the sitemap and the nav.
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import portrait from "../../assets/portrait.jpg";
+import ConceptRows from "../../components/concepts/ConceptRows.astro";
+import ConceptSwitch from "../../components/concepts/ConceptSwitch.astro";
+import { buildWorkMap, itemNo, partData, partLabel } from "../../components/concepts/workMap.ts";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+import { cv, intro, profiles, sheetLead } from "../../data/cv.ts";
+import Base from "../../layouts/Base.astro";
+
+const { layers, parts } = buildWorkMap(await getCollection("projects"));
+const [given, ...family] = cv.basics.name.split(" ");
+---
+
+<Base
+  title="Concept B: flow sheet | Simon van Lierde"
+  description="Design concept for the index: the work map as a fanned deck of flow planes."
+  canonical={false}
+  noindex
+>
+  <div class="b" id="main">
+    <nav class="b-nav" aria-label="Primary">
+      <a class="b-nav__mark" href="/" aria-label="SVL, home">SVL</a>
+      <span class="b-nav__links">
+        <a href="/">Index</a>
+        <a href="/cv/">CV</a>
+        <a href="/archive/">Archive</a>
+        <a href="/notes/">Notes</a>
+        <ThemeToggle />
+      </span>
+    </nav>
+
+    <header class="b-head">
+      <h1 class="b-name">
+        <span>{given}</span>
+        <span>{family.join(" ")}</span>
+      </h1>
+      <div class="b-head__side">
+        <Image class="b-portrait" src={portrait} width={96} densities={[1, 2]} alt={`Portrait of ${cv.basics.name}`} loading="eager" />
+        <p class="b-lead">{sheetLead.join(", ")}</p>
+        <p class="b-intro">{intro}</p>
+        <p class="b-contact">
+          {cv.basics.email && <a href={`mailto:${cv.basics.email}`}>{cv.basics.email}</a>}
+          {profiles.map((p) => <a href={p.href}>{p.label}</a>)}
+        </p>
+        <a class="b-cta" href="/cv/">Curriculum vitae</a>
+      </div>
+    </header>
+
+    <div class="b-stage">
+      <section class="b-map" data-workmap data-leader="flow" aria-label="Work map" aria-describedby="b-map-caption">
+        <h2 class="visually-hidden">Work map</h2>
+        <div class="b-deck">
+          {
+            layers.map((layer, i) => (
+              <section class={`b-plane b-plane--${layer.id}`} style={`--i: ${i}`} aria-labelledby={`b-layer-${layer.id}`}>
+                <h3 class="b-plane__name" id={`b-layer-${layer.id}`}>
+                  {layer.name}
+                  <span class="b-plane__note">{layer.note}</span>
+                </h3>
+                <div class="b-plane__groups">
+                  {layer.groups.map((group) => (
+                    <div class="b-group">
+                      <p class="b-group__label">{group.label}</p>
+                      <ul class="b-parts" role="list">
+                        {group.parts.map((p) => (
+                          <li class={p.featured ? "b-slot b-slot--featured" : "b-slot"}>
+                            <a class="b-part" href={p.href} data-title={p.title} aria-label={partLabel(p, parts)} {...partData(p)}>
+                              <span class="b-part__n" data-anchor>{itemNo(p.n)}</span>{" "}
+                              <span class="b-part__t">{p.title}</span>
+                            </a>
+                            {p.id === "relab" && (
+                              <button class="b-detail" type="button" popovertarget="detail-a" data-detail="detail-a" aria-label="Detail A: R9lab's six parts">
+                                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                  <path d="M4 5h16M7 10h10M4 15h16M9 20h6" />
+                                  <path class="b-detail__axis" d="M12 2v20" />
+                                </svg>
+                              </button>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))
+          }
+          <span class="b-axis" aria-hidden="true"></span>
+          <svg class="wm-leaders" data-leaders aria-hidden="true"><g data-paths></g></svg>
+        </div>
+        <p class="b-readout" data-readout data-idle="Point at a part to see what flows into it and out of it." aria-hidden="true">
+          Point at a part to see what flows into it and out of it.
+        </p>
+        <p class="wm-caption" id="b-map-caption">
+          Fig. 1: Work map. Each plane is a layer, split by register category; bands show what a part uses
+          (solid) and what uses it (dashed). The rows beside it are its text equivalent.
+        </p>
+      </section>
+
+      <main class="b-rows">
+        <h2>Selected work</h2>
+        <ConceptRows />
+      </main>
+    </div>
+
+    <footer class="b-foot">
+      <p>{cv.basics.name} · {cv.basics.location}</p>
+      <p>Design concept B, outside the drawing set.</p>
+    </footer>
+  </div>
+  <ConceptSwitch current="b" />
+</Base>
+
+<script>
+  import "../../components/concepts/workMap.client.ts";
+</script>
+
+<style>
+  /* Own palette: four flat planes and an ink, each text pair at 4.5:1 or more. */
+  .b {
+    --b-ground: light-dark(oklch(96.5% 0.012 85), oklch(17% 0.03 265));
+    --b-ink: light-dark(oklch(20% 0.03 262), oklch(96% 0.012 85));
+    --b-ink-muted: light-dark(oklch(40% 0.03 262), oklch(82% 0.02 85));
+    --b-rule: light-dark(oklch(20% 0.03 262 / 0.25), oklch(96% 0.012 85 / 0.25));
+    --b-link: light-dark(oklch(42% 0.17 262), oklch(82% 0.1 255));
+    --b-flow: light-dark(oklch(20% 0.03 262), oklch(98% 0.01 85));
+    --b-halo: light-dark(oklch(98% 0.01 85), oklch(17% 0.03 265));
+
+    --plane-data: light-dark(oklch(47% 0.17 262), oklch(70% 0.13 255));
+    --on-data: light-dark(oklch(98% 0.01 90), oklch(17% 0.03 265));
+    --plane-software: light-dark(oklch(27% 0.05 262), oklch(34% 0.06 262));
+    --on-software: oklch(97% 0.012 85);
+    --plane-models: light-dark(oklch(84% 0.14 85), oklch(82% 0.14 85));
+    --on-models: oklch(19% 0.03 262);
+    --plane-upstream: light-dark(oklch(72% 0.16 40), oklch(72% 0.16 40));
+    --on-upstream: oklch(17% 0.03 262);
+
+    color: var(--b-ink);
+    background: var(--b-ground);
+    min-height: 100dvh;
+  }
+
+  /* B leaves the sheet: no frame, no paper inset. */
+  :global(body:has(.b)) {
+    padding: 0;
+    background: light-dark(oklch(96.5% 0.012 85), oklch(17% 0.03 265));
+  }
+
+  :global(body:has(.b))::before {
+    display: none;
+  }
+
+  .b a {
+    color: var(--b-link);
+  }
+
+  .b :focus-visible {
+    outline: 3px solid var(--b-ink);
+    outline-offset: 3px;
+  }
+
+  .b-nav {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 clamp(1rem, 3vw, 2.5rem);
+    min-height: 3.25rem;
+    background: var(--b-ground);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .b-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.5rem;
+    color: var(--b-ink);
+    text-decoration: none;
+  }
+
+  .b-nav__mark {
+    letter-spacing: 0.24em;
+  }
+
+  .b-nav__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(0rem, 1vw, 1rem);
+  }
+
+  .b-nav :global(.theme-toggle) {
+    color: var(--b-ink);
+    margin: 0;
+  }
+
+  /* The name owns the first viewport's top, set as large as the lettering goes. */
+  .b-head {
+    display: grid;
+    gap: var(--space-l);
+    padding: clamp(1rem, 2.5vw, 2rem) clamp(1rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .b-name {
+    font-size: clamp(3.1rem, 8vw, 8rem);
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  .b-name span {
+    display: block;
+  }
+
+  .b-head__side {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-s) var(--space-m);
+    align-content: end;
+    max-width: 34rem;
+  }
+
+  .b-portrait {
+    grid-row: span 2;
+    width: 5rem;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .b-lead {
+    font: var(--step-1) / 1.25 var(--font-draft);
+    letter-spacing: 0.01em;
+  }
+
+  .b-intro {
+    color: var(--b-ink-muted);
+  }
+
+  .b-contact {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-m);
+    font: var(--step--1) var(--font-draft);
+  }
+
+  .b-contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* The one primary action: a filled plane in ink, like a fifth layer. */
+  .b-cta {
+    grid-column: 1 / -1;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.25rem;
+    padding-inline: 1.5rem;
+    font: var(--step-0) var(--font-draft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--b-ground) !important;
+    background: var(--b-ink);
+    transition: translate var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .b-cta:hover {
+      translate: 0 -3px;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .b-head {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+      align-items: end;
+    }
+  }
+
+  /* ---------------------------------------------------------------- stage */
+
+  .b-stage {
+    display: grid;
+    gap: var(--space-xl);
+    padding-inline: clamp(1rem, 3vw, 2.5rem);
+    padding-bottom: var(--space-xl);
+  }
+
+  @media (min-width: 64rem) {
+    .b-stage {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      column-gap: clamp(2rem, 4vw, 4rem);
+    }
+
+    .b-map {
+      position: sticky;
+      top: 3.75rem;
+      align-self: start;
+    }
+  }
+
+  .b-deck {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  /* The diagonal axis the planes fan out along. */
+  .b-axis {
+    position: absolute;
+    z-index: 0;
+    inset-inline-start: 1.5rem;
+    inset-block: -1rem;
+    width: 1px;
+    background: var(--b-rule);
+    transform-origin: top;
+    rotate: -9deg;
+  }
+
+  /* A plane: a flat field of colour, no outline anywhere. */
+  .b-plane {
+    position: relative;
+    /* Lower planes lie on top, so every plane's name stays legible in the deck. */
+    z-index: calc(1 + var(--i));
+    margin-inline-start: calc(var(--i) * clamp(0.75rem, 2.4vw, 2.75rem));
+    padding: 0.85rem 1rem 1rem;
+    background: var(--plane);
+    color: var(--on);
+  }
+
+  .b-plane--data {
+    --plane: var(--plane-data);
+    --on: var(--on-data);
+  }
+
+  .b-plane--software {
+    --plane: var(--plane-software);
+    --on: var(--on-software);
+  }
+
+  .b-plane--models {
+    --plane: var(--plane-models);
+    --on: var(--on-models);
+  }
+
+  .b-plane--upstream {
+    --plane: var(--plane-upstream);
+    --on: var(--on-upstream);
+  }
+
+  .b-plane__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.75rem;
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.9rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .b-plane__note {
+    font: 0.85rem var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .b-plane__groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.75rem;
+    margin-top: 0.4rem;
+  }
+
+  .b-group {
+    flex: 1 1 auto;
+  }
+
+  .b-group__label {
+    font: 0.75rem var(--font-draft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding-bottom: 0.15rem;
+    border-bottom: 1px solid color-mix(in oklch, var(--on) 45%, transparent);
+  }
+
+  .b-parts {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+  }
+
+  .b-slot {
+    display: flex;
+    align-items: center;
+  }
+
+  .b-part {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    min-height: 2.1rem;
+    padding-block: 0.35rem;
+    font-family: var(--font-draft);
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+    color: var(--on) !important;
+    text-decoration: none;
+    transition:
+      color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease;
+  }
+
+  .b-slot--featured .b-part {
+    font-size: 1.3rem;
+  }
+
+  .b-part__n {
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+    translate: 0 -0.45em;
+  }
+
+  .b-part__t {
+    text-decoration: underline 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: color-mix(in oklch, var(--on) 40%, transparent);
+  }
+
+  /* States. Focus inverts the part out of its plane; the parts it touches get a
+     heavy underline; the rest step back. Shape, not only colour. */
+  .b-part.is-focus {
+    color: var(--plane) !important;
+    background: var(--on);
+    padding-inline: 0.35rem;
+    margin-inline: -0.35rem;
+  }
+
+  .b-part.is-focus .b-part__t {
+    text-decoration-color: transparent;
+  }
+
+  .b-part.is-uses .b-part__t,
+  .b-part.is-usedby .b-part__t {
+    text-decoration-thickness: 3px;
+    text-decoration-color: currentColor;
+  }
+
+  .b-part.is-current::before {
+    content: "";
+    align-self: center;
+    width: 0.55em;
+    height: 0.55em;
+    background: currentColor;
+  }
+
+  .b-detail {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-inline-start: 0.35rem;
+    color: var(--on);
+    background: none;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    cursor: pointer;
+    view-transition-name: detail-a;
+  }
+
+  :global(body:has(.detail-pop:popover-open)) .b-detail {
+    view-transition-name: none;
+  }
+
+  .b-detail path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+  }
+
+  .b-detail .b-detail__axis {
+    stroke-dasharray: 4 2 1 2;
+    stroke-width: 1;
+  }
+
+  /* Flow bands, drawn only for the focused part. */
+  .wm-leaders {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 30;
+  }
+
+  .wm-leaders :global(.leader) {
+    fill: none;
+    stroke: var(--b-flow);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+
+  .wm-leaders :global(.leader--usedby) {
+    stroke-width: 2.5;
+    stroke-dasharray: 7 6;
+    stroke-linecap: butt;
+  }
+
+  .wm-leaders :global(.leader-halo--usedby) {
+    stroke-width: 6;
+  }
+
+  .wm-leaders :global(.leader-halo) {
+    fill: none;
+    stroke: var(--b-halo);
+    stroke-width: 9;
+    stroke-linecap: round;
+  }
+
+  .b-readout {
+    min-height: 3em;
+    margin-top: var(--space-m);
+    font: var(--step-0) var(--font-draft);
+    letter-spacing: 0.01em;
+  }
+
+  .b-map .wm-caption {
+    margin-top: var(--space-xs);
+    max-width: 44rem;
+    font-size: var(--step--1);
+    color: var(--b-ink-muted);
+  }
+
+  /* Scroll-linked fan: the planes start stacked on top of each other, then fan
+     out along the diagonal as the reader scrolls into the work. Longhands, see
+     global.css. Without support, or with reduced motion, the deck is fanned. */
+  @keyframes b-fan {
+    from {
+      translate: calc(var(--i) * clamp(-2.75rem, -2.4vw, -0.75rem)) calc(var(--i) * -3rem);
+      rotate: calc(var(--i) * -0.8deg);
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .b-plane {
+        animation-name: b-fan;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root);
+        animation-range: 0 55vh;
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------------- rows */
+
+  .b-rows > h2 {
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.4rem);
+    letter-spacing: 0.04em;
+  }
+
+  .b-rows :global(.bom-row) {
+    display: block;
+    padding-block: var(--space-l);
+    border-color: var(--b-rule);
+  }
+
+  .b-rows :global(.bom-row__body) {
+    display: block;
+  }
+
+  .b-rows :global(.bom-row__body > * + *) {
+    margin-top: var(--space-s);
+  }
+
+  .b-rows :global(.bom-row__title) {
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem);
+  }
+
+  .b-rows :global(.bom-row__title a) {
+    color: var(--b-ink);
+  }
+
+  .b-rows :global(.bom-row__desc),
+  .b-rows :global(.bom-row__pos),
+  .b-rows :global(.archive-link),
+  .b-rows :global(.upstream-lines p),
+  .b-rows :global(.r9-notes dt),
+  .b-rows :global(.r9-notes__foot),
+  .b-rows :global(.tag),
+  .b-rows :global(.ref-list__label),
+  .b-rows :global(.project-meta) {
+    color: var(--b-ink-muted);
+  }
+
+  .b-rows :global(.tag) {
+    border-color: var(--b-rule);
+  }
+
+  .b-rows :global(.bom-row__shot img) {
+    background: none;
+    border: 0;
+    filter: none;
+  }
+
+  .b-rows :global(.datum) {
+    color: var(--b-ink);
+    background: none;
+    border-color: var(--b-ink);
+  }
+
+  .b-rows :global(.upstream-lines > li) {
+    grid-template-columns: minmax(0, 1fr);
+    border-color: var(--b-rule);
+  }
+
+  .b-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: var(--space-l) clamp(1rem, 3vw, 2.5rem) 5rem;
+    font: var(--step--1) var(--font-draft);
+    color: var(--b-ink-muted);
+    border-top: 1px solid var(--b-rule);
+  }
+
+  /* Detail A in B's world: a plane of its own. */
+  :global(body:has(.b) .detail-pop) {
+    color: var(--on-software);
+    background: var(--plane-software);
+    border: 0;
+  }
+
+  :global(body:has(.b) .detail-pop) :global(*) {
+    --text: var(--on-software);
+    --text-muted: oklch(85% 0.02 85);
+    --border-strong: oklch(90% 0.02 85);
+    --bg: var(--plane-software);
+    --accent: oklch(86% 0.08 255);
+    --accent-strong: oklch(94% 0.04 255);
+  }
+
+  /* Narrow: the deck stacks straight, full width, and fans as it enters view. */
+  @media (max-width: 63.99rem) {
+    .b-plane {
+      margin-inline-start: 0;
+    }
+
+    .b-axis {
+      display: none;
+    }
+
+    .b-part {
+      min-height: 44px;
+    }
+
+    @keyframes b-fan-narrow {
+      from {
+        translate: 0 calc(var(--i) * -3rem);
+      }
+    }
+
+    @supports (animation-timeline: view()) {
+      @media (prefers-reduced-motion: no-preference) {
+        .b-plane {
+          animation-name: b-fan-narrow;
+          animation-timeline: view();
+          animation-range: entry 10% cover 40%;
+        }
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .b-cta {
+      transition: none;
+    }
+
+    .b-cta:hover {
+      translate: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Detail A and the R9lab row's notes, shared with A's sheet styles. */
+  body:has(.b) .detail-pop {
+    margin: auto;
+    width: min(100% - 2rem, 30rem);
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+    padding: var(--space-m);
+    view-transition-name: detail-a;
+    transition:
+      opacity var(--dur-base) ease,
+      scale var(--dur-slow) var(--ease-out),
+      overlay var(--dur-base) allow-discrete,
+      display var(--dur-base) allow-discrete;
+  }
+
+  body:has(.b) .detail-pop:not(:popover-open) {
+    opacity: 0;
+    scale: 0.96;
+  }
+
+  @starting-style {
+    body:has(.b) .detail-pop:popover-open {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+
+  body:has(.b) .detail-pop::backdrop {
+    background: oklch(17% 0.03 265 / 0.6);
+  }
+
+  body:has(.b) .detail-pop__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-m);
+  }
+
+  body:has(.b) .detail-pop__close,
+  body:has(.b) .r9-row__detail {
+    min-height: 44px;
+    padding-inline: var(--space-s);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.06em;
+    color: inherit;
+    background: none;
+    border: 1.5px solid currentColor;
+    cursor: pointer;
+  }
+
+  body:has(.b) .r9-notes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-m);
+  }
+
+  body:has(.b) .r9-notes dt {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  body:has(.b) .r9-notes dd {
+    font: clamp(2rem, 1.5rem + 2vw, 3.2rem) / 1 var(--font-draft);
+  }
+
+  body:has(.b) .r9-notes__foot {
+    font-size: var(--step--1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:has(.b) .detail-pop,
+    body:has(.b) .detail-pop:not(:popover-open) {
+      scale: none;
+      transition: opacity var(--dur-fast) ease;
+    }
+  }
+</style>

@@ -1,0 +1,660 @@
+---
+// Concept A, "Drawing set, alive": the ISO sheet kept, loosened. The work map is an
+// axonometric exploded assembly of four trays, one per layer, that comes apart as
+// the reader scrolls. A design concept: noindex, outside the sitemap and the nav.
+import { getCollection } from "astro:content";
+import ConceptRows from "../../components/concepts/ConceptRows.astro";
+import ConceptSwitch from "../../components/concepts/ConceptSwitch.astro";
+import { buildWorkMap, itemNo, partData, partLabel } from "../../components/concepts/workMap.ts";
+import SheetHead from "../../components/SheetHead.astro";
+import SheetNav from "../../components/SheetNav.astro";
+import TitleBlock from "../../components/TitleBlock.astro";
+import { cv } from "../../data/cv.ts";
+import Base from "../../layouts/Base.astro";
+
+const { layers, parts } = buildWorkMap(await getCollection("projects"));
+---
+
+<Base
+  title="Concept A: drawing set, alive | Simon van Lierde"
+  description="Design concept for the index: the work map as an exploded assembly drawing."
+  canonical={false}
+  noindex
+>
+  <SheetNav />
+  <div id="main" class="a">
+    <div class="a-stage">
+      <header class="a-head">
+        <SheetHead />
+        <a class="stamp sheet-stamp" href="/cv/">Curriculum vitae<span class="visually-hidden">, sheet 2</span></a>
+      </header>
+
+      <section class="a-map" data-workmap data-leader="ortho" aria-label="Work map" aria-describedby="a-map-caption">
+        <h2 class="visually-hidden">Work map</h2>
+        <div class="a-map__sheet">
+          <div class="a-stack">
+            <span class="a-axis" aria-hidden="true"></span>
+            {
+              layers.map((layer, i) => (
+                <section class="a-layer" style={`--i: ${i}`} aria-labelledby={`a-layer-${layer.id}`}>
+                  <h3 class="a-layer__name" id={`a-layer-${layer.id}`}>
+                    <span class="datum" aria-hidden="true">L{i + 1}</span>
+                    {layer.name}
+                    <span class="a-layer__note">{layer.note}</span>
+                  </h3>
+                  <div class="a-tray">
+                    {layer.groups.map((group) => (
+                      <div class={`a-sub a-sub--${group.category}`}>
+                        <p class="a-sub__label">{group.label}</p>
+                        <ul class="a-parts" role="list">
+                          {group.parts.map((p) => (
+                            <li class={p.featured ? "a-slot a-slot--featured" : "a-slot"}>
+                              <a class="a-part" href={p.href} data-title={p.title} aria-label={partLabel(p, parts)} {...partData(p)}>
+                                <span class="a-part__n" data-anchor>{itemNo(p.n)}</span>{" "}
+                                <span class="a-part__t">{p.title}</span>
+                              </a>
+                              {p.id === "relab" && (
+                                <button
+                                  class="a-detail"
+                                  type="button"
+                                  popovertarget="detail-a"
+                                  data-detail="detail-a"
+                                  aria-label="Detail A: R9lab's six parts"
+                                >
+                                  A
+                                </button>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))
+            }
+            <svg class="wm-leaders" data-leaders aria-hidden="true">
+              <defs>
+                <marker id="a-arrow" viewBox="0 0 10 6" refX="9" refY="3" markerWidth="10" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M0 0 10 3 0 6z"></path>
+                </marker>
+              </defs>
+              <g data-paths></g>
+            </svg>
+          </div>
+          <p class="a-readout draft" data-readout data-idle="Every part opens its project. Hover or focus one to draw its leaders: solid for uses, dashed for used by. Arrow keys walk the parts." aria-hidden="true">
+            Every part opens its project. Hover or focus one to draw its leaders: solid for uses, dashed for used by. Arrow keys walk the parts.
+          </p>
+        </div>
+        <p class="wm-caption" id="a-map-caption">
+          Fig. 1: Work map, exploded by layer; trays group each layer's parts by register category.
+          Schematic. The rows below are its text equivalent.
+        </p>
+      </section>
+
+      <main class="a-rows">
+        <h2>Selected work</h2>
+        <ConceptRows />
+      </main>
+    </div>
+  </div>
+
+  <TitleBlock title={cv.basics.name} docType="Design concept A: work map" sheet="NOT IN SET" />
+  <ConceptSwitch current="a" />
+</Base>
+
+<script>
+  import "../../components/concepts/workMap.client.ts";
+</script>
+
+<style>
+  /* One wide sheet: the title zone and the rows in the left column, the map
+     pinned in the right one while the rows scroll past it. */
+  .a-stage {
+    width: min(100% - 2 * var(--space-m), 92rem);
+    margin-inline: auto;
+    padding-block: var(--space-l);
+    display: grid;
+    gap: var(--space-l);
+  }
+
+  @media (min-width: 64rem) {
+    .a-stage {
+      grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(2rem, 5vw, 5rem);
+    }
+
+    .a-head {
+      grid-column: 1;
+    }
+
+    .a-rows {
+      grid-column: 1;
+    }
+
+    .a-map {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      position: sticky;
+      top: 3.5rem;
+      align-self: start;
+    }
+  }
+
+  .a-rows > h2 {
+    padding-bottom: var(--space-xs);
+    border-bottom: 2px solid var(--border-strong);
+  }
+
+  /* The rows are one column beside the map, whatever the global rail says. */
+  .a-rows :global(.bom-row) {
+    display: block;
+  }
+
+  .a-rows :global(.bom-row__body) {
+    display: block;
+  }
+
+  .a-rows :global(.bom-row__body > * + *) {
+    margin-top: var(--space-s);
+  }
+
+  .a-rows :global(.bom-row__shot) {
+    margin-top: var(--space-s);
+  }
+
+  /* ---------------------------------------------------------------- map */
+
+  .a-map__sheet {
+    position: relative;
+    padding: var(--space-m) var(--space-m) var(--space-s);
+    border: var(--border-width) solid var(--border-strong);
+    background: var(--surface);
+  }
+
+  .a-map__hint {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    max-width: 40rem;
+  }
+
+  .a-stack {
+    position: relative;
+    display: grid;
+    gap: clamp(0.9rem, 2.4vh, 1.75rem);
+  }
+
+  /* The dash-dot centreline the trays come apart along. */
+  .a-axis {
+    position: absolute;
+    inset-block: -0.75rem;
+    inset-inline-start: 1.1rem;
+    border-inline-start: 1px dashed var(--border-strong);
+    border-image: repeating-linear-gradient(
+        to bottom,
+        var(--border-strong) 0 14px,
+        transparent 14px 19px,
+        var(--border-strong) 19px 21px,
+        transparent 21px 26px
+      )
+      1;
+  }
+
+  .a-layer {
+    position: relative;
+    z-index: calc(10 - var(--i));
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .a-layer__name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0 var(--space-xs);
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--surface);
+    width: fit-content;
+    padding-inline-end: var(--space-xs);
+  }
+
+  .a-layer__note {
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+
+  /* A tray in oblique projection: a sheared plate with a hatched section edge,
+     the parts standing on it upright so their names stay level. */
+  .a-tray {
+    position: relative;
+    isolation: isolate;
+    margin-inline: 2.4rem 0.9rem;
+    padding: var(--space-s) var(--space-m) var(--space-s);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s) var(--space-s);
+  }
+
+  .a-tray::before,
+  .a-tray::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset-inline: 0;
+    transform: skewX(-14deg);
+    border: 1.5px solid var(--border-strong);
+  }
+
+  .a-tray::before {
+    inset-block: 0 7px;
+    background: var(--bg);
+  }
+
+  /* Section hatching on the cut edge: the drawing's own convention. */
+  .a-tray::after {
+    block-size: 8px;
+    inset-block-end: 0;
+    border-block-start: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--border-strong) 0 1px,
+      transparent 1px 5px
+    );
+  }
+
+  .a-sub {
+    flex: 1 1 auto;
+    position: relative;
+    display: grid;
+    align-content: start;
+    padding: 0.7rem var(--space-xs) var(--space-xs);
+    /* Phantom line: a subassembly boundary. */
+    border: 1px dashed var(--border);
+  }
+
+  /* Lettered on the phantom line, like a fieldset legend. */
+  .a-sub__label {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: var(--space-xs);
+    translate: 0 -55%;
+    padding-inline: 0.3rem;
+    background: var(--bg);
+    line-height: 1.2;
+    font-family: var(--font-draft);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .a-parts {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .a-slot {
+    position: relative;
+    display: flex;
+    /* The part's place in the tray, drawn as a phantom outline once it lifts. */
+    outline: 1px dashed transparent;
+    outline-offset: -1px;
+    transition: outline-color var(--dur-fast) ease;
+  }
+
+  .a-part {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2rem;
+    padding: 0 0.55rem 0 0;
+    font-family: var(--font-draft);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    text-decoration: none;
+    background: var(--bg);
+    border: 1.5px solid var(--border-strong);
+    transition:
+      translate var(--dur-base) var(--ease-out),
+      color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease,
+      border-color var(--dur-fast) ease;
+  }
+
+  .a-part__n {
+    display: inline-grid;
+    place-items: center;
+    align-self: stretch;
+    min-width: 1.9rem;
+    font-variant-numeric: tabular-nums;
+    border-inline-end: 1px solid var(--border-strong);
+    color: var(--text-muted);
+    transition:
+      background-color var(--dur-fast) ease,
+      color var(--dur-fast) ease;
+  }
+
+  /* Featured parts draw larger: the index's four and R9lab. */
+  .a-slot--featured .a-part {
+    min-height: 2.5rem;
+    font-size: 0.95rem;
+    border-width: 2px;
+  }
+
+  .a-detail {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.5rem;
+    margin-inline-start: -2px;
+    font: 0.9rem var(--font-draft);
+    color: var(--text);
+    background: var(--bg);
+    border: 2px solid var(--border-strong);
+    cursor: pointer;
+    view-transition-name: detail-a;
+    transition:
+      background-color var(--dur-fast) ease,
+      color var(--dur-fast) ease;
+  }
+
+  /* One element holds the name at a time, or the transition is skipped. */
+  :global(body:has(.detail-pop:popover-open)) .a-detail {
+    view-transition-name: none;
+  }
+
+  @media (hover: hover) {
+    .a-detail:hover {
+      background: var(--text);
+      color: var(--bg);
+    }
+  }
+
+  /* States. A focused part lifts out of its tray, inked in engineer's blue; the
+     parts it touches answer in ink; the rest fade to the faded ink. */
+  .a-map[data-focus] .a-part:not(.is-focus, .is-uses, .is-usedby) {
+    color: var(--text-muted);
+    border-color: var(--border);
+  }
+
+  .a-slot:has(.is-focus) {
+    outline-color: var(--border-strong);
+  }
+
+  .a-part.is-focus {
+    translate: 0 -6px;
+    color: var(--accent-contrast);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .a-part.is-focus .a-part__n {
+    color: var(--accent-contrast);
+    border-color: currentColor;
+  }
+
+  .a-part:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  .a-part.is-uses,
+  .a-part.is-usedby {
+    border-color: var(--accent);
+  }
+
+  .a-part.is-uses .a-part__n,
+  .a-part.is-usedby .a-part__n {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+
+  /* The part for the row in view: a heavier frame and a filled number, so it
+     reads without colour. */
+  .a-part.is-current {
+    border-width: 3px;
+  }
+
+  .a-part.is-current .a-part__n {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  /* Leaders, drawn only for the focused part. */
+  .wm-leaders {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  .wm-leaders :global(.leader) {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    marker-end: url(#a-arrow);
+  }
+
+  .wm-leaders :global(.leader--usedby) {
+    stroke-dasharray: 6 4;
+  }
+
+  .wm-leaders marker path {
+    fill: var(--accent);
+  }
+
+  .wm-caption {
+    margin-top: var(--space-s);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    max-width: var(--measure);
+  }
+
+  .a-readout {
+    min-height: 3.2em;
+    margin-top: var(--space-s);
+    padding-top: var(--space-xs);
+    border-top: var(--border-width) solid var(--border);
+    font-size: var(--step--1);
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  /* Scroll-linked explode: the trays start closed onto each other and come
+     apart over the first stretch of the sheet, so the reader sees the stack
+     assemble the work into one map. Longhands: the minifier folds a timeline
+     into the shorthand, which browsers reject. Without support, or with
+     reduced motion, the map stays fully exploded. */
+  @keyframes a-explode {
+    from {
+      translate: 0 calc(var(--i) * -4.2rem);
+    }
+  }
+
+  @keyframes a-tilt {
+    from {
+      transform: skewX(-24deg);
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .a-layer {
+        animation-name: a-explode;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root);
+        animation-range: 0 60vh;
+      }
+
+      .a-tray::before,
+      .a-tray::after {
+        animation-name: a-tilt;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root);
+        animation-range: 0 60vh;
+      }
+    }
+  }
+
+  /* Narrow sheets: the compact assembly map, a front elevation of the trays,
+     which explodes as it comes into view instead. */
+  @media (max-width: 63.99rem) {
+    .a-tray {
+      margin-inline: 1.6rem 0.3rem;
+      padding-inline: var(--space-s);
+    }
+
+    .a-tray::before,
+    .a-tray::after {
+      transform: skewX(-6deg);
+    }
+
+    @keyframes a-tilt-narrow {
+      from {
+        transform: skewX(-12deg);
+      }
+    }
+
+    .a-part {
+      min-height: 44px;
+    }
+
+    .a-axis {
+      inset-inline-start: 0.7rem;
+    }
+
+    @supports (animation-timeline: view()) {
+      @media (prefers-reduced-motion: no-preference) {
+        .a-layer,
+        .a-tray::before,
+        .a-tray::after {
+          animation-timeline: view();
+          animation-range: entry 20% cover 45%;
+        }
+
+        .a-tray::before,
+        .a-tray::after {
+          animation-name: a-tilt-narrow;
+        }
+      }
+    }
+  }
+
+  /* Detail A, opened from the map. */
+  :global(.detail-pop) {
+    margin: auto;
+    width: min(100% - 2rem, 30rem);
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+    padding: var(--space-m);
+    color: var(--text);
+    background: var(--surface);
+    border: var(--frame-line) solid var(--border-strong);
+    view-transition-name: detail-a;
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity var(--dur-base) ease,
+      translate var(--dur-slow) var(--ease-out),
+      overlay var(--dur-base) allow-discrete,
+      display var(--dur-base) allow-discrete;
+  }
+
+  :global(.detail-pop:not(:popover-open)) {
+    opacity: 0;
+    translate: 0 12px;
+  }
+
+  @starting-style {
+    :global(.detail-pop:popover-open) {
+      opacity: 0;
+      translate: 0 12px;
+    }
+  }
+
+  :global(.detail-pop::backdrop) {
+    background: color-mix(in oklch, var(--bg) 70%, transparent);
+  }
+
+  :global(.detail-pop__head) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-m);
+    padding-bottom: var(--space-xs);
+    margin-bottom: var(--space-m);
+    border-bottom: 2px solid var(--border-strong);
+  }
+
+  :global(.detail-pop__close),
+  :global(.r9-row__detail) {
+    min-height: 44px;
+    padding-inline: var(--space-s);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: none;
+    border: 1px solid currentColor;
+    cursor: pointer;
+  }
+
+  :global(.r9-notes) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-s) var(--space-m);
+  }
+
+  :global(.r9-notes dt) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  :global(.r9-notes dd) {
+    font-size: var(--step-2);
+    line-height: 1.1;
+    padding-inline-start: calc(1.7rem + var(--space-xs));
+  }
+
+  :global(.r9-notes__foot) {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .a-part,
+    .a-part__n,
+    .a-slot {
+      transition:
+        color var(--dur-fast) ease,
+        background-color var(--dur-fast) ease,
+        border-color var(--dur-fast) ease;
+    }
+
+    .a-part.is-focus {
+      translate: none;
+    }
+
+    :global(.detail-pop),
+    :global(.detail-pop:not(:popover-open)) {
+      translate: none;
+      transition: opacity var(--dur-fast) ease;
+    }
+  }
+</style>

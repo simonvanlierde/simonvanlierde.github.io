@@ -8,9 +8,11 @@ interface Props {
   jsonLd?: object;
   /** False on pages with no address of their own (the 404 page), so they claim no canonical URL. */
   canonical?: boolean;
+  /** True on drafts outside the set (the design concepts), so search engines skip them. */
+  noindex?: boolean;
 }
 
-const { title, description, jsonLd, canonical: hasCanonical = true } = Astro.props;
+const { title, description, jsonLd, canonical: hasCanonical = true, noindex = false } = Astro.props;
 
 // Astro.site is set in astro.config.mjs (https://simonvanlierde.com).
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -23,6 +25,7 @@ const ogImage = new URL("og.png", Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {hasCanonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <title>{title}</title>
     <meta name="description" content={description} />

@@ -1,0 +1,75 @@
+---
+// A small switcher between the three work-map concepts, for comparing them.
+interface Props {
+  current: "a" | "b" | "c";
+}
+const { current } = Astro.props;
+const concepts = [
+  { id: "a", name: "Drawing set, alive" },
+  { id: "b", name: "Flow sheet" },
+  { id: "c", name: "Core log" },
+];
+---
+
+<nav class="concept-switch" aria-label="Design concepts">
+  {
+    concepts.map((c) => (
+      <a
+        href={`/concepts/${c.id}/`}
+        aria-label={`Concept ${c.id.toUpperCase()}: ${c.name}`}
+        aria-current={c.id === current ? "page" : undefined}
+      >
+        {c.id.toUpperCase()}<span class="concept-switch__name">: {c.name}</span>
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .concept-switch {
+    position: fixed;
+    inset-inline-end: 1rem;
+    inset-block-end: 1rem;
+    z-index: 95;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    font: 0.8rem/1 var(--font-draft);
+    letter-spacing: 0.04em;
+    background: Canvas;
+    color: CanvasText;
+    border: 1px solid CanvasText;
+  }
+
+  .concept-switch a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding-inline: 0.6rem;
+    color: CanvasText;
+    text-decoration: none;
+  }
+
+  .concept-switch a[aria-current="page"] {
+    background: CanvasText;
+    color: Canvas;
+  }
+
+  @media (max-width: 40rem) {
+    .concept-switch {
+      inset-inline-end: 0.5rem;
+      inset-block-end: 0.5rem;
+    }
+
+    .concept-switch a {
+      justify-content: center;
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    .concept-switch__name {
+      display: none;
+    }
+  }
+</style>

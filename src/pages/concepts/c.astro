@@ -1,0 +1,1080 @@
+---
+// Concept C, "Core log": the body of work as a drilled core, logged like a borehole.
+// Layers are strata (upstream libraries are the bedrock), parts are tagged samples,
+// and the rows are the log's description column. The core breaks apart as the reader
+// scrolls down it, and the ground darkens with depth. A design concept: noindex,
+// outside the sitemap and the nav.
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import portrait from "../../assets/portrait.jpg";
+import ConceptRows from "../../components/concepts/ConceptRows.astro";
+import ConceptSwitch from "../../components/concepts/ConceptSwitch.astro";
+import { buildWorkMap, itemNo, type Part, partData, partLabel } from "../../components/concepts/workMap.ts";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+import { cv, intro, profiles, sheetLead } from "../../data/cv.ts";
+import stats from "../../data/stats.json" with { type: "json" };
+import Base from "../../layouts/Base.astro";
+
+const { layers, parts } = buildWorkMap(await getCollection("projects"));
+
+// Each stratum hangs its sample tags on both sides of the core: groups alternate
+// sides, and a stratum with one group splits it in two.
+const sides = layers.map((layer) => {
+  const left: { label: string; parts: Part[] }[] = [];
+  const right: { label: string; parts: Part[] }[] = [];
+  if (layer.groups.length === 1) {
+    const g = layer.groups[0];
+    const half = Math.ceil(g.parts.length / 2);
+    left.push({ label: g.label, parts: g.parts.slice(0, half) });
+    right.push({ label: g.label, parts: g.parts.slice(half) });
+  } else {
+    for (const [i, g] of layer.groups.entries()) (i % 2 ? right : left).push({ label: g.label, parts: g.parts });
+  }
+  return { layer, left, right };
+});
+// Lithology, after the standard symbol sets: sandstone, siltstone, limestone, granite.
+const rock = { data: "Sandstone", software: "Siltstone", models: "Limestone", upstream: "Bedrock" };
+---
+
+<Base
+  title="Concept C: core log | Simon van Lierde"
+  description="Design concept for the index: the work map as a logged core."
+  canonical={false}
+  noindex
+>
+  <div class="c" id="main">
+    <nav class="c-nav" aria-label="Primary">
+      <a class="c-nav__mark" href="/" aria-label="SVL, home">SVL</a>
+      <span class="c-nav__links">
+        <a href="/">Index</a>
+        <a href="/cv/">CV</a>
+        <a href="/archive/">Archive</a>
+        <a href="/notes/">Notes</a>
+        <ThemeToggle />
+      </span>
+    </nav>
+
+    <header class="c-head">
+      <dl class="c-sheet">
+        <div><dt>Log</dt><dd>Body of work, cored and described</dd></div>
+        <div><dt>Logged by</dt><dd>{cv.basics.name}</dd></div>
+        <div><dt>Site</dt><dd>CML, Leiden University</dd></div>
+        <div><dt>Counts dated</dt><dd><time datetime={stats.as_of}>{stats.as_of}</time></dd></div>
+      </dl>
+      <div class="c-head__who">
+        <Image class="c-portrait" src={portrait} width={112} densities={[1, 2]} alt={`Portrait of ${cv.basics.name}`} loading="eager" />
+        <div>
+          <h1 class="c-name">{cv.basics.name}</h1>
+          <p class="c-lead">{sheetLead.join(" · ")}</p>
+        </div>
+      </div>
+      <p class="c-intro">{intro}</p>
+      <p class="c-contact">
+        {cv.basics.email && <a href={`mailto:${cv.basics.email}`}>{cv.basics.email}</a>}
+        {profiles.map((p) => <a href={p.href}>{p.label}</a>)}
+      </p>
+      <a class="c-cta" href="/cv/">Curriculum vitae</a>
+    </header>
+
+    <div class="c-stage">
+      <section class="c-map" data-workmap data-leader="vein" aria-label="Work map" aria-describedby="c-map-caption">
+        <h2 class="visually-hidden">Work map</h2>
+        <p class="c-cols" aria-hidden="true"><span>Unit</span><span>Samples</span><span>Core</span><span>Samples</span></p>
+        <div class="c-core">
+          {
+            sides.map(({ layer, left, right }, i) => (
+              <section class={`c-stratum c-stratum--${layer.id}`} style={`--i: ${i}`} aria-labelledby={`c-unit-${layer.id}`}>
+                <h3 class="c-unit" id={`c-unit-${layer.id}`}>
+                  <span class="c-unit__name">{layer.name}</span>
+                  <span class="c-unit__rock">{rock[layer.id]}</span>
+                </h3>
+                {[left, right].map((side, s) => (
+                  <div class={s ? "c-tags c-tags--right" : "c-tags c-tags--left"}>
+                    {side.map((group) => (
+                      <div class="c-group">
+                        <p class="c-group__label">{group.label}</p>
+                        <ul class="c-group__list" role="list">
+                          {group.parts.map((p) => (
+                            <li class={p.featured ? "c-slot c-slot--featured" : "c-slot"}>
+                              <a class="c-tag" href={p.href} data-title={p.title} aria-label={partLabel(p, parts)} {...partData(p)}>
+                                <span class="c-tag__n" data-anchor>{itemNo(p.n)}</span>{" "}
+                                <span class="c-tag__t">{p.title}</span>
+                              </a>
+                              {p.id === "relab" && (
+                                <button class="c-detail" type="button" popovertarget="detail-a" data-detail="detail-a" aria-label="Detail A: R9lab's six parts, as a thin section">
+                                  A
+                                </button>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+                <div class="c-segment" aria-hidden="true"></div>
+              </section>
+            ))
+          }
+          <svg class="wm-leaders" data-leaders aria-hidden="true"><g data-paths></g></svg>
+        </div>
+        <p class="c-readout" data-readout data-idle="Touch a sample to trace its veins: solid to what it uses, dashed from what uses it." aria-hidden="true">
+          Touch a sample to trace its veins: solid to what it uses, dashed from what uses it.
+        </p>
+        <p class="wm-caption" id="c-map-caption">
+          Fig. 1: Work map as a core log. Strata are layers, sample tags are parts, grouped by register
+          category. Schematic. The description column is its text equivalent.
+        </p>
+      </section>
+
+      <main class="c-rows">
+        <h2><span class="c-rows__col">Description</span> Selected work</h2>
+        <ConceptRows />
+      </main>
+    </div>
+
+    <footer class="c-foot">
+      <p>End of log. {cv.basics.name}, {cv.basics.location}.</p>
+      <p>Design concept C, outside the drawing set.</p>
+    </footer>
+  </div>
+  <ConceptSwitch current="c" />
+</Base>
+
+<script>
+  import "../../components/concepts/workMap.client.ts";
+</script>
+
+<style>
+  @property --depth {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 0%;
+  }
+
+  .c {
+    --c-chalk: light-dark(oklch(95.5% 0.012 80), oklch(22% 0.014 60));
+    --c-deep: light-dark(oklch(89.5% 0.02 70), oklch(15% 0.014 255));
+    --c-ink: light-dark(oklch(24% 0.025 50), oklch(94% 0.012 80));
+    --c-muted: light-dark(oklch(41% 0.025 50), oklch(80% 0.02 80));
+    --c-rule: light-dark(oklch(24% 0.025 50 / 0.28), oklch(94% 0.012 80 / 0.28));
+    --c-link: light-dark(oklch(42% 0.09 175), oklch(82% 0.09 175));
+    --c-tag: light-dark(oklch(99% 0.005 85), oklch(29% 0.016 60));
+    --c-vein: light-dark(oklch(43% 0.13 45), oklch(86% 0.13 85));
+    --c-pattern: light-dark(oklch(28% 0.03 50 / 0.5), oklch(92% 0.02 80 / 0.42));
+
+    --rock-data: light-dark(oklch(86% 0.06 80), oklch(56% 0.06 75));
+    --rock-software: light-dark(oklch(77% 0.035 70), oklch(45% 0.03 65));
+    --rock-models: light-dark(oklch(83% 0.035 105), oklch(51% 0.035 105));
+    --rock-upstream: light-dark(oklch(55% 0.02 30), oklch(35% 0.02 30));
+
+    color: var(--c-ink);
+    /* The ground darkens with depth as the reader goes down the core. */
+    background: color-mix(in oklch, var(--c-chalk), var(--c-deep) var(--depth));
+    min-height: 100dvh;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .c {
+        animation-name: c-descend;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root);
+      }
+    }
+  }
+
+  @keyframes c-descend {
+    to {
+      --depth: 100%;
+    }
+  }
+
+  :global(body:has(.c)) {
+    padding: 0;
+    background: light-dark(oklch(95.5% 0.012 80), oklch(22% 0.014 60));
+  }
+
+  :global(body:has(.c))::before {
+    display: none;
+  }
+
+  .c a {
+    color: var(--c-link);
+  }
+
+  .c :focus-visible {
+    outline: 3px solid var(--c-ink);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--c-vein);
+    color: var(--c-chalk);
+  }
+
+  .c-nav {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 clamp(1rem, 3vw, 2.5rem);
+    min-height: 3.25rem;
+    background: color-mix(in oklch, var(--c-chalk), var(--c-deep) var(--depth));
+    border-bottom: 1px solid var(--c-rule);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .c-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.5rem;
+    color: var(--c-ink);
+    text-decoration: none;
+  }
+
+  .c-nav__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(0rem, 1vw, 1rem);
+  }
+
+  .c-nav :global(.theme-toggle) {
+    color: var(--c-ink);
+    margin: 0;
+  }
+
+  /* The log's header: a ruled sheet of fields, then the logger. */
+  .c-head {
+    display: grid;
+    gap: var(--space-s) var(--space-m);
+    padding: var(--space-m) clamp(1rem, 3vw, 2.5rem) var(--space-l);
+  }
+
+  .c-sheet {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    border-block: 1.5px solid var(--c-ink);
+  }
+
+  .c-sheet > div {
+    padding: 0.4rem 0.6rem;
+    border-inline-end: 1px solid var(--c-rule);
+  }
+
+  .c-sheet dt {
+    font: 0.72rem var(--font-draft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .c-sheet dd {
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.02em;
+  }
+
+  .c-head__who {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+  }
+
+  .c-portrait {
+    width: clamp(4.5rem, 8vw, 7rem);
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: grayscale(0.4) contrast(1.05);
+  }
+
+  .c-name {
+    font-size: clamp(2.1rem, 1.2rem + 2.6vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .c-lead {
+    margin-top: 0.5rem;
+    font: var(--step-1) / 1.3 var(--font-draft);
+  }
+
+  .c-intro {
+    max-width: var(--measure);
+    color: var(--c-muted);
+  }
+
+  .c-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-m);
+    font: var(--step--1) var(--font-draft);
+  }
+
+  .c-contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* The one primary action, as a sample bag label: ink on a tag. */
+  .c-cta {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 3.25rem;
+    padding-inline: 1.4rem;
+    font: var(--step-0) var(--font-draft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--c-chalk) !important;
+    background: var(--c-ink);
+  }
+
+  @media (min-width: 64rem) {
+    .c-head {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--space-xl);
+      align-items: end;
+    }
+
+    .c-sheet {
+      grid-column: 1 / -1;
+    }
+
+    .c-head__who {
+      grid-row: 2 / span 3;
+      align-self: start;
+    }
+
+    .c-intro {
+      grid-row: 2;
+      grid-column: 2;
+    }
+
+    .c-contact {
+      grid-row: 3;
+      grid-column: 2;
+    }
+
+    .c-cta {
+      grid-row: 3;
+      grid-column: 2;
+      justify-self: end;
+    }
+  }
+
+  /* ---------------------------------------------------------------- stage */
+
+  .c-stage {
+    display: grid;
+    gap: var(--space-xl);
+    padding: 0 clamp(1rem, 3vw, 2.5rem) var(--space-xl);
+  }
+
+  @media (min-width: 64rem) {
+    .c-stage {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      column-gap: var(--space-xl);
+    }
+
+    .c-map {
+      position: sticky;
+      top: 3.6rem;
+      align-self: start;
+    }
+  }
+
+  /* The log's column heads. */
+  .c-cols {
+    display: grid;
+    grid-template-columns: var(--c-grid);
+    border-block: 1.5px solid var(--c-ink);
+    font: 0.72rem var(--font-draft);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .c-cols span {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .c-cols span:nth-child(3) {
+    text-align: center;
+  }
+
+  .c-map {
+    --c-grid: 6.5rem minmax(0, 1fr) 5.5rem minmax(0, 1fr);
+  }
+
+  .c-core {
+    position: relative;
+    display: grid;
+  }
+
+  .c-stratum {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--c-grid);
+    grid-template-areas: "unit left core right";
+    align-items: start;
+    min-height: 5rem;
+    border-bottom: 1px dashed var(--c-rule);
+  }
+
+  .c-stratum--data {
+    --rock: var(--rock-data);
+    --lith: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12'%3E%3Ccircle cx='3' cy='3' r='1.1'/%3E%3Ccircle cx='10' cy='9' r='1.1'/%3E%3C/svg%3E");
+  }
+
+  .c-stratum--software {
+    --rock: var(--rock-software);
+    --lith: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M1 3h7M11 8h7' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E");
+  }
+
+  .c-stratum--models {
+    --rock: var(--rock-models);
+    --lith: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath d='M0 .5h24M0 7.5h24M6 0v7M18 7v7' stroke='%23000' fill='none'/%3E%3C/svg%3E");
+  }
+
+  .c-stratum--upstream {
+    --rock: var(--rock-upstream);
+    --lith: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='20'%3E%3Cpath d='M5 2v6M2 5h6M16 11v6M13 14h6' stroke='%23000' stroke-width='1.3'/%3E%3C/svg%3E");
+  }
+
+  .c-unit {
+    grid-area: unit;
+    display: grid;
+    padding: 0.5rem 0.4rem;
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .c-unit__rock {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--c-muted);
+  }
+
+  /* A core segment: the rock's colour, its lithology symbol, and the shading of
+     a cylinder seen from the side. */
+  .c-segment {
+    grid-area: core;
+    align-self: stretch;
+    position: relative;
+    margin-inline: 0.9rem;
+    background: var(--rock);
+    border-inline: 1.5px solid var(--c-ink);
+  }
+
+  .c-segment::before,
+  .c-segment::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .c-segment::before {
+    background: var(--c-pattern);
+    mask: var(--lith) repeat;
+  }
+
+  .c-segment::after {
+    background: linear-gradient(
+      90deg,
+      oklch(0% 0 0 / 0.22),
+      oklch(100% 0 0 / 0.12) 38%,
+      oklch(0% 0 0 / 0) 60%,
+      oklch(0% 0 0 / 0.28)
+    );
+  }
+
+  /* Each segment's top is a saw-cut ellipse: the face of the core run. */
+  .c-segment {
+    border-top-left-radius: 50% 0.55rem;
+    border-top-right-radius: 50% 0.55rem;
+    border-top: 1.5px solid var(--c-ink);
+  }
+
+  .c-tags {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.4rem 0;
+    align-content: start;
+  }
+
+  .c-tags--left {
+    grid-area: left;
+    justify-items: end;
+  }
+
+  .c-tags--right {
+    grid-area: right;
+    justify-items: start;
+  }
+
+  .c-group {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .c-tags--left .c-group {
+    justify-items: end;
+  }
+
+  .c-group__label {
+    font: 0.7rem var(--font-draft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .c-group__list {
+    list-style: none;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .c-tags--left .c-group__list {
+    justify-items: end;
+  }
+
+  .c-slot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .c-tags--left .c-slot {
+    flex-direction: row-reverse;
+  }
+
+  /* The tag's string to the core. */
+  .c-slot::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 0.9rem;
+    border-top: 1px solid var(--c-ink);
+  }
+
+  .c-tags--left .c-slot::after {
+    inset-inline-end: -0.9rem;
+  }
+
+  .c-tags--right .c-slot::after {
+    inset-inline-start: -0.9rem;
+  }
+
+  /* A sample tag: card stock with clipped corners, a punched eyelet, and a
+     string to the core. */
+  .c-tag {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 1.75rem;
+    padding: 0 0.55rem 0 1.15rem;
+    font: 0.8rem var(--font-draft);
+    letter-spacing: 0.02em;
+    color: var(--c-ink) !important;
+    text-decoration: none;
+    background: var(--c-tag);
+    border: 1px solid var(--c-ink);
+    clip-path: polygon(0.45rem 0, 100% 0, 100% 100%, 0.45rem 100%, 0 calc(100% - 0.45rem), 0 0.45rem);
+    transform-origin: 0.6rem 50%;
+    transition:
+      rotate var(--dur-slow) var(--ease-out),
+      color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease;
+  }
+
+  .c-tags--left .c-tag {
+    padding: 0 1.15rem 0 0.55rem;
+    clip-path: polygon(0 0, calc(100% - 0.45rem) 0, 100% 0.45rem, 100% calc(100% - 0.45rem), calc(100% - 0.45rem) 100%, 0 100%);
+    transform-origin: calc(100% - 0.6rem) 50%;
+  }
+
+  .c-tag::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0.4rem;
+    top: 50%;
+    width: 0.38rem;
+    height: 0.38rem;
+    translate: 0 -50%;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+  }
+
+  .c-tags--left .c-tag::before {
+    inset-inline: auto 0.4rem;
+  }
+
+  .c-tag__n {
+    font-variant-numeric: tabular-nums;
+    color: var(--c-muted);
+  }
+
+  .c-slot--featured .c-tag {
+    min-height: 2.1rem;
+    font-size: 0.92rem;
+    border-width: 1.5px;
+  }
+
+  .c-detail {
+    display: inline-grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    font: 0.85rem var(--font-draft);
+    color: var(--c-ink);
+    background: var(--c-tag);
+    border: 1.5px solid var(--c-ink);
+    border-radius: 50%;
+    cursor: pointer;
+    view-transition-name: detail-a;
+  }
+
+  :global(body:has(.detail-pop:popover-open)) .c-detail {
+    view-transition-name: none;
+  }
+
+  /* States. A touched tag swings on its string and is inked; the samples it
+     shares a vein with get a heavy border; the rest stay. */
+  .c-tag.is-focus {
+    color: var(--c-tag) !important;
+    background: var(--c-ink);
+    animation: c-swing 700ms var(--ease-out);
+  }
+
+  .c-tag.is-focus .c-tag__n {
+    color: inherit;
+  }
+
+  .c-tag.is-uses,
+  .c-tag.is-usedby {
+    border-width: 2.5px;
+    border-color: var(--c-vein);
+  }
+
+  .c-tag.is-current {
+    box-shadow: inset 0.3rem 0 0 var(--c-ink);
+  }
+
+  .c-tags--left .c-tag.is-current {
+    box-shadow: inset -0.3rem 0 0 var(--c-ink);
+  }
+
+  @keyframes c-swing {
+    0% {
+      rotate: 0deg;
+    }
+    30% {
+      rotate: -4deg;
+    }
+    60% {
+      rotate: 2deg;
+    }
+    100% {
+      rotate: 0deg;
+    }
+  }
+
+  .c-tags--left .c-tag.is-focus {
+    animation-name: c-swing-left;
+  }
+
+  @keyframes c-swing-left {
+    0% {
+      rotate: 0deg;
+    }
+    30% {
+      rotate: 4deg;
+    }
+    60% {
+      rotate: -2deg;
+    }
+    100% {
+      rotate: 0deg;
+    }
+  }
+
+  /* Veins between samples, drawn only for the touched one. */
+  .wm-leaders {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 30;
+  }
+
+  .wm-leaders :global(.leader) {
+    fill: none;
+    stroke: var(--c-vein);
+    stroke-width: 2.25;
+    stroke-linejoin: bevel;
+  }
+
+  .wm-leaders :global(.leader--usedby) {
+    stroke-dasharray: 5 4;
+  }
+
+  .c-readout {
+    min-height: 3em;
+    margin-top: var(--space-s);
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--c-rule);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.02em;
+  }
+
+  .c-map .wm-caption {
+    margin-top: var(--space-xs);
+    font-size: var(--step--1);
+    color: var(--c-muted);
+  }
+
+  /* Scroll-linked: the core is pulled whole and breaks into runs as the reader
+     goes down it. Longhands, see global.css. Without support, or with reduced
+     motion, the runs lie apart. */
+  .c-stratum + .c-stratum {
+    margin-top: 1.1rem;
+  }
+
+  @keyframes c-break {
+    from {
+      translate: 0 calc(var(--i) * -1.1rem);
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .c-stratum {
+        animation-name: c-break;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root);
+        animation-range: 10vh 70vh;
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------------- rows */
+
+  .c-rows > h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-block: 0.3rem;
+    border-block: 1.5px solid var(--c-ink);
+    font-size: var(--step-1);
+  }
+
+  .c-rows__col {
+    order: 2;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--c-muted);
+  }
+
+  .c-rows :global(.bom-row) {
+    display: block;
+    border-color: var(--c-rule);
+  }
+
+  .c-rows :global(.bom-row__body) {
+    display: block;
+  }
+
+  .c-rows :global(.bom-row__body > * + *) {
+    margin-top: var(--space-s);
+  }
+
+  .c-rows :global(.bom-row__title a) {
+    color: var(--c-ink);
+  }
+
+  .c-rows :global(.bom-row__desc),
+  .c-rows :global(.bom-row__pos),
+  .c-rows :global(.archive-link),
+  .c-rows :global(.upstream-lines p),
+  .c-rows :global(.r9-notes dt),
+  .c-rows :global(.r9-notes__foot),
+  .c-rows :global(.tag),
+  .c-rows :global(.ref-list__label),
+  .c-rows :global(.project-meta) {
+    color: var(--c-muted);
+  }
+
+  .c-rows :global(.tag) {
+    border-color: var(--c-rule);
+  }
+
+  .c-rows :global(.bom-row__shot img) {
+    background: none;
+    border-color: var(--c-rule);
+    filter: none;
+  }
+
+  .c-rows :global(.datum) {
+    color: var(--c-ink);
+    background: none;
+    border-color: var(--c-ink);
+  }
+
+  .c-rows :global(.upstream-lines > li) {
+    grid-template-columns: minmax(0, 1fr);
+    border-color: var(--c-rule);
+  }
+
+  .c-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: var(--space-l) clamp(1rem, 3vw, 2.5rem) 5rem;
+    border-top: 1.5px solid var(--c-ink);
+    font: var(--step--1) var(--font-draft);
+    color: var(--c-muted);
+  }
+
+  /* Narrow: the core tray. Each run lies flat in its box, its tags below it,
+     and the runs part as the tray comes into view. */
+  @media (max-width: 63.99rem) {
+    .c-cols {
+      display: none;
+    }
+
+    .c-sheet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .c-slot::after {
+      display: none;
+    }
+
+    .c-stratum {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas:
+        "unit unit"
+        "core core"
+        "left right";
+      gap: 0 0.6rem;
+      padding-bottom: 0.6rem;
+      border: 1.5px solid var(--c-ink);
+      border-top: 0;
+    }
+
+    .c-stratum:first-child {
+      border-top: 1.5px solid var(--c-ink);
+    }
+
+    .c-stratum + .c-stratum {
+      margin-top: 0;
+    }
+
+    .c-unit {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .c-segment {
+      height: 2.4rem;
+      margin-inline: 0.5rem;
+      border: 1.5px solid var(--c-ink);
+      border-radius: 1.2rem / 50%;
+    }
+
+    .c-segment::after {
+      background: linear-gradient(
+        180deg,
+        oklch(0% 0 0 / 0.22),
+        oklch(100% 0 0 / 0.12) 38%,
+        oklch(0% 0 0 / 0) 60%,
+        oklch(0% 0 0 / 0.28)
+      );
+    }
+
+    .c-segment::before,
+    .c-segment::after {
+      border-radius: inherit;
+    }
+
+    .c-tags {
+      padding-inline: 0.5rem;
+    }
+
+    .c-tags--left,
+    .c-tags--left .c-group,
+    .c-tags--left .c-group__list {
+      justify-items: start;
+    }
+
+    .c-tags--left .c-slot {
+      flex-direction: row;
+    }
+
+    .c-tags--left .c-tag {
+      padding: 0 0.55rem 0 1.15rem;
+      clip-path: polygon(0.45rem 0, 100% 0, 100% 100%, 0.45rem 100%, 0 calc(100% - 0.45rem), 0 0.45rem);
+    }
+
+    .c-tags--left .c-tag::before {
+      inset-inline: 0.4rem auto;
+    }
+
+    .c-tag {
+      min-height: 44px;
+      max-width: 100%;
+    }
+
+    .c-tag__t {
+      overflow-wrap: anywhere;
+    }
+
+    .c-detail {
+      width: 44px;
+      height: 44px;
+    }
+
+    @keyframes c-break-narrow {
+      from {
+        translate: calc(var(--i) * -0.6rem) 0;
+        opacity: 0.6;
+      }
+    }
+
+    @supports (animation-timeline: view()) {
+      @media (prefers-reduced-motion: no-preference) {
+        .c-stratum {
+          animation-name: c-break-narrow;
+          animation-timeline: view();
+          animation-range: entry 0% cover 30%;
+        }
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .c-tag {
+      transition:
+        color var(--dur-fast) ease,
+        background-color var(--dur-fast) ease;
+    }
+
+    .c-tag.is-focus {
+      animation: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Detail A as a thin section under the loupe: the six parts in a round view. */
+  body:has(.c) .detail-pop {
+    margin: auto;
+    width: min(100% - 2rem, 32rem);
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+    padding: var(--space-l);
+    color: var(--c-ink);
+    background: var(--c-tag);
+    border: 1.5px solid var(--c-ink);
+    view-transition-name: detail-a;
+    clip-path: circle(75% at 50% 50%);
+    transition:
+      clip-path var(--dur-slow) var(--ease-out),
+      opacity var(--dur-base) ease,
+      overlay var(--dur-base) allow-discrete,
+      display var(--dur-base) allow-discrete;
+  }
+
+  body:has(.c) .detail-pop:not(:popover-open) {
+    clip-path: circle(0% at 50% 50%);
+    opacity: 0;
+  }
+
+  @starting-style {
+    body:has(.c) .detail-pop:popover-open {
+      clip-path: circle(0% at 50% 50%);
+      opacity: 0;
+    }
+  }
+
+  body:has(.c) .detail-pop * {
+    --text: var(--c-ink);
+    --text-muted: var(--c-muted);
+    --border-strong: var(--c-ink);
+    --bg: var(--c-tag);
+    --accent: var(--c-link);
+    --accent-strong: var(--c-ink);
+  }
+
+  body:has(.c) .detail-pop::backdrop {
+    background: oklch(15% 0.014 255 / 0.55);
+  }
+
+  body:has(.c) .detail-pop__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-m);
+    border-bottom: 1.5px solid currentColor;
+  }
+
+  body:has(.c) .detail-pop__close,
+  body:has(.c) .r9-row__detail {
+    min-height: 44px;
+    padding-inline: var(--space-s);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.06em;
+    color: inherit;
+    background: none;
+    border: 1px solid currentColor;
+    cursor: pointer;
+  }
+
+  body:has(.c) .r9-notes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-s) var(--space-m);
+  }
+
+  body:has(.c) .r9-notes dt {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font: var(--step--1) var(--font-draft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  body:has(.c) .r9-notes dd {
+    font: var(--step-2) / 1.1 var(--font-draft);
+  }
+
+  body:has(.c) .r9-notes__foot {
+    font-size: var(--step--1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:has(.c) .detail-pop,
+    body:has(.c) .detail-pop:not(:popover-open) {
+      clip-path: none;
+      transition: opacity var(--dur-fast) ease;
+    }
+  }
+</style>

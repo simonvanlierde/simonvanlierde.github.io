@@ -1,0 +1,52 @@
+---
+// The rows the work map scrolls beside: R9lab, the four featured projects and the
+// six upstream lines, with the index's content. Each row carries `data-row`, so the
+// map inks the part for the row in view.
+import { getCollection } from "astro:content";
+import { relatedCards } from "../../data/projectSchema.ts";
+import { upstreamShowcase } from "../../data/upstream.ts";
+import ProjectCard from "../ProjectCard.astro";
+import UpstreamList from "../UpstreamList.astro";
+import R9labRow from "./R9labRow.astro";
+
+const all = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+const featured = all.filter((p) => p.data.featured);
+const related = relatedCards(all);
+for (const links of related.values()) {
+  for (const link of [...links.uses, ...links.usedBy]) {
+    link.href = `${featured.some((p) => p.id === link.id) ? "" : "/archive/"}#project-${link.id}`;
+  }
+}
+for (const id of ["monitoring", "jsonvet"])
+  related.get(id)?.usedBy.unshift({ id: "relab", title: "R9lab", href: "#relab" });
+---
+
+<div class="bom">
+  <R9labRow />
+  {
+    featured.map((p) => (
+      <div data-row={p.id}>
+        <ProjectCard
+          id={p.id}
+          related={related.get(p.id)}
+          title={p.data.title}
+          description={p.data.description}
+          repo={p.data.repo}
+          kind={p.data.kind}
+          demo={p.data.demo}
+          tags={p.data.tags}
+          links={p.data.links}
+          figures={p.data.figures}
+          featured
+        />
+      </div>
+    ))
+  }
+</div>
+<p class="archive-link"><a href="/archive/">Project archive</a> · more research tools, personal apps and smaller projects.</p>
+
+<h2 id="upstream-heading" class="rows-heading">Merged upstream</h2>
+<div data-row="upstream">
+  <UpstreamList groups={upstreamShowcase} />
+</div>
+<p class="archive-link"><a href="/archive/#upstream-heading">All upstream contributions and pull requests</a></p>

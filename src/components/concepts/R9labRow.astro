@@ -1,0 +1,64 @@
+---
+// R9lab's row on the concept sheets, with the same facts as the index's, and the
+// popover that holds Detail A (the index's six-part exploded view).
+import { participants, statsSource } from "../../data/figures.ts";
+import stats from "../../data/stats.json" with { type: "json" };
+import { formatCount as fmt } from "../chartScale.ts";
+import ExplodedView from "../ExplodedView.astro";
+import Figure from "../Figure.astro";
+
+const counted = (n: number) => ({ value: fmt(n), source: statsSource, as_of: stats.as_of });
+const notes = [
+  { ref: "A", label: "Products documented", figure: counted(stats.totals.teardowns) },
+  { ref: "B", label: "Components catalogued", figure: counted(stats.totals.parts) },
+  { ref: "C", label: "Images captured", figure: counted(stats.totals.images) },
+  { ref: "D", label: "Workshop participants", figure: participants },
+];
+const firstTeardown = stats.series.find((row) => row.teardowns > 0)?.label;
+const asOf = new Date(stats.as_of).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+---
+
+<article class="bom-row r9-row" id="relab" data-row="relab">
+  <p class="bom-row__pos">Research platform</p>
+  <div class="bom-row__body">
+    <h3 class="bom-row__title r9-row__title"><a href="https://github.com/CMLPlatform/r9lab">R9lab</a></h3>
+    <p class="bom-row__desc">
+      Industrial ecology has little data on what products are made of. R9lab records it by taking
+      durable goods apart, component by component. I designed and built the platform, and CML now uses
+      it, in use since {firstTeardown}, including two teardown workshops.
+    </p>
+    <p class="bom-row__links">
+      <a href="https://app.r9lab.io">Live platform</a>
+      <a href="https://docs.r9lab.io">Documentation</a>
+      <a href="https://doi.org/10.5281/zenodo.16637742">Zenodo record</a>
+      <button class="r9-row__detail" type="button" popovertarget="detail-a" data-detail="detail-a">
+        Detail A: the six parts
+      </button>
+    </p>
+    <dl class="r9-notes">
+      {
+        notes.map((n) => (
+          <div>
+            <dt>
+              <span class="datum" aria-hidden="true">{n.ref}</span> {n.label}
+            </dt>
+            <dd class="draft"><Figure {...n.figure} /></dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="r9-notes__foot draft">
+      Products, components and images as counted <time datetime={stats.as_of}>{asOf}</time>; participants at the two pilot workshops.
+    </p>
+  </div>
+</article>
+
+<div class="detail-pop" id="detail-a" popover aria-labelledby="detail-a-title">
+  <div class="detail-pop__head">
+    <h2 id="detail-a-title">Detail A: R9lab</h2>
+    <button type="button" class="detail-pop__close" popovertarget="detail-a" popovertargetaction="hide">
+      Close<span class="visually-hidden"> Detail A</span>
+    </button>
+  </div>
+  <ExplodedView />
+</div>
