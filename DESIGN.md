@@ -229,6 +229,19 @@ stay visible together.
 
 Moving between sheets uses a native cross-document view transition when supported. The title block keeps its identity between sheets. Reduced motion uses a plain page load. In-page jumps scroll smoothly, `auto` under reduced motion.
 
+#### Named Rules
+
+**The Sheet-Count Rule.** A new sheet needs a reader job no other sheet does.
+The jobs are the index (selected work), the CV (the career), the archive (every
+other project and upstream fix), the notes (write-ups), and the PhD sheet (the
+thesis, in draft). Anything else is a section on one of these. The sheet nav
+keeps every sheet on one line at 390px: below 40rem it letters the sheet's name
+alone, and the accessible name stays "Sheet N: Name". The title block's "N OF
+M" counts real sheets only. A page outside the set, such as the 404 or the
+privacy page, reads "NOT IN SET". Past six sheets the nav cannot hold them. The
+answer then is a drawing list, the list of drawings an ISO drawing set carries,
+on its own page. It is not built.
+
 ### Elevation & Depth
 
 Line weight, lettering size, and the two-step ground (`--bg` against the barely
@@ -268,7 +281,7 @@ sheets use these:
 | Work row | A parts-list row with a shared kind rail and body for featured and plain projects. Featured rows add a demo close-up below the kind. Names, descriptions, links, release metadata, cross-references and tags stay in the same order; tags appear once below the body |
 | Cross-reference | "Uses" and "Used by": plain underlined in-page links in the lettering, on one line under the links, 24px targets. They read as links beside the tags, which are not |
 | Sheet nav | Sticky, solid ground, hairline rule; current sheet marked with `aria-current="page"` and ink, not colour alone. The SVL monogram stays hidden while the sheet's name heading is in view, like a reference mark that appears once the title is out of sight; on the index it scrolls back to the top |
-| Sheet head | The title zone, identical on every sheet and capped at the index's left column: the portrait in a frame-line box beside the name, set as given name over family name at the same height, then the two-line lead (role, then affiliation), the intro, the contact line and the profiles. Only the stamp under it differs per sheet. The index's figure sits beside it |
+| Sheet head | The title zone, identical on the index and the CV and capped at the index's left column: the portrait in a frame-line box beside the name, set as given name over family name at the same height, then the two-line lead (role, then affiliation), the intro, the contact line and the profiles. Only the stamp under it differs between them. The archive and notes sheets open with their title, a lead and the stamp instead. The index's figure sits beside it |
 | Title block | ISO 7200 provenance and contact; the profile links repeat, muted, under each sheet's header. The sheet number links to the other sheet, with an arrow that points the way |
 | Exploded view | The signature figure; see below |
 | General notes | Datum-lettered running totals, sitting with the platform they describe |
@@ -299,7 +312,40 @@ says "schematic".
 Every figure on the set uses one caption style: under the figure, starting with
 "Fig. N:". A second figure inherits all of this.
 
+#### The reading sheet
+
+A note (`src/content/notes/`, served at `/notes/<id>/`) is long-form prose.
+The drawing set owns the frame: the sheet nav, the title in the drafting hand,
+the date as `time` in the drafting hand, and the title block, dated to the
+note. The column inside stays a document. It is the body face at `--measure`.
+A note's sections are h2s: tracked caps in the drafting hand, without the
+zone label's rule. Inline code is set in the drafting hand, because
+`--font-mono` aliases osifont, and a fenced code block inherits it. The stamp
+sits after the article and leads back to "All notes". On the notes sheet the
+stamp is the feed: "RSS feed".
+
+Not yet:
+
+- Figures. A Markdown image renders as a bare `img` in a paragraph, with no
+  `figure` and no "Fig. N:" caption.
+- Code block colours. A fenced block keeps Shiki's default `github-dark`
+  colours as inline styles, the same in both themes and outside the tokens.
+
 #### Named Rules
+
+**The Register Rule.** Projects outside the index's four featured rows go in
+the archive's parts list, the project register. It is grouped by the
+project's recorded `category` in a fixed order: work ("Research tools"),
+personal ("Personal apps"), minor ("Smaller projects"). Within a group, rows
+sort by `order`. A new kind of project gets a category, never a new list.
+Below 48rem each row stacks like a parts-list row (item, then kind and stack,
+then links), and nothing scrolls sideways.
+
+**The Reading Sheet Rule.** On a note, the prose comes first. The reading
+column holds the text, its headings, code, and figures, and nothing else: no
+stamp, tags, or notation marks inside it. Chrome stays in the frame. A figure
+earns its place by showing what the prose cannot, and it takes the set's one
+caption style, "Fig. N:". The note's date follows the Drafting Hand Rule.
 
 **The Drafting Motion Rule.** Motion is drafting-derived behaviour, never
 decoration. Parts settle apart from an assembled stack, a chart's total is
