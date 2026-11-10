@@ -3,7 +3,8 @@
 
 {/* The label names the state, not the action: "Dark mode, pressed" is clear,
     "Toggle dark mode, pressed" is not. */}
-<button type="button" class="theme-toggle" aria-label="Dark mode" aria-pressed="false">
+{/* Pressed by default: the site opens dark, and Base.astro corrects it at once. */}
+<button type="button" class="theme-toggle" aria-label="Dark mode" aria-pressed="true">
   <svg
     class="theme-toggle__moon"
     viewBox="0 0 24 24"

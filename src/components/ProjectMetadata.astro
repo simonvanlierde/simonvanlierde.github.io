@@ -6,10 +6,19 @@ interface Props {
 }
 const metadata = projectMetadata(Astro.props.repo);
 const name = Astro.props.repo.split("/").at(-1);
-const licenses = metadata?.license ? [metadata.license].flat() : [];
+// The label is the URL's last non-empty path segment: "MIT" from spdx.org/licenses/MIT.html.
+const licenses = (metadata?.license ? [metadata.license].flat() : []).map((href) => ({
+  href,
+  label:
+    new URL(href).pathname
+      .split("/")
+      .filter(Boolean)
+      .at(-1)
+      ?.replace(/\.html$/, "") ?? href,
+}));
 ---
 {metadata && <p class="project-metadata draft">
   {metadata.version && <span>v{metadata.version}</span>}
   {metadata.doi && <a href={metadata.doi} aria-label={`DOI for ${name}`}>DOI</a>}
-  {licenses.map((license) => <a href={license} aria-label={`${new URL(license).pathname.split("/").at(-1)?.replace(/\.html$/, "")} licence for ${name}`}>{new URL(license).pathname.split("/").at(-1)?.replace(/\.html$/, "")}</a>)}
+  {licenses.map(({ href, label }) => <a href={href} aria-label={`${label} licence for ${name}`}>{label}</a>)}
 </p>}

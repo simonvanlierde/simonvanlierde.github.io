@@ -98,7 +98,7 @@ const shot = demo && imageSrc;
                     </a>
                   ))}
                   {r.cards.length > 3 && (
-                    <details class="ref-more"><summary aria-label={`${r.cards.length - 3} more ${r.label.toLowerCase()} links for ${title}`}>+{r.cards.length - 3}</summary>
+                    <details class="ref-more"><summary>+{r.cards.length - 3}<span class="visually-hidden"> more {r.label.toLowerCase()} links for {title}</span></summary>
                       {r.cards.slice(3).map((c) => <a class="ref" href={c.href ?? `#project-${c.id}`}>{c.title}</a>)}
                     </details>
                   )}
