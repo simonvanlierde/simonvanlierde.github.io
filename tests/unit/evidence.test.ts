@@ -31,7 +31,7 @@ const pr = (repo: string, number: number, base = "main") => ({ repo, number, bas
 test("the six showcase entries and also-merged line account for every curated repository once", () => {
   assert.deepEqual(
     upstreamShowcase.map((group) => group.name),
-    ["Brightway", "pymrio", "lca_algebraic", "flodym", "premise", "Activity Browser"],
+    ["Brightway", "Activity Browser", "premise", "pymrio", "lca_algebraic", "flodym"],
   );
   const projects = [...upstreamShowcase.flatMap((group) => group.projects), ...alsoMerged];
   assert.equal(new Set(projects.map((project) => project.repo)).size, upstream.length);

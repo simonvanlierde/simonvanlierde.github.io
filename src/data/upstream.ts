@@ -160,11 +160,11 @@ export const upstreamShowcase = [
       "brightway-lca/bw_timex",
     ],
   },
+  { name: "Activity Browser", projects: ["LCA-ActivityBrowser/activity-browser"] },
+  { name: "premise", projects: ["polca/premise"] },
   { name: "pymrio", projects: ["IndEcol/pymrio"] },
   { name: "lca_algebraic", projects: ["oie-mines-paristech/lca_algebraic"] },
   { name: "flodym", projects: ["pik-piam/flodym"] },
-  { name: "premise", projects: ["polca/premise"] },
-  { name: "Activity Browser", projects: ["LCA-ActivityBrowser/activity-browser"] },
 ].map((group) => ({
   name: group.name,
   projects: group.projects.map((repo) => {
