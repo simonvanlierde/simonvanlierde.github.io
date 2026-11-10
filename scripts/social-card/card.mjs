@@ -38,7 +38,7 @@ export async function render(v) {
   const dir = mkdtempSync(join(tmpdir(), "card-"));
   try {
     const doi = v.doi
-      ? `<div class="cell"><div class="label">DOI</div><div class="value">${esc(v.doi)}</div></div>`
+      ? `<div class="row"><div class="cell"><div class="label">DOI</div><div class="value">${esc(v.doi)}</div></div></div>`
       : "";
     const html = readFileSync(join(here, "template.html"), "utf8")
       .replace("{{name}}", () => esc(v.name))

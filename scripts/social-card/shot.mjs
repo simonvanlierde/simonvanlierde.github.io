@@ -7,6 +7,7 @@ await page.goto("file:///card/card.html");
 await page.evaluate(async () => {
   await document.fonts.ready;
   window.fitName();
+  window.fitShot();
 });
 await page.screenshot({ path: "/card/raw.png" });
 await browser.close();

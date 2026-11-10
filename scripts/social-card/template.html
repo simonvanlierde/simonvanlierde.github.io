@@ -2,35 +2,41 @@
 <meta charset="utf-8">
 <style>
   @font-face { font-family: osifont; src: url("osifont.woff2") format("woff2"); }
-  :root { --bg:#f8f7f3; --ink:#181d24; --muted:#49515b; --accent:#234993; --frame:#2c333d; --rule:#e2e1dc; }
+  /* Light-theme values of the site tokens in src/styles/global.css, under the same names. */
+  :root {
+    --bg: oklch(97.5% 0.005 95); --surface: oklch(99.2% 0.003 95);
+    --text: oklch(23% 0.015 255); --text-muted: oklch(43% 0.02 255);
+    --border: oklch(80% 0.012 255); --border-strong: oklch(32% 0.02 255); --accent: oklch(42% 0.13 262);
+    --grid: color-mix(in oklch, var(--border) 40%, var(--bg));
+    /* One module: the frame margin, the cell padding and the drafting grid. Every rule lands on it. */
+    --m: 24px; --frame: 3px; --line: 2px;
+  }
   * { box-sizing: border-box; margin: 0; }
-  body { width: 1200px; height: 630px; background: var(--bg); color: var(--ink);
-         font-family: osifont, "DIN Alternate", "Segoe UI", Roboto, Helvetica, sans-serif; position: relative; overflow: hidden; }
-  .frame { position: absolute; inset: 18px; border: 3px solid var(--frame); display: flex; }
-  .block { width: 478px; display: flex; flex-direction: column; border-right: 3px solid var(--frame); }
-  .cell { padding: 20px 30px; border-bottom: 1.5px solid var(--frame); }
-  .cell:last-child { border-bottom: 0; }
-  .label { font-size: 15px; letter-spacing: 2.4px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .name { padding-top: 30px; }
-  #name { font-size: 76px; line-height: 1.02; letter-spacing: 1px; overflow-wrap: normal; }
-  .what { flex: 1; }
-  .what p { font-size: 29px; line-height: 1.25; }
-  .row { display: flex; padding: 0; }
-  .row .cell { border-bottom: 0; padding: 14px 30px; }
-  .row .cell + .cell { border-left: 1.5px solid var(--frame); }
-  .foot { border-top: 1.5px solid var(--frame); }
-  .foot .cell { border-bottom: 1.5px solid var(--frame); padding: 12px 30px; }
-  .foot .row .cell { border-bottom: 0; }
-  .foot .row { border-bottom: 1.5px solid var(--frame); }
-  .foot > :last-child { border-bottom: 0; }
-  .value { font-size: 23px; }
-  .domain { color: var(--accent); letter-spacing: .5px; }
-  .visual { flex: 1; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr); place-items: center; padding: 28px;
-            background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px);
-            background-size: 20px 20px; background-position: -1px -1px; opacity: 1; }
-  .shot { max-width: 100%; max-height: 100%; min-height: 0; display: block; border: 2px solid var(--frame); background: #fff;
-          box-shadow: 8px 8px 0 rgba(44,51,61,.14); }
-  .cover { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  body { width: 1200px; height: 630px; background: var(--bg); color: var(--text);
+         font-family: osifont, "Segoe UI", system-ui, sans-serif; overflow: hidden; }
+  /* 1146 x 576 inside the frame: a 471px title block, the divider, and a 672 x 576 drawing field (28 x 24 modules). */
+  .frame { position: absolute; inset: var(--m); border: var(--frame) solid var(--border-strong); display: flex; }
+  .block { width: 474px; display: flex; flex-direction: column; border-right: var(--frame) solid var(--border-strong); }
+  .cell { padding: 0 var(--m); display: flex; flex-direction: column; justify-content: center; }
+  .cell + .cell, .row { border-top: var(--line) solid var(--border); }
+  .label { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); line-height: 1; }
+  /* Title takes what the fixed rows leave: 264px, or 192px with a DOI row. */
+  .name { flex: 1; min-height: 0; justify-content: flex-start; gap: 16px; padding-block: 22px 18px; }
+  #name { margin-top: auto; font-size: 96px; line-height: 1; letter-spacing: .01em; overflow-wrap: normal; }
+  .what { height: 168px; justify-content: flex-start; padding-top: 22px; }
+  .what p { font-size: 28px; line-height: 1.25; margin-top: 12px; }
+  .row { display: flex; }
+  .row .cell { flex: 1; }
+  .row .cell + .cell { border-top: 0; border-left: var(--line) solid var(--border); }
+  .foot .row { height: 72px; }
+  .value { font-size: 22px; line-height: 1; margin-top: 10px; font-variant-numeric: tabular-nums; }
+  .domain { color: var(--accent); }
+  .visual { flex: 1; position: relative; display: grid; place-items: center;
+            background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / var(--m) var(--m),
+                        linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / var(--m) var(--m), var(--bg); }
+  .shot { display: block; max-width: calc(100% - 4 * var(--m)); max-height: calc(100% - 4 * var(--m));
+          border: var(--line) solid var(--border-strong); background: var(--surface); object-fit: cover; }
+  .shot.cover { object-position: top; width: calc(100% - 4 * var(--m)); height: calc(100% - 4 * var(--m)); max-width: none; max-height: none; }
 </style>
 <div class="frame">
   <section class="block">
@@ -41,7 +47,7 @@
         <div class="cell"><div class="label">Author</div><div class="value">Simon van Lierde</div></div>
         <div class="cell"><div class="label">First published</div><div class="value">{{year}}</div></div>
       </div>
-      <div class="cell"><div class="label">Domain</div><div class="value domain">{{domain}}</div></div>
+      <div class="row"><div class="cell"><div class="label">Domain</div><div class="value domain">{{domain}}</div></div></div>
       {{doi}}
     </div>
   </section>
@@ -51,7 +57,20 @@
   // Shrink long names until they fit the title cell, on at most two lines and never split mid-word.
   // shot.mjs calls this once the font has loaded, since the fallback font measures differently.
   window.fitName = () => {
-    const n = document.getElementById("name"); let s = 76;
-    while ((n.scrollHeight > s * 2.2 || n.scrollWidth > n.clientWidth) && s > 36) { s -= 2; n.style.fontSize = `${s}px`; }
+    const n = document.getElementById("name"); const cell = n.parentElement; let s = 96;
+    const over = () => n.scrollHeight > s * 2.1 || n.scrollWidth > n.clientWidth || cell.scrollHeight > cell.clientHeight;
+    while (over() && s > 36) { s -= 2; n.style.fontSize = `${s}px`; }
+  };
+  // Snap a contained screenshot to whole grid squares, so its outline runs along the grid lines.
+  // The field is an even number of modules each way, so sizes in 2-module steps stay centred on the grid.
+  // Of the snapped sizes around the contained one, take the one that crops least (object-fit: cover).
+  window.fitShot = () => {
+    const img = document.querySelector(".shot"); if (img.classList.contains("cover")) return;
+    const step = 48; const f = img.parentElement; const maxW = f.clientWidth - 96; const maxH = f.clientHeight - 96;
+    const r = img.naturalHeight / img.naturalWidth; const w0 = Math.min(maxW, maxH / r);
+    const near = (v, max) => [Math.floor(v / step), Math.ceil(v / step)].map((n) => Math.min(max, Math.max(1, n) * step));
+    const crop = ([w, h]) => { const c = Math.max(w, h / r); return 1 - (w * h) / (c * c * r); };
+    const [w, h] = near(w0, maxW).flatMap((w) => near(w * r, maxH).map((h) => [w, h])).sort((a, b) => crop(a) - crop(b))[0];
+    img.style.width = `${w}px`; img.style.height = `${h}px`;
   };
 </script>
