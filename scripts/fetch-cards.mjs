@@ -4,14 +4,13 @@
 // never fetched. A card whose fetch fails keeps its last good entry, with a ::warning::; a page with no og:image
 // drops its entry.
 
-import { readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import sharp from "sharp";
-import { parse } from "yaml";
 import { CLOSE_UP_ASPECT, closeUp, parseSocialCard } from "./cards.mjs";
+import { readCards } from "./projectCards.mjs";
 
 const root = resolve(import.meta.dirname, "..");
-const cardsDir = resolve(root, "src/content/projects");
 const assetsDir = resolve(root, "src/assets/cards");
 const out = resolve(root, "src/data/cardImages.json");
 // Twice the close-up's 15rem (240px) on the card, for sharp screens.
@@ -27,9 +26,7 @@ const previous = await readFile(out, "utf8").then(JSON.parse, () => ({}));
 const next = {};
 const today = new Date().toISOString().slice(0, 10);
 
-for (const name of (await readdir(cardsDir)).filter((f) => f.endsWith(".md")).sort()) {
-  const id = name.slice(0, -3);
-  const card = parse((await readFile(resolve(cardsDir, name), "utf8")).split(/^---$/m)[1]);
+for (const { id, card } of await readCards()) {
   // A hand-made image is kept whatever the card says, so a refresh never deletes it.
   if (previous[id]?.manual) {
     next[id] = previous[id];

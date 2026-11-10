@@ -6,7 +6,7 @@ import { join, resolve } from "node:path";
 import process from "node:process";
 import { test } from "node:test";
 import { promisify } from "node:util";
-import { evidenceDrift, parseUpstream } from "../../scripts/evidence.mjs";
+import { evidenceDrift, parseUpstream, staleEntries } from "../../scripts/evidence.mjs";
 import { alsoMerged, prGroups, upstream, upstreamShowcase } from "../../src/data/upstream.ts";
 import { closedPort } from "./driftRun.ts";
 
@@ -104,4 +104,21 @@ test("a failed refresh warns and leaves upstream.json alone", async () => {
   });
   assert.match(stdout, /^::warning::fetch-evidence: POST .* failed: /m);
   assert.equal(await readFile(file, "utf8"), before);
+});
+
+test("staleEntries lists card entries fetched more than 21 days ago, never a manual one", () => {
+  const report = staleEntries(
+    "src/data/cardImages.json",
+    {
+      fresh: { fetched_at: "2026-10-20" },
+      old: { fetched_at: "2026-10-01" },
+      undated: {},
+      handmade: { manual: true },
+    },
+    "2026-10-29",
+  );
+  assert.match(report, /`old` was last fetched on 2026-10-01/);
+  assert.match(report, /`undated` was last fetched on no date/);
+  assert.doesNotMatch(report, /`fresh`|`handmade`/);
+  assert.equal(staleEntries("x", { fresh: { fetched_at: "2026-10-20" } }, "2026-10-29"), "");
 });
