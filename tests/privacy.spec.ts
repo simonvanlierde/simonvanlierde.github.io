@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-test("the privacy page names the processors and has its own metadata", async ({ page }) => {
+test("the privacy page names the hosts and has its own metadata", async ({ page }) => {
   await page.goto("/privacy/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Privacy");
   await expect(page).toHaveTitle("Privacy | Simon van Lierde");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://simonvanlierde.com/privacy/");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /.+/);
   const main = page.getByRole("main");
-  for (const word of ["GitHub", "Cloudflare", "legitimate interest", "Autoriteit Persoonsgegevens"]) {
+  for (const word of ["GitHub", "Cloudflare", "Autoriteit Persoonsgegevens"]) {
     await expect(main).toContainText(word);
   }
 });

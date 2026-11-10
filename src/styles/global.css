@@ -1300,14 +1300,3 @@ html {
 .note > .sheet-stamp {
   margin-top: var(--space-l);
 }
-
-/* The privacy page: provider sub-headings and their lists need air between blocks. */
-.privacy h3 {
-  margin-top: var(--space-m);
-}
-.privacy section > :where(p, ul) + :where(p, ul, h3) {
-  margin-top: var(--space-s);
-}
-.privacy ul {
-  padding-inline-start: var(--space-m);
-}
