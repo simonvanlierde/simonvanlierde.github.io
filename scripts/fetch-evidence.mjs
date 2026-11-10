@@ -7,7 +7,8 @@ import { resolve } from "node:path";
 import process from "node:process";
 import { parseUpstream, upstreamGraphql, upstreamQuery, withAsOf } from "./evidence.mjs";
 
-const out = resolve(import.meta.dirname, "../src/data/upstream.json");
+// EVIDENCE_OUT is for the tests.
+const out = process.env.EVIDENCE_OUT || resolve(import.meta.dirname, "../src/data/upstream.json");
 const url = "https://api.github.com/graphql";
 
 try {

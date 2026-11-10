@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { copyFile, mkdtemp, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import process from "node:process";
 import { test } from "node:test";
 import { promisify } from "node:util";
 import { evidenceDrift, parseUpstream } from "../../scripts/evidence.mjs";
-import snapshot from "../../src/data/upstream.json" with { type: "json" };
-import { alsoMerged, leftOut, prGroups, upstream, upstreamShowcase } from "../../src/data/upstream.ts";
+import { alsoMerged, prGroups, upstream, upstreamShowcase } from "../../src/data/upstream.ts";
 import { closedPort } from "./driftRun.ts";
 
 const run = promisify(execFile);
@@ -47,17 +47,9 @@ test("the six showcase entries and also-merged line account for every curated re
   );
 });
 
-test("the checked-in upstream evidence has no missing or unmerged contributions", () => {
-  assert.equal(
-    evidenceDrift({
-      curated: upstream,
-      leftOut,
-      merged: snapshot.prs,
-      fetchedAt: snapshot.fetched_at,
-      today: snapshot.fetched_at,
-    }),
-    "",
-  );
+// Missing or unmerged contributions in the live snapshot are the drift issue's job, not a test's:
+// the weekly refresh commits without CI.
+test("lca_algebraic's PRs merged into dev are grouped under that branch", () => {
   const algebraic = upstream.find((project) => project.name === "lca_algebraic");
   assert.ok(algebraic);
   assert.deepEqual(prGroups(algebraic), [{ base: "dev", prs: [106, 107, 108, 109, 110] }]);
@@ -98,13 +90,17 @@ test("evidenceDrift prints nothing when everything matches", () => {
 });
 
 test("a failed refresh warns and leaves upstream.json alone", async () => {
-  const file = join(root, "src/data/upstream.json");
+  // A copy, so a broken failure path cannot overwrite the tracked snapshot.
+  const file = join(await mkdtemp(join(tmpdir(), "evidence-")), "upstream.json");
+  await copyFile(join(root, "src/data/upstream.json"), file);
   const before = await readFile(file, "utf8");
   // Every request goes through a proxy nothing listens on.
   const proxy = `http://127.0.0.1:${await closedPort()}`;
+  const { NO_PROXY: _a, no_proxy: _b, ...env } = process.env;
+  const proxies = { HTTPS_PROXY: proxy, HTTP_PROXY: proxy, https_proxy: proxy, http_proxy: proxy };
   const { stdout } = await run("node", ["scripts/fetch-evidence.mjs"], {
     cwd: root,
-    env: { ...process.env, GITHUB_TOKEN: "test", NODE_USE_ENV_PROXY: "1", HTTPS_PROXY: proxy, HTTP_PROXY: proxy },
+    env: { ...env, ...proxies, GITHUB_TOKEN: "test", NODE_USE_ENV_PROXY: "1", EVIDENCE_OUT: file },
   });
   assert.match(stdout, /^::warning::fetch-evidence: POST .* failed: /m);
   assert.equal(await readFile(file, "utf8"), before);

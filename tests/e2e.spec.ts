@@ -6,6 +6,7 @@ import { isoDay } from "../src/components/cvPeriod.ts";
 // Read the export instead of restating it (see tests/cv.spec.ts).
 const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
 const stats = JSON.parse(readFileSync("src/data/stats.json", "utf8"));
+const codemeta = JSON.parse(readFileSync("src/data/codemeta.json", "utf8"));
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -122,11 +123,9 @@ test("the archive retains software metadata and the thesis dataset in structured
     .locator('script[type="application/ld+json"]')
     .evaluate((el) => JSON.parse(el.textContent ?? "{}")["@graph"]);
   const code = graph.find((node: Record<string, unknown>) => node.name === "sourceledger");
-  expect(code).toMatchObject({
-    "@type": "SoftwareSourceCode",
-    version: "0.4.0",
-    identifier: "https://doi.org/10.5281/zenodo.23460694",
-  });
+  // The weekly refresh rewrites codemeta.json, so expect what it holds now.
+  const meta = codemeta["https://github.com/simonvanlierde/sourceledger"];
+  expect(code).toMatchObject({ "@type": "SoftwareSourceCode", version: meta.version, identifier: meta.doi });
   expect(graph.find((node: Record<string, unknown>) => node["@type"] === "Dataset")).toMatchObject({
     license: "https://spdx.org/licenses/CC-BY-4.0.html",
     url: "https://doi.org/10.5281/zenodo.8344580",
