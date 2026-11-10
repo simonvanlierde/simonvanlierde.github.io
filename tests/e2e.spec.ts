@@ -81,15 +81,27 @@ test("the index keeps four featured projects and sends the rest to the archive",
   await expect(page.locator("#project-bikespot")).toBeVisible();
 });
 
-test("upstream summaries offer one touch-sized link per library", async ({ page }) => {
-  const libraries = page.locator(".upstream-list > li");
-  await expect(libraries).toHaveCount(5);
-  for (const library of await libraries.all()) {
-    const link = library.getByRole("link");
-    await expect(link).toHaveCount(1);
+// The ranking is Simon's (2026-11-09): how widely the field uses each library.
+const showcase = ["Brightway", "Activity Browser", "premise", "pymrio", "lca_algebraic", "flodym"];
+const upstreamAnchor = (name: string) => `upstream-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+
+test("the index gives each upstream library one line that links to its archive entry", async ({ page }) => {
+  const lines = page.locator("#upstream-heading ~ ul").first().locator("> li");
+  await expect(lines).toHaveCount(showcase.length);
+  for (const [i, name] of showcase.entries()) {
+    const line = lines.nth(i);
+    await expect(line.getByRole("link")).toHaveCount(1);
+    await expect(line.locator("p")).toHaveCount(1);
+    const link = line.getByRole("link", { name, exact: true });
+    await expect(link).toHaveAttribute("href", `/archive/#${upstreamAnchor(name)}`);
     expect((await link.boundingBox())?.height).toBeGreaterThanOrEqual(44);
-    await expect(link).toHaveAttribute("href", /^\/archive\/#upstream-/);
   }
+  await expect(page.getByRole("link", { name: "All upstream contributions and pull requests" })).toHaveAttribute(
+    "href",
+    "/archive/#upstream-heading",
+  );
+  await page.goto("/archive/");
+  for (const name of showcase) await expect(page.locator(`#${upstreamAnchor(name)} h3`)).toHaveText(name);
 });
 
 test("published project fragments follow projects into the archive", async ({ page }) => {
@@ -121,7 +133,7 @@ test("the archive retains software metadata and the thesis dataset in structured
 });
 
 test("upstream archive destinations stay below the sticky navigation", async ({ page }) => {
-  await page.getByRole("link", { name: /PRs for lca_algebraic/ }).click();
+  await page.getByRole("link", { name: "lca_algebraic", exact: true }).click();
   const heading = page.locator("#upstream-lca-algebraic h3");
   await expect(heading).toBeInViewport();
   const top = (await heading.boundingBox())?.y ?? 0;
@@ -299,6 +311,30 @@ test("the open sheet is marked current in the nav", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Primary" });
   await expect(nav.getByRole("link", { name: "Sheet 1: Index" })).toHaveAttribute("aria-current", "page");
   await expect(nav.getByRole("link", { name: "Sheet 2: CV" })).not.toHaveAttribute("aria-current", "page");
+});
+
+test("five sheets keep the nav on one line at 390px, with full accessible names", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  // A stand-in fifth sheet, built like the others, for when the set grows.
+  await nav
+    .locator(".sheet-nav__link")
+    .last()
+    .evaluate((last) => {
+      const fifth = last.cloneNode(true) as HTMLElement;
+      fifth.removeAttribute("aria-current");
+      fifth.innerHTML = last.innerHTML.replace("Sheet 4: ", "Sheet 5: ").replace("Notes", "Fifth");
+      last.after(fifth);
+    });
+  const names = ["Sheet 1: Index", "Sheet 2: CV", "Sheet 3: Archive", "Sheet 4: Notes", "Sheet 5: Fifth"];
+  for (const name of names) await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
+  const tops = await nav
+    .locator(".sheet-nav__mark, .sheet-nav__link, .theme-toggle")
+    .evaluateAll((items) =>
+      items.map((item) => item.getBoundingClientRect().top + item.getBoundingClientRect().height / 2),
+    );
+  expect(tops).toHaveLength(names.length + 2);
+  for (const top of tops) expect(Math.abs(top - tops[0])).toBeLessThan(2);
 });
 
 test("the title block ends with a clear collaboration path", async ({ page }) => {
@@ -510,7 +546,7 @@ for (const width of [320, 390]) {
       await expect(page).toHaveURL(/\/archive\/$/);
       await page.goto("/");
     }
-    await page.getByRole("link", { name: "5 PRs for Brightway", exact: true }).click();
+    await page.getByRole("link", { name: "Brightway", exact: true }).click();
     await expect(page).toHaveURL(/\/archive\/#upstream-brightway$/);
     await expect
       .poll(() =>
