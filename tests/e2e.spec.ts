@@ -292,9 +292,12 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
   await expect(block.getByText("1 OF 4", { exact: true })).toBeVisible();
 
-  // This sheet takes the later of the export and stats dates, in UTC.
+  // The sheet is dated by its newest input: the export, the stats or any figure on it, in UTC.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
-  const latest = [isoDay(cv.exported), stats.as_of].sort().at(-1) ?? "";
+  const figureDates = await page
+    .locator("[data-as-of]")
+    .evaluateAll((els) => els.map((el) => el.getAttribute("data-as-of") ?? ""));
+  const latest = [isoDay(cv.exported), stats.as_of, ...figureDates].sort().at(-1) ?? "";
   await expect(block.locator("time")).toHaveAttribute("datetime", latest);
 
   const rev = block.getByRole("link", { name: /^Site revision / });
@@ -572,3 +575,29 @@ for (const width of [320, 390]) {
       .toBeGreaterThanOrEqual(0);
   });
 }
+
+// A broken social card has no visible symptom on the page itself.
+for (const path of ["/", "/cv/", "/archive/", "/notes/", "/notes/hub-and-spoke-observability/", "/privacy/"]) {
+  test(`${path} names a social card that is served as a 1200x630 PNG`, async ({ page, request }) => {
+    await page.goto(path);
+    const og = await page.locator('meta[property="og:image"]').getAttribute("content");
+    expect(og).toMatch(/^https:\/\/simonvanlierde\.com\//);
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+    const res = await request.get(new URL(og ?? "").pathname);
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toBe("image/png");
+    const body = await res.body();
+    // PNG width and height sit at bytes 16-23 of the IHDR chunk.
+    expect([body.readUInt32BE(16), body.readUInt32BE(20)]).toEqual([1200, 630]);
+  });
+}
+
+test("every featured card's close-up loads", async ({ page }) => {
+  await page.goto("/");
+  const shots = page.locator(".bom-row__shot img");
+  expect(await shots.count()).toBeGreaterThan(0);
+  for (const img of await shots.all()) {
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth)).toBeGreaterThan(0);
+  }
+});
