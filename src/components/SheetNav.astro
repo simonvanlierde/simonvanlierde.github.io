@@ -20,18 +20,20 @@ const { current } = Astro.props;
         <a class="sheet-nav__mark" href="/" aria-label="SVL, home">SVL</a>
       )
     }
+    {/* Narrow screens letter the name only; "Sheet 1: Index" stays the accessible name. One inner span,
+        because each flex item of the link would add a space to its name. */}
     <div class="sheet-nav__actions">
       <a class="sheet-nav__link" href="/" aria-current={current === "index" ? "page" : undefined}>
-        Sheet 1: Index
+        <span><span class="sheet-nav__number">Sheet 1: </span>Index</span>
       </a>
       <a class="sheet-nav__link" href="/cv/" aria-current={current === "cv" ? "page" : undefined}>
-        Sheet 2: CV
+        <span><span class="sheet-nav__number">Sheet 2: </span>CV</span>
       </a>
       <a class="sheet-nav__link" href="/archive/" aria-current={current === "archive" ? "page" : undefined}>
-        Sheet 3: Archive
+        <span><span class="sheet-nav__number">Sheet 3: </span>Archive</span>
       </a>
       <a class="sheet-nav__link" href="/notes/" aria-current={current === "notes" ? "page" : undefined}>
-        Sheet 4: Notes
+        <span><span class="sheet-nav__number">Sheet 4: </span>Notes</span>
       </a>
       <ThemeToggle />
     </div>

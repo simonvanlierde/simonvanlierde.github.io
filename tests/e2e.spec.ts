@@ -313,6 +313,30 @@ test("the open sheet is marked current in the nav", async ({ page }) => {
   await expect(nav.getByRole("link", { name: "Sheet 2: CV" })).not.toHaveAttribute("aria-current", "page");
 });
 
+test("five sheets keep the nav on one line at 390px, with full accessible names", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  // A stand-in fifth sheet, built like the others, for when the set grows.
+  await nav
+    .locator(".sheet-nav__link")
+    .last()
+    .evaluate((last) => {
+      const fifth = last.cloneNode(true) as HTMLElement;
+      fifth.removeAttribute("aria-current");
+      fifth.innerHTML = last.innerHTML.replace("Sheet 4: ", "Sheet 5: ").replace("Notes", "Fifth");
+      last.after(fifth);
+    });
+  const names = ["Sheet 1: Index", "Sheet 2: CV", "Sheet 3: Archive", "Sheet 4: Notes", "Sheet 5: Fifth"];
+  for (const name of names) await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
+  const tops = await nav
+    .locator(".sheet-nav__mark, .sheet-nav__link, .theme-toggle")
+    .evaluateAll((items) =>
+      items.map((item) => item.getBoundingClientRect().top + item.getBoundingClientRect().height / 2),
+    );
+  expect(tops).toHaveLength(names.length + 2);
+  for (const top of tops) expect(Math.abs(top - tops[0])).toBeLessThan(2);
+});
+
 test("the title block ends with a clear collaboration path", async ({ page }) => {
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByText("Contact Simon")).toBeVisible();

@@ -1275,14 +1275,21 @@ main > section.container > h2 {
   .sheet-nav__inner {
     gap: var(--space-xs);
   }
+  /* Wider than the space inside "1 Index", so a number reads with its name. */
   .sheet-nav__actions {
-    gap: var(--space-xs);
+    gap: var(--space-s);
     flex-wrap: wrap;
     justify-content: flex-end;
   }
   .sheet-nav__link {
     font-size: 0.75rem;
-    letter-spacing: 0;
+    letter-spacing: 0.04em;
+  }
+  /* The sheet's name alone, so five sheets fit on one line at 390px. Zero-size
+     text, not .visually-hidden, whose positioned span would split the
+     accessible name into "Sheet 1: Index" pieces. */
+  .sheet-nav__number {
+    font-size: 0;
   }
   .sheet-nav__mark {
     font-size: 0.75rem;
