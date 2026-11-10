@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { buildPayload, changedUrls, send } from "../../scripts/indexnow.mjs";
 
@@ -6,6 +7,7 @@ const home = "https://simonvanlierde.com/";
 const cv = "https://simonvanlierde.com/cv/";
 const archive = "https://simonvanlierde.com/archive/";
 const notes = "https://simonvanlierde.com/notes/";
+const privacy = "https://simonvanlierde.com/privacy/";
 
 test("a page-only change posts just that page", () => {
   assert.deepEqual(changedUrls(["src/pages/cv.astro"]), [cv]);
@@ -13,9 +15,20 @@ test("a page-only change posts just that page", () => {
   assert.deepEqual(changedUrls(["src/pages/index.astro", "docs/architecture.md"]), [home]);
 });
 
+test("a note posts its own page and the notes list", () => {
+  assert.deepEqual(changedUrls(["src/content/notes/a-note.md"]), [`${notes}a-note/`, notes]);
+  assert.deepEqual(changedUrls(["src/pages/privacy.astro"]), [privacy]);
+});
+
+test("the key file is served with the key, and changing it posts nothing", () => {
+  const { key } = buildPayload([]);
+  assert.equal(readFileSync(`public/${key}.txt`, "utf8").trim(), key);
+  assert.deepEqual(changedUrls([`public/${key}.txt`]), []);
+});
+
 test("shared code or assets post every sheet", () => {
-  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv, archive, notes]);
-  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv, archive, notes]);
+  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv, archive, notes, privacy]);
+  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv, archive, notes, privacy]);
 });
 
 test("changes that cannot alter the built pages post nothing", () => {

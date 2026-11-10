@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
-import { formatPeriod } from "../src/components/cvPeriod.ts";
+import { formatPeriod, isoDay } from "../src/components/cvPeriod.ts";
 import { listablePublications, PublicationSchema } from "../src/data/publications.ts";
 
 // Read the export instead of hard-coding it, so the tests check the page against
@@ -132,7 +132,12 @@ for (const path of ["/", "/cv/"]) {
     );
 
     // Publications are the only dated works: articles carry a headline, software a name.
-    const works = nodes.filter((n) => "datePublished" in n).map((n) => n.headline ?? n.name);
+    const dated = nodes.filter((n) => "datePublished" in n);
+    const works = dated.map((n) => n.headline ?? n.name);
+    // Every listed work is by the owner, so each names the person node as an author.
+    for (const work of dated) {
+      expect(work.author as unknown[], String(work.headline ?? work.name)).toContainEqual({ "@id": person?.["@id"] });
+    }
     expect(works).toEqual(path === "/cv/" ? publications.map((pub) => pub.title) : []);
 
     const pages = nodes.filter((n) => n["@type"] === "ProfilePage");
@@ -164,9 +169,10 @@ test("the CV sheet stamps when its data was exported, and marks itself current",
   // A generated sheet is dated, not attributed.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
   const stamp = block.locator("time");
-  await expect(stamp).toHaveAttribute("datetime", cv.exported.slice(0, 10));
+  const day = isoDay(cv.exported);
+  await expect(stamp).toHaveAttribute("datetime", day);
   // The stamp is UTC; a local-zone build must not shift the day.
-  await expect(stamp).toHaveText(new RegExp(String(Number(cv.exported.slice(8, 10)))));
+  await expect(stamp).toHaveText(new RegExp(`^${Number(day.slice(8))} `));
 
   const nav = page.getByRole("navigation", { name: "Primary" });
   await expect(nav.getByRole("link", { name: "Sheet 2: CV" })).toHaveAttribute("aria-current", "page");

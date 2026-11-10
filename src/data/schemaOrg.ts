@@ -11,6 +11,8 @@ const sameAs = [...profiles.map((p) => p.href), cv.basics.links.openalex, cv.bas
 // it in the export if a name ever needs more.
 const [givenName, ...family] = cv.basics.name.split(" ");
 const familyName = family.join(" ");
+// How an APA byline names the owner once publications.ts expands it: "S. van Lierde".
+const bylineName = `${givenName[0]}. ${familyName}`;
 
 // Spoken languages go in knowsLanguage, without their level: "Dutch (native)" is not a subject.
 const isLanguages = (group: { group: string }) => group.group === "Languages";
@@ -83,7 +85,7 @@ function publicationNode(pub: Publication) {
     ...(doi ? { "@id": doi, identifier: doi, url: doi } : {}),
     [software ? "name" : "headline"]: pub.title,
     author: pub.authors.map((name) =>
-      name === cv.basics.name || name.endsWith(` ${familyName}`) ? { "@id": personId } : { "@type": "Person", name },
+      name === cv.basics.name || name === bylineName ? { "@id": personId } : { "@type": "Person", name },
     ),
     ...(repositories.has(pub.venue)
       ? { publisher: { "@type": "Organization", name: pub.venue } }
