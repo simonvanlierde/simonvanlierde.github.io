@@ -24,5 +24,13 @@ export default defineConfig({
   base: "/",
   // Preact, not React: the one island needs two hooks, not a 57KB runtime.
   integrations: [preact()],
+  // Fenced code: both themes' colours land as CSS variables, and global.css picks one by colour-scheme.
+  // The high-contrast pair clears 4.5:1 on --surface in both themes.
+  markdown: {
+    shikiConfig: {
+      themes: { light: "github-light-high-contrast", dark: "github-dark-high-contrast" },
+      defaultColor: false,
+    },
+  },
   vite: { define: { "import.meta.env.SITE_SHA": JSON.stringify(sha) } },
 });

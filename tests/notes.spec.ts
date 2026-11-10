@@ -41,3 +41,26 @@ test("the sitemap lists the notes index and each note", async ({ request }) => {
   expect(xml).toContain("<loc>https://simonvanlierde.com/notes/</loc>");
   expect(xml).toContain(`<loc>https://simonvanlierde.com${POST}</loc>`);
 });
+
+// No note holds a fenced block yet. With `defaultColor: false`, Shiki emits each token's colours as
+// --shiki-light and --shiki-dark only, so a block of that shape tests the site's side: the CSS picks one.
+test("fenced code follows the colour scheme", async ({ page }) => {
+  const { default: config } = await import("../astro.config.mjs");
+  expect(config.markdown?.shikiConfig?.defaultColor).toBe(false);
+  const code =
+    '<pre class="astro-code"><code><span class="line">' +
+    '<span style="--shiki-light:#0e1116;--shiki-dark:#f0f3f6">def</span></span></code></pre>';
+
+  const keyword = async (scheme: "light" | "dark") => {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.addInitScript((t) => localStorage.setItem("theme", t), scheme);
+    await page.goto(POST);
+    await page.locator(".note__body").evaluate((el, html) => el.insertAdjacentHTML("beforeend", html), code);
+    return page
+      .locator("pre.astro-code span", { hasText: "def" })
+      .last()
+      .evaluate((el) => getComputedStyle(el).color);
+  };
+  expect(await keyword("light")).toBe("rgb(14, 17, 22)");
+  expect(await keyword("dark")).toBe("rgb(240, 243, 246)");
+});
