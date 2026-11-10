@@ -21,6 +21,7 @@
     "test:e2e": "playwright test",
     "check": "pnpm lint && pnpm typecheck && pnpm test:coverage",
     "gen:og": "node scripts/gen-og.mjs",
+    "gen:card": "node scripts/social-card/card.mjs",
     "fetch:stats": "node scripts/fetch-stats.mjs",
     "fetch:evidence": "node scripts/fetch-evidence.mjs",
     "fetch:cards": "node scripts/fetch-cards.mjs",
