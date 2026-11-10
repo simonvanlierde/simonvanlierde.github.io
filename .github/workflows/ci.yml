@@ -123,7 +123,13 @@ jobs:
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3
         with:
           runtime: node@26
+          cache: true
           install: false
+
+      # wrangler comes from the lockfile, so its dependencies are pinned and Renovate updates them.
+      - if: steps.gate.outputs.run == 'true'
+        name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - if: steps.gate.outputs.run == 'true'
         name: Download build
@@ -138,7 +144,6 @@ jobs:
         run: |
           printf '/*\n  X-Robots-Tag: noindex\n' > dist/_headers
 
-      # wrangler through dlx, so the site's own install stays without it.
       - if: steps.gate.outputs.run == 'true'
         name: Upload Worker version
         id: upload
@@ -152,7 +157,7 @@ jobs:
         run: |
           set -o pipefail
           upload() {
-            pnpm dlx wrangler@4.156.2 versions upload --preview-alias "pr-$PR" --message "PR $PR at $SHA" 2>&1 | tee upload.log
+            pnpm exec wrangler versions upload --preview-alias "pr-$PR" --message "PR $PR at $SHA" 2>&1 | tee upload.log
           }
           if ! upload; then
             # Only an existing Worker takes versions. Create it once with a
@@ -161,7 +166,7 @@ jobs:
             mkdir placeholder
             cp dist/_headers placeholder/
             echo 'Pull request previews of simonvanlierde.com live at pr-NUMBER addresses.' > placeholder/index.html
-            pnpm dlx wrangler@4.156.2 deploy --assets placeholder
+            pnpm exec wrangler deploy --assets placeholder
             upload
           fi
           url=$(grep 'Version Preview Alias URL:' upload.log | grep -Eo 'https://[^ ]+' || true)
