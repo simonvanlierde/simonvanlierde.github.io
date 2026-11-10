@@ -70,4 +70,4 @@ or a merged PR.
 ## Accessibility & Inclusion
 
 WCAG AA in both themes, checked by the axe suite in CI. Every interactive target is at least 44px.
-Reduced motion gets the finished state.
+Reduced motion drops all movement and shows the finished state.

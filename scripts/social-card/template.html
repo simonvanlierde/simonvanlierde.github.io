@@ -69,8 +69,8 @@
     const step = 48; const f = img.parentElement; const maxW = f.clientWidth - 96; const maxH = f.clientHeight - 96;
     const r = img.naturalHeight / img.naturalWidth; const w0 = Math.min(maxW, maxH / r);
     const near = (v, max) => [Math.floor(v / step), Math.ceil(v / step)].map((n) => Math.min(max, Math.max(1, n) * step));
-    const crop = ([w, h]) => { const c = Math.max(w, h / r); return 1 - (w * h) / (c * c * r); };
-    const [w, h] = near(w0, maxW).flatMap((w) => near(w * r, maxH).map((h) => [w, h])).sort((a, b) => crop(a) - crop(b))[0];
+    const crop = ([cw, ch]) => { const c = Math.max(cw, ch / r); return 1 - (cw * ch) / (c * c * r); };
+    const [w, h] = near(w0, maxW).flatMap((sw) => near(sw * r, maxH).map((sh) => [sw, sh])).sort((a, b) => crop(a) - crop(b))[0];
     img.style.width = `${w}px`; img.style.height = `${h}px`;
   };
 </script>
