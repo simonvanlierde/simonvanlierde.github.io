@@ -42,12 +42,14 @@ test("the sitemap lists the notes index and each note", async ({ request }) => {
   expect(xml).toContain(`<loc>https://simonvanlierde.com${POST}</loc>`);
 });
 
-// No note holds a fenced block yet, so render one through the site's own Markdown config and put it in a note.
+// No note holds a fenced block yet. With `defaultColor: false`, Shiki emits each token's colours as
+// --shiki-light and --shiki-dark only, so a block of that shape tests the site's side: the CSS picks one.
 test("fenced code follows the colour scheme", async ({ page }) => {
-  const { createMarkdownProcessor } = await import("@astrojs/markdown-remark");
   const { default: config } = await import("../astro.config.mjs");
-  const md = await createMarkdownProcessor({ shikiConfig: config.markdown?.shikiConfig });
-  const { code } = await md.render("```python\ndef f(): return 1\n```");
+  expect(config.markdown?.shikiConfig?.defaultColor).toBe(false);
+  const code =
+    '<pre class="astro-code"><code><span class="line">' +
+    '<span style="--shiki-light:#0e1116;--shiki-dark:#f0f3f6">def</span></span></code></pre>';
 
   const keyword = async (scheme: "light" | "dark") => {
     await page.emulateMedia({ colorScheme: scheme });
@@ -55,11 +57,10 @@ test("fenced code follows the colour scheme", async ({ page }) => {
     await page.goto(POST);
     await page.locator(".note__body").evaluate((el, html) => el.insertAdjacentHTML("beforeend", html), code);
     return page
-      .locator("pre.astro-code span")
-      .getByText("def", { exact: true })
+      .locator("pre.astro-code span", { hasText: "def" })
+      .last()
       .evaluate((el) => getComputedStyle(el).color);
   };
-  const light = await keyword("light");
-  const dark = await keyword("dark");
-  expect(light).not.toBe(dark);
+  expect(await keyword("light")).toBe("rgb(14, 17, 22)");
+  expect(await keyword("dark")).toBe("rgb(240, 243, 246)");
 });
