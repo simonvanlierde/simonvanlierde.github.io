@@ -29,7 +29,15 @@ async function axeViolations(page: Page) {
 
 // Each colour scheme has its own tokens, and linting cannot catch contrast.
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/cv/", "/archive/", "/notes/", "/notes/hub-and-spoke-observability/", "/no-such-page/"]) {
+  for (const path of [
+    "/",
+    "/cv/",
+    "/archive/",
+    "/notes/",
+    "/notes/hub-and-spoke-observability/",
+    "/privacy/",
+    "/no-such-page/",
+  ]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
       // The sheet defaults to dark; light comes from the toggle's stored choice.

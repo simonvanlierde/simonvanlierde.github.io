@@ -1,0 +1,27 @@
+---
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
+import { cv } from "../data/cv.ts";
+import Base from "../layouts/Base.astro";
+
+const { email } = cv.basics;
+---
+<Base title="Privacy | Simon van Lierde" description="What this site collects about visitors: almost nothing.">
+  <SheetNav />
+  <main id="main" class="container archive">
+    <header>
+      <h1>Privacy</h1>
+      <p class="prose">This site sets no cookies, runs no analytics and loads nothing from other sites.</p>
+    </header>
+    <section aria-labelledby="visit-heading">
+      <h2 id="visit-heading">When you visit</h2>
+      <p class="prose">The site is hosted on <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub Pages</a> and served through <a href="https://www.cloudflare.com/privacy/">Cloudflare</a>. Like any web host, they see your IP address, the page you asked for and your browser type, and keep logs to deliver the site and block attacks. I don't have those logs. I only see request totals in Cloudflare's dashboard.</p>
+      <p class="prose">If you use the theme toggle, your choice is saved in your browser's local storage. It never leaves your device.</p>
+    </section>
+    <section aria-labelledby="contact-heading">
+      <h2 id="contact-heading">Contact</h2>
+      <p class="prose">If you email me, I use your address and message only to reply.{email && <> Questions about your data go to <a href={`mailto:${email}`}>{email}</a>.</>} You can also complain to the Dutch data protection authority, the <a href="https://www.autoriteitpersoonsgegevens.nl/en">Autoriteit Persoonsgegevens</a>.</p>
+    </section>
+  </main>
+  <TitleBlock title={cv.basics.name} docType="Privacy" sheet="NOT IN SET" dated="2026-11-10" />
+</Base>
