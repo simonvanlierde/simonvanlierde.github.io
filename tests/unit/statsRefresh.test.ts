@@ -7,7 +7,7 @@ import { join, resolve } from "node:path";
 import process from "node:process";
 import { test } from "node:test";
 import { promisify } from "node:util";
-import { closedPort, runDrift } from "./driftRun.ts";
+import { droppingPort, runDrift } from "./driftRun.ts";
 
 const run = promisify(execFile);
 const root = resolve(import.meta.dirname, "../..");
@@ -19,7 +19,7 @@ test("a failed refresh warns and leaves the snapshot alone", async () => {
   const before = await readFile(file, "utf8");
   const { stdout } = await run("node", ["scripts/fetch-stats.mjs"], {
     cwd: root,
-    env: { ...process.env, R9LAB_API_URL: `http://127.0.0.1:${await closedPort()}`, STATS_OUT: file },
+    env: { ...process.env, R9LAB_API_URL: `http://127.0.0.1:${await droppingPort()}`, STATS_OUT: file },
   });
   assert.match(stdout, /^::warning::fetch-stats:/m);
   assert.equal(await readFile(file, "utf8"), before);

@@ -601,3 +601,22 @@ test("every featured card's close-up loads", async ({ page }) => {
     await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth)).toBeGreaterThan(0);
   }
 });
+
+// The project sites other repos publish under this domain come from the cards' demo links,
+// so a card that moves its demo off the domain drops out, and this list says which must stay.
+test("the sitemap lists every project site under this domain", async ({ request }) => {
+  const xml = await (await request.get("/sitemap.xml")).text();
+  const locs = [...xml.matchAll(/<loc>https:\/\/simonvanlierde\.com\/([a-z0-9-]+)\/<\/loc>/g)].map((m) => m[1]);
+  const sheets = ["cv", "archive", "notes", "privacy"];
+  expect(locs.filter((l) => !sheets.includes(l)).sort()).toEqual([
+    "brightway-benchmarks",
+    "citesync",
+    "codemeta-drift",
+    "cv-ie-taxonomy",
+    "io-notebook",
+    "jsonvet",
+    "msc-thesis-ie",
+    "ramascene-explorer",
+    "sourceledger",
+  ]);
+});

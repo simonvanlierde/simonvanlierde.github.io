@@ -8,7 +8,7 @@ import { test } from "node:test";
 import { promisify } from "node:util";
 import { evidenceDrift, parseUpstream, staleEntries } from "../../scripts/evidence.mjs";
 import { alsoMerged, prGroups, upstream, upstreamShowcase } from "../../src/data/upstream.ts";
-import { closedPort } from "./driftRun.ts";
+import { droppingPort } from "./driftRun.ts";
 
 const run = promisify(execFile);
 const root = resolve(import.meta.dirname, "../..");
@@ -95,7 +95,7 @@ test("a failed refresh warns and leaves upstream.json alone", async () => {
   await copyFile(join(root, "src/data/upstream.json"), file);
   const before = await readFile(file, "utf8");
   // Every request goes through a proxy nothing listens on.
-  const proxy = `http://127.0.0.1:${await closedPort()}`;
+  const proxy = `http://127.0.0.1:${await droppingPort()}`;
   const { NO_PROXY: _a, no_proxy: _b, ...env } = process.env;
   const proxies = { HTTPS_PROXY: proxy, HTTP_PROXY: proxy, https_proxy: proxy, http_proxy: proxy };
   const { stdout } = await run("node", ["scripts/fetch-evidence.mjs"], {

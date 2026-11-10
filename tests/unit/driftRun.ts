@@ -9,13 +9,15 @@ import { promisify } from "node:util";
 const run = promisify(execFile);
 const root = resolve(import.meta.dirname, "../..");
 
-/** A local port nothing listens on. */
-export async function closedPort(): Promise<number> {
-  const server = createServer();
+/**
+ * A local port whose server drops every connection, so a request there always fails. It stays bound
+ * for the whole run, unlike a closed port that another process could take; unref() lets the run exit.
+ */
+export async function droppingPort(): Promise<number> {
+  const server = createServer((socket) => socket.destroy());
   await new Promise<void>((ok) => server.listen(0, "127.0.0.1", ok));
-  const { port } = server.address() as { port: number };
-  await new Promise((ok) => server.close(ok));
-  return port;
+  server.unref();
+  return (server.address() as { port: number }).port;
 }
 
 /**
