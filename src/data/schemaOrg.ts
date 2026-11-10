@@ -28,7 +28,8 @@ const person = {
   givenName,
   familyName,
   jobTitle: sheetLead[0],
-  description: cv.profile,
+  description:
+    "Research software engineer building open software and data infrastructure for industrial ecology, at CML, Leiden University.",
   url: `${site}/`,
   image: `${site}/portrait.jpg`,
   sameAs,

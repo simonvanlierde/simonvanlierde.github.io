@@ -114,6 +114,7 @@ html {
   -webkit-text-size-adjust: 100%;
   scrollbar-color: var(--border) transparent;
   scroll-behavior: smooth;
+  timeline-scope: --sheet-name; /* lets the nav monogram follow .sheet-name (see below) */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -458,10 +459,6 @@ main > section.container > h2 {
    inset). Hidden means `visibility`, so it also leaves the tab order. A page
    without a .sheet-name (the 404), a browser without scroll-driven animations,
    and reduced motion all keep the monogram showing, the finished state. */
-html {
-  timeline-scope: --sheet-name;
-}
-
 /* Contact, profiles and the stamp under each sheet's title zone, in the same
    order and spacing on both sheets. */
 .sheet-contact {

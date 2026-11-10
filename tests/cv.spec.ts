@@ -41,21 +41,24 @@ test("renders every CV section the export carries, and no empty ones", async ({ 
 });
 
 test("the page is dated from the export, machine-readably", async ({ page }) => {
-  const stamp = page.locator(".cv-updated time");
-  if (cv.exported) {
-    // datetime must be the exact exported instant, not the rendered text.
-    await expect(stamp).toHaveAttribute("datetime", cv.exported);
-    await expect(stamp).toHaveText(
-      new Date(cv.exported).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        timeZone: "UTC",
-      }),
-    );
-  } else {
-    await expect(stamp).toHaveCount(0);
-  }
+  const stamps = await page
+    .locator(".cv-updated time")
+    .evaluateAll((els) => els.map((el) => ({ datetime: el.getAttribute("datetime"), text: el.textContent?.trim() })));
+  // datetime must be the exact exported instant, not the rendered text.
+  const expected = cv.exported
+    ? [
+        {
+          datetime: cv.exported,
+          text: new Date(cv.exported).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            timeZone: "UTC",
+          }),
+        },
+      ]
+    : [];
+  expect(stamps).toEqual(expected);
 });
 
 test("contact details render only what the export publishes", async ({ page }) => {
@@ -63,12 +66,8 @@ test("contact details render only what the export publishes", async ({ page }) =
   await expect(contact).toContainText(cv.basics.location);
 
   // Without an exported address, the page must carry no mailto at all.
-  const mailto = page.locator('a[href^="mailto:"]');
-  if (cv.basics.email) {
-    await expect(mailto.first()).toHaveAttribute("href", `mailto:${cv.basics.email}`);
-  } else {
-    await expect(mailto).toHaveCount(0);
-  }
+  const hrefs = await page.locator('a[href^="mailto:"]').evaluateAll((els) => els.map((el) => el.getAttribute("href")));
+  expect(hrefs.slice(0, 1)).toEqual(cv.basics.email ? [`mailto:${cv.basics.email}`] : []);
 });
 
 test("experience entries carry a role, an organisation, and a formatted period", async ({ page }) => {
@@ -83,12 +82,8 @@ test("each talk lists its event and links slides only when it has a DOI", async 
   for (const talk of cv.talks ?? []) {
     const entry = page.locator(".cv-entry").filter({ hasText: talk.event });
     await expect(entry).toHaveCount(1);
-    const link = entry.getByRole("link");
-    if (talk.doi) {
-      await expect(link).toHaveAttribute("href", `https://doi.org/${talk.doi}`);
-    } else {
-      await expect(link).toHaveCount(0);
-    }
+    const hrefs = await entry.getByRole("link").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
+    expect(hrefs).toEqual(talk.doi ? [`https://doi.org/${talk.doi}`] : []);
   }
 });
 

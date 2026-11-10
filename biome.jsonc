@@ -51,6 +51,18 @@
       }
     },
     {
+      "includes": ["**/*.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            // The sheet targets current evergreen browsers and layers view transitions, scroll-driven
+            // animation and text-wrap on top as enhancements; the rule's Baseline tiers fit neither.
+            "useBaseline": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["scripts/**", "tests/**", "**/*.config.ts", "**/*.config.mjs"],
       "linter": {
         "rules": {
