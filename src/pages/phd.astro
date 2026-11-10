@@ -1,0 +1,66 @@
+---
+// Sheet 5: the PhD at a glance. The outputs and their stages come from the vault
+// (`just franco-overview` writes src/data/phd.json, public-safe: topic lines and
+// public stages only). The cards are the existing project collection, filtered to
+// the PhD repos that file lists. Do not hand-edit phd.json.
+import { getCollection } from "astro:content";
+import ProjectCard from "../components/ProjectCard.astro";
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
+import { cv } from "../data/cv.ts";
+import phd from "../data/phd.json" with { type: "json" };
+import Base from "../layouts/Base.astro";
+
+const { basics } = cv;
+const repoUrl = (r: string) => `https://github.com/${r}`;
+const cards = (await getCollection("projects"))
+  .filter((p) => phd.repos.some((r) => p.data.repo.replace(/\/$/, "") === repoUrl(r)))
+  .sort((a, b) => a.data.order - b.data.order);
+
+// NOTE: placeholder copy for Simon to rewrite; one paragraph, no internal numbering.
+const summary =
+  "My PhD at CML, Leiden University, asks how better primary data on what products are made of can improve life cycle assessment and circular-economy research. The work runs from an open platform for collecting disassembly data, through a review of computer vision for end-of-life products, to studies of when photos and assisted capture make product data better.";
+---
+
+<Base title={`PhD | ${basics.name}`} description={summary}>
+  <SheetNav current="phd" />
+  <header class="container cv-header" id="main">
+    <h1>PhD</h1>
+    <p class="prose">{summary}</p>
+  </header>
+
+  <main>
+    <section class="container" aria-labelledby="outputs-heading">
+      <h2 id="outputs-heading">Thesis outputs</h2>
+      <div class="cv-entries">
+        {
+          phd.outputs.map((o) => (
+            <article class="cv-entry">
+              <p class="cv-entry__period" aria-hidden="true">{o.status}</p>
+              <div class="cv-entry__body">
+                <h3 class="cv-entry__role">
+                  {o.title}
+                  <span class="visually-hidden">, {o.status}</span>
+                </h3>
+                {o.venue && <p class="cv-publication__venue">{o.venue}</p>}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="container" aria-labelledby="software-heading">
+      <h2 id="software-heading">Software and data from the PhD</h2>
+      {cards.map((p) => <ProjectCard id={p.id} {...p.data} />)}
+    </section>
+  </main>
+
+  <TitleBlock
+    title={basics.name}
+    docType="PhD overview"
+    sheet="5 OF 5"
+    turn={{ href: "/notes/", label: "sheet 4, notes", dir: "prev" }}
+    dated={phd.as_of}
+  />
+</Base>

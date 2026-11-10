@@ -25,7 +25,7 @@ test("the post page, the notes index and the landing page link to each other", a
     page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Sheet 4: Notes" }),
   ).toHaveAttribute("aria-current", "page");
   await expect(
-    page.getByRole("region", { name: "Document title block" }).getByText("4 OF 4", { exact: true }),
+    page.getByRole("region", { name: "Document title block" }).getByText("4 OF 5", { exact: true }),
   ).toBeVisible();
 
   await page.getByRole("link", { name: "All notes" }).click();
