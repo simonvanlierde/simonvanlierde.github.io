@@ -16,7 +16,7 @@ test("a page-only change posts just that page", () => {
 });
 
 test("a note posts its own page and the notes list", () => {
-  assert.deepEqual(changedUrls(["src/content/notes/a-note.md"]), [`${notes}a-note/`, notes]);
+  assert.deepEqual(changedUrls(["src/content/notes/a-note.md"]), [`${notes}a-note/`, notes, home]);
   assert.deepEqual(changedUrls(["src/pages/privacy.astro"]), [privacy]);
 });
 

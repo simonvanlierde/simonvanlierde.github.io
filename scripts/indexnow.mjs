@@ -35,8 +35,8 @@ export function changedUrls(files) {
   for (const file of files) {
     const note = file.match(/^src\/content\/notes\/(.+)\.md$/)?.[1];
     if (file in only) for (const url of only[file]) urls.add(url);
-    // A note shows on its own page and in the notes list.
-    else if (note) urls.add(`${notes}${note}/`).add(notes);
+    // A note shows on its own page, in the notes list and among the index's latest notes.
+    else if (note) urls.add(`${notes}${note}/`).add(notes).add(home);
     // Shared layouts, components, styles, data and assets feed every sheet.
     else if (affectsSite(file) && file !== `public/${key}.txt`)
       urls.add(home).add(cv).add(archive).add(notes).add(privacy);

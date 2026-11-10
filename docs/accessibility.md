@@ -29,8 +29,8 @@ Every pull request and every push to `main` runs these checks:
   for 24), and show a visible focus ring.
 - Both colour schemes are checked for contrast. The site opens dark and remembers a choice made with
   the toggle.
-- When the system asks for reduced motion, nothing moves: no smooth scrolling, no page transitions
-  and no animated drawing or chart. The finished state shows at once.
+- When the system asks for reduced motion, nothing slides, scales or scrolls smoothly: no page
+  transitions and no animated drawing or chart. Short colour fades stay.
 - The R9lab chart has a visually hidden table with the same numbers, so its data does not depend on
   reading the SVG.
 - The CV PDF is a tagged PDF that claims PDF/UA-1 (accessible) and PDF/A-2a (archivable). The build
