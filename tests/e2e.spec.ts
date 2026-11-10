@@ -544,7 +544,6 @@ for (const width of [320, 390]) {
       });
       await page.mouse.click(target.x, target.y);
       await expect(page).toHaveURL(/\/archive\/$/);
-      await expect(page.locator(".archive-scroll-hint")).toBeVisible();
       await page.goto("/");
     }
     await page.getByRole("link", { name: "Brightway", exact: true }).click();

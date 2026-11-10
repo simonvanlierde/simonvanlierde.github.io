@@ -1140,16 +1140,11 @@ main > section.container > h2 {
   border-bottom: 2px solid var(--border-strong);
   padding-bottom: var(--space-xs);
 }
-.archive-scroll-hint {
-  display: none;
-}
-.archive-table-wrap {
-  overflow-x: auto;
-  margin-top: var(--space-s);
-}
 .archive-table {
   width: 100%;
+  margin-top: var(--space-s);
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: var(--step--1);
 }
 .archive-note {
@@ -1174,9 +1169,15 @@ main > section.container > h2 {
   letter-spacing: 0.08em;
   border-bottom-color: var(--border-strong);
 }
-.archive-table th[scope="row"] {
-  min-width: 15rem;
-  width: 55%;
+/* Column widths shared by the three group tables (fixed layout). */
+.archive-table thead th:nth-child(1) {
+  width: 50%;
+}
+.archive-table thead th:nth-child(2) {
+  width: 17%;
+}
+.archive-table thead th:nth-child(3) {
+  width: 19%;
 }
 .archive-table th[scope="row"] > a {
   font-family: var(--font-draft);
@@ -1192,6 +1193,62 @@ main > section.container > h2 {
 .archive-table .ref-list,
 .archive-table .project-metadata {
   margin-top: var(--space-xs);
+}
+/* Narrow: each row restacks like a parts-list row, item first, then kind and
+   stack, then links. The column heads stay for screen readers. 48rem, not the
+   sheet's 40rem: below it the four columns clip words such as "observability". */
+@media (max-width: 47.99rem) {
+  .archive-table,
+  .archive-table tbody {
+    display: block;
+  }
+  .archive-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .archive-table tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-s);
+    padding-block: var(--space-m);
+    border-bottom: var(--border-width) solid var(--border);
+  }
+  .archive-table tbody tr:first-child {
+    border-top: var(--border-width) solid var(--border-strong);
+  }
+  .archive-table tbody th,
+  .archive-table tbody td {
+    padding: 0;
+    border: 0;
+  }
+  .archive-table th[scope="row"] {
+    flex-basis: 100%;
+    margin-bottom: var(--space-2xs);
+  }
+  .archive-table td:nth-child(2) {
+    font-family: var(--font-draft);
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .archive-table td:nth-child(3) {
+    color: var(--text-muted);
+  }
+  .archive-table td:last-child {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 0 var(--space-m);
+  }
+  .archive-table td:last-child a {
+    display: inline-flex;
+    align-items: center;
+  }
 }
 .archive-link {
   margin-block: var(--space-l);
@@ -1266,9 +1323,6 @@ main > section.container > h2 {
   margin-top: var(--space-l);
 }
 @media (max-width: 39.99rem) {
-  .archive-scroll-hint {
-    display: inline;
-  }
   .sheet-nav .theme-toggle {
     margin-inline: 0;
   }
