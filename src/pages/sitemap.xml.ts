@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 import { isoDay } from "../components/cvPeriod.ts";
 import { cv } from "../data/cv.ts";
+import { indexDated } from "../data/figures.ts";
 import { site } from "../data/projectSchema.ts";
 import stats from "../data/stats.json" with { type: "json" };
 
@@ -13,9 +14,9 @@ const latestNote = notes
   .sort()
   .at(-1);
 const exported = cv.exported ? isoDay(cv.exported) : undefined;
+const featured = (await getCollection("projects")).filter((p) => p.data.featured);
 const pages: { path: string; lastmod?: string }[] = [
-  // The index dates itself by the newer of the CV export and the R9lab stats.
-  { path: "/", lastmod: [exported, stats.as_of].filter(Boolean).sort().at(-1) },
+  { path: "/", lastmod: indexDated(exported, stats.as_of, featured) },
   { path: "/cv/", lastmod: exported },
   { path: "/archive/", lastmod: exported },
   { path: "/notes/", lastmod: latestNote },
