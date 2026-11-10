@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
+import { isoDay } from "../src/components/cvPeriod.ts";
 
 // Read the export instead of restating it (see tests/cv.spec.ts).
 const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
@@ -268,12 +269,23 @@ test("a keyboard user can focus each part of the figure", async ({ page }) => {
   await expect(first).toHaveCSS("outline-style", "solid");
 });
 
-test("without motion the drawing starts exploded and never assembles", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  // Reduced motion must skip the settle animation, not shorten it.
-  await expect(page.locator(".exploded")).not.toHaveClass(/is-assembled/);
-});
+// The settle class lives for two frames only, so watch every class change from before parsing.
+for (const reducedMotion of ["reduce", "no-preference"] as const) {
+  test(`the drawing assembles only when motion is allowed (${reducedMotion})`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.addInitScript(() => {
+      new MutationObserver((records) => {
+        for (const r of records) {
+          if ((r.target as Element).classList?.contains("is-assembled")) Object.assign(window, { assembled: true });
+        }
+      }).observe(document, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    });
+    await page.goto("/");
+    await page.waitForLoadState("load");
+    // Reduced motion must skip the settle animation, not shorten it.
+    expect(await page.evaluate(() => "assembled" in window)).toBe(reducedMotion === "no-preference");
+  });
+}
 
 test("the title block states what the sheet is, and when it was drawn", async ({ page }) => {
   const block = page.getByRole("region", { name: "Document title block" });
@@ -283,7 +295,7 @@ test("the title block states what the sheet is, and when it was drawn", async ({
 
   // This sheet takes the later of the export and stats dates, in UTC.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
-  const latest = [cv.exported.slice(0, 10), stats.as_of].sort().at(-1) ?? "";
+  const latest = [isoDay(cv.exported), stats.as_of].sort().at(-1) ?? "";
   await expect(block.locator("time")).toHaveAttribute("datetime", latest);
 
   const rev = block.getByRole("link", { name: /^Site revision / });
