@@ -30,11 +30,12 @@ const today = new Date().toISOString().slice(0, 10);
 for (const name of (await readdir(cardsDir)).filter((f) => f.endsWith(".md")).sort()) {
   const id = name.slice(0, -3);
   const card = parse((await readFile(resolve(cardsDir, name), "utf8")).split(/^---$/m)[1]);
-  if (!card.demo || !card.featured) continue;
+  // A hand-made image is kept whatever the card says, so a refresh never deletes it.
   if (previous[id]?.manual) {
     next[id] = previous[id];
     continue;
   }
+  if (!card.demo || !card.featured) continue;
   try {
     // Resolve against the URL after redirects: a demo without its trailing slash moves ./og.png up a level.
     const page = await get(card.demo);
@@ -43,12 +44,12 @@ for (const name of (await readdir(cardsDir)).filter((f) => f.endsWith(".md")).so
     const image = sharp(Buffer.from(await (await get(source)).arrayBuffer()));
     const region = closeUp(await image.metadata(), card.image_focus);
     const file = `${id}.png`;
-    if (previous[id] && previous[id].file !== file) await rm(resolve(assetsDir, previous[id].file), { force: true });
     await image
       .extract(region)
       .resize(width, Math.round(width / CLOSE_UP_ASPECT))
       .png()
       .toFile(resolve(assetsDir, file));
+    if (previous[id] && previous[id].file !== file) await rm(resolve(assetsDir, previous[id].file), { force: true });
     next[id] = { file, source, fetched_at: today };
   } catch (err) {
     console.log(`::warning::fetch-cards: ${id}: ${err.message}. Keeping its last image.`);

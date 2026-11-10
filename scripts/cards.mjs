@@ -13,11 +13,12 @@ function meta(html, property) {
 
 /**
  * A project page's social card: its og:image as an absolute URL (resolved against the page, since some pages give a
- * relative one), or null when the page has no og:image.
+ * relative one), or null when the page has none or names a URL that is not https.
  */
 export function parseSocialCard(html, pageUrl) {
   const image = meta(html, "og:image");
-  return image ? new URL(image, pageUrl).href : null;
+  const url = image ? new URL(image, pageUrl) : null;
+  return url?.protocol === "https:" ? url.href : null;
 }
 
 /** The close-up's shape: 4:3, since the telling parts (a heatmap, a fan) are as tall as they are wide. */
