@@ -114,6 +114,8 @@ html {
   -webkit-text-size-adjust: 100%;
   scrollbar-color: var(--border) transparent;
   scroll-behavior: smooth;
+  /* Keeps anchor targets and focused links clear of the sticky nav (WCAG 2.4.11). */
+  scroll-padding-top: 4rem;
   timeline-scope: --sheet-name; /* lets the nav monogram follow .sheet-name (see below) */
 }
 
@@ -359,6 +361,13 @@ time {
   transition: color var(--dur-fast) ease;
 }
 
+/* Without scripting the toggle cannot work, so it is not shown. */
+@media (scripting: none) {
+  .theme-toggle {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle,
   .sheet-nav__mark,
@@ -405,16 +414,6 @@ time {
 /* The h2's 2px rule divides sections, so no hairline goes above them. */
 main > section {
   padding-block: var(--space-l) calc(var(--space-l) + var(--space-s));
-}
-
-#main,
-#relab,
-[id^="project-"],
-[id^="upstream-"],
-main > section,
-main > section > h2,
-main > section > .container > h2 {
-  scroll-margin-top: 4rem;
 }
 
 main > section > .container > h2,

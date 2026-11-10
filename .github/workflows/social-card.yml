@@ -1,0 +1,38 @@
+name: Social card render
+
+# The render test pulls a 2 GB Playwright image, so it runs only when the generator
+# changes, not on every pull request. tests/unit/socialCard.test.ts skips it elsewhere.
+on:
+  pull_request:
+    paths:
+      - "scripts/social-card/**"
+      - "tests/unit/socialCard.test.ts"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3
+        with:
+          runtime: node@26
+          cache: true
+          install: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Render a card
+        env:
+          CARD_RENDER: "1"
+        run: node --test tests/unit/socialCard.test.ts

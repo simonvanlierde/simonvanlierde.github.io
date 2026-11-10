@@ -83,6 +83,9 @@ jobs:
     concurrency:
       group: preview-${{ github.event.pull_request.number }}
     needs: check
+    permissions:
+      contents: read
+      pull-requests: read # the gate rereads the PR's state
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
@@ -94,9 +97,16 @@ jobs:
         env:
           TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           FORK: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        # The event's draft flag is from when CI started. A PR that closed or turned draft while
+        # `check` ran is already retired, and uploading now would bring its preview back.
         run: |
           if [ "$FORK" = "true" ] || [ -z "$TOKEN" ]; then
             echo "::notice::Preview skipped: fork PR or CLOUDFLARE_API_TOKEN not set."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          elif [ "$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '"\(.state) \(.draft)"')" != "open false" ]; then
+            echo "::notice::Preview skipped: PR ${PR} closed or turned draft while CI ran."
             echo "run=false" >> "$GITHUB_OUTPUT"
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
@@ -113,7 +123,13 @@ jobs:
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3
         with:
           runtime: node@26
+          cache: true
           install: false
+
+      # wrangler comes from the lockfile, so its dependencies are pinned and Renovate updates them.
+      - if: steps.gate.outputs.run == 'true'
+        name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - if: steps.gate.outputs.run == 'true'
         name: Download build
@@ -128,7 +144,6 @@ jobs:
         run: |
           printf '/*\n  X-Robots-Tag: noindex\n' > dist/_headers
 
-      # wrangler through dlx, so the site's own install stays without it.
       - if: steps.gate.outputs.run == 'true'
         name: Upload Worker version
         id: upload
@@ -142,7 +157,7 @@ jobs:
         run: |
           set -o pipefail
           upload() {
-            pnpm dlx wrangler@4.156.2 versions upload --preview-alias "pr-$PR" --message "PR $PR at $SHA" 2>&1 | tee upload.log
+            pnpm exec wrangler versions upload --preview-alias "pr-$PR" --message "PR $PR at $SHA" 2>&1 | tee upload.log
           }
           if ! upload; then
             # Only an existing Worker takes versions. Create it once with a
@@ -151,7 +166,7 @@ jobs:
             mkdir placeholder
             cp dist/_headers placeholder/
             echo 'Pull request previews of simonvanlierde.com live at pr-NUMBER addresses.' > placeholder/index.html
-            pnpm dlx wrangler@4.156.2 deploy --assets placeholder
+            pnpm exec wrangler deploy --assets placeholder
             upload
           fi
           url=$(grep 'Version Preview Alias URL:' upload.log | grep -Eo 'https://[^ ]+' || true)

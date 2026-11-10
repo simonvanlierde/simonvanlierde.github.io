@@ -25,7 +25,11 @@ The backup container would now trip a second alert, which fires when any contain
 
 - Every signal is labelled with the same `project`, `env` and `service.name`. The collector also adds `host_name` to what it gathers. The hub stamps `department` itself, so a sender can't claim to be another department.
 - Each kind of signal has one producer: the collector gathers container logs and server metrics, the applications send traces and request metrics, and healthchecks.io records whether a job ran.
-- Joining means copying, not building. A new project copies the template files at a pinned version, sets a few variables and runs `bootstrap.sh`.
+- Joining means copying, not building. A new project copies the template files at a pinned version and sets a few variables. One command on the hub then adds its alerts:
+
+  ```sh
+  ./bootstrap.sh <project> <env>
+  ```
 
 ## What I left out, and what would change that
 

@@ -1,4 +1,4 @@
-// Renders a 1200x630 title-block social card. See README in the usage text below.
+// Renders a 1200x630 title-block social card; USAGE below lists the flags.
 // Chromium runs in a pinned Playwright container so no fonts or browsers are installed on the host.
 import { execFileSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";

@@ -36,17 +36,19 @@ const destination = (id: string) =>
       <p class="archive-note" id="archive-note">Projects outside the featured selection. An archive entry does not mean a project is discontinued.</p>
       {groups.map(({ category, heading, rows }) => <>
         <h3 class="archive-subheading" id={`register-${category}`}>{heading}</h3>
-        <table class="archive-table" aria-labelledby={`register-${category}`} aria-describedby="archive-note">
-          <thead><tr><th scope="col">Item</th><th scope="col">Kind</th><th scope="col">Stack</th><th scope="col">Link</th></tr></thead>
-          <tbody>{rows.map((p) => <tr id={`project-${p.id}`}>
-            <th scope="row"><a href={p.data.demo ?? p.data.repo}>{p.data.title}</a><p class="bom-row__desc">{figureParts(p.data.description, p.data.figures).map((part) => typeof part === "string" ? part : <Figure {...part} />)}</p>
+        {/* The roles repeat the native ones on purpose: the phone layout sets display on the rows,
+            and some browsers then drop the table semantics. */}
+        <table class="archive-table" role="table" aria-labelledby={`register-${category}`} aria-describedby="archive-note">
+          <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Item</th><th scope="col" role="columnheader">Kind</th><th scope="col" role="columnheader">Stack</th><th scope="col" role="columnheader">Link</th></tr></thead>
+          <tbody role="rowgroup">{rows.map((p) => <tr id={`project-${p.id}`} role="row">
+            <th scope="row" role="rowheader"><a href={p.data.demo ?? p.data.repo}>{p.data.title}</a><p class="bom-row__desc">{figureParts(p.data.description, p.data.figures).map((part) => typeof part === "string" ? part : <Figure {...part} />)}</p>
               <ProjectMetadata repo={p.data.repo} />
               {([['Uses', related.get(p.id)?.uses ?? []], ['Used by', related.get(p.id)?.usedBy ?? []]] as const).map(([label, cards]) => cards.length > 0 && <div class="ref-list"><span class="ref-list__label">{label}</span>{cards.slice(0, 3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}{cards.length > 3 && <details class="ref-more"><summary>+{cards.length - 3}<span class="visually-hidden"> more {label.toLowerCase()} links for {p.data.title}</span></summary>{cards.slice(3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}</details>}</div>)}
               {p.id === "monitoring" && <p class="ref-list">Used by <a class="ref" href="/#relab">R9lab</a></p>}
             </th>
-            <td>{p.data.kind}</td>
-            <td>{p.data.tags.join(", ")}</td>
-            <td><a href={p.data.repo} aria-label={`Source for ${p.data.title}`}>Source</a>{p.data.links.map((link) => <a href={link.url} aria-label={`${link.label} for ${p.data.title}`}>{link.label}</a>)}</td>
+            <td role="cell">{p.data.kind}</td>
+            <td role="cell">{p.data.tags.join(", ")}</td>
+            <td role="cell"><a href={p.data.repo} aria-label={`Source for ${p.data.title}`}>Source</a>{p.data.links.map((link) => <a href={link.url} aria-label={`${link.label} for ${p.data.title}`}>{link.label}</a>)}</td>
           </tr>)}</tbody>
         </table>
       </>)}

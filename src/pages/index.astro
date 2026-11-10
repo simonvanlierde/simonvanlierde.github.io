@@ -12,7 +12,7 @@ import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import UpstreamList from "../components/UpstreamList.astro";
 import { cv, intro } from "../data/cv.ts";
-import { participants, statsSource } from "../data/figures.ts";
+import { indexDated, participants, statsSource } from "../data/figures.ts";
 import { relatedCards } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import stats from "../data/stats.json" with { type: "json" };
@@ -219,13 +219,12 @@ const name = basics.name;
   </main>
   </div>
 
-  {/* Date by the newer input, so the title block is never older than a figure on the page. */}
   <TitleBlock
     title={name}
     docType="Index of work"
     sheet="1 OF 4"
     turn={{ href: "/cv/", label: "sheet 2, CV", dir: "next" }}
-    dated={[exported && isoDay(exported), stats.as_of].filter(Boolean).sort().at(-1)}
+    dated={indexDated(exported && isoDay(exported), stats.as_of, workProjects)}
   />
 </Base>
 

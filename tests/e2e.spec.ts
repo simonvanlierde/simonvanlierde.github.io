@@ -1,10 +1,12 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
+import { isoDay } from "../src/components/cvPeriod.ts";
 
 // Read the export instead of restating it (see tests/cv.spec.ts).
 const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
 const stats = JSON.parse(readFileSync("src/data/stats.json", "utf8"));
+const codemeta = JSON.parse(readFileSync("src/data/codemeta.json", "utf8"));
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -121,11 +123,9 @@ test("the archive retains software metadata and the thesis dataset in structured
     .locator('script[type="application/ld+json"]')
     .evaluate((el) => JSON.parse(el.textContent ?? "{}")["@graph"]);
   const code = graph.find((node: Record<string, unknown>) => node.name === "sourceledger");
-  expect(code).toMatchObject({
-    "@type": "SoftwareSourceCode",
-    version: "0.4.0",
-    identifier: "https://doi.org/10.5281/zenodo.23460694",
-  });
+  // The weekly refresh rewrites codemeta.json, so expect what it holds now.
+  const meta = codemeta["https://github.com/simonvanlierde/sourceledger"];
+  expect(code).toMatchObject({ "@type": "SoftwareSourceCode", version: meta.version, identifier: meta.doi });
   expect(graph.find((node: Record<string, unknown>) => node["@type"] === "Dataset")).toMatchObject({
     license: "https://spdx.org/licenses/CC-BY-4.0.html",
     url: "https://doi.org/10.5281/zenodo.8344580",
@@ -268,12 +268,23 @@ test("a keyboard user can focus each part of the figure", async ({ page }) => {
   await expect(first).toHaveCSS("outline-style", "solid");
 });
 
-test("without motion the drawing starts exploded and never assembles", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  // Reduced motion must skip the settle animation, not shorten it.
-  await expect(page.locator(".exploded")).not.toHaveClass(/is-assembled/);
-});
+// The settle class lives for two frames only, so watch every class change from before parsing.
+for (const reducedMotion of ["reduce", "no-preference"] as const) {
+  test(`the drawing assembles only when motion is allowed (${reducedMotion})`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion });
+    await page.addInitScript(() => {
+      new MutationObserver((records) => {
+        for (const r of records) {
+          if ((r.target as Element).classList?.contains("is-assembled")) Object.assign(window, { assembled: true });
+        }
+      }).observe(document, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    });
+    await page.goto("/");
+    await page.waitForLoadState("load");
+    // Reduced motion must skip the settle animation, not shorten it.
+    expect(await page.evaluate(() => "assembled" in window)).toBe(reducedMotion === "no-preference");
+  });
+}
 
 test("the title block states what the sheet is, and when it was drawn", async ({ page }) => {
   const block = page.getByRole("region", { name: "Document title block" });
@@ -281,9 +292,12 @@ test("the title block states what the sheet is, and when it was drawn", async ({
   await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
   await expect(block.getByText("1 OF 4", { exact: true })).toBeVisible();
 
-  // This sheet takes the later of the export and stats dates, in UTC.
+  // The sheet is dated by its newest input: the export, the stats or any figure on it, in UTC.
   await expect(block.getByText("Dated", { exact: true })).toBeVisible();
-  const latest = [cv.exported.slice(0, 10), stats.as_of].sort().at(-1) ?? "";
+  const figureDates = await page
+    .locator("[data-as-of]")
+    .evaluateAll((els) => els.map((el) => el.getAttribute("data-as-of") ?? ""));
+  const latest = [isoDay(cv.exported), stats.as_of, ...figureDates].sort().at(-1) ?? "";
   await expect(block.locator("time")).toHaveAttribute("datetime", latest);
 
   const rev = block.getByRole("link", { name: /^Site revision / });
@@ -561,3 +575,48 @@ for (const width of [320, 390]) {
       .toBeGreaterThanOrEqual(0);
   });
 }
+
+// A broken social card has no visible symptom on the page itself.
+for (const path of ["/", "/cv/", "/archive/", "/notes/", "/notes/hub-and-spoke-observability/", "/privacy/"]) {
+  test(`${path} names a social card that is served as a 1200x630 PNG`, async ({ page, request }) => {
+    await page.goto(path);
+    const og = await page.locator('meta[property="og:image"]').getAttribute("content");
+    expect(og).toMatch(/^https:\/\/simonvanlierde\.com\//);
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+    const res = await request.get(new URL(og ?? "").pathname);
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toBe("image/png");
+    const body = await res.body();
+    // PNG width and height sit at bytes 16-23 of the IHDR chunk.
+    expect([body.readUInt32BE(16), body.readUInt32BE(20)]).toEqual([1200, 630]);
+  });
+}
+
+test("every featured card's close-up loads", async ({ page }) => {
+  await page.goto("/");
+  const shots = page.locator(".bom-row__shot img");
+  expect(await shots.count()).toBeGreaterThan(0);
+  for (const img of await shots.all()) {
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth)).toBeGreaterThan(0);
+  }
+});
+
+// The project sites other repos publish under this domain come from the cards' demo links,
+// so a card that moves its demo off the domain drops out, and this list says which must stay.
+test("the sitemap lists every project site under this domain", async ({ request }) => {
+  const xml = await (await request.get("/sitemap.xml")).text();
+  const locs = [...xml.matchAll(/<loc>https:\/\/simonvanlierde\.com\/([a-z0-9-]+)\/<\/loc>/g)].map((m) => m[1]);
+  const sheets = ["cv", "archive", "notes", "privacy"];
+  expect(locs.filter((l) => !sheets.includes(l)).sort()).toEqual([
+    "brightway-benchmarks",
+    "citesync",
+    "codemeta-drift",
+    "cv-ie-taxonomy",
+    "io-notebook",
+    "jsonvet",
+    "msc-thesis-ie",
+    "ramascene-explorer",
+    "sourceledger",
+  ]);
+});

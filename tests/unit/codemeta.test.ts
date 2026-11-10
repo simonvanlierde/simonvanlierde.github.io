@@ -71,7 +71,7 @@ test("refresh updates successes and keeps each failed repository's last good met
     await mkdir(join(dir, "src/content/projects"), { recursive: true });
     await mkdir(join(dir, "src/data"));
     await symlink(join(root, "node_modules"), join(dir, "node_modules"));
-    for (const script of ["codemeta.mjs", "fetch-codemeta.mjs"])
+    for (const script of ["codemeta.mjs", "fetch-codemeta.mjs", "projectCards.mjs"])
       await cp(join(root, "scripts", script), join(dir, "scripts", script));
     for (const id of ["success", "malformed", "invalid-doi", "unavailable", "missing", "new"]) {
       await writeFile(join(dir, `src/content/projects/${id}.md`), `---\nrepo: ${repo(id)}\n---\n`);

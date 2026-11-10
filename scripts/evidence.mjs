@@ -32,13 +32,13 @@ export function parseUpstream(body) {
 }
 
 /**
- * Adds as_of: today if the payload changed, else the previous date, so as_of dates the facts. fetched_at is always
- * today: a source that keeps failing leaves it behind, which the drift check reports.
+ * Adds as_of: `asOf` (default today) if the payload changed, else the previous date, so as_of dates the facts.
+ * fetched_at is always today: a source that keeps failing leaves it behind, which the drift check reports.
  */
-export function withAsOf(previous, payload, today) {
+export function withAsOf(previous, payload, today, asOf = today) {
   const { as_of: previousAsOf, fetched_at: _, ...rest } = previous ?? {};
   const unchanged = previousAsOf && JSON.stringify(rest) === JSON.stringify(payload);
-  return { as_of: unchanged ? previousAsOf : today, fetched_at: today, ...payload };
+  return { as_of: unchanged ? previousAsOf : asOf, fetched_at: today, ...payload };
 }
 
 /** Days after which upstream.json counts as stale; the same limit as stats.json in scripts/check-drift.sh. */
@@ -78,4 +78,18 @@ export function evidenceDrift({ curated, leftOut, merged, fetchedAt, today }) {
   }
 
   return lines.length ? `### Merged upstream (src/data/upstream.ts)\n\n${lines.join("\n")}\n\n` : "";
+}
+
+/**
+ * Markdown for the drift issue: entries of a per-card snapshot (cardImages.json, codemeta.json) whose fetched_at is
+ * older than maxFetchAgeDays. Their refresh keeps the last good entry on failure, so an old date is the only sign that
+ * a card stopped refreshing. Hand-made entries (`manual`) are never fetched and are skipped.
+ */
+export function staleEntries(file, entries, today) {
+  const lines = Object.entries(entries)
+    .filter(([, e]) => !e.manual && !((Date.parse(today) - Date.parse(e.fetched_at)) / 86_400_000 <= maxFetchAgeDays))
+    .map(([id, e]) => `- \`${id}\` was last fetched on ${e.fetched_at ?? "no date"}`);
+  return lines.length
+    ? `### Stale entries in ${file}\n\n${lines.join("\n")}\n\nCheck the refresh-data workflow.\n\n`
+    : "";
 }

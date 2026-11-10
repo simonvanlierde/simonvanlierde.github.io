@@ -5,6 +5,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import process from "node:process";
+import { withAsOf } from "./evidence.mjs";
 
 // STATS_OUT is for the tests.
 const out = process.env.STATS_OUT || resolve(import.meta.dirname, "../src/data/stats.json");
@@ -31,7 +32,11 @@ async function getJson(url) {
   if (!res.headers.get("content-type")?.includes("application/json")) {
     skip(`GET ${url} did not return JSON (likely a Cloudflare challenge)`);
   }
-  return res.json();
+  try {
+    return await res.json();
+  } catch (err) {
+    skip(`GET ${url} returned invalid JSON: ${err.message}`);
+  }
 }
 
 const [seriesPayload, totalsPayload] = await Promise.all([getJson(seriesUrl), getJson(totalsUrl)]);
@@ -40,11 +45,17 @@ if (!Array.isArray(seriesPayload?.series) || seriesPayload.series.length === 0) 
   skip("series response had no rows");
 }
 
+if (typeof seriesPayload.generated_at !== "string") skip("series response had no generated_at date");
+
 // A renamed or dropped field would otherwise render as zeros.
 const required = ["period", "teardowns", "parts", "mass_kg", "images", "users_new"];
-// biome-ignore lint/suspicious/noEqualsToNull: == null intentionally matches null and undefined
-if (seriesPayload.series.some((row) => required.some((k) => row?.[k] == null))) {
-  skip(`a series row is missing one of: ${required.join(", ")}`);
+// The gap filler walks months until it meets the last period, so a period in any other
+// form would never match and loop forever.
+const counts = required.slice(1);
+const validRow = (row) =>
+  /^\d{4}-(0[1-9]|1[0-2])$/.test(row?.period) && counts.every((k) => typeof row[k] === "number");
+if (!seriesPayload.series.every(validRow)) {
+  skip(`a series row needs a YYYY-MM period and numbers for: ${counts.join(", ")}`);
 }
 
 // The hero prints these totals, so each must be a number.
@@ -90,20 +101,10 @@ const payload = {
   totals: totalsPayload.totals,
 };
 
-// as_of is the API's count date (UTC, YYYY-MM-DD). If only the date would change,
-// keep the old one, so the page dates the counts, not the fetch. fetched_at is set on
-// every successful run, so the drift check can tell a quiet stretch from a dead refresh.
-let previous = null;
-try {
-  previous = JSON.parse(await readFile(out, "utf8"));
-} catch {
-  // no committed snapshot yet
-}
-// Also drop the legacy `sample` flag.
-const { as_of: previousAsOf, fetched_at: _fetchedAt, sample: _sample, ...previousRest } = previous ?? {};
-const unchanged = previousAsOf && JSON.stringify(previousRest) === JSON.stringify(payload);
-payload.as_of = unchanged ? previousAsOf : seriesPayload.generated_at.slice(0, 10);
-payload.fetched_at = new Date().toISOString().slice(0, 10);
+// as_of is the API's count date (UTC, YYYY-MM-DD), kept while the counts stay the same.
+const previous = await readFile(out, "utf8").then(JSON.parse, () => null);
+const today = new Date().toISOString().slice(0, 10);
+const next = withAsOf(previous, payload, today, seriesPayload.generated_at.slice(0, 10));
 
-await writeFile(out, `${JSON.stringify(payload, null, 2)}\n`);
-console.log(`fetch-stats: wrote ${payload.series.length} rows to src/data/stats.json`);
+await writeFile(out, `${JSON.stringify(next, null, 2)}\n`);
+console.log(`fetch-stats: wrote ${next.series.length} rows to src/data/stats.json`);

@@ -10,6 +10,12 @@ test("reads og:image", () => {
   assert.equal(parseSocialCard(html, page), "https://example.org/og.png");
 });
 
+test("ignores an og:image that is not https", () => {
+  for (const url of ["http://example.org/og.png", "file:///etc/passwd", "data:image/png;base64,AA=="]) {
+    assert.equal(parseSocialCard(`<meta property="og:image" content="${url}">`, page), null);
+  }
+});
+
 test("resolves a relative og:image against the page", () => {
   assert.equal(parseSocialCard(`<meta property="og:image" content="./og.png" />`, page), `${page}og.png`);
 });

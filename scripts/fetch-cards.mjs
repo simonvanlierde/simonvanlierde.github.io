@@ -4,14 +4,13 @@
 // never fetched. A card whose fetch fails keeps its last good entry, with a ::warning::; a page with no og:image
 // drops its entry.
 
-import { readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import sharp from "sharp";
-import { parse } from "yaml";
 import { CLOSE_UP_ASPECT, closeUp, parseSocialCard } from "./cards.mjs";
+import { readCards } from "./projectCards.mjs";
 
 const root = resolve(import.meta.dirname, "..");
-const cardsDir = resolve(root, "src/content/projects");
 const assetsDir = resolve(root, "src/assets/cards");
 const out = resolve(root, "src/data/cardImages.json");
 // Twice the close-up's 15rem (240px) on the card, for sharp screens.
@@ -27,14 +26,13 @@ const previous = await readFile(out, "utf8").then(JSON.parse, () => ({}));
 const next = {};
 const today = new Date().toISOString().slice(0, 10);
 
-for (const name of (await readdir(cardsDir)).filter((f) => f.endsWith(".md")).sort()) {
-  const id = name.slice(0, -3);
-  const card = parse((await readFile(resolve(cardsDir, name), "utf8")).split(/^---$/m)[1]);
-  if (!card.demo || !card.featured) continue;
+for (const { id, card } of await readCards()) {
+  // A hand-made image is kept whatever the card says, so a refresh never deletes it.
   if (previous[id]?.manual) {
     next[id] = previous[id];
     continue;
   }
+  if (!card.demo || !card.featured) continue;
   try {
     // Resolve against the URL after redirects: a demo without its trailing slash moves ./og.png up a level.
     const page = await get(card.demo);
@@ -43,12 +41,12 @@ for (const name of (await readdir(cardsDir)).filter((f) => f.endsWith(".md")).so
     const image = sharp(Buffer.from(await (await get(source)).arrayBuffer()));
     const region = closeUp(await image.metadata(), card.image_focus);
     const file = `${id}.png`;
-    if (previous[id] && previous[id].file !== file) await rm(resolve(assetsDir, previous[id].file), { force: true });
     await image
       .extract(region)
       .resize(width, Math.round(width / CLOSE_UP_ASPECT))
       .png()
       .toFile(resolve(assetsDir, file));
+    if (previous[id] && previous[id].file !== file) await rm(resolve(assetsDir, previous[id].file), { force: true });
     next[id] = { file, source, fetched_at: today };
   } catch (err) {
     console.log(`::warning::fetch-cards: ${id}: ${err.message}. Keeping its last image.`);

@@ -57,10 +57,10 @@ for (const path of ["/", "/cv/", "/archive/", "/notes/hub-and-spoke-observabilit
   });
 }
 
-// The "Components" chart measure is an optional control; its absence is not a failure here.
+// The index always has the chart, so a missing "Components" button fails the scan of its state.
 async function pressComponents(page: Page) {
   const parts = page.getByRole("button", { name: "Components" });
-  if ((await parts.count()) === 0) return;
+  await expect(parts).toHaveCount(1);
   await expect(async () => {
     await parts.click();
     await expect(parts).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });

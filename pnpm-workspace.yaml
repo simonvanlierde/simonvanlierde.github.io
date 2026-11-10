@@ -4,3 +4,5 @@ allowBuilds:
   esbuild: true
   lefthook: false
   sharp: true
+  # wrangler only uploads previews; the local Workers runtime it would set up is never run.
+  workerd: false

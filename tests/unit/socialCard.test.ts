@@ -29,7 +29,7 @@ test("rejects a bad year and a missing visual", () => {
   assert.throws(() => parse(argv({ ...ok, visual: "nope.png" })), /not found/);
 });
 
-// Pulls a 2 GB image, so it runs only when asked: CARD_RENDER=1 pnpm test
+// Pulls a 2 GB image, so it runs only when asked: CARD_RENDER=1 pnpm test, and in social-card.yml.
 test("renders a 1200x630 PNG under the size cap", { skip: !process.env.CARD_RENDER }, async () => {
   const out = join(mkdtempSync(join(tmpdir(), "card-test-")), "card.png");
   await render({ ...ok, out, doi: "10.5281/zenodo.1" });

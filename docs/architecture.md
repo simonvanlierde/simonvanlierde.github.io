@@ -14,6 +14,12 @@ flowchart LR
   search[GitHub search] --> refresh
   refresh --> stats
   refresh --> upjson[upstream.json]
+  demos[Demo pages' social cards] --> refresh
+  repos[Project repos' codemeta.json] --> refresh
+  refresh --> cards[cardImages.json and src/assets/cards]
+  refresh --> codemeta[codemeta.json]
+  cards --> astro
+  codemeta --> astro
   upjson --> astro
   upjson --> drift[check-drift issue]
   refresh --> pages
@@ -62,15 +68,15 @@ Pull requests and pushes to `main` run `pnpm check`, a production Astro build, a
 
 Pushing to `main` triggers `deploy.yml`, which builds the site and publishes it to GitHub Pages. For this to work, the Pages source must be set to **GitHub Actions** (Settings → Pages). The refresh workflow starts the deploy workflow with `gh workflow run`, and the deploy workflow holds the `pages` concurrency group, so deployments queue instead of racing.
 
-After a deploy succeeds, the `indexnow` job in `deploy.yml` tells search engines which pages changed (IndexNow). `scripts/indexnow.mjs` maps the files changed since the previous deploy to page URLs: `src/pages/index.astro` is `/`, `src/pages/cv.astro` is `/cv/`, `src/pages/archive.astro` is `/archive/`, `src/pages/notes/index.astro` is `/notes/`, and any other change under `src/` or `public/`, or to the package files or Astro config, counts for all sheets. It posts them to `api.indexnow.org` with the key served from `public/<key>.txt`. The key is public by design. A failed ping only prints a warning.
+After a deploy succeeds, the `indexnow` job in `deploy.yml` tells search engines which pages changed (IndexNow). `scripts/indexnow.mjs` maps the files changed since the previous deploy to page URLs: `src/pages/index.astro` is `/`, `src/pages/cv.astro` is `/cv/`, `src/pages/archive.astro` is `/archive/`, `src/pages/notes/index.astro` is `/notes/`, `src/pages/privacy.astro` is `/privacy/`, a note in `src/content/notes/` is its own page plus `/notes/` and `/`, and any other change under `src/` or `public/`, or to the package files or Astro config, counts for the four sheets and the privacy page. It posts them to `api.indexnow.org` with the key served from `public/<key>.txt`. The key is public by design. A failed ping only prints a warning.
 
-`public/robots.txt` allows every crawler and points at `/sitemap.xml`, which `src/pages/sitemap.xml.ts` writes at build time: all four sheets and every note with a `lastmod`, plus the project sites other repos publish under this domain.
+`public/robots.txt` allows every crawler and points at `/sitemap.xml`, which `src/pages/sitemap.xml.ts` writes at build time: all four sheets, the privacy page and every note with a `lastmod`, plus the project sites other repos publish under this domain.
 
 Each pull request also gets a preview. Once CI passes, its `preview` job uploads the build as a version of a Cloudflare Worker (`wrangler.jsonc`) whose only deployment is a placeholder page, at `https://pr-<number>-simonvanlierde-site-preview.<account>.workers.dev`. The PR links it as its `preview` deployment. Previews send `X-Robots-Tag: noindex`, so search engines keep to simonvanlierde.com. The job needs a `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit) and `CLOUDFLARE_ACCOUNT_ID` in the `preview` environment's secrets; without them, and on fork PRs, it skips with a notice. Drafts get no preview. When a PR closes or turns draft, `preview-retire.yml` points its alias at a short "preview closed" page, since wrangler cannot delete an alias; run it by hand with PR numbers to retire older ones. Each version's own hashed URL stays up, as Cloudflare cannot delete a version.
 
 `check-drift.yml` runs 30 minutes after `refresh-data.yml` starts. It keeps one issue open while public repos with new commits are missing from this site, or while the site or the profile README links a repo that was renamed, archived or deleted, while `stats.json` was last fetched more than 21 days ago, or while a pinned repo on the GitHub profile is archived or has no card on this site (card means a `repo:` URL in `src/content/projects`). To skip a repo, list it in `.github/drift-ignore`.
 
-The same issue lists what `scripts/evidence-drift.mjs` finds in `upstream.json`: a merged PR that is neither in `src/data/upstream.ts` nor in its `leftOut` list (a PR as `owner/repo#n`, or a whole repo as `owner/repo`), a listed PR the search no longer finds merged, and a `fetched_at` more than 21 days old.
+The same issue lists what `scripts/evidence-drift.mjs` finds in `upstream.json`: a merged PR that is neither in `src/data/upstream.ts` nor in its `leftOut` list (a PR as `owner/repo#n`, or a whole repo as `owner/repo`), a listed PR the search no longer finds merged, and a `fetched_at` more than 21 days old. It does the same age check on each fetched entry in `cardImages.json` and `codemeta.json`, whose refresh keeps the last good entry when a fetch fails.
 
 Renovate opens one PR a month for minor and patch updates and merges it once CI passes, which triggers a deploy. Major updates get their own PRs and wait for me to merge them.
 
@@ -78,4 +84,4 @@ Renovate opens one PR a month for minor and patch updates and merges it once CI 
 
 - No backend for the portfolio site.
 - No runtime database. Research datasets and platform data live in their own repositories and services.
-- No changelog, and no release per deploy. Every push to `main` deploys, so the commit is the version: the title block's "Site rev" names it and links to it. A tagged release (`package.json` version plus a GitHub release) marks a milestone only: a new sheet, a redesign, or a large content change.
+- No release per deploy. Every push to `main` deploys, so the commit is the version: the title block's "Site rev" names it and links to it. `CHANGELOG.md` lists the changes a visitor would notice under the next version. A tagged release (`package.json` version plus a GitHub release) marks a milestone only: a new sheet, a redesign, or a large content change.
