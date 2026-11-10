@@ -267,6 +267,19 @@ code {
   font-size: 0.95em;
 }
 
+/* Shiki writes both themes as variables; colour-scheme (the toggle sets it) picks one. */
+pre.astro-code {
+  overflow-x: auto;
+  padding: var(--space-s) var(--space-m);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+}
+
+pre.astro-code span {
+  color: light-dark(var(--shiki-light), var(--shiki-dark));
+}
+
 ul {
   padding: 0;
 }

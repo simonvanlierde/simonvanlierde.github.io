@@ -41,3 +41,25 @@ test("the sitemap lists the notes index and each note", async ({ request }) => {
   expect(xml).toContain("<loc>https://simonvanlierde.com/notes/</loc>");
   expect(xml).toContain(`<loc>https://simonvanlierde.com${POST}</loc>`);
 });
+
+// No note holds a fenced block yet, so render one through the site's own Markdown config and put it in a note.
+test("fenced code follows the colour scheme", async ({ page }) => {
+  const { createMarkdownProcessor } = await import("@astrojs/markdown-remark");
+  const { default: config } = await import("../astro.config.mjs");
+  const md = await createMarkdownProcessor({ shikiConfig: config.markdown?.shikiConfig });
+  const { code } = await md.render("```python\ndef f(): return 1\n```");
+
+  const keyword = async (scheme: "light" | "dark") => {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.addInitScript((t) => localStorage.setItem("theme", t), scheme);
+    await page.goto(POST);
+    await page.locator(".note__body").evaluate((el, html) => el.insertAdjacentHTML("beforeend", html), code);
+    return page
+      .locator("pre.astro-code span")
+      .getByText("def", { exact: true })
+      .evaluate((el) => getComputedStyle(el).color);
+  };
+  const light = await keyword("light");
+  const dark = await keyword("dark");
+  expect(light).not.toBe(dark);
+});
