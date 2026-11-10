@@ -31,7 +31,11 @@ async function getJson(url) {
   if (!res.headers.get("content-type")?.includes("application/json")) {
     skip(`GET ${url} did not return JSON (likely a Cloudflare challenge)`);
   }
-  return res.json();
+  try {
+    return await res.json();
+  } catch (err) {
+    skip(`GET ${url} returned invalid JSON: ${err.message}`);
+  }
 }
 
 const [seriesPayload, totalsPayload] = await Promise.all([getJson(seriesUrl), getJson(totalsUrl)]);
@@ -40,11 +44,17 @@ if (!Array.isArray(seriesPayload?.series) || seriesPayload.series.length === 0) 
   skip("series response had no rows");
 }
 
+if (typeof seriesPayload.generated_at !== "string") skip("series response had no generated_at date");
+
 // A renamed or dropped field would otherwise render as zeros.
 const required = ["period", "teardowns", "parts", "mass_kg", "images", "users_new"];
-// biome-ignore lint/suspicious/noEqualsToNull: == null intentionally matches null and undefined
-if (seriesPayload.series.some((row) => required.some((k) => row?.[k] == null))) {
-  skip(`a series row is missing one of: ${required.join(", ")}`);
+// The gap filler walks months until it meets the last period, so a period in any other
+// form would never match and loop forever.
+const counts = required.slice(1);
+const validRow = (row) =>
+  /^\d{4}-(0[1-9]|1[0-2])$/.test(row?.period) && counts.every((k) => typeof row[k] === "number");
+if (!seriesPayload.series.every(validRow)) {
+  skip(`a series row needs a YYYY-MM period and numbers for: ${counts.join(", ")}`);
 }
 
 // The hero prints these totals, so each must be a number.
