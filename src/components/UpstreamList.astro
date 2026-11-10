@@ -1,24 +1,23 @@
 ---
-import { prGroups, type UpstreamProject } from "../data/upstream.ts";
+import { plainWhat, prGroups, type upstreamShowcase } from "../data/upstream.ts";
 
 interface Props {
-  groups: { name: string; projects: UpstreamProject[] }[];
+  groups: typeof upstreamShowcase;
+  /** The archive's full entries with PR links; otherwise one line per library. */
   details?: boolean;
 }
 const { groups, details = false } = Astro.props;
+const anchor = (name: string) => `upstream-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 ---
+{details ? (
 <ul class="upstream-list">
-  {groups.map((group) => {
-    const count = group.projects.reduce((sum, project) => sum + project.prs.length, 0);
-    const label = `${count} PR${count === 1 ? "" : "s"}`;
-    return (
-    <li id={`upstream-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
+  {groups.map((group) => (
+    <li id={anchor(group.name)}>
       <h3>{group.name}</h3>
       {group.projects.map((project) => (
-        <p>{group.projects.length > 1 && <span class="draft">{project.name}: </span>}{project.what}</p>
+        <p>{group.projects.length > 1 && <span class="draft">{project.name}: </span>}{plainWhat(project)}</p>
       ))}
-      {!details && group.projects.map((project) => prGroups(project).filter((part) => part.base).map((part) => <p class="upstream-branch">{group.projects.length > 1 && `${project.name}: `}Merged into the {part.base} branch.</p>))}
-      {details ? group.projects.map((project) => (
+      {group.projects.map((project) => (
         <p class="upstream-prs"><span class="draft">{project.name}: </span>
           {prGroups(project).map((part, i) => <>
             {i > 0 && "; "}
@@ -26,9 +25,17 @@ const { groups, details = false } = Astro.props;
             {part.base && ` merged into the ${part.base} branch`}
           </>)}
         </p>
-      )) : <a class="upstream-count" href={`/archive/#upstream-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} aria-label={`${label} for ${group.name}`}>
-        {label}
-      </a>}
+      ))}
     </li>
-  ); })}
+  ))}
 </ul>
+) : (
+<ul class="upstream-lines">
+  {groups.map((group) => (
+    <li>
+      <a class="upstream-lines__name" href={`/archive/#${anchor(group.name)}`}>{group.name}</a>
+      <p>{group.projects.length > 1 && <span class="draft">{group.lead.project.repo.split("/")[1]}: </span>}{group.lead.text}</p>
+    </li>
+  ))}
+</ul>
+)}

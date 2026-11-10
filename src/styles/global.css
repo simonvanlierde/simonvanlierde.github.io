@@ -1219,12 +1219,43 @@ main > section.container > h2 {
 .upstream-list p + p {
   margin-top: var(--space-xs);
 }
-.upstream-count {
+/* The index's one line per library, on the parts-list rail. The name is the
+   link, 44px tall, so the row needs no padding of its own. */
+.upstream-lines {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-m);
+}
+:where(.upstream-lines > li) {
+  display: grid;
+  align-items: baseline;
+  column-gap: var(--space-l);
+  padding-bottom: var(--space-xs);
+  border-bottom: var(--border-width) solid var(--border);
+}
+.upstream-lines__name {
   display: inline-flex;
   align-items: center;
+  justify-self: start;
   min-height: 44px;
   font-family: var(--font-draft);
+  letter-spacing: 0.02em;
+}
+:where(.upstream-lines p) {
+  color: var(--text-muted);
   font-size: var(--step--1);
+  max-width: var(--measure);
+}
+@media (min-width: 40rem) {
+  :where(.upstream-lines > li) {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    padding-bottom: 0;
+  }
+}
+@media (min-width: 60rem) {
+  :where(.upstream-lines > li) {
+    grid-template-columns: 15rem minmax(0, 1fr);
+  }
 }
 :where(.upstream-prs a) {
   display: inline-flex;

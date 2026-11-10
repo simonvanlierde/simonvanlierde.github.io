@@ -17,6 +17,7 @@ export const leftOut = [
 export interface UpstreamProject {
   name: string;
   repo: string;
+  /** Results in prose. In a showcase group, one project brackets its strongest result. */
   what: string;
   prs: number[];
 }
@@ -25,7 +26,7 @@ export const upstream: UpstreamProject[] = [
   {
     name: "lca_algebraic",
     repo: "oie-mines-paristech/lca_algebraic",
-    what: "fixed truncated-normal and lognormal sampling, method lookup and a cache that went stale across time zones; sped up parameter expansion, and cut the Sobol analysis step from 3.13 s to 0.16 s in a 20-parameter benchmark when second-order indices are not needed",
+    what: "fixed truncated-normal and lognormal sampling, method lookup and a cache that went stale across time zones; sped up parameter expansion, and [cut the Sobol analysis step from 3.13 s to 0.16 s in a 20-parameter benchmark] when second-order indices are not needed",
     prs: [106, 107, 108, 109, 110],
   },
   {
@@ -37,37 +38,37 @@ export const upstream: UpstreamProject[] = [
   {
     name: "pymrio",
     repo: "IndEcol/pymrio",
-    what: "made extension calculations about 4× faster on EXIOBASE-sized tables with the same results, fixed three small bugs, and got the development test job passing again",
+    what: "[made extension calculations about 4× faster on EXIOBASE-sized tables] with the same results, fixed three small bugs, and got the development test job passing again",
     prs: [179, 180, 181],
   },
   {
     name: "Brightway (stats_arrays)",
     repo: "brightway-lca/stats_arrays",
-    what: "stopped loading scipy.stats at import, which makes importing bw2calc and bw2data about 0.3 s faster",
+    what: "stopped loading scipy.stats at import, which makes importing bw2calc and bw2data about 0.3 s faster",
     prs: [43],
   },
   {
     name: "flodym",
     repo: "pik-piam/flodym",
-    what: "stopped lifetime extension from overwriting the model's parameters, and made it about 9× faster",
+    what: "[made lifetime extension about 9× faster], and stopped it overwriting the model's parameters",
     prs: [198],
   },
   {
     name: "bw_timex",
     repo: "brightway-lca/bw_timex",
-    what: "made building the time-explicit matrices 3 to 4× faster, with identical matrices and scores",
+    what: "[made building the time-explicit matrices 3 to 4× faster], with identical matrices and scores",
     prs: [244],
   },
   {
     name: "premise",
     repo: "polca/premise",
-    what: "fixed two bugs in how external scenarios apply efficiency changes, one of which scaled flows they were meant to leave alone",
+    what: "[fixed two bugs in how external scenarios apply efficiency changes], one of which scaled flows they were meant to leave alone",
     prs: [316, 317],
   },
   {
     name: "Activity Browser",
     repo: "LCA-ActivityBrowser/activity-browser",
-    what: "kept parameter amounts editable, loaded scenario files with empty keys, and kept a Monte Carlo seed of 0",
+    what: "[kept parameter amounts editable], loaded scenario files with empty keys, and kept a Monte Carlo seed of 0",
     prs: [1743, 1744],
   },
   {
@@ -165,14 +166,22 @@ export const upstreamShowcase = [
   { name: "pymrio", projects: ["IndEcol/pymrio"] },
   { name: "lca_algebraic", projects: ["oie-mines-paristech/lca_algebraic"] },
   { name: "flodym", projects: ["pik-piam/flodym"] },
-].map((group) => ({
-  name: group.name,
-  projects: group.projects.map((repo) => {
+].map((group) => {
+  const projects = group.projects.map((repo) => {
     const project = upstream.find((entry) => entry.repo === repo);
     if (!project) throw new Error(`Missing upstream evidence for ${repo}`);
     return project;
-  }),
-}));
+  });
+  const leads = projects.flatMap((project) => {
+    const text = project.what.match(/\[(.+?)\]/)?.[1];
+    return text ? [{ project, text }] : [];
+  });
+  if (leads.length !== 1) throw new Error(`${group.name} needs one [strongest result], has ${leads.length}`);
+  return { name: group.name, projects, lead: leads[0] };
+});
+
+/** `what` as printed, without the bracket that marks the strongest result. */
+export const plainWhat = (project: UpstreamProject) => project.what.replace(/[[\]]/g, "");
 
 export const alsoMerged = upstream.filter(
   (project) => !upstreamShowcase.some((group) => group.projects.includes(project)),
