@@ -320,7 +320,9 @@ the date as `time` in the drafting hand, and the title block, dated to the
 note. The column inside stays a document. It is the body face at `--measure`.
 A note's sections are h2s: tracked caps in the drafting hand, without the
 zone label's rule. Inline code is set in the drafting hand, because
-`--font-mono` aliases osifont, and a fenced code block inherits it. The stamp
+`--font-mono` aliases osifont, and a fenced code block inherits it. A fenced
+block takes its token colours from a light and a dark high-contrast theme,
+picked by `light-dark()` like every other colour, on the `--surface` ground. The stamp
 sits after the article and leads back to "All notes". On the notes sheet the
 stamp is the feed: "RSS feed".
 
@@ -328,8 +330,6 @@ Not yet:
 
 - Figures. A Markdown image renders as a bare `img` in a paragraph, with no
   `figure` and no "Fig. N:" caption.
-- Code block colours. A fenced block keeps Shiki's default `github-dark`
-  colours as inline styles, the same in both themes and outside the tokens.
 
 #### Named Rules
 
