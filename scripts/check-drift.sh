@@ -5,10 +5,11 @@
 # Also adds what scripts/evidence-drift.mjs finds in src/data/upstream.json.
 # Prints a Markdown report and exits 0 either way; prints nothing when clean.
 # Needs gh (authenticated; GITHUB_TOKEN is enough), jq and Node 26.
+# A gh call that fails stops the script, so an outage never reads as "nothing behind".
 # DRIFT_OFFLINE=1 runs only the checks that need no gh call; DRIFT_STATS_FILE
-# points the stats check at another file, and DRIFT_PINNED_JSON replaces the
-# pinned-repos query with a JSON list of {nameWithOwner, isArchived} (all three
-# are for the tests).
+# points the stats check at another file, DRIFT_IGNORE_FILE replaces
+# .github/drift-ignore, and DRIFT_PINNED_JSON replaces the pinned-repos query
+# with a JSON list of {nameWithOwner, isArchived} (all four are for the tests).
 set -euo pipefail
 
 owner=simonvanlierde
@@ -20,7 +21,7 @@ stats_max_days=21
 stats_file=${DRIFT_STATS_FILE:-$root/src/data/stats.json}
 
 # One repo name per line; # starts a comment.
-ignore=$(sed 's/#.*//; /^[[:space:]]*$/d' "$root/.github/drift-ignore" 2>/dev/null || true)
+ignore=$(sed 's/#.*//; /^[[:space:]]*$/d' "${DRIFT_IGNORE_FILE:-$root/.github/drift-ignore}" 2>/dev/null || true)
 
 # Newest commit date touching any of the given paths in a repo.
 last_edit() {
@@ -86,8 +87,9 @@ repos=$(grep -vxF -e "$owner" -e "$owner.github.io" -f <(printf '%s\n' "$ignore"
 # Date of the newest commit not made by a bot (Renovate, Dependabot, Actions).
 last_human_commit() {
   gh api "repos/$owner/$1/commits?per_page=30" \
-    --jq '[.[] | select((.author.type // "User") != "Bot" and (.author.login // "" | endswith("[bot]") | not))][0].commit.committer.date // empty' 2>/dev/null || true
+    --jq '[.[] | select((.author.type // "User") != "Bot" and (.author.login // "" | endswith("[bot]") | not))][0].commit.committer.date // empty'
 }
+gh_err=$(mktemp)
 
 section() { # title, page date, page text, "links-only" to skip the unlinked-repo check
   local out="" name d linked
@@ -101,7 +103,14 @@ section() { # title, page date, page text, "links-only" to skip the unlinked-rep
   done
   for name in $linked; do
     [[ $name == "$owner" || $name == "$owner.github.io" ]] && continue
-    info=$(gh api "repos/$owner/$name" --jq '"\(.name) \(.archived)"' 2>/dev/null || echo "")
+    # Only a 404 means the repo is gone; any other failure stops the run.
+    if ! info=$(gh api "repos/$owner/$name" --jq '"\(.name) \(.archived)"' 2>"$gh_err"); then
+      grep -q "HTTP 404" "$gh_err" || {
+        cat "$gh_err" >&2
+        exit 1
+      }
+      info=""
+    fi
     if [[ -z $info ]]; then
       out+="- \`$name\` is linked but the repo does not exist"$'\n'
     elif [[ ${info% *} != "$name" ]]; then

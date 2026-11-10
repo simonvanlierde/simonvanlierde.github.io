@@ -83,6 +83,9 @@ jobs:
     concurrency:
       group: preview-${{ github.event.pull_request.number }}
     needs: check
+    permissions:
+      contents: read
+      pull-requests: read # the gate rereads the PR's state
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
@@ -94,9 +97,16 @@ jobs:
         env:
           TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           FORK: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        # The event's draft flag is from when CI started. A PR that closed or turned draft while
+        # `check` ran is already retired, and uploading now would bring its preview back.
         run: |
           if [ "$FORK" = "true" ] || [ -z "$TOKEN" ]; then
             echo "::notice::Preview skipped: fork PR or CLOUDFLARE_API_TOKEN not set."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          elif [ "$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '"\(.state) \(.draft)"')" != "open false" ]; then
+            echo "::notice::Preview skipped: PR ${PR} closed or turned draft while CI ran."
             echo "run=false" >> "$GITHUB_OUTPUT"
           else
             echo "run=true" >> "$GITHUB_OUTPUT"

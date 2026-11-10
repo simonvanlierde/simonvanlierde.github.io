@@ -20,9 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      # No stored credential: the fetch steps run dependency and image-decoding code, and only
+      # the push below needs the token.
       - name: Checkout
-        # zizmor: ignore[artipacked] the job pushes the refreshed snapshot with this credential
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       # No install here: fetch:cards needs sharp and yaml, and pnpm 11 installs the
       # dependencies itself before it runs the first package script.
@@ -61,6 +64,8 @@ jobs:
             echo "No change in $FILES."
             exit 0
           fi
+          # A snapshot the site cannot build from must not reach main.
+          pnpm build
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # shellcheck disable=SC2086
@@ -68,5 +73,5 @@ jobs:
           git commit -m "chore: refresh site data"
           # Rebase onto commits that landed while this job ran.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}"
           gh workflow run deploy.yml --ref "${GITHUB_REF_NAME}"
