@@ -82,11 +82,13 @@ img{position:absolute;left:72px;top:150px;width:180px;height:180px;border:2px so
 h1{font-weight:400;font-size:112px;line-height:1.02;letter-spacing:.03em;text-transform:uppercase}
 p{margin-top:30px;font-size:42px;line-height:1.25}
 p span{color:${muted}}
+.url{position:absolute;left:285px;bottom:52px;font-size:34px;letter-spacing:.03em}
 </style>
 <div class="frame"></div>
 <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${r9lab}</svg>
 <img alt="" src="data:image/jpeg;base64,${portrait}">
-<div class="text"><h1>Simon<br>van Lierde</h1><p>Research software engineer<br><span>for industrial ecology</span></p></div>`;
+<div class="text"><h1>Simon<br>van Lierde</h1><p>Research software engineer<br><span>for industrial ecology</span></p></div>
+<div class="url">simonvanlierde.com</div>`;
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: W, height: H } });
