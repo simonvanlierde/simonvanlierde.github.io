@@ -15,6 +15,7 @@ const cv = `https://${host}/cv/`;
 const archive = `https://${host}/archive/`;
 const notes = `https://${host}/notes/`;
 const privacy = `https://${host}/privacy/`;
+const duinlab = `https://${host}/duinlab/`;
 
 // Files that change one page only. The 404 page is not worth indexing.
 const only = {
@@ -23,6 +24,7 @@ const only = {
   "src/pages/archive.astro": [archive],
   "src/pages/notes/index.astro": [notes],
   "src/pages/privacy.astro": [privacy],
+  "src/pages/duinlab.astro": [duinlab],
   "src/pages/404.astro": [],
 };
 // Only these paths can change the built pages.
@@ -39,7 +41,7 @@ export function changedUrls(files) {
     else if (note) urls.add(`${notes}${note}/`).add(notes).add(home);
     // Shared layouts, components, styles, data and assets feed every sheet.
     else if (affectsSite(file) && file !== `public/${key}.txt`)
-      urls.add(home).add(cv).add(archive).add(notes).add(privacy);
+      urls.add(home).add(cv).add(archive).add(notes).add(privacy).add(duinlab);
   }
   return [...urls];
 }

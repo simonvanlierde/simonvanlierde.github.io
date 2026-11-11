@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Personal website for Simon van Lierde, research software engineer and PhD candidate at CML, Leiden
-University. It has four sheets: selected work, a CV, a project archive and technical notes (with an RSS feed at `/notes/rss.xml`), plus a privacy page. I build it with Astro and deploy
+University. It has four sheets: selected work, a CV, a project archive and technical notes (with an RSS feed at `/notes/rss.xml`), plus a privacy page and a `/duinlab/` page that lists the small apps under duinlab.nl. I build it with Astro and deploy
 it to GitHub Pages at [simonvanlierde.com](https://simonvanlierde.com).
 
 The site is drawn as one ISO technical drawing set, with a chart of R9lab's disassembly data that refreshes weekly.

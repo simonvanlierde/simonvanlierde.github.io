@@ -8,6 +8,7 @@ const cv = "https://simonvanlierde.com/cv/";
 const archive = "https://simonvanlierde.com/archive/";
 const notes = "https://simonvanlierde.com/notes/";
 const privacy = "https://simonvanlierde.com/privacy/";
+const duinlab = "https://simonvanlierde.com/duinlab/";
 
 test("a page-only change posts just that page", () => {
   assert.deepEqual(changedUrls(["src/pages/cv.astro"]), [cv]);
@@ -18,6 +19,7 @@ test("a page-only change posts just that page", () => {
 test("a note posts its own page and the notes list", () => {
   assert.deepEqual(changedUrls(["src/content/notes/a-note.md"]), [`${notes}a-note/`, notes, home]);
   assert.deepEqual(changedUrls(["src/pages/privacy.astro"]), [privacy]);
+  assert.deepEqual(changedUrls(["src/pages/duinlab.astro"]), [duinlab]);
 });
 
 test("the key file is served with the key, and changing it posts nothing", () => {
@@ -27,8 +29,8 @@ test("the key file is served with the key, and changing it posts nothing", () =>
 });
 
 test("shared code or assets post every sheet", () => {
-  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv, archive, notes, privacy]);
-  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv, archive, notes, privacy]);
+  assert.deepEqual(changedUrls(["src/styles/global.css"]), [home, cv, archive, notes, privacy, duinlab]);
+  assert.deepEqual(changedUrls(["pnpm-lock.yaml"]), [home, cv, archive, notes, privacy, duinlab]);
 });
 
 test("changes that cannot alter the built pages post nothing", () => {
