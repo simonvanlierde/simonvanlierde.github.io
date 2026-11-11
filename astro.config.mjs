@@ -1,6 +1,8 @@
 // @ts-check
 
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import process from "node:process";
 import preact from "@astrojs/preact";
 import { defineConfig } from "astro/config";
@@ -17,6 +19,8 @@ function buildSha() {
   }
 }
 const sha = buildSha();
+// Platforms cache a preview by image URL, so the card URL carries the PNG's hash.
+const ogVersion = createHash("sha256").update(readFileSync("public/og.png")).digest("hex").slice(0, 8);
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,5 +36,10 @@ export default defineConfig({
       defaultColor: false,
     },
   },
-  vite: { define: { "import.meta.env.SITE_SHA": JSON.stringify(sha) } },
+  vite: {
+    define: {
+      "import.meta.env.SITE_SHA": JSON.stringify(sha),
+      "import.meta.env.OG_VERSION": JSON.stringify(ogVersion),
+    },
+  },
 });
