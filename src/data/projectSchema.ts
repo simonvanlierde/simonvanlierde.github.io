@@ -151,3 +151,9 @@ export function projectNodes(cards: ProjectCard[]) {
     return [code, dataset];
   });
 }
+
+// A duinlab app is a project whose demo runs under duinlab.nl; home.duinlab.nl is the private homelab.
+export const isDuinlabApp = (demo?: string) => {
+  const host = demo ? new URL(demo).hostname : "";
+  return host.endsWith(".duinlab.nl") && !host.endsWith(".home.duinlab.nl");
+};

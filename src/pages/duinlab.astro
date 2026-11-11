@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import Figure from "../components/Figure.astro";
+import SheetNav from "../components/SheetNav.astro";
+import TitleBlock from "../components/TitleBlock.astro";
+import { cv } from "../data/cv.ts";
+import { figureParts, isDuinlabApp } from "../data/projectSchema.ts";
+import Base from "../layouts/Base.astro";
+
+// duinlab.nl redirects here, so the URL is public: keep /duinlab/ across redesigns.
+const apps = (await getCollection("projects"))
+  .filter((p) => isDuinlabApp(p.data.demo))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+<Base title="duinlab | Simon van Lierde" description="duinlab is where Simon van Lierde publishes his small web apps, each under its own duinlab.nl address.">
+  <SheetNav />
+  <main id="main" class="container archive">
+    <header>
+      <h1>duinlab</h1>
+      <p class="prose">duinlab is where I publish my small web apps. Each one runs under its own duinlab.nl address, and its source is open.</p>
+      <a class="stamp sheet-stamp" href="/">Selected work</a>
+    </header>
+    <section aria-labelledby="apps-heading">
+      <h2 id="apps-heading">Apps</h2>
+      <table class="archive-table" role="table" aria-labelledby="apps-heading">
+        <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">App</th><th scope="col" role="columnheader">Kind</th><th scope="col" role="columnheader">Stack</th><th scope="col" role="columnheader">Link</th></tr></thead>
+        <tbody role="rowgroup">{apps.map((p) => <tr id={`app-${p.id}`} role="row">
+          <th scope="row" role="rowheader"><a href={p.data.demo}>{p.data.title}</a><p class="bom-row__desc">{figureParts(p.data.description, p.data.figures).map((part) => typeof part === "string" ? part : <Figure {...part} />)}</p></th>
+          <td role="cell">{p.data.kind}</td>
+          <td role="cell">{p.data.tags.join(", ")}</td>
+          <td role="cell"><a href={p.data.repo} aria-label={`Source for ${p.data.title}`}>Source</a></td>
+        </tr>)}</tbody>
+      </table>
+    </section>
+  </main>
+  <TitleBlock title={cv.basics.name} docType="duinlab apps" sheet="NOT IN SET" dated="2026-11-11" />
+</Base>

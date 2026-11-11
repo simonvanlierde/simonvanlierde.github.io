@@ -577,7 +577,15 @@ for (const width of [320, 390]) {
 }
 
 // A broken social card has no visible symptom on the page itself.
-for (const path of ["/", "/cv/", "/archive/", "/notes/", "/notes/hub-and-spoke-observability/", "/privacy/"]) {
+for (const path of [
+  "/",
+  "/cv/",
+  "/archive/",
+  "/notes/",
+  "/notes/hub-and-spoke-observability/",
+  "/privacy/",
+  "/duinlab/",
+]) {
   test(`${path} names a social card that is served as a 1200x630 PNG`, async ({ page, request }) => {
     await page.goto(path);
     const og = await page.locator('meta[property="og:image"]').getAttribute("content");
@@ -607,7 +615,7 @@ test("every featured card's close-up loads", async ({ page }) => {
 test("the sitemap lists every project site under this domain", async ({ request }) => {
   const xml = await (await request.get("/sitemap.xml")).text();
   const locs = [...xml.matchAll(/<loc>https:\/\/simonvanlierde\.com\/([a-z0-9-]+)\/<\/loc>/g)].map((m) => m[1]);
-  const sheets = ["cv", "archive", "notes", "privacy"];
+  const sheets = ["cv", "archive", "notes", "privacy", "duinlab"];
   expect(locs.filter((l) => !sheets.includes(l)).sort()).toEqual([
     "brightway-benchmarks",
     "citesync",

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { relatedCards } from "../../src/data/projectSchema.ts";
+import { isDuinlabApp, relatedCards } from "../../src/data/projectSchema.ts";
 
 const card = (id: string, uses: string[] = []) => ({ id, data: { title: id.toUpperCase(), uses } });
 
@@ -20,4 +20,11 @@ test("using an unknown card fails", () => {
 test("a card using itself or the same card twice fails", () => {
   assert.throws(() => relatedCards([card("app", ["app"])]), /app.*itself/);
   assert.throws(() => relatedCards([card("app", ["lint", "lint"]), card("lint")]), /app.*"lint".*twice/);
+});
+
+test("a duinlab app has its demo under duinlab.nl, outside the homelab", () => {
+  assert.equal(isDuinlabApp("https://tide.duinlab.nl"), true);
+  assert.equal(isDuinlabApp("https://grafana.home.duinlab.nl"), false);
+  assert.equal(isDuinlabApp("https://simonvanlierde.com/jsonvet/"), false);
+  assert.equal(isDuinlabApp(undefined), false);
 });

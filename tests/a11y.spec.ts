@@ -36,6 +36,7 @@ for (const colorScheme of ["light", "dark"] as const) {
     "/notes/",
     "/notes/hub-and-spoke-observability/",
     "/privacy/",
+    "/duinlab/",
     "/no-such-page/",
   ]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
