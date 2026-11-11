@@ -41,6 +41,8 @@ libraries, each backed by a live demo, a DOI or a merged PR.
 
 - Content: a home page with the work, one page per project, curated threads through the work, the
   CV, technical notes, a `/duinlab/` list, and a privacy page.
+- Most notes open with a paragraph that works alone as a LinkedIn or Bluesky post and links back to
+  the note. Reference write-ups may skip it.
 - The work is a dependency graph. Each project has a `layer` (upstream libraries, data, software,
   tools and apps) and lists what it `uses`; "used by" is derived. Threads are curated stories across
   projects (PhD, environmental footprints, trustworthy research software, ML and computer vision,
