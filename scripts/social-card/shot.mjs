@@ -6,8 +6,7 @@ const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 await page.goto("file:///card/card.html");
 await page.evaluate(async () => {
   await document.fonts.ready;
-  window.fitName();
-  window.fitShot();
+  window.fit();
 });
 await page.screenshot({ path: "/card/raw.png" });
 await browser.close();

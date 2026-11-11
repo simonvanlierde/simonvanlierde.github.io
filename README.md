@@ -24,7 +24,7 @@ pnpm fetch:cards  # copy each featured card's demo og:image into src/assets/card
 pnpm fetch:codemeta # refresh project versions, DOIs and licences from their repositories
 pnpm fetch:stats  # refresh R9lab's figures in src/data/stats.json
 pnpm fetch:evidence # refresh merged upstream PRs in src/data/upstream.json
-pnpm gen:card     # a title-block social card for another site (needs Docker); run it bare for its flags
+pnpm gen:card     # a poster social card (name, line, address, one app screen) for another site (needs Docker); run it bare for its flags
 pnpm check        # lint + typecheck + unit tests
 pnpm test:e2e     # playwright: axe a11y + behaviour, against the built site (pnpm build first)
 ```
