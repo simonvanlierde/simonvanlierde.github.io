@@ -15,6 +15,7 @@ links:
 uses:
   - citesync
 featured: true
+image_focus: { x: 0.47, y: 0.61, zoom: 2.4 }
 order: 1
 figures:
   dialects:
