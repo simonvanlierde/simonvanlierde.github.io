@@ -17,14 +17,21 @@ const ok: Record<string, string> = {
 const argv = (o: Record<string, string>) => Object.entries(o).flatMap(([k, v]) => [`--${k}`, v]);
 
 test("rejects each missing required input", () => {
-  for (const k of Object.keys(ok)) {
+  for (const k of ["name", "line", "domain", "out"]) {
     const { [k]: _, ...rest } = ok;
     assert.throws(() => parse(argv(rest)), new RegExp(`missing --${k}`));
   }
 });
 
+test("needs a visual or a mark", () => {
+  const { visual: _, ...rest } = ok;
+  assert.throws(() => parse(argv(rest)), /missing --visual or --mark/);
+  assert.doesNotThrow(() => parse(argv({ ...rest, mark: "public/og.png" })));
+});
+
 test("rejects a missing visual", () => {
-  assert.throws(() => parse(argv({ ...ok, visual: "nope.png" })), /not found/);
+  assert.throws(() => parse(argv({ ...ok, visual: "nope.png" })), /visual not found/);
+  assert.throws(() => parse(argv({ ...ok, mark: "nope.svg" })), /mark not found/);
 });
 
 // Pulls a 2 GB image, so it runs only when asked: CARD_RENDER=1 pnpm test, and in social-card.yml.

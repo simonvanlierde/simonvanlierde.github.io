@@ -15,21 +15,24 @@ export const MAX_BYTES = 200 * 1024;
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, "../..");
 
-const USAGE = `Usage: pnpm gen:card --visual <png|jpg> --name <text> --line <text> --domain <host> --out <png> [--fit cover|contain] [--focus <css object-position>]`;
+const USAGE = `Usage: pnpm gen:card (--visual <png|jpg> and/or --mark <png|svg>) --name <text> --line <text> --domain <host> --out <png> [--fit cover|contain] [--focus <css object-position>]\n--mark is the app icon, above the name inside the centre 630 px; --visual is a real proof (a figure, a dial) in the right panel. Give one or both.`;
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
 export function parse(argv) {
   const { values: v } = parseArgs({
     args: argv,
     options: Object.fromEntries(
-      ["visual", "name", "line", "domain", "out", "fit", "focus"].map((k) => [k, { type: "string" }]),
+      ["visual", "mark", "name", "line", "domain", "out", "fit", "focus"].map((k) => [k, { type: "string" }]),
     ),
   });
-  for (const k of ["visual", "name", "line", "domain", "out"]) {
+  for (const k of ["name", "line", "domain", "out"]) {
     if (!v[k]) throw new Error(`missing --${k}\n${USAGE}`);
   }
+  if (!v.visual && !v.mark) throw new Error(`missing --visual or --mark\n${USAGE}`);
   if (v.fit && !["contain", "cover"].includes(v.fit)) throw new Error("--fit must be contain or cover");
-  if (!existsSync(v.visual)) throw new Error(`visual not found: ${v.visual}`);
+  for (const k of ["visual", "mark"]) {
+    if (v[k] && !existsSync(v[k])) throw new Error(`${k} not found: ${v[k]}`);
+  }
   return v;
 }
 
@@ -40,11 +43,21 @@ export async function render(v) {
       .replace("{{name}}", () => esc(v.name))
       .replace("{{line}}", () => esc(v.line))
       .replace("{{domain}}", () => esc(v.domain))
+      .replace("{{mark}}", () => (v.mark ? '<img class="mark" src="mark.png" alt="">' : ""))
+      .replace("{{visual}}", () =>
+        v.visual ? '<div class="visual {{fit}}"><img src="visual.png" alt="" style="--focus: {{focus}}"></div>' : "",
+      )
       .replace("{{fit}}", () => (v.fit === "contain" ? "contain" : ""))
       .replace("{{focus}}", () => esc(v.focus ?? "50% 0"));
     writeFileSync(join(dir, "card.html"), html);
     copyFileSync(join(repo, "public/fonts/osifont.woff2"), join(dir, "osifont.woff2"));
-    await sharp(v.visual).png().toFile(join(dir, "visual.png"));
+    // density keeps an SVG mark sharp; rasters ignore it.
+    if (v.visual) await sharp(v.visual).png().toFile(join(dir, "visual.png"));
+    if (v.mark)
+      await sharp(v.mark, { density: 384 })
+        .resize(192, 192, { fit: "contain", background: "#0000" })
+        .png()
+        .toFile(join(dir, "mark.png"));
     execFileSync(
       "docker",
       [
