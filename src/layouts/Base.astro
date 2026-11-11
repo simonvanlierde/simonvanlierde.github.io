@@ -15,6 +15,8 @@ const { title, description, jsonLd, canonical: hasCanonical = true } = Astro.pro
 // Astro.site is set in astro.config.mjs (https://simonvanlierde.com).
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL("og.png", Astro.site);
+const ogImageAlt =
+  "Simon van Lierde, research software engineer for industrial ecology, with his portrait beside an exploded drawing of a software system.";
 ---
 
 <!doctype html>
@@ -57,6 +59,8 @@ const ogImage = new URL("og.png", Astro.site);
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
 

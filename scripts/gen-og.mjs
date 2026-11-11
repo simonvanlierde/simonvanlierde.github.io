@@ -1,7 +1,8 @@
-// Generates public/og.png, the 1200x630 social card, from an inline SVG of the
-// drawing sheet. Rerun `pnpm gen:og` when the look or copy changes.
-// osifont renders only if it is installed locally; otherwise a fallback sans is used.
-import sharp from "sharp";
+// Generates public/og.png, the 1200x630 social card, from an HTML page of the drawing
+// sheet rendered in Chromium with the site's own osifont. Rerun `pnpm gen:og` when the
+// look or copy changes. The name and role sit in the centred 630 px, so a square crop keeps them.
+import { readFileSync } from "node:fs";
+import { chromium } from "@playwright/test";
 
 const W = 1200;
 const H = 630;
@@ -10,11 +11,9 @@ const H = 630;
 const bg = "#f8f7f3"; // --bg        oklch(97.5% 0.005 95)
 const ink = "#181d24"; // --text      oklch(23% 0.015 255)
 const muted = "#49515b"; // --text-muted oklch(43% 0.02 255)
-const accent = "#234993"; // --accent  oklch(42% 0.13 262)
-const stamp = "#15632f"; // --stamp   oklch(44% 0.11 150)
 const frame = "#2c333d"; // --border-strong oklch(32% 0.02 255)
 
-const draft = "'osifont', 'DIN Alternate', 'Bahnschrift', 'Segoe UI', Roboto, Helvetica, sans-serif";
+const draft = "osifont, 'Segoe UI', system-ui, sans-serif";
 
 // A compact copy of the site's Fig. 1: R9lab's six parts on one axis, with
 // balloons on the right.
@@ -70,35 +69,29 @@ const r9lab = `
     ${balloon(562, 6)}
   </g>`;
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <rect width="${W}" height="${H}" fill="${bg}"/>
-  <rect x="18" y="18" width="${W - 36}" height="${H - 36}" fill="none" stroke="${frame}" stroke-width="3"/>
-  ${r9lab}
-  <g font-family="${draft}">
-    <text x="80" y="200" font-size="84" letter-spacing="4" fill="${ink}">SIMON VAN LIERDE</text>
-    <text x="82" y="274" font-size="30" fill="${ink}">Research software engineer · PhD candidate, Leiden</text>
-    <text x="82" y="366" font-size="22" letter-spacing="1.2" fill="${muted}">OPEN RESEARCH INFRASTRUCTURE FOR SUSTAINABILITY SCIENCE</text>
-    <text x="82" y="408" font-size="18" letter-spacing="2.4" fill="${muted}">CML · LEIDEN UNIVERSITY</text>
-    <text x="82" y="492" font-size="28" letter-spacing="2" fill="${accent}">SIMONVANLIERDE.COM</text>
-  </g>
-  <g font-family="${draft}">
-    <rect x="80" y="48" width="165" height="44" fill="none" stroke="${stamp}" stroke-width="3"/>
-    <text x="98" y="77" font-size="22" letter-spacing="3" fill="${stamp}">PORTFOLIO</text>
-  </g>
-</svg>`;
+const font = readFileSync("public/fonts/osifont.woff2").toString("base64");
+const portrait = readFileSync("src/assets/portrait.jpg").toString("base64");
+const html = `<!doctype html><meta charset="utf-8"><style>
+@font-face{font-family:osifont;src:url(data:font/woff2;base64,${font}) format("woff2")}
+*{box-sizing:border-box;margin:0}
+body{width:${W}px;height:${H}px;background:${bg};font-family:${draft};color:${ink};position:relative;overflow:hidden}
+.frame{position:absolute;inset:18px;border:3px solid ${frame}}
+svg{position:absolute;inset:0}
+img{position:absolute;left:72px;top:150px;width:180px;height:180px;border:2px solid ${frame}}
+.text{position:absolute;left:285px;top:0;bottom:0;width:630px;display:flex;flex-direction:column;justify-content:center}
+h1{font-weight:400;font-size:112px;line-height:1.02;letter-spacing:.03em;text-transform:uppercase}
+p{margin-top:30px;font-size:42px;line-height:1.25}
+p span{color:${muted}}
+</style>
+<div class="frame"></div>
+<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${r9lab}</svg>
+<img alt="" src="data:image/jpeg;base64,${portrait}">
+<div class="text"><h1>Simon<br>van Lierde</h1><p>Research software engineer<br><span>for industrial ecology</span></p></div>`;
 
-// The portrait sits under the name, clear of the text lines and of the figure.
-const P = { left: 660, top: 400, size: 180 };
-const portrait = await sharp("src/assets/portrait.jpg").resize(P.size, P.size).toBuffer();
-const portraitFrame = `<svg xmlns="http://www.w3.org/2000/svg" width="${P.size}" height="${P.size}">
-  <rect x="1" y="1" width="${P.size - 2}" height="${P.size - 2}" fill="none" stroke="${frame}" stroke-width="2"/>
-</svg>`;
-
-await sharp(Buffer.from(svg))
-  .composite([
-    { input: portrait, left: P.left, top: P.top },
-    { input: Buffer.from(portraitFrame), left: P.left, top: P.top },
-  ])
-  .png()
-  .toFile("public/og.png");
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: W, height: H } });
+await page.setContent(html);
+await page.evaluate(() => document.fonts.ready);
+await page.screenshot({ path: "public/og.png" });
+await browser.close();
 console.log("Wrote public/og.png");
