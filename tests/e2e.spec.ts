@@ -471,6 +471,8 @@ const names = [
   "SHA-256",
   "R9lab",
   "bw2calc 3.0.0",
+  // A Dutch tax category, not a figure.
+  "Box 3",
   "3.1.0",
   // The sentence lists the three itself.
   "written three times: in bash, Python and Rust",
@@ -618,5 +620,6 @@ test("the sitemap lists every project site under this domain", async ({ request 
     "msc-thesis-ie",
     "ramascene-explorer",
     "sourceledger",
+    "vuurtoren",
   ]);
 });
