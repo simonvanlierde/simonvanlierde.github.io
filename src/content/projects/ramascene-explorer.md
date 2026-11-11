@@ -16,7 +16,7 @@ uses:
   - jsonvet
   - citesync
 featured: true
-image_focus: { x: 0.62, y: 1, zoom: 2.3 }
+image_focus: { x: 0.52, y: 0.46, zoom: 2.5 }
 order: 4
 figures:
   runs:
