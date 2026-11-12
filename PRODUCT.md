@@ -52,8 +52,9 @@ libraries, each backed by a live demo, a DOI or a merged PR.
   it downstream. Threads are curated stories across projects (circular data economy, footprints and
   flows, open and fair research software, open and reproducible machine learning, tools that respect
   people, built to scale and last), each with its own URL.
-- Clusters group projects that belong together: R9lab's parts, the apps (with the duinlab apps
-  inside), and small utilities. Repos with copier level `minimal` sit in utilities and stay off the CV.
+- Groupings come from facts, not a hand-set field: R9lab's parts from its own card, the duinlab apps
+  from the duinlab GitHub organisation, and utilities from copier level `minimal`. Utilities stay
+  off the CV.
 - A project page carries what the data already holds: description, real figures, demo or install,
   CodeMeta facts (version, licence, DOI, citation), related notes. Flagships may add a longer story.
 - Release versions, DOIs and licences come from each repo's cached CodeMeta record; levels from each
