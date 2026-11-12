@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "sourceledger",
+  "description": "Fetch or record a dataset's public files with provenance, and release it without files whose terms forbid it",
+  "version": "0.5.1",
+  "codeRepository": "https://github.com/simonvanlierde/sourceledger",
+  "datePublished": "2026-11-11",
+  "identifier": "https://doi.org/10.5281/zenodo.23460694",
+  "license": "https://spdx.org/licenses/MIT",
+  "keywords": [
+    "provenance",
+    "data pipeline",
+    "reproducibility",
+    "open data",
+    "research software",
+    "FAIR"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0009-0006-6953-909X",
+      "givenName": "Simon",
+      "familyName": "van Lierde",
+      "name": "Simon van Lierde"
+    }
+  ]
+}

@@ -45,10 +45,12 @@ export function parseCodemeta(raw) {
   }
   if (raw.datePublished !== undefined) {
     const date = text(raw.datePublished);
+    const partial = /^\d{4}(?:-(?:0[1-9]|1[0-2]))?$/.test(date);
     if (
-      !/^\d{4}-\d{2}-\d{2}(?:T.+)?$/.test(date) ||
-      !Number.isFinite(Date.parse(date)) ||
-      new Date(date.slice(0, 10)).toISOString().slice(0, 10) !== date.slice(0, 10)
+      !partial &&
+      (!/^\d{4}-\d{2}-\d{2}(?:T.+)?$/.test(date) ||
+        !Number.isFinite(Date.parse(date)) ||
+        new Date(date.slice(0, 10)).toISOString().slice(0, 10) !== date.slice(0, 10))
     ) {
       throw new Error("datePublished must be an ISO date or timestamp");
     }

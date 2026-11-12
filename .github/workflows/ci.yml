@@ -39,6 +39,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Set up locked metadata tools
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.6"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: scripts/metadata.py.lock
+
+      - name: Check the site citation
+        run: pnpm gen:citation && git diff --exit-code -- CITATION.cff
+
+      - name: Check Python integration
+        run: |
+          uvx --from ruff==0.17.3 ruff check scripts/metadata.py
+          uvx --from ruff==0.17.3 ruff format --check scripts/metadata.py
+          uvx --from ty==0.0.95 ty check --python "$(uv python find --script scripts/metadata.py)" scripts/metadata.py
+
       - name: Lint, typecheck & test
         run: pnpm check
 

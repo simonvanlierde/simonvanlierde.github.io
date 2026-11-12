@@ -2,10 +2,20 @@
 // If the API is down or Cloudflare blocks a request, the script prints a ::warning:: and exits 0
 // without touching the committed snapshot, so the site keeps the last good figures.
 
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import process from "node:process";
 import { withAsOf } from "./evidence.mjs";
+import {
+  acquireMetadataLock,
+  capture,
+  generateMetadata,
+  metadataRoot,
+  publishMetadata,
+  readJson,
+} from "./metadata.mjs";
+
+await acquireMetadataLock();
 
 // STATS_OUT is for the tests.
 const out = process.env.STATS_OUT || resolve(import.meta.dirname, "../src/data/stats.json");
@@ -20,7 +30,7 @@ function skip(reason) {
   process.exit(0);
 }
 
-async function getJson(url) {
+async function getJson(url, id) {
   let res;
   try {
     // A hung API would hold the job until its 10-minute timeout.
@@ -33,13 +43,14 @@ async function getJson(url) {
     skip(`GET ${url} did not return JSON (likely a Cloudflare challenge)`);
   }
   try {
-    return await res.json();
+    return await capture(res, id, url);
   } catch (err) {
     skip(`GET ${url} returned invalid JSON: ${err.message}`);
   }
 }
 
-const [seriesPayload, totalsPayload] = await Promise.all([getJson(seriesUrl), getJson(totalsUrl)]);
+const sources = await Promise.all([getJson(seriesUrl, "r9lab-series"), getJson(totalsUrl, "r9lab-totals")]);
+const [seriesPayload, totalsPayload] = sources.map((source) => source.parsed);
 
 if (!Array.isArray(seriesPayload?.series) || seriesPayload.series.length === 0) {
   skip("series response had no rows");
@@ -52,15 +63,14 @@ const required = ["period", "teardowns", "parts", "mass_kg", "images", "users_ne
 // The gap filler walks months until it meets the last period, so a period in any other
 // form would never match and loop forever.
 const counts = required.slice(1);
-const validRow = (row) =>
-  /^\d{4}-(0[1-9]|1[0-2])$/.test(row?.period) && counts.every((k) => typeof row[k] === "number");
+const validRow = (row) => /^\d{4}-(0[1-9]|1[0-2])$/.test(row?.period) && counts.every((k) => Number.isFinite(row[k]));
 if (!seriesPayload.series.every(validRow)) {
   skip(`a series row needs a YYYY-MM period and numbers for: ${counts.join(", ")}`);
 }
 
 // The hero prints these totals, so each must be a number.
 const totalKeys = ["teardowns", "parts", "mass_kg", "images", "users"];
-if (totalKeys.some((k) => typeof totalsPayload?.totals?.[k] !== "number")) {
+if (totalKeys.some((k) => !Number.isFinite(totalsPayload?.totals?.[k]))) {
   skip(`totals is missing one of: ${totalKeys.join(", ")}`);
 }
 
@@ -106,5 +116,22 @@ const previous = await readFile(out, "utf8").then(JSON.parse, () => null);
 const today = new Date().toISOString().slice(0, 10);
 const next = withAsOf(previous, payload, today, seriesPayload.generated_at.slice(0, 10));
 
-await writeFile(out, `${JSON.stringify(next, null, 2)}\n`);
+try {
+  const generated = await generateMetadata({ kind: "stats", sources });
+  const provenance = await readJson(resolve(metadataRoot, "src/data/provenance.json"));
+  Object.assign(provenance, generated.provenance);
+  // STATS_OUT stays available for isolated tests, with provenance rooted at METADATA_ROOT.
+  const snapshot = out.startsWith(`${metadataRoot}/`) ? out.slice(metadataRoot.length + 1) : null;
+  if (!snapshot) throw new Error("STATS_OUT must be within METADATA_ROOT");
+  await publishMetadata(
+    {
+      ...generated.files,
+      [snapshot]: `${JSON.stringify(next, null, 2)}\n`,
+      "src/data/provenance.json": `${JSON.stringify(provenance, null, 2)}\n`,
+    },
+    generated.raw,
+  );
+} catch (error) {
+  skip(`provenance failed: ${error.message}`);
+}
 console.log(`fetch-stats: wrote ${next.series.length} rows to src/data/stats.json`);

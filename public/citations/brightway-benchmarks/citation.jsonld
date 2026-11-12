@@ -1,0 +1,17 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "brightway-benchmarks",
+  "description": "Continuous benchmarks and tested installation sets for the Brightway LCA stack. A static viewer shows performance histories across package releases, dependency compatibility checks, solver comparisons and linked findings. Benchmark cases cover inventory and impact calculations, multiple functional units, Monte Carlo, database writes, imports, datapackage and matrix building, graph traversal and time-explicit LCA. Correctness checks accompany timings; the method documents reference values and coverage limits. Inputs include seeded synthetic databases modeled on ecoinvent and the public-domain USEEIO 1.1 database. Licensed ecoinvent inputs are optional and are not redistributed. Each result records its environment, while tested installation sets retain exact package versions.",
+  "codeRepository": "https://github.com/simonvanlierde/brightway-benchmarks",
+  "license": "https://spdx.org/licenses/BSD-3-Clause",
+  "author": [
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0009-0006-6953-909X",
+      "givenName": "Simon",
+      "familyName": "van Lierde",
+      "name": "Simon van Lierde"
+    }
+  ]
+}

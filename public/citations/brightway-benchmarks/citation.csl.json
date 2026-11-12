@@ -1,0 +1,14 @@
+[
+  {
+    "id": "brightway-benchmarks",
+    "type": "software",
+    "title": "brightway-benchmarks",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "URL": "https://github.com/simonvanlierde/brightway-benchmarks"
+  }
+]

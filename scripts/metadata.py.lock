@@ -1,0 +1,69 @@
+version = 1
+revision = 5
+requires-python = ">=3.13"
+
+[manifest]
+requirements = [
+    { name = "citesync", url = "https://github.com/simonvanlierde/citesync/archive/a043e5c57f5dcbf36112fff1f9de4946683e5860.tar.gz" },
+    { name = "sourceledger", url = "https://github.com/simonvanlierde/sourceledger/archive/2cb7cd31e61f39f490de64046395fd3cd171e49c.tar.gz" },
+]
+
+[[package]]
+name = "citesync"
+version = "0.5.0"
+source = { url = "https://github.com/simonvanlierde/citesync/archive/a043e5c57f5dcbf36112fff1f9de4946683e5860.tar.gz" }
+dependencies = [
+    { name = "packaging" },
+    { name = "ruamel-yaml" },
+    { name = "tomlkit" },
+]
+sdist = { hash = "sha256:b26d470927af5625b2ac77213df466afcc8e8ba4c8729712e189d2924f5e192f" }
+
+[package.metadata]
+requires-dist = [
+    { name = "packaging", specifier = ">=26.3" },
+    { name = "ruamel-yaml", specifier = ">=0.19" },
+    { name = "tomlkit", specifier = ">=0.15.2" },
+]
+
+[[package]]
+name = "packaging"
+version = "26.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz", hash = "sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79", size = 313412, upload-time = "2026-08-04T18:15:28.737Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl", hash = "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c", size = 129956, upload-time = "2026-08-04T18:15:27.159Z" },
+]
+
+[[package]]
+name = "ruamel-yaml"
+version = "0.19.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/3b/ebda527b56beb90cb7652cb1c7e4f91f48649fbcd8d2eb2fb6e77cd3329b/ruamel_yaml-0.19.1.tar.gz", hash = "sha256:53eb66cd27849eff968ebf8f0bf61f46cdac2da1d1f3576dd4ccee9b25c31993", size = 142709, upload-time = "2026-01-02T16:50:31.84Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b8/0c/51f6841f1d84f404f92463fc2b1ba0da357ca1e3db6b7fbda26956c3b82a/ruamel_yaml-0.19.1-py3-none-any.whl", hash = "sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93", size = 118102, upload-time = "2026-01-02T16:50:29.201Z" },
+]
+
+[[package]]
+name = "sourceledger"
+version = "0.5.1"
+source = { url = "https://github.com/simonvanlierde/sourceledger/archive/2cb7cd31e61f39f490de64046395fd3cd171e49c.tar.gz" }
+sdist = { hash = "sha256:01bf1df457c21257dbaae13d4fed8d9a0125bdf1ac6cf36edcd4ff1b799ad567" }
+
+[package.metadata]
+requires-dist = [
+    { name = "mlcroissant", marker = "extra == 'release'", specifier = ">=1.1.1" },
+    { name = "openpyxl", marker = "extra == 'xlsx'", specifier = ">=3.1" },
+    { name = "pyarrow", marker = "extra == 'parquet'", specifier = ">=23" },
+    { name = "roc-validator", marker = "extra == 'release'", specifier = ">=0.13.1" },
+]
+provides-extras = ["xlsx", "parquet", "release"]
+
+[[package]]
+name = "tomlkit"
+version = "0.15.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/08/72/fc01563df95c189a9f65850096bdc205bc2fe37da6c740cd64afaf18d07e/tomlkit-0.15.2.tar.gz", hash = "sha256:83e32755ba1d20d9340bd069ee97e9f6232ba2346b63ffcba425de01f7e327a6", size = 190522, upload-time = "2026-10-16T04:07:08.166Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/da/46/7d84138a60a8bd796825b2d38ebe92d0d16501ca57d501b7c5d677401bbc/tomlkit-0.15.2-py3-none-any.whl", hash = "sha256:05562412163a3037b94497385fb7f9204c637bc605af7a48199e41cf2272f437", size = 52225, upload-time = "2026-10-16T04:07:09.216Z" },
+]

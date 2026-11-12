@@ -1,0 +1,15 @@
+[
+  {
+    "id": "codemeta-drift",
+    "type": "software",
+    "title": "codemeta-drift",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "DOI": "10.5281/zenodo.23774728",
+    "URL": "https://github.com/simonvanlierde/codemeta-drift"
+  }
+]

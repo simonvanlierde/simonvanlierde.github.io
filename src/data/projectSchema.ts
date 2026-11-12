@@ -11,6 +11,11 @@ export interface ProjectMetadata {
   doi?: string;
   license?: string | string[];
   fetched_at: string;
+  sourceId?: string;
+  citation?: {
+    apa: string;
+    downloads: { apa: string; bibtex: string; cslJson: string; jsonld: string };
+  };
 }
 
 export const projectMetadata = (repo: string): ProjectMetadata | undefined =>

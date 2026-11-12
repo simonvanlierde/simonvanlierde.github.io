@@ -35,6 +35,14 @@ jobs:
           runtime: node@26
           install: false
 
+      - name: Set up locked metadata tools
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: "0.13.6"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: scripts/metadata.py.lock
+
       - name: Fetch stats
         run: pnpm fetch:stats
 
@@ -50,17 +58,24 @@ jobs:
       - name: Fetch project metadata
         run: pnpm fetch:codemeta
 
+      - name: Generate the site citation
+        run: pnpm gen:citation
+
       - name: Commit refreshed snapshots and deploy if changed
         env:
           GH_TOKEN: ${{ github.token }}
           # The bot commits fetched data only; the git hooks need tools this runner lacks (uvx for reuse).
           LEFTHOOK: "0"
-          FILES: src/data/stats.json src/data/upstream.json src/data/cardImages.json src/data/codemeta.json src/assets/cards
+          FILES: src/data/stats.json src/data/upstream.json src/data/cardImages.json src/data/codemeta.json src/data/provenance.json public/citations public/provenance CITATION.cff src/assets/cards
         # fetched_at changes on every successful run, so this commits weekly. The
         # drift check reads that stamp to see that the refresh still works.
         run: |-
-          # shellcheck disable=SC2086 # FILES is a list of paths
-          if git diff --quiet -- $FILES; then
+          changed=()
+          # shellcheck disable=SC2086 # FILES contains fixed path filters, not filenames to stage.
+          while IFS= read -r -d '' path; do
+            changed+=("$path")
+          done < <(git ls-files --modified --others --exclude-standard -z -- $FILES)
+          if [ "${#changed[@]}" -eq 0 ]; then
             echo "No change in $FILES."
             exit 0
           fi
@@ -68,8 +83,7 @@ jobs:
           pnpm build
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # shellcheck disable=SC2086
-          git add $FILES
+          git add -- "${changed[@]}"
           git commit -m "chore: refresh site data"
           # Rebase onto commits that landed while this job ran.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}"

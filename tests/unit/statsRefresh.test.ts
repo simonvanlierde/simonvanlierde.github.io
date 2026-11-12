@@ -93,7 +93,7 @@ test("a refresh with unchanged counts keeps as_of and stamps fetched_at", async 
   const { port } = server.address() as { port: number };
   const dir = await mkdtemp(join(tmpdir(), "stats-"));
   const file = join(dir, "stats.json");
-  const env = { ...process.env, R9LAB_API_URL: `http://127.0.0.1:${port}`, STATS_OUT: file };
+  const env = { ...process.env, R9LAB_API_URL: `http://127.0.0.1:${port}`, STATS_OUT: file, METADATA_ROOT: dir };
   try {
     await run("node", ["scripts/fetch-stats.mjs"], { cwd: root, env });
     const first = JSON.parse(await readFile(file, "utf8"));

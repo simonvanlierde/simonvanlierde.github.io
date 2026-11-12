@@ -71,7 +71,14 @@ test("refresh updates successes and keeps each failed repository's last good met
     await mkdir(join(dir, "src/content/projects"), { recursive: true });
     await mkdir(join(dir, "src/data"));
     await symlink(join(root, "node_modules"), join(dir, "node_modules"));
-    for (const script of ["codemeta.mjs", "fetch-codemeta.mjs", "projectCards.mjs"])
+    for (const script of [
+      "codemeta.mjs",
+      "fetch-codemeta.mjs",
+      "projectCards.mjs",
+      "metadata.mjs",
+      "metadata.py",
+      "metadata.py.lock",
+    ])
       await cp(join(root, "scripts", script), join(dir, "scripts", script));
     for (const id of ["success", "malformed", "invalid-doi", "unavailable", "missing", "new"]) {
       await writeFile(join(dir, `src/content/projects/${id}.md`), `---\nrepo: ${repo(id)}\n---\n`);
@@ -92,18 +99,21 @@ test("refresh updates successes and keeps each failed repository's last good met
     globalThis.fetch = async (url) => {
       if (++started === 6) { clearTimeout(deadline); ready.resolve(); }
       await ready.promise;
-      if (url.includes('/success/')) return Response.json({name: 'Example', author: {name: 'Alex River'}, datePublished: '2026-11-12', version: '2.0.0'});
+      if (url.includes('/success/')) return Response.json({'@context': 'https://w3id.org/codemeta/3.0', '@type': 'SoftwareSourceCode', name: 'Example', author: {name: 'Alex River'}, datePublished: '2026-11-12', version: '2.0.0'});
       if (url.includes('/malformed/')) return Response.json({license: 'javascript:alert(1)'});
       if (url.includes('/invalid-doi/')) return Response.json({version: '2.0.0', identifier: 'doi:not-a-doi'});
       if (url.includes('/unavailable/')) return new Response('', {status: 503});
       return new Response('', {status: 404});
     };`,
     );
-    await promisify(execFile)("node", ["--import", "./mock.mjs", "scripts/fetch-codemeta.mjs"], {
+    const { stdout } = await promisify(execFile)("node", ["--import", "./mock.mjs", "scripts/fetch-codemeta.mjs"], {
       cwd: dir,
     });
     const next = JSON.parse(await readFile(join(dir, "src/data/codemeta.json"), "utf8"));
-    assert.deepEqual(next[repo("success")], {
+    const { citation, sourceId, ...success } = next[repo("success")];
+    assert.equal(sourceId, "codemeta-success", stdout);
+    assert.match(citation.apa, /Alex River/);
+    assert.deepEqual(success, {
       name: "Example",
       author: [{ name: "Alex River" }],
       datePublished: "2026-11-12",
@@ -240,4 +250,13 @@ test("keeps the thesis dataset licence and DOI separate from the software licenc
   assert.equal(nodes[1].license, "https://spdx.org/licenses/CC-BY-4.0.html");
   assert.equal(nodes[1].url, "https://doi.org/10.5281/zenodo.8344580");
   assert.notEqual("identifier" in nodes[0] ? nodes[0].identifier : undefined, nodes[1].url);
+});
+
+test("CodeMeta accepts year and month precision without inventing a release day", () => {
+  for (const date of ["2026", "2026-11", "2024-02-29", "2026-11-12T23:00:00-01:00"]) {
+    assert.equal(parseCodemeta({ datePublished: date }).datePublished, date);
+  }
+  for (const date of ["2026-00", "2026-13", "2026-1", "2026-02-30", "2025-02-29"]) {
+    assert.throws(() => parseCodemeta({ datePublished: date }));
+  }
 });

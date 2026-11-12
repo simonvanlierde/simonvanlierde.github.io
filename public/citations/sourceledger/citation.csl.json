@@ -1,0 +1,25 @@
+[
+  {
+    "id": "sourceledger",
+    "type": "software",
+    "title": "sourceledger",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "DOI": "10.5281/zenodo.23460694",
+    "URL": "https://github.com/simonvanlierde/sourceledger",
+    "version": "0.5.1",
+    "issued": {
+      "date-parts": [
+        [
+          2026,
+          11,
+          11
+        ]
+      ]
+    }
+  }
+]

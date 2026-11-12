@@ -1,0 +1,25 @@
+[
+  {
+    "id": "rama-scene-explorer",
+    "type": "software",
+    "title": "RaMa-Scene Explorer",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "DOI": "10.5281/zenodo.23461260",
+    "URL": "https://github.com/simonvanlierde/ramascene-explorer",
+    "version": "0.7.0",
+    "issued": {
+      "date-parts": [
+        [
+          2026,
+          11,
+          7
+        ]
+      ]
+    }
+  }
+]
