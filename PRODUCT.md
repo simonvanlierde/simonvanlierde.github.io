@@ -53,7 +53,7 @@ libraries, each backed by a live demo, a DOI or a merged PR.
   flows, open and fair research software, open and reproducible machine learning, tools that respect
   people, built to scale and last), each with its own URL.
 - Groupings come from facts, not a hand-set field: R9lab's parts from its own card, the duinlab apps
-  from the duinlab GitHub organisation, and utilities from copier level `minimal`. Utilities stay
+  from a demo host ending in `.duinlab.nl`, and utilities from copier level `minimal`. Utilities stay
   off the CV.
 - A project page carries what the data already holds: description, real figures, demo or install,
   CodeMeta facts (version, licence, DOI, citation), related notes. Flagships may add a longer story.
