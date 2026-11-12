@@ -92,7 +92,7 @@ test("refresh updates successes and keeps each failed repository's last good met
     globalThis.fetch = async (url) => {
       if (++started === 6) { clearTimeout(deadline); ready.resolve(); }
       await ready.promise;
-      if (url.includes('/success/')) return Response.json({version: '2.0.0'});
+      if (url.includes('/success/')) return Response.json({name: 'Example', author: {name: 'Alex River'}, datePublished: '2026-11-12', version: '2.0.0'});
       if (url.includes('/malformed/')) return Response.json({license: 'javascript:alert(1)'});
       if (url.includes('/invalid-doi/')) return Response.json({version: '2.0.0', identifier: 'doi:not-a-doi'});
       if (url.includes('/unavailable/')) return new Response('', {status: 503});
@@ -103,7 +103,13 @@ test("refresh updates successes and keeps each failed repository's last good met
       cwd: dir,
     });
     const next = JSON.parse(await readFile(join(dir, "src/data/codemeta.json"), "utf8"));
-    assert.deepEqual(next[repo("success")], { version: "2.0.0", fetched_at: new Date().toISOString().slice(0, 10) });
+    assert.deepEqual(next[repo("success")], {
+      name: "Example",
+      author: [{ name: "Alex River" }],
+      datePublished: "2026-11-12",
+      version: "2.0.0",
+      fetched_at: new Date().toISOString().slice(0, 10),
+    });
     for (const id of ["malformed", "invalid-doi", "unavailable", "missing"]) assert.deepEqual(next[repo(id)], old);
     assert.equal(next[repo("new")], undefined);
     assert.equal(next[repo("removed")], undefined);
@@ -166,4 +172,72 @@ test("Astro rejects a manual DOI supplied by CodeMeta but accepts a different DO
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+// CodeMeta citation lists related works; the software's own citation uses its bibliographic fields.
+test("caches public bibliographic fields without treating related works as the software citation", () => {
+  assert.deepEqual(
+    parseCodemeta({
+      name: "Example software",
+      author: [
+        { givenName: "Alex", familyName: "River", email: "alex@example.org" },
+        { name: "Example research team" },
+      ],
+      datePublished: "2026-11-12",
+      citation: { name: "A related paper", url: "https://example.org/paper" },
+    }),
+    {
+      name: "Example software",
+      author: [{ givenName: "Alex", familyName: "River" }, { name: "Example research team" }],
+      datePublished: "2026-11-12",
+    },
+  );
+  assert.deepEqual(parseCodemeta({ name: "Example", author: { name: "Alex River" } }), {
+    name: "Example",
+    author: [{ name: "Alex River" }],
+  });
+  assert.equal(
+    parseCodemeta({ datePublished: "2026-11-12T12:00:00+01:00" }).datePublished,
+    "2026-11-12T12:00:00+01:00",
+  );
+  assert.throws(() => parseCodemeta({ citation: { name: "A related paper" } }));
+});
+
+test("rejects malformed bibliographic fields rather than overwriting the cache", () => {
+  for (const field of [
+    { name: {} },
+    { name: " " },
+    { author: "Alex River" },
+    { author: [{}] },
+    { author: [{ name: 42 }] },
+    { author: [] },
+    { datePublished: "yesterday" },
+    { datePublished: "2026-02-30" },
+  ])
+    assert.throws(() => parseCodemeta({ version: "1.0.0", ...field }));
+});
+
+test("keeps the thesis dataset licence and DOI separate from the software licence", () => {
+  const nodes = projectNodes([
+    {
+      id: "msc-thesis-ie",
+      data: {
+        title: "Example thesis",
+        description: "Example model",
+        repo: "https://github.com/simonvanlierde/msc-thesis-ie",
+        tags: [],
+        links: [
+          {
+            label: "Zenodo dataset",
+            url: "https://doi.org/10.5281/zenodo.8344580",
+            license: "https://spdx.org/licenses/CC-BY-4.0.html",
+          },
+        ],
+      },
+    },
+  ]);
+  assert.equal(nodes[0].license, "https://spdx.org/licenses/GPL-3.0-or-later");
+  assert.equal(nodes[1].license, "https://spdx.org/licenses/CC-BY-4.0.html");
+  assert.equal(nodes[1].url, "https://doi.org/10.5281/zenodo.8344580");
+  assert.notEqual("identifier" in nodes[0] ? nodes[0].identifier : undefined, nodes[1].url);
 });

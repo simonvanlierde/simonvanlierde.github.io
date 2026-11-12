@@ -1,48 +1,116 @@
 {
   "https://github.com/simonvanlierde/brightway-benchmarks": {
+    "name": "brightway-benchmarks",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "license": "https://spdx.org/licenses/BSD-3-Clause",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/citesync": {
+    "name": "citesync",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-10",
+    "version": "0.5.0",
     "doi": "https://doi.org/10.5281/zenodo.23779706",
     "license": "https://spdx.org/licenses/Apache-2.0",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/codemeta-drift": {
+    "name": "codemeta-drift",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "doi": "https://doi.org/10.5281/zenodo.23774728",
     "license": "https://spdx.org/licenses/Apache-2.0",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/credit-matrix": {
-    "version": "0.11.0",
+    "name": "CRediT Matrix",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-12",
+    "version": "0.13.0",
     "doi": "https://doi.org/10.5281/zenodo.21213659",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/jsonvet": {
+    "name": "jsonvet",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "doi": "https://doi.org/10.5281/zenodo.23461825",
     "license": ["https://spdx.org/licenses/MIT", "https://spdx.org/licenses/Apache-2.0"],
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/msc-thesis-ie": {
+    "name": "Cooling for Comfort, Warming the World: cooling demand and environmental impact model for The Hague",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "license": "https://spdx.org/licenses/GPL-3.0-or-later",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/project-templates": {
+    "name": "project-templates",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "doi": "https://doi.org/10.5281/zenodo.23701980",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/ramascene-explorer": {
-    "version": "0.6.0",
+    "name": "RaMa-Scene Explorer",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-07",
+    "version": "0.7.0",
     "doi": "https://doi.org/10.5281/zenodo.23461260",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   },
   "https://github.com/simonvanlierde/sourceledger": {
-    "version": "0.4.0",
+    "name": "sourceledger",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-11",
+    "version": "0.5.1",
     "doi": "https://doi.org/10.5281/zenodo.23460694",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12"
   }
 }

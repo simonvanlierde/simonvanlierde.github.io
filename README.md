@@ -21,7 +21,7 @@ pnpm dev          # start the dev server at http://localhost:4321
 pnpm build        # type-check (astro check) and build to dist/
 pnpm gen:og       # regenerate public/og.png (the social-card image)
 pnpm fetch:cards  # copy each featured card's demo og:image into src/assets/cards/
-pnpm fetch:codemeta # refresh project versions, DOIs and licences from their repositories
+pnpm fetch:codemeta # refresh project citation fields, versions, DOIs and licences from public CodeMeta
 pnpm fetch:stats  # refresh R9lab's figures in src/data/stats.json
 pnpm fetch:evidence # refresh merged upstream PRs in src/data/upstream.json
 pnpm gen:card     # a poster social card (name, line, address, an app icon via `--mark` above the name and/or a proof visual via `--visual` in the right panel) for another site (needs Docker); run it bare for its flags
