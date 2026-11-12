@@ -48,8 +48,10 @@ libraries, each backed by a live demo, a DOI or a merged PR.
 - The work is drawn as a metabolism: the physical world it reads from, the field's libraries, my
   projects by `layer` (data, software, tools and apps), and the people who use them. Each project
   lists what it `builds_on` (drawn) and its `tooling` (project pages only); "used by" is derived.
-  `extracts` names the part of the physical world a project draws data from, and `serves` who uses
-  it downstream. Threads are curated stories across projects (circular data economy, footprints and
+  `extracts` names the part of the physical world a project draws data from, `serves` who uses it
+  downstream now, and `could_serve` who it could serve next (drawn faint and dashed). The people are
+  five roles: researchers and students, research software builders, policy and planning,
+  circular-economy practitioners, and the public. Threads are curated stories across projects (circular data economy, footprints and
   flows, open and fair research software, open and reproducible machine learning, tools that respect
   people, built to scale and last), each with its own URL.
 - Groupings come from facts, not a hand-set field: R9lab's parts from its own card, the duinlab apps
@@ -61,8 +63,8 @@ libraries, each backed by a live demo, a DOI or a merged PR.
   repo's public copier answers. Nothing from the private planning repo (mode, rank, reasons for
   leaving a repo off the CV) enters this repo.
 - The CV keeps its dated experience history and exported PDF.
-- Links other sites already hold keep working: `/#project-<id>`, `/archive/#project-<id>`, `/cv/`,
-  `/notes/<slug>/`, `/duinlab/`.
+- Links other sites already hold keep working: `/cv/`, `/notes/<slug>/`, `/duinlab/`. The old
+  `/archive/` and `/#project-<id>` anchors are not redirected; the 404 page points to the project.
 - Static site built with Astro on GitHub Pages behind Cloudflare. Interactive parts are islands:
   Preact today, Svelte from the redesign on. No cookies, no analytics, no third-party scripts or fonts.
 
