@@ -9,8 +9,16 @@ tags:
   - PyPI
   - CodeMeta
   - CITATION.cff
-uses:
-  - codemeta-drift
+tooling:
   - project-templates
 order: 9
+layer: software
+threads:
+  - open-and-fair-research-software
+builds_on:
+  - codemeta-drift
+serves:
+  - builders
+could_serve:
+  - researchers
 ---

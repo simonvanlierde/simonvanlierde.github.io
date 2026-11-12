@@ -1,19 +1,17 @@
 ---
 import { getCollection } from "astro:content";
-import { isoDay } from "../components/cvPeriod.ts";
 import Figure from "../components/Figure.astro";
 import ProjectMetadata from "../components/ProjectMetadata.astro";
-import SheetNav from "../components/SheetNav.astro";
-import TitleBlock from "../components/TitleBlock.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import UpstreamList from "../components/UpstreamList.astro";
-import { cv } from "../data/cv.ts";
 import { figureParts, relatedCards } from "../data/projectSchema.ts";
 import { archiveJsonLd } from "../data/schemaOrg.ts";
 import { alsoMerged, upstreamShowcase } from "../data/upstream.ts";
 import Base from "../layouts/Base.astro";
 
 const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
-const archived = projects.filter((p) => !p.data.featured);
+const archived = projects.filter((p) => !p.data.featured && p.id !== "r9lab");
 const groups = [
   { category: "work", heading: "Research tools" },
   { category: "personal", heading: "Personal apps" },
@@ -21,11 +19,11 @@ const groups = [
 ].map((g) => ({ ...g, rows: archived.filter((p) => p.data.category === g.category) }));
 const related = relatedCards(projects);
 const destination = (id: string) =>
-  `${projects.find((p) => p.id === id)?.data.featured ? "/" : "/archive/"}#project-${id}`;
+  id === "r9lab" ? "/#relab" : `${projects.find((p) => p.id === id)?.data.featured ? "/" : "/archive/"}#project-${id}`;
 ---
 <Base title="Project archive | Simon van Lierde" description="Research tools, personal apps and smaller projects by Simon van Lierde, with the complete list of merged upstream contributions." jsonLd={archiveJsonLd(archived)}>
-  <SheetNav current="archive" />
-  <main id="main" class="container archive">
+  <SiteHeader current="archive" />
+  <main id="main" tabindex="-1" class="container archive">
     <header>
       <h1>Project archive</h1>
       <p class="prose">Research tools, personal apps, smaller projects and every merged upstream contribution.</p>
@@ -43,8 +41,7 @@ const destination = (id: string) =>
           <tbody role="rowgroup">{rows.map((p) => <tr id={`project-${p.id}`} role="row">
             <th scope="row" role="rowheader"><a href={p.data.demo ?? p.data.repo}>{p.data.title}</a><p class="bom-row__desc">{figureParts(p.data.description, p.data.figures).map((part) => typeof part === "string" ? part : <Figure {...part} />)}</p>
               <ProjectMetadata repo={p.data.repo} />
-              {([['Uses', related.get(p.id)?.uses ?? []], ['Used by', related.get(p.id)?.usedBy ?? []]] as const).map(([label, cards]) => cards.length > 0 && <div class="ref-list"><span class="ref-list__label">{label}</span>{cards.slice(0, 3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}{cards.length > 3 && <details class="ref-more"><summary>+{cards.length - 3}<span class="visually-hidden"> more {label.toLowerCase()} links for {p.data.title}</span></summary>{cards.slice(3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}</details>}</div>)}
-              {p.id === "monitoring" && <p class="ref-list">Used by <a class="ref" href="/#relab">R9lab</a></p>}
+              {([['Tooling', related.get(p.id)?.tooling ?? []], ['Tooling for', related.get(p.id)?.toolingFor ?? []]] as const).map(([label, cards]) => cards.length > 0 && <div class="ref-list"><span class="ref-list__label">{label}</span>{cards.slice(0, 3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}{cards.length > 3 && <details class="ref-more"><summary>+{cards.length - 3}<span class="visually-hidden"> more {label.toLowerCase()} links for {p.data.title}</span></summary>{cards.slice(3).map((card) => <a class="ref" href={destination(card.id)}>{card.title}</a>)}</details>}</div>)}
             </th>
             <td role="cell">{p.data.kind}</td>
             <td role="cell">{p.data.tags.join(", ")}</td>
@@ -60,5 +57,5 @@ const destination = (id: string) =>
       <p class="also-merged">{alsoMerged.map((project, i) => <>{i > 0 && "; "}<a href={`https://github.com/${project.repo}/pulls?q=is%3Apr+is%3Amerged+author%3Asimonvanlierde`}>{project.name} ({project.prs.length} PR{project.prs.length === 1 ? "" : "s"})</a></>)}</p>
     </section>
   </main>
-  <TitleBlock title={cv.basics.name} docType="Project archive" sheet="3 OF 4" turn={{ href: "/notes/", label: "sheet 4, notes", dir: "next" }} dated={cv.exported && isoDay(cv.exported)} />
+  <SiteFooter />
 </Base>

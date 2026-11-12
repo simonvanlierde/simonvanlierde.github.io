@@ -1,14 +1,14 @@
 ---
-import SheetNav from "../components/SheetNav.astro";
-import TitleBlock from "../components/TitleBlock.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import { cv } from "../data/cv.ts";
 import Base from "../layouts/Base.astro";
 
 const { email } = cv.basics;
 ---
 <Base title="Privacy | Simon van Lierde" description="What this site collects about visitors: almost nothing.">
-  <SheetNav />
-  <main id="main" class="container archive">
+  <SiteHeader />
+  <main id="main" tabindex="-1" class="container archive">
     <header>
       <h1>Privacy</h1>
       <p class="prose">This site sets no cookies, runs no analytics and loads nothing from other sites.</p>
@@ -23,5 +23,5 @@ const { email } = cv.basics;
       <p class="prose">If you email me, I use your address and message only to reply.{email && <> Questions about your data go to <a href={`mailto:${email}`}>{email}</a>.</>} You can also complain to the Dutch data protection authority, the <a href="https://www.autoriteitpersoonsgegevens.nl/en">Autoriteit Persoonsgegevens</a>.</p>
     </section>
   </main>
-  <TitleBlock title={cv.basics.name} docType="Privacy" sheet="NOT IN SET" dated="2026-11-10" />
+  <SiteFooter />
 </Base>

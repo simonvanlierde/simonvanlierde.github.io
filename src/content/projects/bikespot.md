@@ -9,7 +9,7 @@ tags:
   - TypeScript
   - PWA
 category: personal
-uses:
+tooling:
   - project-templates
   - jsonvet
 order: 4
@@ -18,4 +18,9 @@ figures:
     value: "seven"
     source: https://github.com/simonvanlierde/bikespot/blob/main/src/lib/i18n.ts
     as_of: "2026-10-21"
+layer: tools-and-apps
+threads:
+  - tools-that-respect-people
+serves:
+  - public
 ---

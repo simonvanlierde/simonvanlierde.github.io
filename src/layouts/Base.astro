@@ -33,21 +33,19 @@ const ogImageAlt =
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="Technical notes" href="/notes/rss.xml" />
-    {/* Dark --bg (the default theme) as a fallback; the script at the end of
-        body syncs it to the active theme. */}
-    <meta name="theme-color" content="#19263f" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#f2f4ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#10171a" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
 
-    {/* Every heading uses osifont on first paint. */}
-    <link rel="preload" href="/fonts/osifont.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/schibsted-grotesk-latin-800.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/newsreader-latin-400-italic.woff2" as="font" type="font/woff2" crossorigin />
 
     {/* Apply the saved theme before paint to avoid a flash. */}
     <script is:inline>
-      // Storage throws where blocked (sandboxed iframe, strict privacy modes);
-      // the default dark theme applies instead.
+      // Blocked storage leaves the system theme in control.
       try {
         const t = localStorage.getItem("theme");
-        if (t) document.documentElement.dataset.theme = t;
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
       } catch {}
     </script>
 
@@ -80,7 +78,8 @@ const ogImageAlt =
 
     <script is:inline>
       const btn = document.querySelector(".theme-toggle");
-      const meta = document.querySelector('meta[name="theme-color"]');
+      const metas = document.querySelectorAll('meta[name="theme-color"]');
+      const systemTheme = matchMedia("(prefers-color-scheme: dark)");
 
       // Blocked storage stops the toggle remembering the theme, not applying it.
       const remember = (v) => {
@@ -89,8 +88,10 @@ const ogImageAlt =
         } catch {}
       };
 
-      // Dark unless the visitor picked light; global.css sets the same default.
-      const isDark = () => document.documentElement.dataset.theme !== "light";
+      const isDark = () => {
+        const saved = document.documentElement.dataset.theme;
+        return saved ? saved === "dark" : systemTheme.matches;
+      };
 
       // Computed styles serialise --bg as oklch(), which theme-color parsers
       // may not accept. A 1px canvas converts it to plain sRGB.
@@ -106,7 +107,8 @@ const ogImageAlt =
       // btn is optional: some pages have no toggle.
       const sync = () => {
         const dark = isDark();
-        meta.content = toRgb(getComputedStyle(document.body).backgroundColor);
+        const color = toRgb(getComputedStyle(document.body).backgroundColor);
+        metas.forEach((meta) => { meta.content = color; });
         btn?.setAttribute("aria-pressed", String(dark));
       };
 
@@ -118,6 +120,7 @@ const ogImageAlt =
       });
 
       sync();
+      systemTheme.addEventListener("change", sync);
     </script>
   </body>
 </html>

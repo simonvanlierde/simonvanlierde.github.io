@@ -1,100 +1,4 @@
-/* ---------------------------------------------------------------------------
-   THE ENGINEERING DRAWING SHEET (see DESIGN.md)
-   Light: ink on drafting paper. Dark: cyanotype.
-   Change token values, not names: the chart island and other consumers read
-   the names (--bg, --text, --accent, --chart-bar...).
-   --------------------------------------------------------------------------- */
-
-@font-face {
-  font-family: "osifont";
-  src: url("/fonts/osifont.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-:root {
-  /* osifont for display, labels, and data; system sans for prose. */
-  --font-draft: "osifont", "Segoe UI", system-ui, sans-serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  /* The chart and data labels read this name. */
-  --font-mono: var(--font-draft);
-
-  --step--1: clamp(0.85rem, 0.81rem + 0.26vw, 1rem);
-  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
-  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
-  --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  --step-3: clamp(2.1rem, 1.6rem + 2.4vw, 3.4rem);
-
-  --space-2xs: 0.25rem;
-  --space-xs: 0.5rem;
-  --space-s: 0.75rem;
-  --space-m: 1.25rem;
-  --space-l: 2rem;
-  --space-xl: 3.5rem;
-
-  /* rem, not ch: 1ch is the zero glyph, so 72ch fits about 91 characters of
-     system sans. 38rem fits about 70. */
-  --measure: 38rem;
-  --radius: 0px;
-  --border-width: 1px;
-
-  --frame-inset: clamp(8px, 1.2vw, 16px);
-  --frame-line: 1.5px;
-
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --dur-fast: 150ms;
-  --dur-base: 200ms;
-  --dur-slow: 250ms;
-  --dur-explode: 700ms; /* exploded view (Fig. 1) */
-
-  /* Every text pair clears 4.5:1 on its ground; tests/a11y.spec.ts checks it.
-     Dark (the cyanotype) unless the visitor picks light with the toggle. */
-  color-scheme: dark;
-
-  --bg: light-dark(oklch(97.5% 0.005 95), oklch(27% 0.05 262));
-  --surface: light-dark(oklch(99.2% 0.003 95), oklch(30.5% 0.055 262));
-  --text: light-dark(oklch(23% 0.015 255), oklch(96.5% 0.008 240));
-  --text-muted: light-dark(oklch(43% 0.02 255), oklch(85% 0.03 240));
-  --border: light-dark(oklch(80% 0.012 255), oklch(45% 0.05 258));
-  --border-strong: light-dark(oklch(32% 0.02 255), oklch(90% 0.02 240));
-
-  /* Pale cyan in dark mode, where the ground is already blue. */
-  --accent: light-dark(oklch(42% 0.13 262), oklch(88% 0.055 225));
-  --accent-strong: light-dark(oklch(34% 0.11 262), oklch(94% 0.035 225));
-  --accent-contrast: light-dark(oklch(98% 0.003 95), oklch(25% 0.05 262));
-
-  /* The stamp: one primary action per sheet. Green, not red: red reads as an
-     error. */
-  --stamp: light-dark(oklch(44% 0.11 150), oklch(82% 0.1 150));
-  --stamp-contrast: light-dark(oklch(98.5% 0.003 95), oklch(23% 0.05 262));
-
-  --focus: var(--accent);
-
-  /* Both clear 3:1 against --surface. */
-  --chart-bar: light-dark(oklch(42% 0.13 262), oklch(80% 0.07 225));
-  --chart-bar-strong: light-dark(oklch(34% 0.11 262), oklch(88% 0.055 225));
-}
-
-/* P3: raise chroma only, never lightness, so contrast holds on any display. */
-@media (color-gamut: p3) {
-  :root {
-    --accent: light-dark(oklch(42% 0.155 262), oklch(88% 0.066 225));
-    --accent-strong: light-dark(oklch(34% 0.132 262), oklch(94% 0.042 225));
-    --stamp: light-dark(oklch(44% 0.13 150), oklch(82% 0.12 150));
-    --chart-bar: light-dark(oklch(42% 0.155 262), oklch(80% 0.084 225));
-    --chart-bar-strong: light-dark(oklch(34% 0.132 262), oklch(88% 0.066 225));
-  }
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
-}
+@import "./tokens.css";
 
 /* ---------------------------------------------------------------------------
    Reset / base
@@ -115,8 +19,7 @@ html {
   scrollbar-color: var(--border) transparent;
   scroll-behavior: smooth;
   /* Keeps anchor targets and focused links clear of the sticky nav (WCAG 2.4.11). */
-  scroll-padding-top: 4rem;
-  timeline-scope: --sheet-name; /* lets the nav monogram follow .sheet-name (see below) */
+  scroll-padding-top: 6.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -126,7 +29,6 @@ html {
 }
 
 body {
-  position: relative; /* the sheet frame is drawn on the document, not the viewport */
   font-family: var(--font-sans);
   font-size: var(--step-0);
   line-height: 1.6;
@@ -134,20 +36,6 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  padding: calc(var(--frame-inset) + var(--frame-line));
-}
-
-/* Sheet frame on the document, not the viewport: a fixed line would cross
-   scrolling text like a strikethrough. */
-@media screen {
-  body::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border: var(--frame-line) solid var(--border-strong);
-    pointer-events: none;
-    z-index: 90;
-  }
 }
 
 /* Print in the light theme. :root[data-theme] matches the toggle's
@@ -196,20 +84,18 @@ h2,
 h3 {
   font-family: var(--font-draft);
   line-height: 1.12;
-  font-weight: 400;
+  font-weight: 800;
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--step-3);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
 
 h2 {
   font-size: var(--step-1);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
   color: var(--text);
 }
 
@@ -240,6 +126,7 @@ p {
 }
 
 figcaption {
+  font-style: italic;
   margin-top: var(--space-s);
   font-size: var(--step--1);
   color: var(--text-muted);
@@ -399,7 +286,7 @@ time {
 /* 11rem rail + 2rem gutter + 38rem measure + 3rem spare, so rules end where
    the text ends. */
 .container {
-  width: min(100% - 2 * var(--space-m), 54rem);
+  width: min(100% - 2 * var(--gutter), 80rem);
   margin-inline: auto;
 }
 
@@ -422,55 +309,6 @@ main > section.container > h2 {
   border-bottom: 2px solid var(--border-strong);
 }
 
-/* ---------------------------------------------------------------------------
-   Sheet header (shared chrome, all sheets)
-   --------------------------------------------------------------------------- */
-
-/* Opaque ground and a rule, never a shadow or blur (the Flat Sheet Rule). */
-.sheet-nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--bg);
-  border-bottom: var(--border-width) solid var(--border);
-}
-
-.sheet-nav__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-m);
-  padding-block: var(--space-xs);
-  font-family: var(--font-draft);
-  font-size: var(--step--1);
-  letter-spacing: 0.08em;
-}
-
-.sheet-nav__mark {
-  color: var(--text);
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  /* 44px target without moving the mark. */
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0.7rem 0.5rem;
-  margin: -0.7rem -0.5rem;
-  transition: color var(--dur-fast) ease;
-}
-
-@media (hover: hover) {
-  .sheet-nav__mark:hover {
-    color: var(--accent);
-  }
-}
-
-/* While the name heading is in view, the monogram stays hidden: the title is
-   already on the sheet. It fades in as the name slides under the nav (the 4rem
-   inset). Hidden means `visibility`, so it also leaves the tab order. A page
-   without a .sheet-name (the 404), a browser without scroll-driven animations,
-   and reduced motion all keep the monogram showing, the finished state. */
 /* Contact, profiles and the stamp under each sheet's title zone, in the same
    order and spacing on both sheets. */
 .sheet-contact {
@@ -509,89 +347,17 @@ main > section.container > h2 {
   margin-top: var(--space-m);
 }
 
-.sheet-name {
-  view-timeline: --sheet-name block;
-  view-timeline-inset: 4rem 0;
-}
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* Longhands: the build's minifier folds a timeline into the `animation`
-       shorthand, which browsers reject, and the whole rule is lost. */
-    .sheet-nav__mark {
-      animation-name: sheet-mark-in;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: --sheet-name;
-      animation-range: exit 0% exit 100%;
-    }
-  }
-}
-
-@keyframes sheet-mark-in {
-  from {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  to {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-.sheet-nav__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-m);
-}
-
-/* Below 22rem, hide the wordmark: "Sheet 1: Index" links home too. */
-@media (max-width: 21.99rem) {
-  .sheet-nav__mark {
-    display: none;
-  }
-
-  .sheet-nav__inner {
-    justify-content: flex-end;
-  }
-}
-
-.sheet-nav__link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--text-muted);
-  text-decoration: none;
-  text-transform: uppercase;
-  white-space: nowrap;
-  padding: 0.7rem 0.35rem;
-  margin: -0.7rem -0.35rem;
-  transition: color var(--dur-fast) ease;
-}
-
-@media (hover: hover) {
-  .sheet-nav__link:hover {
-    color: var(--accent);
-  }
-}
-
-.sheet-nav__link[aria-current="page"] {
-  color: var(--text);
-  text-decoration: underline;
-  text-underline-offset: 0.3em;
-}
-
 /* ---------------------------------------------------------------------------
    Stamp: the one primary action per sheet, in checker's green
    --------------------------------------------------------------------------- */
 
 .stamp {
+  border-radius: 2px;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-m) var(--space-l);
-  border: 2px solid var(--stamp);
+  padding: 12px 20px;
+  border: 1px solid var(--stamp);
   color: var(--stamp);
   background: transparent;
   font-family: var(--font-draft);
@@ -769,9 +535,13 @@ main > section.container > h2 {
   border-color: var(--border-strong);
 }
 
-/* Demo pages are mostly drawn light: dim the close-ups a little on the
-   cyanotype so they do not glare. Dark is the default theme; print is light. */
+/* Light demo screenshots are dimmed only on the night ground. */
 @media screen {
+  :root[data-theme="dark"] .bom-row__shot img {
+    filter: brightness(0.88);
+  }
+}
+@media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .bom-row__shot img {
     filter: brightness(0.88);
   }
@@ -984,132 +754,86 @@ main > section.container > h2 {
   align-content: start;
 }
 
-/* ---------------------------------------------------------------------------
-   Title block (ISO 7200): the footer on every sheet
-   --------------------------------------------------------------------------- */
-
-.title-block {
-  margin-top: var(--space-xl);
-  margin-bottom: var(--space-s);
-  border: var(--border-width) solid var(--border-strong);
-  font-family: var(--font-draft);
-  font-size: var(--step--1);
-  letter-spacing: 0.05em;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  /* The 1px gap shows the --border background as cell hairlines. */
-  gap: var(--border-width);
-  background: var(--border);
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--paper);
+  border-bottom: 0.75px solid var(--rule);
+  font: 400 1rem / 1.4 var(--font-draft);
 }
 
-.title-block__cell {
-  padding: var(--space-xs) var(--space-s);
-  min-width: 0;
-  background: var(--bg);
+.site-header__inner,
+.site-header nav,
+.site-footer,
+.site-footer nav,
+.site-footer__build {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem 1.5rem;
 }
 
-/* Contact spans every column except the last. */
-.title-block__cell--contact {
-  grid-column: 1 / -2;
+.site-header__inner {
+  justify-content: space-between;
+  padding-block: 12px;
 }
-
-@media (max-width: 39.99rem) {
-  .title-block {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .title-block__cell--contact,
-  .title-block__cell:last-child {
-    grid-column: 1 / -1;
-  }
-}
-
-.title-block__label {
-  display: block;
-  font-size: 0.8em; /* stays above 10px at every step */
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.15em;
-}
-
-.title-block__value {
-  color: var(--text);
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-
-/* A commit hash is lowercase on GitHub; uppercased it no longer matches. */
-.title-block__value--sha {
-  text-transform: none;
-}
-
-/* Underlined: the surrounding cells are plain data. */
-.title-block__value a {
+.site-header a,
+.site-footer a {
+  color: var(--ink);
+  text-decoration: none;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  color: inherit;
-  text-underline-offset: 0.18em;
-  padding: 0.65rem 0.4rem;
-  margin: -0.65rem -0.4rem;
 }
-
-@media (hover: hover) {
-  .title-block__value a:hover {
-    color: var(--accent);
-  }
+.site-header__name {
+  font-weight: 800;
 }
-
-/* The sheet number turns to the other sheet; the arrow points the way and
-   nudges toward it on hover. */
-.title-block__turn {
-  gap: 0.5em;
+.site-header a[aria-current],
+.site-header a:hover,
+.site-footer a:hover {
+  text-decoration: underline;
 }
-
-.title-block__turn--prev {
-  flex-direction: row-reverse;
-}
-
-.title-block__arrow {
-  flex: none;
-  transition: translate var(--dur-fast) var(--ease-out);
-}
-
-.title-block__turn--prev .title-block__arrow {
-  scale: -1 1;
-}
-
-@media (hover: hover) {
-  .title-block__turn--next:hover .title-block__arrow {
-    translate: 3px 0;
-  }
-}
-
-@media (hover: hover) {
-  .title-block__turn--prev:hover .title-block__arrow {
-    translate: -3px 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .title-block__arrow {
-    transition: none;
-  }
-}
-
-/* Email in the accent colour; profiles in ink like other values. */
-.title-block__contact {
-  display: flex;
+.site-footer {
+  justify-content: space-between;
   flex-wrap: wrap;
-  /* The row gap keeps wrapped links 24px apart on a phone (WCAG 2.5.8). */
-  gap: var(--space-2xs) var(--space-m);
-  list-style: none;
-  text-transform: none;
+  margin-block: var(--space-xl) var(--space-l);
+  padding-top: var(--space-m);
+  border-top: 0.75px solid var(--rule);
+  font: 400 var(--step--1) / 1.4 var(--font-draft);
 }
-
-.title-block__contact a[href^="mailto:"] {
-  color: var(--accent);
+.site-footer__build > a {
+  font-family: var(--font-mono);
+  color: var(--ink-2);
+}
+.site-footer .theme-toggle {
+  margin: 0;
+  padding: 12px;
+}
+code,
+.draft,
+time {
+  font-family: var(--font-mono);
+}
+@media (max-width: 719px) {
+  .site-header__inner {
+    flex-wrap: wrap;
+    gap: 0;
+    padding-block: 4px;
+  }
+  .site-header nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .site-header__name {
+    min-height: 36px;
+  }
+}
+@media print {
+  .site-header,
+  .site-footer {
+    display: none;
+  }
 }
 
 .project-metadata {
@@ -1333,42 +1057,6 @@ main > section.container > h2 {
 }
 .archive-subheading {
   margin-top: var(--space-l);
-}
-@media (max-width: 39.99rem) {
-  .sheet-nav .theme-toggle {
-    margin-inline: 0;
-  }
-  .sheet-nav__inner {
-    gap: var(--space-xs);
-  }
-  /* Wider than the space inside "1 Index", so a number reads with its name. */
-  .sheet-nav__actions {
-    gap: var(--space-s);
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  .sheet-nav__link {
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
-  }
-  /* The sheet's name alone, so five sheets fit on one line at 390px. Zero-size
-     text, not .visually-hidden, whose positioned span would split the
-     accessible name into "Sheet 1: Index" pieces. */
-  .sheet-nav__number {
-    font-size: 0;
-  }
-  .sheet-nav__mark {
-    font-size: 0.75rem;
-    padding-inline: 0;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-  .title-block {
-    view-transition-name: title-block;
-  }
 }
 
 .also-merged {

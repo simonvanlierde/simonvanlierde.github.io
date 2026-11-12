@@ -6,10 +6,11 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Personal website for Simon van Lierde, research software engineer and PhD candidate at CML, Leiden
-University. It has four sheets: selected work, a CV, a project archive and technical notes (with an RSS feed at `/notes/rss.xml`), plus a privacy page. I build it with Astro and deploy
+University. It has selected work, a CV, a project archive and technical notes (with an RSS feed at `/notes/rss.xml`), plus a privacy page. I build it with Astro and deploy
 it to GitHub Pages at [simonvanlierde.com](https://simonvanlierde.com).
 
-The site is drawn as one ISO technical drawing set, with a chart of R9lab's disassembly data that refreshes weekly.
+The field-atlas palette and shared shell introduce a metabolism of the work: its data sources,
+dependencies and downstream users. R9lab's disassembly data refreshes weekly.
 
 ## Local development
 
@@ -36,13 +37,15 @@ Every pull request and push to `main` runs `pnpm check` and `pnpm test:e2e`.
 
 - [docs/architecture.md](docs/architecture.md): how the site is built, where the CV and chart data
   come from, the checks, and the deploy
-- [DESIGN.md](DESIGN.md): the design system
+- [DESIGN.md](DESIGN.md): the previous drawing-set system, to be replaced after the redesign review
 - [docs/accessibility.md](docs/accessibility.md): the accessibility statement and what the checks cover
 
 ## Licence and credits
 
-MIT, see [LICENSE](LICENSE); [REUSE.toml](REUSE.toml) gives each file's license. Display and
-data lettering use a vendored [osifont](https://github.com/hikikomori82/osifont) subset
+MIT, see [LICENSE](LICENSE); [REUSE.toml](REUSE.toml) gives each file's license.
+The self-hosted fonts are Schibsted Grotesk, Newsreader and a subset of IBM Plex Mono,
+under SIL OFL 1.1; [font sources and subset settings](public/fonts/SOURCES.md) record their provenance.
+The social-card generator still uses [osifont](https://github.com/hikikomori82/osifont)
 (ISO 3098, LGPL+FE), see [public/fonts/osifont-LICENSE.txt](public/fonts/osifont-LICENSE.txt).
 The technical notes in `src/content/notes/` are CC-BY-4.0. The Code of Conduct is the Contributor Covenant (CC-BY-SA-4.0). My portrait (also in the social card) and the CV PDF
 are all rights reserved.

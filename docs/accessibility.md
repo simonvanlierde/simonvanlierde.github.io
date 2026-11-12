@@ -27,8 +27,8 @@ Every pull request and every push to `main` runs these checks:
 - The page language is set, and a skip link leads past the navigation.
 - Links and buttons are sized to 44 by 44 CSS pixels where the layout allows (WCAG 2.2 AA asks
   for 24), and show a visible focus ring.
-- Both colour schemes are checked for contrast. The site opens dark and remembers a choice made with
-  the toggle.
+- Both colour schemes are checked for contrast. The site follows the system theme and remembers a
+  choice made with the footer toggle.
 - When the system asks for reduced motion, nothing slides, scales or scrolls smoothly: no page
   transitions and no animated drawing or chart. Short colour fades stay.
 - The R9lab chart has a visually hidden table with the same numbers, so its data does not depend on

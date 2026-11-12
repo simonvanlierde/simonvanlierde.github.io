@@ -15,7 +15,7 @@ links:
   - label: Zenodo dataset
     url: https://doi.org/10.5281/zenodo.8344580
     license: https://spdx.org/licenses/CC-BY-4.0.html
-uses:
+tooling:
   - citesync
 order: 11
 figures:
@@ -30,5 +30,18 @@ figures:
   office_ghg:
     value: "79%"
     source: https://github.com/simonvanlierde/msc-thesis-ie#key-findings
+    as_of: "2026-10-28"
+layer: data
+threads:
+  - circular-data-economy
+serves:
+  - researchers
+could_serve:
+  - policy
+extracts:
+  - reservoir: buildings
+    stock: 59381
+    unit: buildings
+    source: https://github.com/simonvanlierde/msc-thesis-ie/blob/main/dashboard/README.md
     as_of: "2026-10-28"
 ---

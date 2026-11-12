@@ -11,9 +11,16 @@ tags:
   - GitHub Actions
   - CodeMeta
   - just
-uses:
+tooling:
   - jsonvet
   - sourceledger
   - citesync
 order: 7
+layer: software
+threads:
+  - built-to-scale-and-last
+serves:
+  - builders
+could_serve:
+  - researchers
 ---

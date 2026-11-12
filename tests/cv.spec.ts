@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
-import { formatPeriod, isoDay } from "../src/components/cvPeriod.ts";
+import { formatPeriod } from "../src/components/cvPeriod.ts";
 import { listablePublications, PublicationSchema } from "../src/data/publications.ts";
 
 // Read the export instead of hard-coding it, so the tests check the page against
@@ -102,13 +102,10 @@ test("the homepage links to the CV, and the CV links back", async ({ page }) => 
   // suspends rendering during it, so the second click times out. A harness quirk only.
   await page.emulateMedia({ reducedMotion: "reduce" });
 
-  await page.getByRole("link", { name: "Home" }).click();
+  await page.getByRole("link", { name: "Simon van Lierde", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
 
-  await page
-    .getByRole("navigation")
-    .getByRole("link", { name: /Sheet 2/ })
-    .click();
+  await page.getByRole("navigation").getByRole("link", { name: "CV", exact: true }).click();
   await expect(page).toHaveURL(/\/cv\/$/);
 });
 
@@ -160,21 +157,8 @@ test("the homepage does not restate the CV timeline", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 2, name: /Experience|Education/ })).toHaveCount(0);
 });
 
-test("the CV sheet stamps when its data was exported, and marks itself current", async ({ page }) => {
-  const block = page.getByRole("region", { name: "Document title block" });
-  await expect(block.getByText("Curriculum vitae", { exact: true })).toBeVisible();
-  await expect(block.getByText("2 OF 4", { exact: true })).toBeVisible();
-  await expect(block.getByRole("link", { name: "2 OF 4, go to sheet 1, index" })).toHaveAttribute("href", "/");
-
-  // A generated sheet is dated, not attributed.
-  await expect(block.getByText("Dated", { exact: true })).toBeVisible();
-  const stamp = block.locator("time");
-  const day = isoDay(cv.exported);
-  await expect(stamp).toHaveAttribute("datetime", day);
-  // The stamp is UTC; a local-zone build must not shift the day.
-  await expect(stamp).toHaveText(new RegExp(`^${Number(day.slice(8))} `));
-
+test("the CV is marked current in the primary navigation", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Primary" });
-  await expect(nav.getByRole("link", { name: "Sheet 2: CV" })).toHaveAttribute("aria-current", "page");
-  await expect(nav.getByRole("link", { name: "Sheet 1: Index" })).not.toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link", { name: "CV", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(nav.getByRole("link", { name: "Work", exact: true })).not.toHaveAttribute("aria-current", "page");
 });

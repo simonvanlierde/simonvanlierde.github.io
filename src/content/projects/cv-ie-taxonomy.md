@@ -20,4 +20,12 @@ figures:
     value: "39.7%"
     source: https://github.com/simonvanlierde/cv-ie-taxonomy
     as_of: "2026-10-28"
+layer: data
+threads:
+  - circular-data-economy
+  - open-and-reproducible-ml
+serves:
+  - researchers
+could_serve:
+  - builders
 ---

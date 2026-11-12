@@ -9,7 +9,7 @@ tags:
   - i18next
   - PWA
 category: personal
-uses:
+tooling:
   - project-templates
   - jsonvet
 order: 5
@@ -18,4 +18,9 @@ figures:
     value: "nine"
     source: https://github.com/simonvanlierde/scattergories/blob/main/src/i18n/locales/registry.json
     as_of: "2026-10-19"
+layer: tools-and-apps
+threads:
+  - tools-that-respect-people
+serves:
+  - public
 ---

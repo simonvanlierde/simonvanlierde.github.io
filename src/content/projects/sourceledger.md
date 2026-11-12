@@ -9,8 +9,17 @@ tags:
   - PyPI
   - Frictionless
   - reproducible builds
-uses:
+tooling:
   - project-templates
   - citesync
 order: 5
+layer: software
+threads:
+  - open-and-fair-research-software
+serves:
+  - builders
+could_serve:
+  - researchers
+fixes:
+  - SchemaStore/schemastore
 ---

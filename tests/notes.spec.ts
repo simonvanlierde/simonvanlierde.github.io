@@ -22,11 +22,8 @@ test("the post page, the notes index and the landing page link to each other", a
     "/notes/rss.xml",
   );
   await expect(
-    page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Sheet 4: Notes" }),
+    page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Notes", exact: true }),
   ).toHaveAttribute("aria-current", "page");
-  await expect(
-    page.getByRole("region", { name: "Document title block" }).getByText("4 OF 4", { exact: true }),
-  ).toBeVisible();
 
   await page.getByRole("link", { name: "All notes" }).click();
   await expect(page).toHaveURL(/\/notes\/$/);

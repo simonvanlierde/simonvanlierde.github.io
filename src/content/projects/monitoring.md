@@ -18,4 +18,9 @@ figures:
     value: "19"
     source: https://github.com/CMLPlatform/monitoring/blob/main/docs/adr/0002-hub-and-spoke-observability.md
     as_of: "2026-08-20"
+layer: software
+threads:
+  - built-to-scale-and-last
+serves:
+  - builders
 ---

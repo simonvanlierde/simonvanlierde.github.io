@@ -12,12 +12,13 @@ test("the privacy page names the hosts and has its own metadata", async ({ page 
   }
 });
 
-test("every sheet's footer links to the privacy page", async ({ page }) => {
+test("every page's footer links to the privacy page", async ({ page }) => {
   for (const path of ["/", "/cv/", "/archive/", "/notes/", "/privacy/"]) {
     await page.goto(path);
-    await expect(
-      page.getByRole("region", { name: "Document title block" }).getByRole("link", { name: "Privacy" }),
-    ).toHaveAttribute("href", "/privacy/");
+    await expect(page.getByRole("contentinfo").getByRole("link", { name: "Privacy" })).toHaveAttribute(
+      "href",
+      "/privacy/",
+    );
   }
 });
 

@@ -1,0 +1,18 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+
+const sha: string = import.meta.env.SITE_SHA;
+const repo = "https://github.com/simonvanlierde/simonvanlierde.github.io";
+---
+
+<footer class="container site-footer">
+  <nav aria-label="Footer">
+    <a href="/privacy/">Privacy</a>
+    <a href="/notes/rss.xml">RSS feed</a>
+    <a href={repo}>Source</a>
+  </nav>
+  <div class="site-footer__build">
+    {sha && <a href={`${repo}/commit/${sha}`} aria-label={`Site revision ${sha.slice(0, 7)}`}>{sha.slice(0, 7)}</a>}
+    <ThemeToggle />
+  </div>
+</footer>

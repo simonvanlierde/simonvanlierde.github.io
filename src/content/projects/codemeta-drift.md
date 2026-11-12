@@ -8,7 +8,7 @@ tags:
   - Python
   - CodeMeta
   - FAIR
-uses:
+tooling:
   - project-templates
   - citesync
 order: 8
@@ -17,4 +17,11 @@ figures:
     value: "46"
     source: https://github.com/simonvanlierde/codemeta-drift#what-it-found-in-codemeta-2026-10-13
     as_of: "2026-10-13"
+layer: software
+threads:
+  - open-and-fair-research-software
+serves:
+  - builders
+fixes:
+  - codemeta/codemeta
 ---

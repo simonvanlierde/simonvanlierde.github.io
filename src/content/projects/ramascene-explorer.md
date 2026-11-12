@@ -12,7 +12,7 @@ tags:
 links:
   - label: Brightway check
     url: https://github.com/simonvanlierde/ramascene-explorer/blob/main/brightway-check/README.md
-uses:
+tooling:
   - jsonvet
   - citesync
 featured: true
@@ -31,4 +31,20 @@ figures:
     value: "0.98"
     source: https://github.com/simonvanlierde/ramascene-explorer/blob/main/docs/page.md#first-load-size
     as_of: "2026-10-26"
+layer: tools-and-apps
+threads:
+  - footprints-and-flows
+builds_on:
+  - IndEcol/pymrio
+serves:
+  - researchers
+could_serve:
+  - public
+  - policy
+extracts:
+  - reservoir: economy
+    stock: 49
+    unit: regions
+    source: https://github.com/simonvanlierde/ramascene-explorer/blob/main/data/regions.json
+    as_of: "2026-10-13"
 ---

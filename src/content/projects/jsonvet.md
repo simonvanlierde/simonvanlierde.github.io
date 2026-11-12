@@ -12,7 +12,7 @@ tags:
 links:
   - label: Speed figures
     url: https://github.com/simonvanlierde/jsonvet/blob/main/docs/design.md#speed
-uses:
+tooling:
   - citesync
 featured: true
 image_focus: { x: 0.47, y: 0.61, zoom: 2.4 }
@@ -30,4 +30,9 @@ figures:
     value: "2,201"
     source: https://github.com/simonvanlierde/jsonvet/blob/main/docs/design.md#speed
     as_of: "2026-11-01"
+layer: software
+threads:
+  - built-to-scale-and-last
+serves:
+  - builders
 ---

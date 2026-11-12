@@ -11,4 +11,9 @@ figures:
     value: "75"
     source: https://github.com/simonvanlierde/awesome-ai4ie/blob/main/src/data/literature.yaml
     as_of: "2026-10-19"
+layer: tools-and-apps
+threads:
+  - open-and-reproducible-ml
+serves:
+  - researchers
 ---

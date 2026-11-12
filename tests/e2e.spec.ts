@@ -1,11 +1,9 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { parse } from "yaml";
-import { isoDay } from "../src/components/cvPeriod.ts";
 
 // Read the export instead of restating it (see tests/cv.spec.ts).
 const cv = parse(readFileSync("src/data/cv-public.yaml", "utf8"));
-const stats = JSON.parse(readFileSync("src/data/stats.json", "utf8"));
 const codemeta = JSON.parse(readFileSync("src/data/codemeta.json", "utf8"));
 
 test.beforeEach(async ({ page }) => {
@@ -18,7 +16,7 @@ test("renders the page shell: title, main landmark, single h1", async ({ page })
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Simon van Lierde");
 });
 
-// The sheet frame and the exploded view reach outside their boxes at small widths.
+// Check the complete page at narrow and wide viewport sizes.
 for (const width of [320, 390, 900, 1200]) {
   test(`no page scrolls sideways at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
@@ -33,8 +31,8 @@ for (const width of [320, 390, 900, 1200]) {
   });
 }
 
-test("the title block's contact links point at the right destinations", async ({ page }) => {
-  const footer = page.getByRole("contentinfo");
+test("the contact section links to the published profiles", async ({ page }) => {
+  const footer = page.locator("#contact");
   const expected: Record<string, string> = {
     GitHub: cv.basics.links.github,
     LinkedIn: cv.basics.links.linkedin,
@@ -51,27 +49,8 @@ test("skip link is the first tab stop and lands before the h1", async ({ page })
   const skip = page.getByRole("link", { name: "Skip to content" });
   await expect(skip).toBeFocused();
   await expect(skip).toHaveAttribute("href", "#main");
-  // The h1 and the primary stamp are content, so they sit inside the skip target.
+  // The page heading belongs to the skip target.
   await expect(page.locator("#main").getByRole("heading", { level: 1 })).toHaveCount(1);
-});
-
-test("the sheet starts dark, even on a light system, and the toggle's light choice persists", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/");
-  const html = page.locator("html");
-  const toggle = page.getByRole("button", { name: "Dark mode" });
-  const bg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-
-  await expect(toggle).toHaveAttribute("aria-pressed", "true");
-  const dark = await bg();
-
-  await toggle.click();
-  await expect(html).toHaveAttribute("data-theme", "light");
-  await expect(toggle).toHaveAttribute("aria-pressed", "false");
-  expect(await bg()).not.toBe(dark);
-
-  await page.reload();
-  await expect(html).toHaveAttribute("data-theme", "light");
 });
 
 test("the index keeps four featured projects and sends the rest to the archive", async ({ page }) => {
@@ -163,205 +142,10 @@ test("project titles open websites and keep source links, with repositories as t
   ).toHaveAttribute("href", "https://github.com/simonvanlierde/project-templates");
 });
 
-for (const path of ["/", "/cv/"]) {
-  test(`the monogram hides while the name is in view (${path})`, async ({ page }) => {
-    await page.goto(path);
-    const mark = page.locator(".sheet-nav__mark");
-    await expect(mark).toBeHidden();
-    await page.evaluate(() => window.scrollTo(0, 600));
-    await expect(mark).toBeVisible();
-  });
-}
-
-test("the 404 has no name heading, so its monogram always shows", async ({ page }) => {
-  await page.goto("/no-such-page/");
-  await expect(page.locator(".sheet-nav__mark")).toBeVisible();
-});
-
-test("under reduced motion the monogram always shows", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  await expect(page.locator(".sheet-nav__mark")).toBeVisible();
-});
-
-test("the monogram scrolls the index back up, and leads home from the CV", async ({ page }) => {
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.getByRole("link", { name: "SVL, back to top" }).click();
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
-  expect(new URL(page.url()).pathname).toBe("/");
-
-  await page.goto("/cv/");
-  // Hidden at the top of the sheet, so not in the accessibility tree: check the element.
-  const mark = page.locator(".sheet-nav__mark");
-  await expect(mark).toHaveAttribute("href", "/");
-  await expect(mark).toHaveAttribute("aria-label", "SVL, home");
-});
-
-test("the hero has exactly one stamp, and it is the CV", async ({ page }) => {
-  // The header allows one stamp, and it goes to the CV. An exported address sits
-  // beside it as a plain link.
-  const primary = page.locator("header .stamp");
-  await expect(primary).toHaveCount(1);
-  await expect(primary).toHaveAttribute("href", "/cv/");
-  const emails = await page
-    .locator("header a[href^='mailto:']")
-    .evaluateAll((els) => els.map((el) => ({ href: el.getAttribute("href"), text: el.textContent?.trim() })));
-  expect(emails).toEqual(cv.basics.email ? [{ href: `mailto:${cv.basics.email}`, text: cv.basics.email }] : []);
-});
-
-test("the exploded view becomes one compact, touch-sized system on mobile", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-
-  await expect(page.getByText("Open any numbered part.")).toBeVisible();
-  await expect(page.locator(".exploded__svg--desktop")).toBeHidden();
-  const mobile = page.locator(".exploded__svg--mobile");
-  await expect(mobile).toBeVisible();
-
-  const links = mobile.locator("a.mobile-part");
-  await expect(links).toHaveCount(6);
-  for (let i = 0; i < 6; i += 1) {
-    const box = await links.nth(i).boundingBox();
-    expect(box?.width).toBeGreaterThanOrEqual(44);
-    expect(box?.height).toBeGreaterThanOrEqual(44);
-  }
-
-  await page.setViewportSize({ width: 900, height: 800 });
-  await expect(page.locator(".exploded__svg--desktop")).toBeVisible();
-  await expect(mobile).toBeHidden();
-});
-
-// Each balloon's href is hand-written in the SVG, so copy-paste slips are likely.
-// This list is the independent check.
-const PART_DESTINATIONS = [
-  ["Camera rig", "https://github.com/CMLPlatform/r9cam"],
-  ["Capture app", "https://github.com/CMLPlatform/r9lab/tree/main/app"],
-  ["Web app", "https://app.r9lab.io"],
-  ["API", "https://docs.r9lab.io/api-reference/"],
-  ["Database", "https://docs.r9lab.io/architecture/datamodel/"],
-  ["Docs", "https://docs.r9lab.io"],
-];
-
-for (const [variant, width] of [
-  ["desktop", 900],
-  ["mobile", 390],
-] as const) {
-  test(`every numbered part on the ${variant} plate opens its own destination`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 844 });
-    const links = page.locator(`.exploded__svg--${variant} a`);
-    await expect(links).toHaveCount(PART_DESTINATIONS.length);
-    // No two parts share a destination.
-    expect(new Set(PART_DESTINATIONS.map(([, href]) => href)).size).toBe(PART_DESTINATIONS.length);
-
-    for (const [i, [name, href]] of PART_DESTINATIONS.entries()) {
-      await expect(links.nth(i)).toHaveAttribute("href", href);
-      // The label names the part, so a swapped balloon fails here.
-      await expect(links.nth(i)).toHaveAttribute("aria-label", new RegExp(`^${i + 1} ${name}:`));
-    }
-  });
-}
-
-test("a keyboard user can focus each part of the figure", async ({ page }) => {
-  const first = page.locator(".exploded__svg--desktop a").first();
-  await first.focus();
-  await expect(first).toBeFocused();
-  // Sighted keyboard users find the part by its focus ring.
-  await expect(first).toHaveCSS("outline-style", "solid");
-});
-
-// The settle class lives for two frames only, so watch every class change from before parsing.
-for (const reducedMotion of ["reduce", "no-preference"] as const) {
-  test(`the drawing assembles only when motion is allowed (${reducedMotion})`, async ({ page }) => {
-    await page.emulateMedia({ reducedMotion });
-    await page.addInitScript(() => {
-      new MutationObserver((records) => {
-        for (const r of records) {
-          if ((r.target as Element).classList?.contains("is-assembled")) Object.assign(window, { assembled: true });
-        }
-      }).observe(document, { subtree: true, attributes: true, attributeFilter: ["class"] });
-    });
-    await page.goto("/");
-    await page.waitForLoadState("load");
-    // Reduced motion must skip the settle animation, not shorten it.
-    expect(await page.evaluate(() => "assembled" in window)).toBe(reducedMotion === "no-preference");
-  });
-}
-
-test("the title block states what the sheet is, and when it was drawn", async ({ page }) => {
-  const block = page.getByRole("region", { name: "Document title block" });
-  await expect(block.getByText("Simon van Lierde", { exact: true })).toBeVisible();
-  await expect(block.getByText("Index of work", { exact: true })).toBeVisible();
-  await expect(block.getByText("1 OF 4", { exact: true })).toBeVisible();
-
-  // The sheet is dated by its newest input: the export, the stats or any figure on it, in UTC.
-  await expect(block.getByText("Dated", { exact: true })).toBeVisible();
-  const figureDates = await page
-    .locator("[data-as-of]")
-    .evaluateAll((els) => els.map((el) => el.getAttribute("data-as-of") ?? ""));
-  const latest = [isoDay(cv.exported), stats.as_of, ...figureDates].sort().at(-1) ?? "";
-  await expect(block.locator("time")).toHaveAttribute("datetime", latest);
-
-  const rev = block.getByRole("link", { name: /^Site revision / });
-  await expect(rev).toHaveAttribute(
-    "href",
-    /^https:\/\/github\.com\/simonvanlierde\/simonvanlierde\.github\.io\/commit\/[0-9a-f]{40}$/,
-  );
-  await expect(rev).toHaveText(/^[0-9a-f]{7}$/);
-  // The sheet number turns the page.
-  await block.getByRole("link", { name: "1 OF 4, go to sheet 2, CV" }).click();
-  await expect(page).toHaveURL(/\/cv\/$/);
-});
-
-test("a sheet with nothing generated is attributed rather than dated", async ({ page }) => {
-  // The 404 has no export behind it, so it falls back to "Drawn by".
-  await page.goto("/no-such-page/");
-  const block = page.getByRole("region", { name: "Document title block" });
-  await expect(block.getByText("Drawn by", { exact: true })).toBeVisible();
-  await expect(block.getByText("SVL", { exact: true })).toBeVisible();
-  await expect(block.locator("time")).toHaveCount(0);
-  await expect(block.getByText("NOT IN SET", { exact: true })).toBeVisible();
-});
-
-test("the open sheet is marked current in the nav", async ({ page }) => {
-  const nav = page.getByRole("navigation", { name: "Primary" });
-  await expect(nav.getByRole("link", { name: "Sheet 1: Index" })).toHaveAttribute("aria-current", "page");
-  await expect(nav.getByRole("link", { name: "Sheet 2: CV" })).not.toHaveAttribute("aria-current", "page");
-});
-
-test("five sheets keep the nav on one line at 390px, with full accessible names", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  const nav = page.getByRole("navigation", { name: "Primary" });
-  // A stand-in fifth sheet, built like the others, for when the set grows.
-  await nav
-    .locator(".sheet-nav__link")
-    .last()
-    .evaluate((last) => {
-      const fifth = last.cloneNode(true) as HTMLElement;
-      fifth.removeAttribute("aria-current");
-      fifth.innerHTML = last.innerHTML.replace("Sheet 4: ", "Sheet 5: ").replace("Notes", "Fifth");
-      last.after(fifth);
-    });
-  const names = ["Sheet 1: Index", "Sheet 2: CV", "Sheet 3: Archive", "Sheet 4: Notes", "Sheet 5: Fifth"];
-  for (const name of names) await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
-  const tops = await nav
-    .locator(".sheet-nav__mark, .sheet-nav__link, .theme-toggle")
-    .evaluateAll((items) =>
-      items.map((item) => item.getBoundingClientRect().top + item.getBoundingClientRect().height / 2),
-    );
-  expect(tops).toHaveLength(names.length + 2);
-  for (const top of tops) expect(Math.abs(top - tops[0])).toBeLessThan(2);
-});
-
-test("the title block ends with a clear collaboration path", async ({ page }) => {
-  const footer = page.getByRole("contentinfo");
-  await expect(footer.getByText("Contact Simon")).toBeVisible();
-  const hrefs = await footer.getByRole("link").evaluateAll((els) => els.map((el) => el.getAttribute("href")));
-  expect(hrefs.filter((h) => h?.startsWith("mailto:"))).toEqual(cv.basics.email ? [`mailto:${cv.basics.email}`] : []);
-});
-
 test("an unknown path serves the 404 page with a way back", async ({ page }) => {
   await page.goto("/no-such-page/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("That page does not exist");
-  await expect(page.getByRole("link", { name: "Sheet 1: index of work" })).toHaveAttribute("href", "/");
+  await expect(page.getByRole("link", { name: "Back to work" })).toHaveAttribute("href", "/");
 });
 
 test.describe("disassembly chart", () => {
@@ -516,12 +300,9 @@ test("archive route, nav and cross references reach real project rows", async ({
   expect((await request.get("/archive/")).status()).toBe(200);
   await page.goto("/archive/");
   await expect(
-    page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Sheet 3: Archive" }),
+    page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Work", exact: true }),
   ).toHaveAttribute("aria-current", "page");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://simonvanlierde.com/archive/");
-  await expect(
-    page.getByRole("region", { name: "Document title block" }).getByText("3 OF 4", { exact: true }),
-  ).toBeVisible();
   for (const path of ["/", "/archive/"]) {
     await page.goto(path);
     const links = await page.locator("a.ref").evaluateAll((els) => els.map((el) => el.getAttribute("href") ?? ""));
@@ -551,14 +332,8 @@ for (const width of [320, 390]) {
       await page.evaluate((value) => {
         document.documentElement.dataset.theme = value;
       }, theme);
-      const archive = page.getByRole("link", { name: "Sheet 3: Archive", exact: true });
-      const target = await archive.evaluate((el) => {
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        const box = range.getBoundingClientRect();
-        return { x: box.right - 1, y: box.top + box.height / 2 };
-      });
-      await page.mouse.click(target.x, target.y);
+      const archive = page.getByRole("link", { name: "Project archive", exact: true });
+      await archive.click();
       await expect(page).toHaveURL(/\/archive\/$/);
       await page.goto("/");
     }
@@ -571,7 +346,7 @@ for (const width of [320, 390]) {
           .evaluate(
             (el) =>
               el.getBoundingClientRect().top -
-              (document.querySelector(".sheet-nav")?.getBoundingClientRect().bottom ?? 0),
+              (document.querySelector(".site-header")?.getBoundingClientRect().bottom ?? 0),
           ),
       )
       .toBeGreaterThanOrEqual(0);

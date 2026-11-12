@@ -40,15 +40,13 @@ for (const colorScheme of ["light", "dark"] as const) {
   ]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
-      // The sheet defaults to dark; light comes from the toggle's stored choice.
-      await page.addInitScript((t) => localStorage.setItem("theme", t), colorScheme);
       await page.goto(path);
       expect(await axeViolations(page)).toEqual([]);
     });
   }
 }
 
-// Narrow screens get their own layout, such as the compact Fig. 1 plate.
+// Narrow screens exercise the responsive shell and content.
 for (const path of ["/", "/cv/", "/archive/", "/notes/hub-and-spoke-observability/"]) {
   test(`no axe violations on a phone (${path})`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -82,9 +80,10 @@ test("no axe violations after interaction", async ({ page }) => {
   await page.goto("/");
   await pressComponents(page);
 
-  await page.locator(".theme-toggle").click();
-  // A fresh context starts dark, so anything but "false" means the toggle is broken.
-  await expect(page.locator(".theme-toggle")).toHaveAttribute("aria-pressed", "false");
+  const toggle = page.getByRole("button", { name: "Dark mode" });
+  const pressed = await toggle.getAttribute("aria-pressed");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", String(pressed !== "true"));
 
   expect(await axeViolations(page)).toEqual([]);
 });

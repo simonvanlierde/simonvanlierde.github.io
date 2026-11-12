@@ -144,7 +144,13 @@ test("Astro rejects a manual DOI supplied by CodeMeta but accepts a different DO
     await mkdir(join(dir, "src/pages"));
     await symlink(join(root, "node_modules"), join(dir, "node_modules"));
     await writeFile(join(dir, "package.json"), '{"type":"module"}');
-    for (const path of ["src/content.config.ts", "src/data/projectSchema.ts", "src/data/codemeta.json"])
+    for (const path of [
+      "src/content.config.ts",
+      "src/data/projectSchema.ts",
+      "src/data/codemeta.json",
+      "src/data/upstream.ts",
+      "src/data/upstream.json",
+    ])
       await cp(join(root, path), join(dir, path));
     await writeFile(
       join(dir, "src/pages/index.astro"),
@@ -152,7 +158,7 @@ test("Astro rejects a manual DOI supplied by CodeMeta but accepts a different DO
     );
     const cardPath = join(dir, "src/content/projects/example.md");
     const card = (doi: string) =>
-      `---\ntitle: Example\ndescription: Example\nkind: Tool\nrepo: https://github.com/simonvanlierde/credit-matrix\nlinks:\n  - label: Paper\n    url: ${doi}\n---\n`;
+      `---\ntitle: Example\ndescription: Example\nkind: Tool\nlayer: software\nthreads: [built-to-scale-and-last]\nrepo: https://github.com/simonvanlierde/credit-matrix\nlinks:\n  - label: Paper\n    url: ${doi}\n---\n`;
     const build = () =>
       promisify(execFile)(process.execPath, [join(root, "node_modules/astro/bin/astro.mjs"), "build", "--root", dir], {
         cwd: dir,

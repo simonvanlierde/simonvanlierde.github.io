@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import process from "node:process";
 import preact from "@astrojs/preact";
+import svelte from "@astrojs/svelte";
 import { defineConfig } from "astro/config";
 
 // The commit this build came from, for the title block's "Site rev". Actions sets
@@ -26,8 +27,7 @@ const ogVersion = createHash("sha256").update(readFileSync("public/og.png")).dig
 export default defineConfig({
   site: "https://simonvanlierde.com",
   base: "/",
-  // Preact, not React: the one island needs two hooks, not a 57KB runtime.
-  integrations: [preact()],
+  integrations: [preact(), svelte()],
   // Fenced code: both themes' colours land as CSS variables, and global.css picks one by colour-scheme.
   // The high-contrast pair clears 4.5:1 on --surface in both themes.
   markdown: {

@@ -13,7 +13,7 @@ tags:
 links:
   - label: Zenodo record
     url: https://doi.org/10.5281/zenodo.23727602
-uses:
+tooling:
   - project-templates
 order: 2
 figures:
@@ -21,4 +21,13 @@ figures:
     value: "five"
     source: https://github.com/simonvanlierde/brightway-benchmarks#results-so-far
     as_of: "2026-10-29"
+layer: software
+threads:
+  - footprints-and-flows
+  - built-to-scale-and-last
+builds_on:
+  - brightway-lca/brightway2-calc
+serves:
+  - builders
+  - researchers
 ---

@@ -13,7 +13,7 @@ tags:
 links:
   - label: CRediT census
     url: https://github.com/simonvanlierde/credit-matrix/blob/main/census/README.md
-uses:
+tooling:
   - citesync
 featured: true
 order: 3
@@ -22,4 +22,12 @@ figures:
     value: "27,874"
     source: https://github.com/simonvanlierde/credit-matrix/blob/main/census/README.md
     as_of: "2026-10-27"
+layer: tools-and-apps
+threads:
+  - open-and-fair-research-software
+  - tools-that-respect-people
+serves:
+  - researchers
+could_serve:
+  - builders
 ---

@@ -1,0 +1,18 @@
+---
+interface Props {
+  current?: "index" | "cv" | "archive" | "notes";
+}
+const { current } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__name" href="/">Simon van Lierde</a>
+    <nav aria-label="Primary">
+      <a href="/#work-heading" aria-current={current === "index" || current === "archive" ? "page" : undefined}>Work</a>
+      <a href="/cv/" aria-current={current === "cv" ? "page" : undefined}>CV</a>
+      <a href="/notes/" aria-current={current === "notes" ? "page" : undefined}>Notes</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>

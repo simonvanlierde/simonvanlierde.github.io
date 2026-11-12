@@ -6,4 +6,10 @@ demo: https://cmlplatform.github.io/cml-gallery/
 kind: project gallery
 category: minor
 order: 2
+layer: tools-and-apps
+threads:
+  - open-and-fair-research-software
+serves:
+  - researchers
+  - public
 ---

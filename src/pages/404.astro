@@ -1,8 +1,8 @@
 ---
+import SiteFooter from "../components/SiteFooter.astro";
 // GitHub Pages serves this for any unmatched path. It keeps the site chrome
 // so a wrong URL does not look like a broken host.
-import SheetNav from "../components/SheetNav.astro";
-import TitleBlock from "../components/TitleBlock.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import Base from "../layouts/Base.astro";
 ---
 
@@ -11,23 +11,22 @@ import Base from "../layouts/Base.astro";
   description="That page does not exist on this site."
   canonical={false}
 >
-  <SheetNav />
+  <SiteHeader />
 
-  <main id="main" class="container notfound">
+  <main id="main" tabindex="-1" class="container notfound">
     <h1>That page does not exist</h1>
     <p class="prose">
-      The link may be out of date, or the address may have a typo in it. This
-      drawing set has four sheets:
+      The link may be out of date, or the address may have a typo in it.
     </p>
     <p class="notfound__row">
-      <a class="stamp" href="/">Sheet 1: index of work</a>
-      <a href="/cv/">Sheet 2: CV</a>
-      <a href="/archive/">Sheet 3: project archive</a>
-      <a href="/notes/">Sheet 4: notes</a>
+      <a class="stamp" href="/">Back to work</a>
+      <a href="/cv/">CV</a>
+      <a href="/archive/">Project archive</a>
+      <a href="/notes/">Notes</a>
     </p>
   </main>
 
-  <TitleBlock title="Simon van Lierde" docType="Page not found" sheet="NOT IN SET" />
+  <SiteFooter />
 </Base>
 
 <style>

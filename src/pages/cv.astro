@@ -1,8 +1,8 @@
 ---
-import { formatDate, formatIsoDate, formatPeriod, isoDay } from "../components/cvPeriod.ts";
+import { formatDate, formatIsoDate, formatPeriod } from "../components/cvPeriod.ts";
 import SheetHead from "../components/SheetHead.astro";
-import SheetNav from "../components/SheetNav.astro";
-import TitleBlock from "../components/TitleBlock.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import { cv, cvPdf as pdf } from "../data/cv.ts";
 import { listablePublications } from "../data/publications.ts";
 import { cvJsonLd } from "../data/schemaOrg.ts";
@@ -48,10 +48,10 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
   description={`Curriculum vitae of ${basics.name}: ${basics.headline}.`}
   jsonLd={cvJsonLd}
 >
-  <SheetNav current="cv" />
+  <SiteHeader current="cv" />
 
-  {/* Skip target: the skip link passes only the sheet nav. */}
-  <header class="container cv-header" id="main">
+  <main id="main" tabindex="-1">
+  <div class="container cv-header">
     {/* Same split as the index's hero: the title zone and the stamp on the
         left, the section register where the index has its figure. */}
     <div class="cv-header__grid">
@@ -105,9 +105,8 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
         </ol>
       </nav>
     </div>
-  </header>
+  </div>
 
-  <main>
     <section class="container" aria-labelledby="profile-heading">
       <h2 id="profile-heading"><span class="datum" aria-hidden="true">{ref("profile-heading")}</span>Profile</h2>
       <p class="prose cv-profile cv-aligned">{profile}</p>
@@ -281,13 +280,7 @@ const ref = (id: string) => sections.find((s) => s.id === id)?.ref;
     </aside>
   </main>
 
-  <TitleBlock
-    title={basics.name}
-    docType="Curriculum vitae"
-    sheet="2 OF 4"
-    turn={{ href: "/", label: "sheet 1, index", dir: "prev" }}
-    dated={exported && isoDay(exported)}
-  />
+  <SiteFooter />
 </Base>
 
 <style>

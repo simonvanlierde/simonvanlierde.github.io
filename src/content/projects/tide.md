@@ -12,7 +12,7 @@ links:
   - label: Backtest
     url: https://github.com/simonvanlierde/tide/blob/main/docs/backtest.md
 category: personal
-uses:
+tooling:
   - project-templates
   - jsonvet
 order: 3
@@ -37,4 +37,9 @@ figures:
     value: "six"
     source: https://github.com/simonvanlierde/tide/blob/main/docs/backtest.md#results
     as_of: "2026-10-18"
+layer: tools-and-apps
+threads:
+  - tools-that-respect-people
+serves:
+  - public
 ---

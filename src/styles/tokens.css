@@ -1,0 +1,104 @@
+/* Field-atlas palette. This table supplies both themes and the contrast checks. */
+@font-face {
+  font-family: "Schibsted Grotesk";
+  src: url("/fonts/schibsted-grotesk-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Schibsted Grotesk";
+  src: url("/fonts/schibsted-grotesk-latin-800.woff2") format("woff2");
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-latin-400-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atlas Mono";
+  src: url("/fonts/atlas-mono-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light dark;
+  --font-sans: "Newsreader", Georgia, serif;
+  --font-draft: "Schibsted Grotesk", system-ui, sans-serif;
+  --font-mono: "Atlas Mono", monospace;
+  --step--1: clamp(0.833rem, 0.826rem + 0.033vw, 0.85rem);
+  --step-0: clamp(1rem, 0.971rem + 0.122vw, 1.0625rem);
+  --step-1: clamp(1.44rem, 1.338rem + 0.429vw, 1.66rem);
+  --step-2: clamp(1.2rem, 1.141rem + 0.25vw, 1.328rem);
+  --step-3: clamp(1.728rem, 1.567rem + 0.677vw, 2.075rem);
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-s: 0.75rem;
+  --space-m: clamp(1.25rem, 1.134rem + 0.488vw, 1.5rem);
+  --space-l: clamp(1.5rem, 1.268rem + 0.976vw, 2rem);
+  --space-xl: clamp(3rem, 2.305rem + 2.927vw, 4.5rem);
+  --gutter: clamp(1rem, 0.073rem + 3.902vw, 3rem);
+  --measure: 50ch;
+  --radius: 2px;
+  --border-width: 0.75px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
+  --dur-slow: 250ms;
+  --dur-explode: 600ms;
+  --bg: var(--paper);
+  --surface: var(--sheet);
+  --text: var(--ink);
+  --text-muted: var(--ink-2);
+  --border: var(--rule);
+  --border-strong: var(--ink-2);
+  --accent: var(--river);
+  --accent-strong: var(--ink);
+  --accent-contrast: var(--sheet);
+  --stamp: var(--ink);
+  --stamp-contrast: var(--paper);
+  --focus: var(--ink);
+  --chart-bar: var(--river);
+  --chart-bar-strong: var(--tech);
+  --paper: light-dark(oklch(96.4244% 0.006937 124.448), oklch(19.8883% 0.01213 225.894));
+  --sheet: light-dark(oklch(98.9480% 0.004078 121.5589), oklch(22.3301% 0.01429 220.2622));
+  --ink: light-dark(oklch(25.0952% 0.0137 163.622), oklch(93.7406% 0.008317 157.0838));
+  --ink-2: light-dark(oklch(46.7668% 0.015727 159.4406), oklch(74.5209% 0.016836 166.5533));
+  --rule: light-dark(oklch(85.9940% 0.012678 137.7879), oklch(32.7445% 0.018831 185.5789));
+  --res: light-dark(oklch(93.4053% 0.014325 148.7735), oklch(26.9252% 0.022781 177.1544));
+  --eco: light-dark(oklch(53.8704% 0.065548 157.0177), oklch(76.1885% 0.06741 156.1245));
+  --river: light-dark(oklch(52.2970% 0.075031 218.7932), oklch(75.5308% 0.071926 213.1881));
+  --lib: light-dark(oklch(92.9272% 0.004224 236.5001), oklch(25.8410% 0.013666 229.5769));
+  --tech: light-dark(oklch(51.3818% 0.028775 257.6766), oklch(72.1538% 0.029503 258.3714));
+  --loam: light-dark(oklch(52.0345% 0.084881 82.5602), oklch(75.0371% 0.120016 81.8229));
+  --loop: light-dark(oklch(47.5436% 0.177286 358.473), oklch(70.5158% 0.164509 354.5263));
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@media print {
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+  }
+}

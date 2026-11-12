@@ -6,4 +6,9 @@ demo: https://simonvanlierde.com/io-notebook/
 kind: teaching notebook
 category: minor
 order: 3
+layer: tools-and-apps
+threads:
+  - footprints-and-flows
+serves:
+  - researchers
 ---

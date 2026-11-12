@@ -12,4 +12,9 @@ links:
     url: https://github.com/simonvanlierde/roadmap-sh-file-integrity-checker/blob/main/docs/threat-model.md
 category: personal
 order: 2
+layer: software
+threads:
+  - built-to-scale-and-last
+serves:
+  - builders
 ---

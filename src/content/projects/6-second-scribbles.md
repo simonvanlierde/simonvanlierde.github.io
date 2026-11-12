@@ -12,7 +12,7 @@ links:
   - label: Load test
     url: https://github.com/simonvanlierde/6-second-scribbles/blob/main/docs/capacity.md
 category: personal
-uses:
+tooling:
   - jsonvet
 order: 1
 figures:
@@ -32,4 +32,9 @@ figures:
     value: "250"
     source: https://github.com/simonvanlierde/6-second-scribbles/blob/main/docs/capacity.md
     as_of: "2026-10-21"
+layer: tools-and-apps
+threads:
+  - tools-that-respect-people
+serves:
+  - public
 ---
