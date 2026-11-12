@@ -21,8 +21,9 @@ pnpm dev          # start the dev server at http://localhost:4321
 pnpm build        # type-check (astro check) and build to dist/
 pnpm gen:og       # regenerate public/og.png (the social-card image)
 pnpm fetch:cards  # copy each featured card's demo og:image into src/assets/cards/
-pnpm fetch:codemeta # refresh project versions, DOIs and licences from their repositories
-pnpm fetch:stats  # refresh R9lab's figures in src/data/stats.json
+pnpm fetch:codemeta # refresh project metadata, citation downloads and source records
+pnpm fetch:stats  # refresh R9lab figures and source records
+pnpm gen:citation # regenerate CITATION.cff from the package and public CV
 pnpm fetch:evidence # refresh merged upstream PRs in src/data/upstream.json
 pnpm gen:card     # a poster social card (name, line, address, an app icon via `--mark` above the name and/or a proof visual via `--visual` in the right panel) for another site (needs Docker); run it bare for its flags
                   # the visual is one element captured at 3x and cropped tight, or the app icon: a whole screen is unreadable in the panel
@@ -49,3 +50,41 @@ are all rights reserved.
 
 To report a bug, see [CONTRIBUTING](.github/CONTRIBUTING.md); for a vulnerability,
 [SECURITY](.github/SECURITY.md).
+
+## Citations and source records
+
+Metadata refreshes need [uv](https://docs.astral.sh/uv/) and Python 3.13 or newer. The
+locked script environment uses citesync 0.5.0 and sourceledger 0.5.1; no global tool
+installation is needed. `pnpm dev` and `pnpm build` use committed snapshots and need
+neither Python nor network access.
+
+`pnpm fetch:codemeta` downloads each project's CodeMeta, then runs citesync's public
+CLI to generate APA, BibTeX, CSL-JSON and schema.org JSON-LD under `public/citations/`.
+The card's metadata index links to these files. Missing upstream CodeMeta stays
+missing; the site supplies no authors, dates, DOIs or licences for it. Download,
+validation, export or provenance failures keep that project's last accepted files.
+`pnpm fetch:stats` accepts R9lab's series and totals together, keeping both previous
+source records when either response fails.
+
+sourceledger records the original HTTP response bytes before JSON parsing. Its
+canonical records live in `public/provenance/`; `src/data/provenance.json` is a derived
+index for the site. Each record gives the source URL, actual retrieval time and
+SHA-256. A changed hash means the downloaded bytes changed, including whitespace;
+it does not establish that the source's claims changed or are correct.
+
+Raw response bodies stay in ignored `.cache/sources/<source-id>/<sha256>` for local
+audit. They are never included in the site build, committed or uploaded as public
+artifacts. A fresh checkout has the record history but no raw bodies: hashes alone
+cannot reconstruct earlier downloads. Raw bodies fetched by CI are ephemeral and leave
+with its runner. The record history is evidence of retrieval, not a permanent archive.
+
+`pnpm gen:citation` generates the site's own `CITATION.cff` with citesync, using the
+package's name, description and version and the public CV's author and ORCID.
+CI regenerates it and checks for drift before the build. The weekly refresh updates
+it with the other committed artifacts; the static build serves it at `/CITATION.cff`.
+
+Refresh commands share a lock in `.cache/metadata-refresh.lock`. A second command
+exits 3 without changing accepted data; retry after the first finishes. Normal exit,
+Ctrl-C and SIGTERM release the lock. After a forced kill or host crash, verify that
+no refresh is running before removing the empty lock directory with
+`rmdir .cache/metadata-refresh.lock`.

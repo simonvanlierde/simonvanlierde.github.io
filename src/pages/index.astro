@@ -9,6 +9,7 @@ import NoteList from "../components/NoteList.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
+import SourceRecord from "../components/SourceRecord.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import UpstreamList from "../components/UpstreamList.astro";
 import { cv, intro } from "../data/cv.ts";
@@ -159,6 +160,8 @@ const name = basics.name;
                 <p class="notes__foot draft">
                   Products, components and images as counted <time datetime={counts.as_of}>{asOfLabel}</time>; participants at the two pilot workshops.
                 </p>
+                <SourceRecord sourceId="r9lab-totals" label="R9lab totals" />
+                <SourceRecord sourceId="r9lab-series" label="R9lab monthly series" />
               </section>
 
               <div class="bom-row__spec">

@@ -53,7 +53,7 @@ It also runs `scripts/fetch-cards.mjs` (`pnpm fetch:cards`). For each card marke
 
 When no part of a social card reads well that small, make the close-up by hand: a 480x360 PNG of the live app (a 240x180 CSS-pixel screenshot at 2x), saved as `src/assets/cards/<id>.png`, with `"manual": true` on its entry in `cardImages.json`. The script keeps such an entry and never fetches it. credit-matrix's heatmap is one.
 
-The workflow finishes with `scripts/fetch-codemeta.mjs` (`pnpm fetch:codemeta`). It reads each card repository's `codemeta.json` into committed `src/data/codemeta.json`. Each successful entry gets a `fetched_at` date; a failed or malformed response keeps that repository's last good entry. Missing files are skipped when there is no previous entry. The parser reads version, DOI and licence without fetching JSON-LD contexts. Cards and structured data use this snapshot. A card that repeats its CodeMeta DOI in `links` fails validation during the build.
+The workflow finishes with `scripts/fetch-codemeta.mjs` (`pnpm fetch:codemeta`). It reads each card repository's `codemeta.json` into committed `src/data/codemeta.json`. Each successful entry gets a `fetched_at` date; a failed or malformed response keeps that repository's last good entry. Missing files are skipped when there is no previous entry. The parser reads the software name, author names, publication date, version, DOI and licence without fetching JSON-LD contexts. These bibliographic fields support software citations; CodeMeta’s `citation` property lists related works and is not a recommended citation for the software. Author emails and other personal fields are not cached. Cards and structured data use this snapshot. A card that repeats its CodeMeta DOI in `links` fails validation during the build.
 
 The ranking, grouping and wording of "Merged upstream" stay hand-kept in `src/data/upstream.ts`, which lists each project's PR numbers. The page names the branch when a PR went into one that is not the repo's default (lca_algebraic's `dev`, for example), since that work is not on the default branch yet.
 
@@ -85,3 +85,17 @@ Renovate opens one PR a month for minor and patch updates and merges it once CI 
 - No backend for the portfolio site.
 - No runtime database. Research datasets and platform data live in their own repositories and services.
 - No release per deploy. Every push to `main` deploys, so the commit is the version: the title block's "Site rev" names it and links to it. `CHANGELOG.md` lists the changes a visitor would notice under the next version. A tagged release (`package.json` version plus a GitHub release) marks a milestone only: a new sheet, a redesign, or a large content change.
+
+## Citation and provenance pipeline
+
+The refresh scripts fetch and validate source responses in JavaScript. `scripts/metadata.py`
+runs citesync's public CLI for citation exports and sourceledger's public `record()` API
+for provenance. Its PEP 723 lock pins both tools and their dependencies. Field mappings
+stay in citesync's pinned codemeta-drift export; the site does not format citations.
+
+Each helper call stages its outputs before the fetcher publishes them with the accepted
+snapshot. Failed exports or ledger writes retain the preceding snapshot, exports and
+source records. Stats series and totals are one accepted pair. A local publication
+failure restores the preceding files. Source records are canonical JSONL logs; the UI
+index is derived from their latest records. The site citation is generated and checked
+before CI builds, with committed outputs used for ordinary offline builds.

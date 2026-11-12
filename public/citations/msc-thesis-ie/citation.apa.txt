@@ -1,0 +1,1 @@
+van Lierde, S. (n.d.). Cooling for Comfort, Warming the World: cooling demand and environmental impact model for The Hague [Computer software]. https://github.com/simonvanlierde/msc-thesis-ie

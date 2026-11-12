@@ -1,48 +1,206 @@
 {
   "https://github.com/simonvanlierde/brightway-benchmarks": {
+    "name": "brightway-benchmarks",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "license": "https://spdx.org/licenses/BSD-3-Clause",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (n.d.). brightway-benchmarks [Computer software]. https://github.com/simonvanlierde/brightway-benchmarks",
+      "downloads": {
+        "apa": "/citations/brightway-benchmarks/citation.apa.txt",
+        "bibtex": "/citations/brightway-benchmarks/citation.bib",
+        "cslJson": "/citations/brightway-benchmarks/citation.csl.json",
+        "jsonld": "/citations/brightway-benchmarks/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-brightway-benchmarks"
   },
   "https://github.com/simonvanlierde/citesync": {
+    "name": "citesync",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-10",
+    "version": "0.5.0",
     "doi": "https://doi.org/10.5281/zenodo.23779706",
     "license": "https://spdx.org/licenses/Apache-2.0",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (2026). citesync (Version 0.5.0) [Computer software]. https://doi.org/10.5281/zenodo.23779706",
+      "downloads": {
+        "apa": "/citations/citesync/citation.apa.txt",
+        "bibtex": "/citations/citesync/citation.bib",
+        "cslJson": "/citations/citesync/citation.csl.json",
+        "jsonld": "/citations/citesync/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-citesync"
   },
   "https://github.com/simonvanlierde/codemeta-drift": {
+    "name": "codemeta-drift",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "doi": "https://doi.org/10.5281/zenodo.23774728",
     "license": "https://spdx.org/licenses/Apache-2.0",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (n.d.). codemeta-drift [Computer software]. https://doi.org/10.5281/zenodo.23774728",
+      "downloads": {
+        "apa": "/citations/codemeta-drift/citation.apa.txt",
+        "bibtex": "/citations/codemeta-drift/citation.bib",
+        "cslJson": "/citations/codemeta-drift/citation.csl.json",
+        "jsonld": "/citations/codemeta-drift/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-codemeta-drift"
   },
   "https://github.com/simonvanlierde/credit-matrix": {
-    "version": "0.11.0",
+    "name": "CRediT Matrix",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-12",
+    "version": "0.13.0",
     "doi": "https://doi.org/10.5281/zenodo.21213659",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (2026). CRediT Matrix (Version 0.13.0) [Computer software]. https://doi.org/10.5281/zenodo.21213659",
+      "downloads": {
+        "apa": "/citations/credit-matrix/citation.apa.txt",
+        "bibtex": "/citations/credit-matrix/citation.bib",
+        "cslJson": "/citations/credit-matrix/citation.csl.json",
+        "jsonld": "/citations/credit-matrix/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-credit-matrix"
   },
   "https://github.com/simonvanlierde/jsonvet": {
+    "name": "jsonvet",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "doi": "https://doi.org/10.5281/zenodo.23461825",
     "license": ["https://spdx.org/licenses/MIT", "https://spdx.org/licenses/Apache-2.0"],
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (n.d.). jsonvet [Computer software]. https://doi.org/10.5281/zenodo.23461825",
+      "downloads": {
+        "apa": "/citations/jsonvet/citation.apa.txt",
+        "bibtex": "/citations/jsonvet/citation.bib",
+        "cslJson": "/citations/jsonvet/citation.csl.json",
+        "jsonld": "/citations/jsonvet/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-jsonvet"
   },
   "https://github.com/simonvanlierde/msc-thesis-ie": {
+    "name": "Cooling for Comfort, Warming the World: cooling demand and environmental impact model for The Hague",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "license": "https://spdx.org/licenses/GPL-3.0-or-later",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (n.d.). Cooling for Comfort, Warming the World: cooling demand and environmental impact model for The Hague [Computer software]. https://github.com/simonvanlierde/msc-thesis-ie",
+      "downloads": {
+        "apa": "/citations/msc-thesis-ie/citation.apa.txt",
+        "bibtex": "/citations/msc-thesis-ie/citation.bib",
+        "cslJson": "/citations/msc-thesis-ie/citation.csl.json",
+        "jsonld": "/citations/msc-thesis-ie/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-msc-thesis-ie"
   },
   "https://github.com/simonvanlierde/project-templates": {
+    "name": "project-templates",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
     "doi": "https://doi.org/10.5281/zenodo.23701980",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (n.d.). project-templates [Computer software]. https://doi.org/10.5281/zenodo.23701980",
+      "downloads": {
+        "apa": "/citations/project-templates/citation.apa.txt",
+        "bibtex": "/citations/project-templates/citation.bib",
+        "cslJson": "/citations/project-templates/citation.csl.json",
+        "jsonld": "/citations/project-templates/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-project-templates"
   },
   "https://github.com/simonvanlierde/ramascene-explorer": {
-    "version": "0.6.0",
+    "name": "RaMa-Scene Explorer",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-07",
+    "version": "0.7.0",
     "doi": "https://doi.org/10.5281/zenodo.23461260",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (2026). RaMa-Scene Explorer (Version 0.7.0) [Computer software]. https://doi.org/10.5281/zenodo.23461260",
+      "downloads": {
+        "apa": "/citations/ramascene-explorer/citation.apa.txt",
+        "bibtex": "/citations/ramascene-explorer/citation.bib",
+        "cslJson": "/citations/ramascene-explorer/citation.csl.json",
+        "jsonld": "/citations/ramascene-explorer/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-ramascene-explorer"
   },
   "https://github.com/simonvanlierde/sourceledger": {
-    "version": "0.4.0",
+    "name": "sourceledger",
+    "author": [
+      {
+        "givenName": "Simon",
+        "familyName": "van Lierde"
+      }
+    ],
+    "datePublished": "2026-11-11",
+    "version": "0.5.1",
     "doi": "https://doi.org/10.5281/zenodo.23460694",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-07"
+    "fetched_at": "2026-11-12",
+    "citation": {
+      "apa": "van Lierde, S. (2026). sourceledger (Version 0.5.1) [Computer software]. https://doi.org/10.5281/zenodo.23460694",
+      "downloads": {
+        "apa": "/citations/sourceledger/citation.apa.txt",
+        "bibtex": "/citations/sourceledger/citation.bib",
+        "cslJson": "/citations/sourceledger/citation.csl.json",
+        "jsonld": "/citations/sourceledger/citation.jsonld"
+      }
+    },
+    "sourceId": "codemeta-sourceledger"
   }
 }

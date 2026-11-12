@@ -71,7 +71,14 @@ test("refresh updates successes and keeps each failed repository's last good met
     await mkdir(join(dir, "src/content/projects"), { recursive: true });
     await mkdir(join(dir, "src/data"));
     await symlink(join(root, "node_modules"), join(dir, "node_modules"));
-    for (const script of ["codemeta.mjs", "fetch-codemeta.mjs", "projectCards.mjs"])
+    for (const script of [
+      "codemeta.mjs",
+      "fetch-codemeta.mjs",
+      "projectCards.mjs",
+      "metadata.mjs",
+      "metadata.py",
+      "metadata.py.lock",
+    ])
       await cp(join(root, "scripts", script), join(dir, "scripts", script));
     for (const id of ["success", "malformed", "invalid-doi", "unavailable", "missing", "new"]) {
       await writeFile(join(dir, `src/content/projects/${id}.md`), `---\nrepo: ${repo(id)}\n---\n`);
@@ -92,18 +99,27 @@ test("refresh updates successes and keeps each failed repository's last good met
     globalThis.fetch = async (url) => {
       if (++started === 6) { clearTimeout(deadline); ready.resolve(); }
       await ready.promise;
-      if (url.includes('/success/')) return Response.json({version: '2.0.0'});
+      if (url.includes('/success/')) return Response.json({'@context': 'https://w3id.org/codemeta/3.0', '@type': 'SoftwareSourceCode', name: 'Example', author: {name: 'Alex River'}, datePublished: '2026-11-12', version: '2.0.0'});
       if (url.includes('/malformed/')) return Response.json({license: 'javascript:alert(1)'});
       if (url.includes('/invalid-doi/')) return Response.json({version: '2.0.0', identifier: 'doi:not-a-doi'});
       if (url.includes('/unavailable/')) return new Response('', {status: 503});
       return new Response('', {status: 404});
     };`,
     );
-    await promisify(execFile)("node", ["--import", "./mock.mjs", "scripts/fetch-codemeta.mjs"], {
+    const { stdout } = await promisify(execFile)("node", ["--import", "./mock.mjs", "scripts/fetch-codemeta.mjs"], {
       cwd: dir,
     });
     const next = JSON.parse(await readFile(join(dir, "src/data/codemeta.json"), "utf8"));
-    assert.deepEqual(next[repo("success")], { version: "2.0.0", fetched_at: new Date().toISOString().slice(0, 10) });
+    const { citation, sourceId, ...success } = next[repo("success")];
+    assert.equal(sourceId, "codemeta-success", stdout);
+    assert.match(citation.apa, /Alex River/);
+    assert.deepEqual(success, {
+      name: "Example",
+      author: [{ name: "Alex River" }],
+      datePublished: "2026-11-12",
+      version: "2.0.0",
+      fetched_at: new Date().toISOString().slice(0, 10),
+    });
     for (const id of ["malformed", "invalid-doi", "unavailable", "missing"]) assert.deepEqual(next[repo(id)], old);
     assert.equal(next[repo("new")], undefined);
     assert.equal(next[repo("removed")], undefined);
@@ -165,5 +181,82 @@ test("Astro rejects a manual DOI supplied by CodeMeta but accepts a different DO
     await build();
   } finally {
     await rm(dir, { recursive: true, force: true });
+  }
+});
+
+// CodeMeta citation lists related works; the software's own citation uses its bibliographic fields.
+test("caches public bibliographic fields without treating related works as the software citation", () => {
+  assert.deepEqual(
+    parseCodemeta({
+      name: "Example software",
+      author: [
+        { givenName: "Alex", familyName: "River", email: "alex@example.org" },
+        { name: "Example research team" },
+      ],
+      datePublished: "2026-11-12",
+      citation: { name: "A related paper", url: "https://example.org/paper" },
+    }),
+    {
+      name: "Example software",
+      author: [{ givenName: "Alex", familyName: "River" }, { name: "Example research team" }],
+      datePublished: "2026-11-12",
+    },
+  );
+  assert.deepEqual(parseCodemeta({ name: "Example", author: { name: "Alex River" } }), {
+    name: "Example",
+    author: [{ name: "Alex River" }],
+  });
+  assert.equal(
+    parseCodemeta({ datePublished: "2026-11-12T12:00:00+01:00" }).datePublished,
+    "2026-11-12T12:00:00+01:00",
+  );
+  assert.throws(() => parseCodemeta({ citation: { name: "A related paper" } }));
+});
+
+test("rejects malformed bibliographic fields rather than overwriting the cache", () => {
+  for (const field of [
+    { name: {} },
+    { name: " " },
+    { author: "Alex River" },
+    { author: [{}] },
+    { author: [{ name: 42 }] },
+    { author: [] },
+    { datePublished: "yesterday" },
+    { datePublished: "2026-02-30" },
+  ])
+    assert.throws(() => parseCodemeta({ version: "1.0.0", ...field }));
+});
+
+test("keeps the thesis dataset licence and DOI separate from the software licence", () => {
+  const nodes = projectNodes([
+    {
+      id: "msc-thesis-ie",
+      data: {
+        title: "Example thesis",
+        description: "Example model",
+        repo: "https://github.com/simonvanlierde/msc-thesis-ie",
+        tags: [],
+        links: [
+          {
+            label: "Zenodo dataset",
+            url: "https://doi.org/10.5281/zenodo.8344580",
+            license: "https://spdx.org/licenses/CC-BY-4.0.html",
+          },
+        ],
+      },
+    },
+  ]);
+  assert.equal(nodes[0].license, "https://spdx.org/licenses/GPL-3.0-or-later");
+  assert.equal(nodes[1].license, "https://spdx.org/licenses/CC-BY-4.0.html");
+  assert.equal(nodes[1].url, "https://doi.org/10.5281/zenodo.8344580");
+  assert.notEqual("identifier" in nodes[0] ? nodes[0].identifier : undefined, nodes[1].url);
+});
+
+test("CodeMeta accepts year and month precision without inventing a release day", () => {
+  for (const date of ["2026", "2026-11", "2024-02-29", "2026-11-12T23:00:00-01:00"]) {
+    assert.equal(parseCodemeta({ datePublished: date }).datePublished, date);
+  }
+  for (const date of ["2026-00", "2026-13", "2026-1", "2026-02-30", "2025-02-29"]) {
+    assert.throws(() => parseCodemeta({ datePublished: date }));
   }
 });

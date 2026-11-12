@@ -1,9 +1,10 @@
 import type { Figure } from "./projectSchema.ts";
+import { sourceRecord } from "./provenance.ts";
 
 // Figures on the index sheet that are not project-card figures.
 
 /** The public endpoint scripts/fetch-stats.mjs copies src/data/stats.json from. */
-export const statsSource = "https://api.r9lab.io/v1/stats/totals";
+export const statsSource = sourceRecord("r9lab-totals")?.url ?? "https://api.r9lab.io/v1/stats/totals";
 
 /** Not in the stats API: counted at the two pilot workshops, and kept by hand. */
 export const participants: Figure = {

@@ -4,10 +4,18 @@
 import codemeta from "./codemeta.json" with { type: "json" };
 
 export interface ProjectMetadata {
+  name?: string;
+  author?: { name?: string; givenName?: string; familyName?: string }[];
+  datePublished?: string;
   version?: string;
   doi?: string;
   license?: string | string[];
   fetched_at: string;
+  sourceId?: string;
+  citation?: {
+    apa: string;
+    downloads: { apa: string; bibtex: string; cslJson: string; jsonld: string };
+  };
 }
 
 export const projectMetadata = (repo: string): ProjectMetadata | undefined =>
