@@ -39,7 +39,7 @@ export async function capture(response, id, url) {
   return { id, url, retrievedAt: new Date().toISOString(), body: body.toString("base64"), parsed: JSON.parse(body) };
 }
 
-/** Run the released public tools in the locked local environment; publish nothing on failure. */
+/** Run the pinned public tools in the locked local environment; publish nothing on failure. */
 export async function generateMetadata(request) {
   const temp = await mkdtemp(resolve(tmpdir(), "site-metadata-"));
   try {
