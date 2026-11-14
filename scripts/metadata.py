@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#   "citesync @ https://github.com/simonvanlierde/citesync/archive/a043e5c57f5dcbf36112fff1f9de4946683e5860.tar.gz",
+#   "citesync @ https://github.com/simonvanlierde/citesync/archive/e201f309ce72779618e965ea41507452a03da155.tar.gz",
 #   "sourceledger @ https://github.com/simonvanlierde/sourceledger/archive/2cb7cd31e61f39f490de64046395fd3cd171e49c.tar.gz",
 # ]
 # ///
@@ -26,17 +26,13 @@ FORMATS = {
 }
 
 
-def export(folder: Path, source: str, fmt: str) -> str:
+def run_citesync(folder: Path, *arguments: str) -> str:
     result = subprocess.run(
         [
             str(Path(sys.executable).with_name("citesync")),
-            "export",
+            *arguments,
             "--root",
             str(folder),
-            "--source",
-            source,
-            "--format",
-            fmt,
         ],
         capture_output=True,
         text=True,
@@ -44,12 +40,17 @@ def export(folder: Path, source: str, fmt: str) -> str:
         check=False,
     )
     if result.returncode:
-        raise ValueError(f"citesync {fmt} failed: {result.stderr.strip()}")
+        raise ValueError(f"citesync {arguments[0]} failed: {(result.stderr or result.stdout).strip()}")
     if result.stderr:
         print(result.stderr.rstrip(), file=sys.stderr)
-    if not result.stdout.strip():
-        raise ValueError(f"citesync produced no {fmt} export")
     return result.stdout
+
+
+def export(folder: Path, source: str, fmt: str) -> str:
+    output = run_citesync(folder, "export", "--source", source, "--format", fmt)
+    if not output.strip():
+        raise ValueError(f"citesync produced no {fmt} export")
+    return output
 
 
 def generate(request: dict) -> dict:
@@ -74,6 +75,11 @@ def generate(request: dict) -> dict:
             downloaded = folder / "codemeta.json"
             downloaded.write_bytes(body)
             if request["kind"] == "project":
+                (folder / "citesync.toml").write_text(
+                    'source = "codemeta.json"\nrequired-fields = { "codemeta.json" = ["name", "author", "license"] }\n',
+                    encoding="utf-8",
+                )
+                run_citesync(folder, "check")
                 card_id = request["cardId"]
                 if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,99}", card_id):
                     raise ValueError("invalid card id")

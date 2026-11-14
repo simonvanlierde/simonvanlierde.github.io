@@ -34,7 +34,7 @@ async function tree(folder: string): Promise<Record<string, string>> {
   return result;
 }
 
-test("released tools generate citations and byte-accurate records; failures retain the accepted pair", async () => {
+test("pinned tools generate citations and byte-accurate records; failures retain the accepted pair", async () => {
   let body = `${JSON.stringify(metadata, null, 2)}  \n`;
   let status = 200;
   const server = createServer((req, res) => {
@@ -98,12 +98,19 @@ test("released tools generate citations and byte-accurate records; failures reta
     const changed = JSON.parse(await readFile(join(folder, "src/data/provenance.json"), "utf8"))["codemeta-example"];
     assert.equal(changed.changed, true);
     assert.equal(changed.sha256, digest(body));
+    body = JSON.stringify({ ...metadata, version: undefined });
+    await refresh();
+    const optional = JSON.parse(await readFile(join(folder, "src/data/codemeta.json"), "utf8"))[repo];
+    assert.equal(optional.version, undefined);
+    assert.equal(optional.doi, undefined);
     const accepted = await tree(folder);
     for (const [nextBody, nextStatus] of [
       ["{", 200],
       ["{}", 200],
       ["missing", 404],
       [JSON.stringify({ ...metadata, name: undefined }), 200],
+      [JSON.stringify({ ...metadata, author: undefined }), 200],
+      [JSON.stringify({ ...metadata, license: undefined }), 200],
     ] as const) {
       body = nextBody;
       status = nextStatus;

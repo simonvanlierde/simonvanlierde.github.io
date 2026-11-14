@@ -99,7 +99,7 @@ test("refresh updates successes and keeps each failed repository's last good met
     globalThis.fetch = async (url) => {
       if (++started === 6) { clearTimeout(deadline); ready.resolve(); }
       await ready.promise;
-      if (url.includes('/success/')) return Response.json({'@context': 'https://w3id.org/codemeta/3.0', '@type': 'SoftwareSourceCode', name: 'Example', author: {name: 'Alex River'}, datePublished: '2026-11-12', version: '2.0.0'});
+      if (url.includes('/success/')) return Response.json({'@context': 'https://w3id.org/codemeta/3.0', '@type': 'SoftwareSourceCode', name: 'Example', author: {name: 'Alex River'}, license: 'https://spdx.org/licenses/MIT', datePublished: '2026-11-12', version: '2.0.0'});
       if (url.includes('/malformed/')) return Response.json({license: 'javascript:alert(1)'});
       if (url.includes('/invalid-doi/')) return Response.json({version: '2.0.0', identifier: 'doi:not-a-doi'});
       if (url.includes('/unavailable/')) return new Response('', {status: 503});
@@ -116,6 +116,7 @@ test("refresh updates successes and keeps each failed repository's last good met
     assert.deepEqual(success, {
       name: "Example",
       author: [{ name: "Alex River" }],
+      license: "https://spdx.org/licenses/MIT",
       datePublished: "2026-11-12",
       version: "2.0.0",
       fetched_at: new Date().toISOString().slice(0, 10),

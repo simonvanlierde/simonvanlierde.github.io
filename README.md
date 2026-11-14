@@ -54,12 +54,14 @@ To report a bug, see [CONTRIBUTING](.github/CONTRIBUTING.md); for a vulnerabilit
 ## Citations and source records
 
 Metadata refreshes need [uv](https://docs.astral.sh/uv/) and Python 3.13 or newer. The
-locked script environment uses citesync 0.5.0 and sourceledger 0.5.1; no global tool
+locked script environment pins citesync and sourceledger to source commits; no global tool
 installation is needed. `pnpm dev` and `pnpm build` use committed snapshots and need
 neither Python nor network access.
 
 `pnpm fetch:codemeta` downloads each project's CodeMeta, then runs citesync's public
 CLI to generate APA, BibTeX, CSL-JSON and schema.org JSON-LD under `public/citations/`.
+Before generating exports or source records, citesync requires a name, author and
+licence in each downloaded file. Version and DOI stay optional.
 The card's metadata index links to these files. Missing upstream CodeMeta stays
 missing; the site supplies no authors, dates, DOIs or licences for it. Download,
 validation, export or provenance failures keep that project's last accepted files.
