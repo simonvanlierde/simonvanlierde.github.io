@@ -10,6 +10,25 @@ import { promisify } from "node:util";
 import { parseCodemeta } from "../../scripts/codemeta.mjs";
 import { projectMetadata, projectNodes } from "../../src/data/projectSchema.ts";
 
+for (const key of ["type", "@type"]) {
+  for (const type of ["Role", "https://schema.org/Role", "http://schema.org/Role", ["Role", "Thing"]]) {
+    test(`keeps people separate from ${key}=${JSON.stringify(type)} attribution records`, () => {
+      const person = { type: "Person", id: "#author-1", name: "Alex Example" };
+      const role = {
+        [key]: type,
+        "schema:author": person.id,
+        roleName: "https://credit.niso.org/contributor-roles/software/",
+      };
+      const raw = { name: "Example software", author: [person, role] };
+      const original = structuredClone(raw);
+      assert.deepEqual(parseCodemeta(raw), { name: "Example software", author: [{ name: "Alex Example" }] });
+      assert.deepEqual(raw, original);
+      assert.throws(() => parseCodemeta({ author: [role] }), /author must not be empty/);
+      assert.throws(() => parseCodemeta({ author: [role, {}] }), /author must have a name/);
+    });
+  }
+}
+
 // Metadata fields from each repository's /HEAD/codemeta.json on raw.githubusercontent.com, fetched 2026-11-07.
 const expected = {
   "brightway-benchmarks": { license: "https://spdx.org/licenses/BSD-3-Clause" },
