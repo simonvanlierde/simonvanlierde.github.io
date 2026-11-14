@@ -16,7 +16,14 @@ const metadata = {
   "@context": "https://w3id.org/codemeta/3.0",
   "@type": "SoftwareSourceCode",
   name: "Example software",
-  author: [{ "@type": "Person", givenName: "Alex", familyName: "Example" }],
+  author: [
+    { "@type": "Person", "@id": "#author-1", givenName: "Alex", familyName: "Example" },
+    {
+      "@type": "Role",
+      "schema:author": "#author-1",
+      roleName: "https://credit.niso.org/contributor-roles/software/",
+    },
+  ],
   codeRepository: repo,
   version: "1.0.0",
   datePublished: "2026-01-01",
@@ -71,6 +78,7 @@ test("pinned tools generate citations and byte-accurate records; failures retain
     await assert.rejects(readdir(join(folder, "public/citations/missing")));
     assert.match(index[repo].citation.apa, /Example, A\. \(2026\)/);
     assert.match(index[repo].citation.apa, /Example software/);
+    assert.deepEqual(index[repo].author, [{ givenName: "Alex", familyName: "Example" }]);
     const first = JSON.parse(await readFile(join(folder, "src/data/provenance.json"), "utf8"))["codemeta-example"];
     assert.equal(first.sha256, digest(body));
     assert.equal(first.bytes, Buffer.byteLength(body));

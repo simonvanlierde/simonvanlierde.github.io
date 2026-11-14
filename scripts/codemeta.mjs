@@ -31,7 +31,11 @@ export function parseCodemeta(raw) {
   const result = {};
   if (raw.name !== undefined) result.name = text(raw.name);
   if (raw.author !== undefined) {
-    result.author = (Array.isArray(raw.author) ? raw.author : [raw.author]).map((author) => {
+    const authors = (Array.isArray(raw.author) ? raw.author : [raw.author]).filter((author) => {
+      const types = [author?.["@type"] ?? author?.type].flat();
+      return !types.some((type) => ["Role", "https://schema.org/Role", "http://schema.org/Role"].includes(type));
+    });
+    result.author = authors.map((author) => {
       if (!author || typeof author !== "object" || Array.isArray(author)) throw new Error("author must be an object");
       const names = Object.fromEntries(
         ["name", "givenName", "familyName"]

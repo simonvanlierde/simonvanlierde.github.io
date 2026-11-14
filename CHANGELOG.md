@@ -7,6 +7,10 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Project metadata refresh accepts CodeMeta contribution roles alongside authors, including CRediT Matrix exports.
+
 ### Added
 
 - Downloadable project citations in APA, BibTeX, CSL-JSON and JSON-LD, plus the site's own citation file.
