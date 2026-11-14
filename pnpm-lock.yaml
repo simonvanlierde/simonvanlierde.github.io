@@ -31,22 +31,22 @@ importers:
         version: 4.6.7
     devDependencies:
       '@axe-core/playwright':
-        specifier: ^4.12.1
+        specifier: 4.14.0
         version: 4.14.0(playwright-core@1.64.1)
       '@biomejs/biome':
-        specifier: ^2.6.4
+        specifier: 2.6.4
         version: 2.6.4
       '@playwright/test':
-        specifier: ^1.63.0
+        specifier: 1.64.1
         version: 1.64.1
       '@types/node':
-        specifier: ^26.6.5
+        specifier: 26.6.6
         version: 26.6.6
       lefthook:
-        specifier: ^2.1.14
+        specifier: 2.2.2
         version: 2.2.2
       sharp:
-        specifier: ^0.35.4
+        specifier: 0.35.5
         version: 0.35.5(@types/node@26.6.6)
       wrangler:
         specifier: 4.156.2
