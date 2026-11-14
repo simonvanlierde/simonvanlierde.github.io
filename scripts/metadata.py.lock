@@ -4,20 +4,20 @@ requires-python = ">=3.13"
 
 [manifest]
 requirements = [
-    { name = "citesync", url = "https://github.com/simonvanlierde/citesync/archive/3f8fa2135399252c57d8ccd2c7aeca4cf5efe81b.tar.gz" },
+    { name = "citesync", url = "https://github.com/simonvanlierde/citesync/archive/e201f309ce72779618e965ea41507452a03da155.tar.gz" },
     { name = "sourceledger", url = "https://github.com/simonvanlierde/sourceledger/archive/2cb7cd31e61f39f490de64046395fd3cd171e49c.tar.gz" },
 ]
 
 [[package]]
 name = "citesync"
 version = "0.5.0"
-source = { url = "https://github.com/simonvanlierde/citesync/archive/3f8fa2135399252c57d8ccd2c7aeca4cf5efe81b.tar.gz" }
+source = { url = "https://github.com/simonvanlierde/citesync/archive/e201f309ce72779618e965ea41507452a03da155.tar.gz" }
 dependencies = [
     { name = "packaging" },
     { name = "ruamel-yaml" },
     { name = "tomlkit" },
 ]
-sdist = { hash = "sha256:18c17dc438000d2a9170b0cf380290e79da7d8b4ac9619e2ae55c21be20da1b8" }
+sdist = { hash = "sha256:ea0f13150d65e17df3a430ca34c787695bb4e54d97d1d481d28172ba7cabd519" }
 
 [package.metadata]
 requires-dist = [

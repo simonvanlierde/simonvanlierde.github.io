@@ -1,7 +1,7 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#   "citesync @ https://github.com/simonvanlierde/citesync/archive/3f8fa2135399252c57d8ccd2c7aeca4cf5efe81b.tar.gz",
+#   "citesync @ https://github.com/simonvanlierde/citesync/archive/e201f309ce72779618e965ea41507452a03da155.tar.gz",
 #   "sourceledger @ https://github.com/simonvanlierde/sourceledger/archive/2cb7cd31e61f39f490de64046395fd3cd171e49c.tar.gz",
 # ]
 # ///
