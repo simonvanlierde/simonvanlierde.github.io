@@ -30,6 +30,7 @@ test("the post page, the notes index and the landing page link to each other", a
   await expect(page.getByRole("link", { name: /Hub-and-spoke observability/ })).toHaveAttribute("href", POST);
 
   await page.goto("/");
+  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Notes", exact: true }).click();
   await expect(page.getByRole("link", { name: /Hub-and-spoke observability/ })).toHaveAttribute("href", POST);
 });
 

@@ -69,9 +69,7 @@ const splitLabel = (label: string): [string, string] => {
   return i === -1 ? [label, ""] : [label.slice(0, i), label.slice(i + 1)];
 };
 
-// viewBox size. The SVG scales to its column, so user units set the type size.
-// 480 renders near 1:1 at full width; 720 shrank 12px labels to 8px. The CSS
-// handles narrow plots.
+// A 480-unit plot keeps labels legible in narrow columns; CSS enlarges them on phones.
 const W = 480;
 const H = 240;
 const PAD = { top: 20, right: 12, bottom: 40, left: 48 };
@@ -136,7 +134,7 @@ export default function DisassemblyChart({
 
   const summary =
     `Running total of ${measure.noun} in R9lab: ${measure.format(first.value)} by ${first.label}, ` +
-    `${measure.format(last.value)} by ${last.label}. Monthly figures are in the table below.`;
+    `${measure.format(last.value)} by ${last.label}. Open Monthly data for the figures.`;
 
   const secondaryMeasureActive = secondaryMeasures.some((m) => m.key === measure.key);
   const measureButton = (m: Measure) => (
@@ -194,7 +192,7 @@ export default function DisassemblyChart({
       <div className="chart__plot">
         {/* Keyboard users get one tab stop, and arrow keys move the tooltip
             between columns. Not one stop per column: role="img" makes the
-            children presentational. Screen readers use the data table. */}
+            children presentational. The data disclosure provides the table. */}
         {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: the handlers are the keyboard affordance described above */}
         <svg
           viewBox={`0 0 ${W} ${H}`}
@@ -331,25 +329,28 @@ export default function DisassemblyChart({
         {`${measure.label}: ${measure.format(last.value)} by ${last.label}.`}
       </p>
 
-      <table className="visually-hidden" aria-labelledby={legendId}>
-        <caption id={legendId}>{measure.label}, running total by month</caption>
-        <thead>
-          <tr>
-            <th scope="col">Period</th>
-            <th scope="col">Added</th>
-            <th scope="col">Running total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {series.map((d) => (
-            <tr key={d.period}>
-              <th scope="row">{d.label}</th>
-              <td>{measure.format(d.added)}</td>
-              <td>{measure.format(d.value)}</td>
+      <details className="chart__data">
+        <summary>Monthly data</summary>
+        <table aria-labelledby={legendId}>
+          <caption id={legendId}>{measure.label}, running total by month</caption>
+          <thead>
+            <tr>
+              <th scope="col">Period</th>
+              <th scope="col">Added</th>
+              <th scope="col">Running total</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {series.map((d) => (
+              <tr key={d.period}>
+                <th scope="row">{d.label}</th>
+                <td>{measure.format(d.added)}</td>
+                <td>{measure.format(d.value)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </details>
 
       {caption && (
         <figcaption>

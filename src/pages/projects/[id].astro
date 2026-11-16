@@ -1,0 +1,25 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import ProjectStory from "../../components/ProjectStory.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import { figureText } from "../../data/projectSchema.ts";
+import Base from "../../layouts/Base.astro";
+export async function getStaticPaths() {
+  return (await getCollection("projects")).map((entry) => ({ params: { id: entry.id }, props: { project: entry } }));
+}
+const { project } = Astro.props as { project: CollectionEntry<"projects"> };
+---
+<Base title={`${project.data.title} — Simon van Lierde`} description={figureText(project.data.description, project.data.figures)}>
+  <SiteHeader />
+  <main id="main" tabindex="-1" class="container project-page">
+    <a href={`/?project=${project.id}`}>Explore {project.data.title} in the map</a>
+    <h1>{project.data.title}</h1>
+    <ProjectStory project={project} standalone />
+  </main>
+  <SiteFooter />
+</Base>
+<style>
+  .project-page { max-width: 760px; padding-block: 32px 64px; }
+  h1 { font: italic 44px/1.1 var(--font-sans); margin-block: 24px; }
+</style>

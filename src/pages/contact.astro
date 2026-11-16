@@ -1,0 +1,25 @@
+---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { cv, profiles } from "../data/cv.ts";
+import Base from "../layouts/Base.astro";
+---
+<Base title="Contact — Simon van Lierde" description="Get in touch about industrial ecology, open tools and data, or working together.">
+  <SiteHeader />
+  <main id="main" tabindex="-1" class="container contact-page">
+    <h1>Contact</h1>
+    <div id="contact">
+      <p>For questions about the tools, data, or working together:</p>
+      {cv.basics.email && <a class="contact-email" href={`mailto:${cv.basics.email}`}>{cv.basics.email}</a>}
+      <ul class="link-list" aria-label="Profiles">{profiles.map((p) => <li><a href={p.href}>{p.label}</a></li>)}</ul>
+      <img src="/portrait.jpg" width="128" height="128" alt={`Portrait of ${cv.basics.name}`} />
+    </div>
+  </main>
+  <SiteFooter />
+</Base>
+<style>
+  .contact-page { max-width: 760px; min-height: calc(100svh - 176px); padding-block: 40px; }
+  h1 { font: italic 44px/1.1 var(--font-sans); margin-bottom: 32px; }
+  .contact-email { display: inline-flex; align-items: center; min-height: 44px; }
+  img { display: block; margin-top: 32px; }
+</style>

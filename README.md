@@ -9,8 +9,10 @@ Personal website for Simon van Lierde, research software engineer and PhD candid
 University. It has selected work, a CV, a project archive and technical notes (with an RSS feed at `/notes/rss.xml`), plus a privacy page. I build it with Astro and deploy
 it to GitHub Pages at [simonvanlierde.com](https://simonvanlierde.com).
 
-The field-atlas palette and shared shell introduce a metabolism of the work: its data sources,
-dependencies and downstream users. R9lab's disassembly data refreshes weekly.
+The homepage is an interactive metabolism of the work: its data sources, dependencies and downstream
+users. Projects open in a reading pane beside the map, or a sheet on phones. Clusters unfold in place.
+The same project content is available without JavaScript at `/projects/<id>/`. R9lab's disassembly data
+refreshes weekly.
 
 ## Local development
 

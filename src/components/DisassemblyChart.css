@@ -1,10 +1,65 @@
 /* DisassemblyChart island styles. Colours come from global design tokens. */
 
-/* 30rem renders the 480-unit viewBox at 1:1. Wider, and 13px labels scale up
-   to 19px. */
 .chart {
   margin: 0;
-  max-width: 30rem;
+  width: 100%;
+}
+
+.chart__data {
+  margin-top: 16px;
+  font: 400 15px / 1.5 var(--font-sans);
+}
+.chart__data summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.chart__data summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 160ms ease-out;
+}
+.chart__data[open] summary::before {
+  transform: rotate(45deg);
+}
+.chart__data summary:hover {
+  color: var(--river);
+}
+.chart__data table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.chart__data caption {
+  padding-block: 8px;
+  text-align: left;
+  color: var(--ink-2);
+}
+.chart__data th,
+.chart__data td {
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--rule);
+  text-align: right;
+}
+.chart__data th:first-child {
+  text-align: left;
+}
+.chart__data tbody tr:hover {
+  background: var(--sheet);
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart__data summary::before {
+    transition: none;
+  }
 }
 
 .chart__empty {

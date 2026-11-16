@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 test("renders the page shell: title, main landmark, single h1", async ({ page }) => {
   await expect(page).toHaveTitle(/Simon van Lierde/);
   await expect(page.getByRole("main")).toBeVisible();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Simon van Lierde");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Connected work");
 });
 
 // Check the complete page at narrow and wide viewport sizes.
@@ -32,6 +32,7 @@ for (const width of [320, 390, 900, 1200]) {
 }
 
 test("the contact section links to the published profiles", async ({ page }) => {
+  await page.goto("/contact/");
   const footer = page.locator("#contact");
   const expected: Record<string, string> = {
     GitHub: cv.basics.links.github,
@@ -53,47 +54,28 @@ test("skip link is the first tab stop and lands before the h1", async ({ page })
   await expect(page.locator("#main").getByRole("heading", { level: 1 })).toHaveCount(1);
 });
 
-test("the index keeps four featured projects and sends the rest to the archive", async ({ page }) => {
-  await expect(page.locator(".bom-row--feature")).toHaveCount(4);
-  await expect(page.locator("#project-bikespot")).toHaveCount(0);
-  await page.getByRole("link", { name: "Project archive", exact: true }).click();
-  await expect(page).toHaveURL(/\/archive\/$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Project archive");
-  await expect(page.locator("#project-bikespot")).toBeVisible();
+test("the homepage uses the map and exposes every project through the text alternative", async ({ page }) => {
+  await expect(page.locator(".bom-row")).toHaveCount(0);
+  const list = page.locator("#work-map-list");
+  await list.locator("summary").click();
+  await list.getByRole("link", { name: "bikespot", exact: true }).click();
+  await expect(page).toHaveURL(/\/projects\/bikespot\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("bikespot");
 });
 
-// The ranking is Simon's (2026-11-09): how widely the field uses each library.
 const showcase = ["Brightway", "Activity Browser", "premise", "pymrio", "lca_algebraic", "flodym"];
 const upstreamAnchor = (name: string) => `upstream-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
-test("the index gives each upstream library one line that links to its archive entry", async ({ page }) => {
-  const lines = page.locator("#upstream-heading ~ ul").first().locator("> li");
-  await expect(lines).toHaveCount(showcase.length);
-  for (const [i, name] of showcase.entries()) {
-    const line = lines.nth(i);
-    await expect(line.getByRole("link")).toHaveCount(1);
-    await expect(line.locator("p")).toHaveCount(1);
-    const link = line.getByRole("link", { name, exact: true });
-    await expect(link).toHaveAttribute("href", `/archive/#${upstreamAnchor(name)}`);
-    expect((await link.boundingBox())?.height).toBeGreaterThanOrEqual(44);
-  }
-  await expect(page.getByRole("link", { name: "All upstream contributions and pull requests" })).toHaveAttribute(
-    "href",
-    "/archive/#upstream-heading",
-  );
+test("upstream contributions remain available in the archive", async ({ page }) => {
   await page.goto("/archive/");
   for (const name of showcase) await expect(page.locator(`#${upstreamAnchor(name)} h3`)).toHaveText(name);
 });
 
-test("published project fragments follow projects into the archive", async ({ page }) => {
-  await page.goto("/#project-sourceledger");
-  await expect(page).toHaveURL(/\/archive\/#project-sourceledger$/);
-  await expect(page.locator("#project-sourceledger")).toBeInViewport();
-  await page.goto("/");
-  await page.evaluate(() => {
-    location.hash = "project-bikespot";
-  });
-  await expect(page).toHaveURL(/\/archive\/#project-bikespot$/);
+test("shared map URLs open the selected project directly", async ({ page }) => {
+  await page.goto("/?project=sourceledger");
+  await expect(page.getByRole("complementary", { name: "sourceledger", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Open sourceledger as a page", exact: true }).click();
+  await expect(page).toHaveURL(/\/projects\/sourceledger\/$/);
 });
 
 test("the archive retains software metadata and the thesis dataset in structured data", async ({ page }) => {
@@ -112,7 +94,7 @@ test("the archive retains software metadata and the thesis dataset in structured
 });
 
 test("upstream archive destinations stay below the sticky navigation", async ({ page }) => {
-  await page.getByRole("link", { name: "lca_algebraic", exact: true }).click();
+  await page.goto("/archive/#upstream-lca-algebraic");
   const heading = page.locator("#upstream-lca-algebraic h3");
   await expect(heading).toBeInViewport();
   const top = (await heading.boundingBox())?.y ?? 0;
@@ -128,10 +110,11 @@ test("project titles open websites and keep source links, with repositories as t
     ["bikespot", "https://bikespot.duinlab.nl"],
     ["io-notebook", "https://simonvanlierde.com/io-notebook/"],
   ]) {
-    await page.goto(id === "jsonvet" ? "/" : "/archive/");
-    const row = page.locator(`#project-${id}`);
-    await expect(row.getByRole("link", { name: id, exact: true })).toHaveAttribute("href", website);
-    await expect(row.getByRole("link", { name: `Source for ${id}`, exact: true })).toHaveAttribute(
+    await page.goto(`/projects/${id}/`);
+    const row = page.locator(`[data-project-story="${id}"]`);
+    const title = await page.getByRole("heading", { level: 1 }).textContent();
+    await expect(row.getByRole("link", { name: `Open ${title}`, exact: true })).toHaveAttribute("href", website);
+    await expect(row.getByRole("link", { name: "Source", exact: true })).toHaveAttribute(
       "href",
       `https://github.com/simonvanlierde/${id}`,
     );
@@ -149,15 +132,15 @@ test("an unknown path serves the 404 page with a way back", async ({ page }) => 
 });
 
 test.describe("disassembly chart", () => {
-  // The chart hydrates on scroll (client:visible). Astro drops `ssr` once it has
-  // hydrated, so wait for that before interacting.
+  // Astro drops `ssr` once the chart has hydrated.
   test.beforeEach(async ({ page }) => {
-    await page.locator("astro-island").scrollIntoViewIfNeeded();
-    await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
+    await page.goto("/projects/r9lab/");
+    await page.locator(".r9lab__chart astro-island").scrollIntoViewIfNeeded();
+    await expect(page.locator(".r9lab__chart astro-island[ssr]")).toHaveCount(0);
   });
 
-  test("the visually-hidden data table mirrors the plotted series", async ({ page }) => {
-    // The hidden table is the accessible fallback, so it must match the plotted months.
+  test("the monthly data table mirrors the plotted series", async ({ page }) => {
+    await page.getByText("Monthly data", { exact: true }).click();
     const rows = page.locator("table tbody tr");
     const columns = page.locator("rect.chart__hit");
     const rowCount = await rows.count();
@@ -188,7 +171,7 @@ test.describe("disassembly chart", () => {
   });
 
   test("arrow keys walk the tooltip, which never blocks the pointer", async ({ page }) => {
-    // Sighted keyboard users read exact values here; the hidden table serves screen readers.
+    // Keyboard users can inspect the plot or open its data table.
     const chart = page.locator('svg[role="img"]');
     await chart.focus();
     const tip = page.locator(".chart__tip-title");
@@ -266,13 +249,13 @@ const names = [
 // Number words count as numbers too. "one" is left out on purpose: every use is idiom.
 const NUMBER_WORD = "(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozen|hundreds?|thousands?|million)";
 
-for (const route of ["/", "/archive/"]) {
+for (const route of ["/projects/jsonvet/", "/archive/"]) {
   test(`every number in notes and project descriptions on ${route} has a source and a date`, async ({ page }) => {
     await page.goto(route);
-    const selectors = route === "/" ? [".notes__list", ".bom-row__desc"] : [".bom-row__desc"];
+    const selectors = route === "/archive/" ? [".bom-row__desc"] : [".story-description"];
     for (const sel of selectors) await expect(page.locator(sel).first()).toBeVisible();
     const regions = page.locator(selectors.join(", "));
-    await expect(page.locator(".notes__list [data-source]")).toHaveCount(route === "/" ? 4 : 0);
+    await expect(page.locator(".notes__list [data-source]")).toHaveCount(0);
 
     for (const figure of await regions.locator("[data-source]").all()) {
       await expect(figure).toHaveText(new RegExp(`^\\s*(?:\\d[\\d.,\\s]*%?|${NUMBER_WORD})\\s*$`, "i"));
@@ -309,14 +292,15 @@ test("archive route, nav and cross references reach real project rows", async ({
     for (const href of new Set(links)) {
       const url = new URL(href, page.url());
       await page.goto(url.pathname);
-      await expect(page.locator(url.hash)).toHaveCount(1);
+      await expect(url.hash ? page.locator(url.hash) : page.getByRole("heading", { level: 1 })).toBeVisible();
     }
   }
 });
 
 test("featured projects show cached release metadata with named links", async ({ page }) => {
   for (const id of ["jsonvet", "credit-matrix", "ramascene-explorer"]) {
-    const row = page.locator(`#project-${id}`);
+    await page.goto(`/projects/${id}/`);
+    const row = page.locator(`[data-project-story="${id}"]`);
     await expect(row.locator(".project-metadata")).toBeVisible();
     await expect(row.getByRole("link", { name: `DOI for ${id}`, exact: true })).toHaveAttribute(
       "href",
@@ -332,12 +316,11 @@ for (const width of [320, 390]) {
       await page.evaluate((value) => {
         document.documentElement.dataset.theme = value;
       }, theme);
-      const archive = page.getByRole("link", { name: "Project archive", exact: true });
-      await archive.click();
+      await page.goto("/archive/");
       await expect(page).toHaveURL(/\/archive\/$/);
       await page.goto("/");
     }
-    await page.getByRole("link", { name: "Brightway", exact: true }).click();
+    await page.goto("/archive/#upstream-brightway");
     await expect(page).toHaveURL(/\/archive\/#upstream-brightway$/);
     await expect
       .poll(() =>
@@ -370,8 +353,8 @@ for (const path of ["/", "/cv/", "/archive/", "/notes/", "/notes/hub-and-spoke-o
 }
 
 test("every featured card's close-up loads", async ({ page }) => {
-  await page.goto("/");
-  const shots = page.locator(".bom-row__shot img");
+  await page.goto("/projects/jsonvet/");
+  const shots = page.locator(".story-preview img");
   expect(await shots.count()).toBeGreaterThan(0);
   for (const img of await shots.all()) {
     await img.scrollIntoViewIfNeeded();
@@ -384,7 +367,7 @@ test("every featured card's close-up loads", async ({ page }) => {
 test("the sitemap lists every project site under this domain", async ({ request }) => {
   const xml = await (await request.get("/sitemap.xml")).text();
   const locs = [...xml.matchAll(/<loc>https:\/\/simonvanlierde\.com\/([a-z0-9-]+)\/<\/loc>/g)].map((m) => m[1]);
-  const sheets = ["cv", "archive", "notes", "privacy"];
+  const sheets = ["cv", "archive", "notes", "privacy", "contact"];
   expect(locs.filter((l) => !sheets.includes(l)).sort()).toEqual([
     "brightway-benchmarks",
     "citesync",

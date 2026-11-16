@@ -28,6 +28,8 @@ const pages: { path: string; lastmod?: string }[] = [
   { path: "/archive/", lastmod: exported },
   { path: "/notes/", lastmod: latestNote },
   { path: "/privacy/" },
+  { path: "/contact/" },
+  ...projects.map((project) => ({ path: `/projects/${project.id}/` })),
   ...notes.map((note) => ({ path: `/notes/${note.id}/`, lastmod: note.data.date })),
   ...subsites.map((path) => ({ path })),
 ];

@@ -7,16 +7,19 @@ const routes = [
   "/notes/",
   "/notes/hub-and-spoke-observability/",
   "/privacy/",
+  "/contact/",
+  "/projects/r9lab/",
+  "/projects/jsonvet/",
   "/no-such-page/",
 ];
 
 for (const colorScheme of ["light", "dark"] as const) {
   test(`the theme follows the system without storing a preference (${colorScheme})`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
-    await page.goto("/");
+    await page.goto("/projects/jsonvet/");
     const toggle = page.getByRole("button", { name: "Dark mode" });
     await expect(toggle).toHaveAttribute("aria-pressed", String(colorScheme === "dark"));
-    const thumbnail = page.locator(".bom-row__shot img").first();
+    const thumbnail = page.locator(".story-preview img").first();
     await expect(thumbnail).toHaveCSS("filter", colorScheme === "dark" ? "brightness(0.88)" : "none");
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
     const initialBackground = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
@@ -32,12 +35,12 @@ for (const colorScheme of ["light", "dark"] as const) {
 
   test(`an explicit ${colorScheme} theme survives reload, navigation and a system change`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: colorScheme === "light" ? "dark" : "light" });
-    await page.goto("/");
+    await page.goto("/projects/jsonvet/");
     const toggle = page.getByRole("button", { name: "Dark mode" });
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-pressed", String(colorScheme === "dark"));
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe(colorScheme);
-    await expect(page.locator(".bom-row__shot img").first()).toHaveCSS(
+    await expect(page.locator(".story-preview img").first()).toHaveCSS(
       "filter",
       colorScheme === "dark" ? "brightness(0.88)" : "none",
     );
@@ -61,10 +64,10 @@ for (const width of [320, 390, 1200]) {
       await expect(header.getByRole("link", { name: "Simon van Lierde", exact: true })).toHaveAttribute("href", "/");
       const primary = page.getByRole("navigation", { name: "Primary" });
       for (const [name, href] of [
-        ["Work", "/#work-heading"],
+        ["Work", "/"],
         ["CV", "/cv/"],
         ["Notes", "/notes/"],
-        ["Contact", "/#contact"],
+        ["Contact", "/contact/"],
       ]) {
         const link = primary.getByRole("link", { name, exact: true });
         await expect(link).toBeVisible();
@@ -104,14 +107,14 @@ test("the built pages make no third-party requests", async ({ page, baseURL }) =
     await page.goto(route);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.evaluate(() => document.fonts.ready);
-    await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
+    await expect(page.locator("astro-island[ssr]").filter({ visible: true })).toHaveCount(0);
   }
   expect(external).toEqual([]);
 });
 
 test("keyboard users can skip content, navigate the shell and change theme", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "light" });
-  await page.goto("/");
+  await page.goto("/projects/jsonvet/");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
   await page.keyboard.press("Enter");
@@ -137,11 +140,11 @@ test("keyboard users can skip content, navigate the shell and change theme", asy
   expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
 });
 
-test("the homepage hero leads with the name while the CV retains the portrait", async ({ page }) => {
+test("the homepage leads with the map while the CV retains the portrait", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Simon van Lierde");
-  await expect(page.locator(".hero")).toBeVisible();
-  await expect(page.locator(".hero").getByRole("img", { name: "Portrait of Simon van Lierde" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Connected work");
+  await expect(page.locator(".map-home")).toBeVisible();
+  await expect(page.locator(".map-home").getByRole("img", { name: "Portrait of Simon van Lierde" })).toHaveCount(0);
   await page.goto("/cv/");
   await expect(page.getByRole("img", { name: "Portrait of Simon van Lierde" })).toBeVisible();
 });

@@ -760,7 +760,7 @@ main > section.container > h2 {
   z-index: 50;
   background: var(--paper);
   border-bottom: 0.75px solid var(--rule);
-  font: 400 1rem / 1.4 var(--font-draft);
+  font: 400 17px / 1.4 var(--font-sans);
 }
 
 .site-header__inner,
@@ -786,7 +786,7 @@ main > section.container > h2 {
   align-items: center;
 }
 .site-header__name {
-  font-weight: 800;
+  font: italic 21px / 1.2 var(--font-sans);
 }
 .site-header a[aria-current],
 .site-header a:hover,
@@ -799,7 +799,7 @@ main > section.container > h2 {
   margin-block: var(--space-xl) var(--space-l);
   padding-top: var(--space-m);
   border-top: 0.75px solid var(--rule);
-  font: 400 var(--step--1) / 1.4 var(--font-draft);
+  font: 400 16px / 1.4 var(--font-sans);
 }
 .site-footer__build > a {
   font-family: var(--font-mono);
@@ -827,6 +827,20 @@ time {
   }
   .site-header__name {
     min-height: 36px;
+  }
+}
+@media (min-width: 360px) and (max-width: 719px) {
+  .site-header__inner {
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .site-header__name {
+    font-size: 18px;
+    white-space: nowrap;
+  }
+  .site-header nav {
+    width: auto;
+    font-size: 15px;
   }
 }
 @media print {

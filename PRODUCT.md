@@ -21,6 +21,43 @@ drawn as the system they belong to: where the data comes from, what it builds on
 downstream. Success is a reader who sees within seconds what I contribute and how it connects, then
 uses, checks, cites or adds to one piece of it, or gets in touch.
 
+## Redesign Scope
+
+The redesign replaces the whole website's information architecture, content presentation,
+navigation and visual system. Existing content and working public URLs are inputs; the existing
+homepage cards and page hierarchy do not constrain the result.
+
+The site header carries the name once; the homepage title is “Connected work”.
+The homepage organizes the work into data, research software, and tools and apps lanes. Selecting a project opens its
+full story, figures, interactive charts, evidence and actions in an integrated reading view. Groups
+unfold and refold in place. Threads provide curated routes through the same graph. Closing a view
+or using Back to map returns to the folded overview within the current thread. On desktop, the introduction and project reading share
+the left text rail while the map stays on the right. Demo and source actions lead the project story.
+
+Opening a project emphasizes its immediate relationships, with connected work available near the
+top of its reading view. Declared tooling and one further dependency connection stay visible in
+quieter ink, with relationship labels and dotted tooling paths. Shared audiences alone do not
+establish a project connection. Unrelated projects and the global loop leave the selected view.
+The desktop reading pane takes roughly half the canvas. Lanes make room for supporting work while
+an interruptible camera eases closer to selection and returns to a wider overview. Hover or keyboard
+focus brings a node's paths forward. Nodes fade between states and shared connections remain;
+reduced motion uses the composed state immediately. Input and library controls open local explanations;
+their evidence is reached through explicit source links. One cluster can be unfolded at a time; opening another
+folds the previous one. Following a connected project switches both the reading content and map
+focus. Back to map closes reading and folds clusters in one step, regardless of projects visited. Browser Back restores the previous project, cluster, thread and reading position.
+
+Reading content uses the pane's width: charts and previews span it, paragraphs retain a readable
+measure, and totals and resource links adapt to the container. R9lab's monthly figures can be
+opened as a table beneath the chart.
+
+Project and thread permalinks expose the same content for direct arrival and deeper reading.
+CV, notes, duinlab, contact, privacy and 404 are redesigned within the same system. A basic header
+and footer retain small direct links. A complete semantic alternative supports keyboard,
+assistive-technology and no-JavaScript use.
+
+The graph must not sit above a retained stack of portfolio cards. Visual quality, expressive motion
+and content integration are acceptance requirements; a working graph alone is insufficient.
+
 ## Positioning
 
 Mission, the line under my name: "I contribute open tools and data to industrial ecology and the
@@ -34,7 +71,8 @@ libraries, each backed by a live demo, a DOI or a merged PR.
 
 - Readers arrive from a tool's README, a DOI landing page, a paper, a talk, a job application, or a
   shared link with a social card. Many read on a phone.
-- Project titles open the project's website when one exists; source links stay separate.
+- Selecting a project in the map opens its integrated content. Demo and source links stay explicit
+  and separate.
 - duinlab.nl will redirect to `/duinlab/`, so that URL is public.
 - Nine project sites are other repos' GitHub Pages served under this domain (`/jsonvet/` and others);
   the sitemap lists them and the site must not shadow their paths.
@@ -71,8 +109,8 @@ libraries, each backed by a live demo, a DOI or a merged PR.
 ## Brand Commitments
 
 - The lab is spelled "R9lab".
-- Wanted role and availability appear in one place only: the contact section at the end of home
-  (agreed 2026-11-11). The old rule kept them out of the drawing set's title block.
+- Wanted role and availability appear in the contact content only. Its presentation follows the
+  redesigned navigation and reading views.
 - The portrait, its social card and the CV PDF are all rights reserved.
 - The vision lives on the about page. Other pages link to it rather than restate it.
 

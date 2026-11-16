@@ -2,7 +2,7 @@
 
 This statement covers [simonvanlierde.com](https://simonvanlierde.com): the index of
 work (`/`), the CV (`/cv/`), the project archive (`/archive/`), the notes (`/notes/`), the privacy
-page, the 404 page and the CV PDF. It was last reviewed on 10 November 2026.
+page, contact (`/contact/`), project pages (`/projects/<id>/`), the 404 page and the CV PDF. It was last reviewed on 12 November 2026.
 
 ## Target
 
@@ -31,8 +31,9 @@ Every pull request and every push to `main` runs these checks:
   choice made with the footer toggle.
 - When the system asks for reduced motion, nothing slides, scales or scrolls smoothly: no page
   transitions and no animated drawing or chart. Short colour fades stay.
-- The R9lab chart has a visually hidden table with the same numbers, so its data does not depend on
-  reading the SVG.
+- The map has a semantic project list linking to full static project pages. Its nodes are native buttons; clusters report their expanded state. On phones, expanded reading moves focus to the project title and keeps keyboard navigation inside the reading view. The background becomes inert until closing or showing the map again. Returning to the summary restores its Read more control; resizing keeps the selected node above the sheet.
+- The R9lab chart's “Monthly data” disclosure opens a table with the same numbers and row/column
+  headers. It works with keyboard, touch and without JavaScript, so reading the SVG is optional.
 - The CV PDF is a tagged PDF that claims PDF/UA-1 (accessible) and PDF/A-2a (archivable). The build
   of the PDF checks both claims.
 

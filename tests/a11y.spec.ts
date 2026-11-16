@@ -24,7 +24,9 @@ const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best
 async function axeViolations(page: Page) {
   await settle(page);
   const { violations } = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
-  return violations.map((v) => `${v.id} (${v.nodes.length}): ${v.help}`);
+  return violations.map(
+    (v) => `${v.id} (${v.nodes.length}): ${v.help} — ${v.nodes.map((node) => node.target.join(" ")).join(", ")}`,
+  );
 }
 
 // Each colour scheme has its own tokens, and linting cannot catch contrast.
@@ -36,6 +38,9 @@ for (const colorScheme of ["light", "dark"] as const) {
     "/notes/",
     "/notes/hub-and-spoke-observability/",
     "/privacy/",
+    "/contact/",
+    "/projects/r9lab/",
+    "/projects/jsonvet/",
     "/no-such-page/",
   ]) {
     test(`no axe violations on load (${path}, ${colorScheme})`, async ({ page }) => {
@@ -77,7 +82,7 @@ async function pressComponents(page: Page) {
 // Scan states a first-paint scan never reaches: another
 // chart measure, and the light theme reached through the toggle.
 test("no axe violations after interaction", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?project=r9lab");
   await pressComponents(page);
 
   const toggle = page.getByRole("button", { name: "Dark mode" });

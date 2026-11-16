@@ -18,8 +18,7 @@ const groups = [
   { category: "minor", heading: "Smaller projects" },
 ].map((g) => ({ ...g, rows: archived.filter((p) => p.data.category === g.category) }));
 const related = relatedCards(projects);
-const destination = (id: string) =>
-  id === "r9lab" ? "/#relab" : `${projects.find((p) => p.id === id)?.data.featured ? "/" : "/archive/"}#project-${id}`;
+const destination = (id: string) => `/projects/${id}/`;
 ---
 <Base title="Project archive | Simon van Lierde" description="Research tools, personal apps and smaller projects by Simon van Lierde, with the complete list of merged upstream contributions." jsonLd={archiveJsonLd(archived)}>
   <SiteHeader current="archive" />
