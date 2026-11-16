@@ -333,7 +333,7 @@ Not yet:
 
 #### Named Rules
 
-**The Register Rule.** Projects outside the index's four featured rows go in
+**The Register Rule.** Projects outside the index's five featured rows go in
 the archive's parts list, the project register. It is grouped by the
 project's recorded `category` in a fixed order: work ("Research tools"),
 personal ("Personal apps"), minor ("Smaller projects"). Within a group, rows
@@ -369,7 +369,7 @@ The named rules above are the checklist. A few more:
 
 - **Do** add sheets, sections, figures, and components. The set is meant to
   grow, and the rules keep a new part legible beside the old ones.
-- **Do** keep the index focused on R9lab and four featured rows. Personal, smaller and other projects belong to the archive register.
+- **Do** keep the index focused on R9lab and five featured rows. Personal, smaller and other projects belong to the archive register.
 - **Do** spell the lab "R9lab".
 
 #### Don't

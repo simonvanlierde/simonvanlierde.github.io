@@ -74,13 +74,26 @@ test("the sheet starts dark, even on a light system, and the toggle's light choi
   await expect(html).toHaveAttribute("data-theme", "light");
 });
 
-test("the index keeps four featured projects and sends the rest to the archive", async ({ page }) => {
-  await expect(page.locator(".bom-row--feature")).toHaveCount(4);
+test("the index leads with the selected research projects and sends the rest to the archive", async ({ page }) => {
+  expect(await page.locator(".bom > article").evaluateAll((rows) => rows.map((row) => row.id))).toEqual([
+    "relab",
+    "project-brightway-benchmarks",
+    "project-ramascene-explorer",
+    "project-jsonvet",
+    "project-cv-ie-taxonomy",
+    "project-credit-matrix",
+  ]);
   await expect(page.locator("#project-bikespot")).toHaveCount(0);
   await page.getByRole("link", { name: "Project archive", exact: true }).click();
   await expect(page).toHaveURL(/\/archive\/$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Project archive");
   await expect(page.locator("#project-bikespot")).toBeVisible();
+});
+
+test("published archive links follow promoted projects to the index", async ({ page }) => {
+  await page.goto("/archive/#project-brightway-benchmarks");
+  await expect(page).toHaveURL(new URL("/#project-brightway-benchmarks", page.url()).href);
+  await expect(page.locator("#project-brightway-benchmarks")).toBeInViewport();
 });
 
 // The ranking is Simon's (2026-11-09): how widely the field uses each library.
@@ -149,7 +162,7 @@ test("project titles open websites and keep source links, with repositories as t
     ["bikespot", "https://bikespot.duinlab.nl"],
     ["io-notebook", "https://simonvanlierde.com/io-notebook/"],
   ]) {
-    await page.goto(id === "jsonvet" ? "/" : "/archive/");
+    await page.goto(["jsonvet", "brightway-benchmarks"].includes(id) ? "/" : "/archive/");
     const row = page.locator(`#project-${id}`);
     await expect(row.getByRole("link", { name: id, exact: true })).toHaveAttribute("href", website);
     await expect(row.getByRole("link", { name: `Source for ${id}`, exact: true })).toHaveAttribute(
