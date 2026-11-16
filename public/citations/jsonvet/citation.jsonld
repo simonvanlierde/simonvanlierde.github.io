@@ -16,6 +16,7 @@
     "pre-commit",
     "pre-commit-hook",
     "rust",
+    "language-server",
     "github-action",
     "formatter",
     "fixer",

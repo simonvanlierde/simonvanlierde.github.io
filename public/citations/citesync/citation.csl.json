@@ -11,13 +11,13 @@
     ],
     "DOI": "10.5281/zenodo.23779706",
     "URL": "https://github.com/simonvanlierde/citesync",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "issued": {
       "date-parts": [
         [
           2026,
           11,
-          10
+          16
         ]
       ]
     }

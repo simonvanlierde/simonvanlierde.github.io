@@ -8,7 +8,7 @@
       }
     ],
     "license": "https://spdx.org/licenses/BSD-3-Clause",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
       "apa": "van Lierde, S. (n.d.). brightway-benchmarks [Computer software]. https://github.com/simonvanlierde/brightway-benchmarks",
       "downloads": {
@@ -28,13 +28,13 @@
         "familyName": "van Lierde"
       }
     ],
-    "datePublished": "2026-11-10",
-    "version": "0.5.0",
+    "datePublished": "2026-11-16",
+    "version": "0.6.0",
     "doi": "https://doi.org/10.5281/zenodo.23779706",
     "license": "https://spdx.org/licenses/Apache-2.0",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
-      "apa": "van Lierde, S. (2026). citesync (Version 0.5.0) [Computer software]. https://doi.org/10.5281/zenodo.23779706",
+      "apa": "van Lierde, S. (2026). citesync (Version 0.6.0) [Computer software]. https://doi.org/10.5281/zenodo.23779706",
       "downloads": {
         "apa": "/citations/citesync/citation.apa.txt",
         "bibtex": "/citations/citesync/citation.bib",
@@ -54,7 +54,7 @@
     ],
     "doi": "https://doi.org/10.5281/zenodo.23774728",
     "license": "https://spdx.org/licenses/Apache-2.0",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
       "apa": "van Lierde, S. (n.d.). codemeta-drift [Computer software]. https://doi.org/10.5281/zenodo.23774728",
       "downloads": {
@@ -74,11 +74,11 @@
         "familyName": "van Lierde"
       }
     ],
-    "datePublished": "2026-11-12",
+    "datePublished": "2026-11-16",
     "version": "0.13.0",
     "doi": "https://doi.org/10.5281/zenodo.21213659",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
       "apa": "van Lierde, S. (2026). CRediT Matrix (Version 0.13.0) [Computer software]. https://doi.org/10.5281/zenodo.21213659",
       "downloads": {
@@ -100,7 +100,7 @@
     ],
     "doi": "https://doi.org/10.5281/zenodo.23461825",
     "license": ["https://spdx.org/licenses/MIT", "https://spdx.org/licenses/Apache-2.0"],
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
       "apa": "van Lierde, S. (n.d.). jsonvet [Computer software]. https://doi.org/10.5281/zenodo.23461825",
       "downloads": {
@@ -121,7 +121,7 @@
       }
     ],
     "license": "https://spdx.org/licenses/GPL-3.0-or-later",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
       "apa": "van Lierde, S. (n.d.). Cooling for Comfort, Warming the World: cooling demand and environmental impact model for The Hague [Computer software]. https://github.com/simonvanlierde/msc-thesis-ie",
       "downloads": {
@@ -143,7 +143,7 @@
     ],
     "doi": "https://doi.org/10.5281/zenodo.23701980",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
       "apa": "van Lierde, S. (n.d.). project-templates [Computer software]. https://doi.org/10.5281/zenodo.23701980",
       "downloads": {
@@ -163,13 +163,13 @@
         "familyName": "van Lierde"
       }
     ],
-    "datePublished": "2026-11-07",
-    "version": "0.7.0",
+    "datePublished": "2026-11-15",
+    "version": "0.8.0",
     "doi": "https://doi.org/10.5281/zenodo.23461260",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
-      "apa": "van Lierde, S. (2026). RaMa-Scene Explorer (Version 0.7.0) [Computer software]. https://doi.org/10.5281/zenodo.23461260",
+      "apa": "van Lierde, S. (2026). RaMa-Scene Explorer (Version 0.8.0) [Computer software]. https://doi.org/10.5281/zenodo.23461260",
       "downloads": {
         "apa": "/citations/ramascene-explorer/citation.apa.txt",
         "bibtex": "/citations/ramascene-explorer/citation.bib",
@@ -187,13 +187,13 @@
         "familyName": "van Lierde"
       }
     ],
-    "datePublished": "2026-11-11",
-    "version": "0.5.1",
+    "datePublished": "2026-11-15",
+    "version": "0.6.0",
     "doi": "https://doi.org/10.5281/zenodo.23460694",
     "license": "https://spdx.org/licenses/MIT",
-    "fetched_at": "2026-11-12",
+    "fetched_at": "2026-11-16",
     "citation": {
-      "apa": "van Lierde, S. (2026). sourceledger (Version 0.5.1) [Computer software]. https://doi.org/10.5281/zenodo.23460694",
+      "apa": "van Lierde, S. (2026). sourceledger (Version 0.6.0) [Computer software]. https://doi.org/10.5281/zenodo.23460694",
       "downloads": {
         "apa": "/citations/sourceledger/citation.apa.txt",
         "bibtex": "/citations/sourceledger/citation.bib",
