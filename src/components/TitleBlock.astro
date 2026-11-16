@@ -71,7 +71,7 @@ const contact = [...(basics.email ? [{ label: basics.email, href: `mailto:${basi
         {
           contact.map((c) => (
             <li>
-              <a href={c.href}>{c.label}</a>
+              <a href={c.href} rel={c.href.startsWith("https:") ? "me" : undefined}>{c.label}</a>
             </li>
           ))
         }
