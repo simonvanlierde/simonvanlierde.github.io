@@ -58,7 +58,7 @@ const { location, email } = cv.basics;
   {
     profiles.map((p) => (
       <li>
-        <a href={p.href}>{p.label}</a>
+        <a href={p.href} rel="me">{p.label}</a>
       </li>
     ))
   }
