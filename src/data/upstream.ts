@@ -11,7 +11,9 @@ export const leftOut = [
   "helenahartmann/awesome-PhD#51",
   "open-wanderer/wanderer",
   "pogopaule/awesome-sustainability-jobs#21",
+  "perma-id/w3id.org#7130",
   "typst/packages#6284",
+  "typst/packages#6377",
 ];
 
 export interface UpstreamProject {
@@ -68,14 +70,14 @@ export const upstream: UpstreamProject[] = [
   {
     name: "Activity Browser",
     repo: "LCA-ActivityBrowser/activity-browser",
-    what: "[kept parameter amounts editable], loaded scenario files with empty keys, and kept a Monte Carlo seed of 0",
-    prs: [1743, 1744],
+    what: "[kept parameter amounts editable], loaded scenario files with empty keys, kept a Monte Carlo seed of 0, kept impacts of activities with an empty field when aggregating contributions, and checked the online project templates once per session",
+    prs: [1743, 1744, 1754, 1766],
   },
   {
     name: "SALib",
     repo: "SALib/SALib",
-    what: "let ProblemSpec take samples and results as plain lists, kept a random seed of 0, and added tests for the sampling and analysis command-line tools",
-    prs: [700, 706, 713],
+    what: "let ProblemSpec take samples and results as plain lists, kept a random seed of 0, added tests for the sampling and analysis command-line tools, and made the analyze CLI validate inputs like ProblemSpec, use the analysis defaults and read radial resamples",
+    prs: [700, 706, 710, 713, 715],
   },
   {
     name: "Brightway (bw2data)",
