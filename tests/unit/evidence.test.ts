@@ -74,6 +74,8 @@ test("evidenceDrift flags unlisted merged PRs, listed PRs not merged and a stale
   });
   assert.match(report, /merged \[a\/new#5\]\(https:\/\/github\.com\/a\/new\/pull\/5\)/);
   assert.match(report, /merged \[a\/list#10\]/);
+  // Each line carries the entry to paste into leftOut, so a PR that should stay off needs no lookup.
+  assert.match(report, /add `"a\/new#5"` to `leftOut`/);
   assert.doesNotMatch(report, /a\/list#9|a\/b#1\b|a\/hobby/);
   assert.match(report, /listed `a\/b#2` is not among the merged/);
   assert.match(report, /was last fetched on 2026-09-01, 58 days ago/);
