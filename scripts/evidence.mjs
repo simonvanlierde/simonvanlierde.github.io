@@ -60,7 +60,9 @@ export function evidenceDrift({ curated, leftOut, merged, fetchedAt, today }) {
   for (const pr of merged) {
     const k = key(pr.repo, pr.number);
     if (!listed.has(k) && !skipped.has(k) && !skipped.has(pr.repo.toLowerCase())) {
-      lines.push(`- merged [${pr.repo}#${pr.number}](https://github.com/${pr.repo}/pull/${pr.number}) is not listed`);
+      lines.push(
+        `- merged [${pr.repo}#${pr.number}](https://github.com/${pr.repo}/pull/${pr.number}) is not listed; to keep it off, add \`"${pr.repo}#${pr.number}"\` to \`leftOut\``,
+      );
     }
   }
   for (const u of curated) {
