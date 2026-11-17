@@ -1,0 +1,265 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import cardImages from "../data/cardImages.json" with { type: "json" };
+import { statsSource } from "../data/figures.ts";
+import { figureParts, projectMetadata, roleIds } from "../data/projectSchema.ts";
+import stats from "../data/stats.json" with { type: "json" };
+import { upstream } from "../data/upstream.ts";
+import Figure from "./Figure.astro";
+
+interface Props {
+  projects: CollectionEntry<"projects">[];
+  mission: string;
+}
+const { projects, mission } = Astro.props;
+
+const lanes = [
+  { id: "lead", label: "The platform", note: "" },
+  { id: "data", label: "Data", note: "Datasets and the platform that collects them." },
+  { id: "software", label: "Research software", note: "Libraries and tools other research builds on." },
+  { id: "tools-and-apps", label: "Tools and apps", note: "Small applications for people outside the lab." },
+] as const;
+const threads = [
+  ["circular-data-economy", "Circular data economy"],
+  ["footprints-and-flows", "Footprints and flows"],
+  ["open-and-fair-research-software", "Open and fair research software"],
+  ["open-and-reproducible-ml", "Open and reproducible ML"],
+  ["tools-that-respect-people", "Tools that respect people"],
+  ["built-to-scale-and-last", "Built to scale and last"],
+] as const;
+const roleLabels: Record<(typeof roleIds)[number], string> = {
+  researchers: "Researchers and students",
+  builders: "Research software builders",
+  policy: "Policy and planning",
+  practitioners: "Circular-economy practitioners",
+  public: "The public",
+};
+
+const byId = new Map(projects.map((p) => [p.id, p]));
+const libraries = new Map(upstream.map((l) => [l.repo, l]));
+const target = (id: string) => {
+  const project = byId.get(id);
+  if (project) return { label: project.data.title, href: `#${id}`, id };
+  const library = libraries.get(id);
+  return { label: library?.name ?? id, href: `https://github.com/${id}`, id: undefined };
+};
+const links = (p: CollectionEntry<"projects">) => ({
+  buildsOn: p.data.builds_on.map(target),
+  tooling: p.data.tooling.map(target),
+  fixes: p.data.fixes.map(target),
+  usedBy: projects
+    .filter((q) => q.data.builds_on.includes(p.id) || q.data.tooling.includes(p.id))
+    .map((q) => target(q.id)),
+});
+
+const assets = import.meta.glob<{ default: ImageMetadata }>("../assets/cards/*", { eager: true });
+const image = (id: string) => {
+  const entry = (cardImages as Record<string, { file: string }>)[id];
+  return entry && assets[`../assets/cards/${entry.file}`]?.default;
+};
+
+const reservoirs = (["products", "buildings", "economy"] as const).map((id) => {
+  const extract = projects.flatMap((p) => p.data.extracts).find((e) => e.reservoir === id);
+  const label = id[0].toUpperCase() + id.slice(1);
+  if (id === "products")
+    return {
+      label,
+      stock: `${stats.totals.teardowns.toLocaleString("en-US")} products`,
+      source: statsSource,
+      as_of: stats.as_of,
+    };
+  return extract
+    ? {
+        label,
+        stock: `${extract.stock.toLocaleString("en-US")} ${extract.unit}`,
+        source: extract.source,
+        as_of: extract.as_of,
+      }
+    : { label };
+});
+const totals = [
+  ["Products documented", stats.totals.teardowns],
+  ["Components catalogued", stats.totals.parts],
+  ["Images captured", stats.totals.images],
+] as const;
+const audiences = roleIds.map((id) => ({
+  label: roleLabels[id],
+  count: projects.filter((p) => p.data.serves.includes(id)).length,
+}));
+---
+
+<div class="index">
+  <header class="index__head">
+    <h1>Connected work</h1>
+    <p class="index__mission">{mission}</p>
+    <div class="threads" data-threads hidden>
+      <span class="threads__label" id="threads-label">Follow a thread</span>
+      <div role="group" aria-labelledby="threads-label">
+        {threads.map(([id, label]) => <button type="button" aria-pressed="false" data-thread={id}>{label}</button>)}
+      </div>
+    </div>
+  </header>
+
+  <section class="bookend" aria-labelledby="reads-from">
+    <h2 id="reads-from">Reads from</h2>
+    <ul>
+      {reservoirs.map((r) => <li>
+        <strong>{r.label}</strong>
+        {"stock" in r && <span class="mono"><a href={r.source}>{r.stock}</a>, <time datetime={r.as_of}>{r.as_of}</time></span>}
+      </li>)}
+    </ul>
+  </section>
+
+  {lanes.map((lane) => {
+    const entries = projects.filter((p) => (lane.id === "lead" ? p.id === "r9lab" : p.id !== "r9lab" && p.data.layer === lane.id));
+    return <section class={`lane lane--${lane.id}`} aria-labelledby={`lane-${lane.id}`}>
+      <header class={`lane__head${lane.id === "lead" ? " visually-hidden" : ""}`}>
+        <h2 id={`lane-${lane.id}`}>{lane.label}</h2>
+        <p>{lane.note}</p>
+      </header>
+      <ol class="entries">
+        {entries.map((p) => {
+          const rel = links(p);
+          const src = image(p.id);
+          const meta = projectMetadata(p.data.repo);
+          const ids = [...rel.buildsOn, ...rel.tooling, ...rel.usedBy].flatMap((l) => (l.id ? [l.id] : []));
+          return <li class="entry" id={p.id} data-threads={p.data.threads.join(" ")} data-related={ids.join(" ")}>
+            <div class="entry__title">
+              <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
+              <p class="entry__kind">{p.data.kind}{meta?.version && <span class="mono"> v{meta.version}</span>}</p>
+              {p.id === "r9lab" && <dl class="totals">{totals.map(([label, value]) => <div><dt>{label}</dt><dd><Figure value={value.toLocaleString("en-US")} source={statsSource} as_of={stats.as_of} /></dd></div>)}</dl>}
+              {src && <Image class="entry__image" src={src} alt="" width={320} loading="lazy" />}
+            </div>
+            <p class="entry__text">{figureParts(p.data.description, p.data.figures).map((part) => typeof part === "string" ? part : <Figure {...part} />)}</p>
+            <div class="entry__side"><dl class="entry__links">
+              {rel.buildsOn.length > 0 && <div><dt>Builds on</dt><dd>{rel.buildsOn.map((l) => <a href={l.href} data-to={l.id}>{l.label}</a>)}</dd></div>}
+              {rel.tooling.length > 0 && <div><dt>Tooling</dt><dd>{rel.tooling.map((l) => <a href={l.href} data-to={l.id}>{l.label}</a>)}</dd></div>}
+              {rel.usedBy.length > 0 && <div><dt>Used by</dt><dd>{rel.usedBy.map((l) => <a href={l.href} data-to={l.id}>{l.label}</a>)}</dd></div>}
+              {rel.fixes.length > 0 && <div><dt>Fixes in</dt><dd>{rel.fixes.map((l) => <a href={l.href}>{l.label}</a>)}</dd></div>}
+            </dl>
+            <p class="entry__actions">
+              {p.data.demo && <a href={p.data.demo}>Demo</a>}
+              <a href={p.data.repo}>Source</a>
+            </p></div>
+          </li>;
+        })}
+      </ol>
+    </section>;
+  })}
+
+  <section class="bookend" aria-labelledby="serves">
+    <h2 id="serves">Used by</h2>
+    <ul>
+      {audiences.map((a) => <li><strong>{a.label}</strong> <span class="mono">{a.count} {a.count === 1 ? "project" : "projects"}</span></li>)}
+    </ul>
+  </section>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>(".index");
+  const entries = [...document.querySelectorAll<HTMLElement>(".entry")];
+  const picker = document.querySelector<HTMLElement>("[data-threads]");
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-thread]")];
+  if (root && picker) {
+    picker.hidden = false;
+    const show = (thread: string) => {
+      for (const b of buttons) b.setAttribute("aria-pressed", String(b.dataset.thread === thread));
+      for (const e of entries) e.toggleAttribute("data-off", !!thread && !(e.dataset.threads ?? "").split(" ").includes(thread));
+      history.replaceState(null, "", thread ? `?thread=${thread}` : location.pathname);
+    };
+    for (const b of buttons)
+      b.addEventListener("click", () => show(b.getAttribute("aria-pressed") === "true" ? "" : (b.dataset.thread ?? "")));
+    const start = new URLSearchParams(location.search).get("thread");
+    if (start && buttons.some((b) => b.dataset.thread === start)) show(start);
+  }
+  // Hover or focus an entry to bring its neighbours forward.
+  for (const entry of entries) {
+    const on = () => {
+      const near = (entry.dataset.related ?? "").split(" ");
+      for (const other of entries) other.toggleAttribute("data-near", near.includes(other.id));
+    };
+    const off = () => { for (const other of entries) other.removeAttribute("data-near"); };
+    entry.addEventListener("pointerenter", on);
+    entry.addEventListener("pointerleave", off);
+    entry.addEventListener("focusin", on);
+    entry.addEventListener("focusout", off);
+  }
+</script>
+
+<style>
+  .index { padding-block: var(--space-l) var(--space-xl); }
+  .index__head { max-width: 62rem; margin-bottom: var(--space-l); }
+  h1 { font: 800 clamp(2.6rem, 1.6rem + 4.4vw, 5rem)/1 var(--font-draft); letter-spacing: -0.03em; margin: 0; }
+  .index__mission { font: italic 400 var(--step-2)/1.4 var(--font-sans); max-width: 38ch; margin: var(--space-m) 0 0; color: var(--text); }
+  .threads { margin-top: var(--space-l); }
+  .threads__label, .bookend h2, dt { font: 600 var(--step--1)/1.4 var(--font-draft); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+  .threads__label { display: block; margin-bottom: var(--space-xs); }
+  .threads [role="group"] { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+  .threads button {
+    font: 400 var(--step--1)/1 var(--font-draft); color: var(--text); background: none; cursor: pointer;
+    border: var(--border-width) solid var(--border-strong); border-radius: 999px; padding: 0.7em 1.1em; min-height: 44px;
+    transition: background var(--dur-fast), color var(--dur-fast);
+  }
+  .threads button:hover { background: var(--surface); }
+  .threads button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+
+  .bookend { display: grid; gap: var(--space-s); padding-block: var(--space-m); border-block: var(--border-width) solid var(--border); }
+  .bookend + .lane, .lane + .bookend { margin-top: var(--space-xl); }
+  .bookend h2 { margin: 0; }
+  .bookend ul { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-l); list-style: none; padding: 0; margin: 0; }
+  .bookend li { display: flex; flex-direction: column; font: 400 var(--step-0)/1.4 var(--font-sans); }
+  .bookend strong { font: 600 var(--step-0)/1.4 var(--font-draft); }
+  .mono { font: 400 var(--step--1)/1.5 var(--font-mono); color: var(--text-muted); }
+
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .lane { --lane: var(--tech); margin-top: var(--space-xl); }
+  .lane--lead { --lane: var(--river); margin-top: var(--space-l); }
+  .lane--lead .entries { border-top: 2px solid var(--lane); }
+  .lane--lead .entry__title h3 { font-size: var(--step-3); }
+  .lane--lead .entry__text { font-size: var(--step-1); line-height: 1.45; }
+  .totals { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: var(--space-s); margin: var(--space-m) 0 0; }
+  .totals div { display: flex; flex-direction: column-reverse; }
+  .totals dd { font: 800 var(--step-2)/1 var(--font-draft); font-variant-numeric: tabular-nums; }
+  .lane--data { --lane: var(--eco); }
+  .lane--tools-and-apps { --lane: var(--loam); }
+  .lane__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2xs) var(--space-m); padding-bottom: var(--space-s); border-bottom: 2px solid var(--lane); }
+  .lane__head h2 { font: 800 var(--step-3)/1.1 var(--font-draft); letter-spacing: -0.02em; margin: 0; }
+  .lane__head p { margin: 0; color: var(--text-muted); font: italic 400 var(--step-0)/1.4 var(--font-sans); }
+
+  .entries { list-style: none; padding: 0; margin: 0; }
+  .entry {
+    display: grid; gap: var(--space-s) var(--space-l); padding-block: var(--space-l);
+    border-bottom: var(--border-width) solid var(--border); scroll-margin-top: 5rem;
+    transition: opacity var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+  }
+  .entry[data-off] { opacity: 0.28; }
+  .entry[data-near] { background: var(--surface); }
+  .entry:target { background: var(--surface); outline: 2px solid var(--lane); outline-offset: -2px; }
+  .entry__title h3 { font: 800 var(--step-2)/1.15 var(--font-draft); letter-spacing: -0.01em; margin: 0; }
+  .entry__title h3 a { color: var(--text); text-decoration: none; }
+  .entry__title h3 a:hover { text-decoration: underline; text-decoration-color: var(--lane); text-underline-offset: 0.2em; text-decoration-thickness: 2px; }
+  .entry__kind { margin: var(--space-2xs) 0 0; font: 400 var(--step--1)/1.4 var(--font-draft); color: var(--text-muted); }
+  .entry__image { display: block; width: 100%; max-width: 20rem; height: auto; margin-top: var(--space-s); border: var(--border-width) solid var(--border); }
+  .entry__text { margin: 0; font: 400 var(--step-0)/1.6 var(--font-sans); max-width: 62ch; }
+  .entry__links { margin: 0; display: grid; gap: var(--space-xs); align-content: start; font: 400 var(--step--1)/1.5 var(--font-draft); }
+  .entry__links > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--space-xs); }
+  dd { margin: 0; display: flex; flex-wrap: wrap; gap: 0 var(--space-s); }
+  dt { padding-top: 0.15em; }
+  .entry__links a, .entry__actions a { display: inline-flex; align-items: center; min-height: 24px; color: var(--accent); }
+  .entry__side { display: grid; gap: var(--space-xs); align-content: start; }
+  .entry__actions { display: flex; gap: var(--space-m); margin: 0; font: 400 var(--step--1)/1.5 var(--font-draft); }
+  .entry__actions a { min-height: 44px; font-weight: 600; }
+
+  @media (min-width: 1100px) {
+    .index__head { display: grid; grid-template-columns: 1fr minmax(18rem, 26rem); gap: var(--space-l); max-width: none; align-items: end; }
+    .threads { margin-top: 0; }
+  }
+  @media (min-width: 860px) {
+    .entry { grid-template-columns: minmax(12rem, 1fr) minmax(0, 2fr) minmax(13rem, 1.1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .entry { transition: none; }
+  }
+</style>

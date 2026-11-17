@@ -1,11 +1,9 @@
 ---
 import { getCollection } from "astro:content";
-import ProjectStory from "../components/ProjectStory.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import WorkMap from "../components/WorkMap.svelte";
+import WorkIndex from "../components/WorkIndex.astro";
 import { cv, intro } from "../data/cv.ts";
-import { figureText } from "../data/projectSchema.ts";
 import { homeJsonLd } from "../data/schemaOrg.ts";
 import Base from "../layouts/Base.astro";
 
@@ -14,19 +12,8 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
 
 <Base title={`${cv.basics.name} | Research software engineer for industrial ecology`} description={intro} jsonLd={homeJsonLd(projects.filter((p) => p.data.featured))}>
   <SiteHeader current="index" />
-  <main id="main" tabindex="-1" class="container map-home">
-    <WorkMap mission="I contribute open tools and data to industrial ecology and the circular economy, for anyone to use, check and add to." projects={projects.map((p) => ({ id: p.id, ...p.data, description: figureText(p.data.description, p.data.figures), href: `/projects/${p.id}/` }))} client:load>
-      <div class="project-stories">
-        {projects.map((project) => <ProjectStory project={project} primaryActions={false} />)}
-      </div>
-    </WorkMap>
+  <main id="main" tabindex="-1" class="container">
+    <WorkIndex mission="I contribute open tools and data to industrial ecology and the circular economy, for anyone to use, check and add to." projects={projects} />
   </main>
   <SiteFooter />
 </Base>
-
-<style>
-  .map-home { min-height: calc(100svh - 176px); }
-  @media (min-width: 1080px) {
-    :global(body:has(.map-home) .container) { width: calc(100% - 2 * var(--gutter)); }
-  }
-</style>
