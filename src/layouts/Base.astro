@@ -26,6 +26,15 @@ const ogImageAlt =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {hasCanonical && <link rel="canonical" href={canonical} />}
 
+    <script is:inline>
+      // Published #project-<id> and #relab links on / and /archive/ now live on project pages.
+      addEventListener("DOMContentLoaded", () => {
+        const hash = location.hash.slice(1);
+        if (!/^(project-.+|relab)$/.test(hash) || document.getElementById(hash)) return;
+        if (location.pathname === "/" || location.pathname === "/archive/")
+          location.replace(`/projects/${hash === "relab" ? "r9lab" : hash.slice(8)}/`);
+      });
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />

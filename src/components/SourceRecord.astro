@@ -1,0 +1,32 @@
+---
+import { sourceRecord } from "../data/provenance.ts";
+
+interface Props {
+  sourceId: string;
+  label: string;
+}
+const { sourceId, label } = Astro.props;
+const record = sourceRecord(sourceId);
+---
+
+{record && <p class="source-record draft" data-source-id={sourceId} data-sha256={record.sha256}>
+  <a href={record.url}>{label}</a>
+  {record.retrieved_at && <span>Retrieved <time datetime={record.retrieved_at}>{record.retrieved_at.slice(0, 10)}</time></span>}
+  <a href={record.record} download aria-label={`Source record for ${label}`}>Source record</a>
+  {record.changed && <span>Source changed since the previous download</span>}
+</p>}
+
+<style>
+  .source-record {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
+</style>

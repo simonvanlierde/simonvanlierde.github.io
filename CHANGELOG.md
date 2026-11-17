@@ -11,6 +11,17 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - The shared header, footer and type use a field-atlas palette. The theme follows the system until a choice is saved.
 
+### Added
+
+- Downloadable project citations in APA, BibTeX, CSL-JSON and JSON-LD, plus the site's own citation file.
+- Source records for project metadata and R9lab figures, showing retrieval dates, checksums and changed downloads. See [citations and source records](README.md#citations-and-source-records).
+
+### Fixed
+
+- Project metadata refresh accepts CodeMeta contribution roles alongside authors, including CRediT Matrix exports.
+- Project metadata refreshes keep the last accepted citation and source record when
+  an upstream file loses its name, author or licence. See [citations and source records](README.md#citations-and-source-records).
+
 ## [0.5.0] - 2026-11-10
 
 ### Added

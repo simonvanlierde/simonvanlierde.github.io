@@ -9,6 +9,7 @@ import stats from "../data/stats.json" with { type: "json" };
 import DisassemblyChart from "./DisassemblyChart.tsx";
 import Figure from "./Figure.astro";
 import ProjectMetadata from "./ProjectMetadata.astro";
+import SourceRecord from "./SourceRecord.astro";
 
 const {
   project,
@@ -46,6 +47,8 @@ const totals = [
       <div><dt>Workshop participants</dt><dd><Figure {...participants} /></dd></div>
     </dl>
     <p class="story-source">Products, components and images: <a href={statsSource}>platform snapshot</a>, <time datetime={stats.as_of}>{stats.as_of}</time>. Participants: <a href={participants.source}>pilot workshops</a>, <time datetime={participants.as_of}>{participants.as_of}</time>.</p>
+    <SourceRecord sourceId="r9lab-totals" label="R9lab totals" />
+    <SourceRecord sourceId="r9lab-series" label="R9lab monthly series" />
     <Heading>Use and check the work</Heading>
     <ul class="story-actions">
       <li><a href="https://docs.r9lab.io">Documentation</a></li>

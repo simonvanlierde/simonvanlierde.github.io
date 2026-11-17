@@ -28,3 +28,8 @@ yarn-error.log*
 # macOS
 .DS_Store
 
+
+# raw source bytes are retained locally, never published
+.cache/
+__pycache__/
+.ruff_cache/

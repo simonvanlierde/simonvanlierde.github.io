@@ -6,3 +6,6 @@ allowBuilds:
   sharp: true
   # wrangler only uploads previews; the local Workers runtime it would set up is never run.
   workerd: false
+minimumReleaseAgeExclude:
+  # Renovate security update: astro@7.4.7
+  - astro@7.4.7

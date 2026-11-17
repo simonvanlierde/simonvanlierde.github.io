@@ -17,7 +17,7 @@ tooling:
   - citesync
 featured: true
 image_focus: { x: 0.52, y: 0.46, zoom: 2.5 }
-order: 4
+order: 2
 figures:
   runs:
     value: "153"

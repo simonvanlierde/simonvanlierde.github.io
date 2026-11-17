@@ -1,6 +1,6 @@
 ---
 title: msc-thesis-ie
-description: "In The Hague, offices have {office_area} of the floor area but cause {office_ghg} of the greenhouse-gas emissions from cooling. I rebuilt the model from my MSc Industrial Ecology thesis (Leiden / TU Delft) as a Snakemake pipeline: an hourly heat balance for {buildings} buildings from the Dutch building register (BAG), followed by LCA."
+description: "In The Hague, offices have {office_area} of the floor area but cause {office_ghg} of the greenhouse-gas emissions from cooling. I rebuilt the model from my MSc Industrial Ecology thesis (Leiden / TU Delft) as a Snakemake pipeline: an hourly heat balance for buildings in The Hague from the Dutch building register (BAG), followed by LCA."
 repo: https://github.com/simonvanlierde/msc-thesis-ie
 demo: https://simonvanlierde.com/msc-thesis-ie/
 kind: thesis + dashboard
@@ -19,10 +19,6 @@ tooling:
   - citesync
 order: 11
 figures:
-  buildings:
-    value: "59,381"
-    source: https://github.com/simonvanlierde/msc-thesis-ie/blob/main/dashboard/README.md
-    as_of: "2026-10-28"
   office_area:
     value: "11%"
     source: https://github.com/simonvanlierde/msc-thesis-ie#key-findings

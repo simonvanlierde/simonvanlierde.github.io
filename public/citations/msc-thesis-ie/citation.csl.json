@@ -1,0 +1,14 @@
+[
+  {
+    "id": "cooling-for-comfort-warming-the-world",
+    "type": "software",
+    "title": "Cooling for Comfort, Warming the World: cooling demand and environmental impact model for The Hague",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "URL": "https://github.com/simonvanlierde/msc-thesis-ie"
+  }
+]

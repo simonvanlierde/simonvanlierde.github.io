@@ -102,7 +102,7 @@ libraries, each backed by a live demo, a DOI or a merged PR.
   leaving a repo off the CV) enters this repo.
 - The CV keeps its dated experience history and exported PDF.
 - Links other sites already hold keep working: `/cv/`, `/notes/<slug>/`, `/duinlab/`. The old
-  `/archive/` and `/#project-<id>` anchors are not redirected; the 404 page points to the project.
+  `/archive/` and `/#project-<id>` links follow a project between the archive and selected work.
 - Static site built with Astro on GitHub Pages behind Cloudflare. Interactive parts are islands:
   Preact today, Svelte from the redesign on. No cookies, no analytics, no third-party scripts or fonts.
 

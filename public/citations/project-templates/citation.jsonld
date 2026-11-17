@@ -1,0 +1,33 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "project-templates",
+  "description": "A Copier template that starts Python, TypeScript, Rust, Go and Docker repos, secure by default and kept current by a weekly update PR. Research code comes citable, with CITATION.cff, a Zenodo DOI and a Software Heritage archive. Its data-pipeline kind builds a dataset from public sources where every row says which download it came from, and the web-app kind adds legal pages and an accessibility statement.",
+  "codeRepository": "https://github.com/simonvanlierde/project-templates",
+  "identifier": "https://doi.org/10.5281/zenodo.23701980",
+  "license": "https://spdx.org/licenses/MIT",
+  "keywords": [
+    "copier",
+    "project template",
+    "research software",
+    "provenance",
+    "data pipeline",
+    "supply-chain security",
+    "web app",
+    "python",
+    "typescript",
+    "rust",
+    "go",
+    "docker",
+    "dependency updates"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0009-0006-6953-909X",
+      "givenName": "Simon",
+      "familyName": "van Lierde",
+      "name": "Simon van Lierde"
+    }
+  ]
+}

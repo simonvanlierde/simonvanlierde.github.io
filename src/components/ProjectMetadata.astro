@@ -1,11 +1,19 @@
 ---
 import { projectMetadata } from "../data/projectSchema.ts";
+import SourceRecord from "./SourceRecord.astro";
 
 interface Props {
   repo: string;
 }
 const metadata = projectMetadata(Astro.props.repo);
-const name = Astro.props.repo.split("/").at(-1);
+const name = Astro.props.repo.split("/").filter(Boolean).at(-1);
+const citation = metadata?.citation;
+const formats = [
+  ["apa", "APA"],
+  ["bibtex", "BibTeX"],
+  ["cslJson", "CSL-JSON"],
+  ["jsonld", "JSON-LD"],
+] as const;
 // The label is the URL's last non-empty path segment: "MIT" from spdx.org/licenses/MIT.html.
 const licenses = (metadata?.license ? [metadata.license].flat() : []).map((href) => ({
   href,
@@ -22,3 +30,42 @@ const licenses = (metadata?.license ? [metadata.license].flat() : []).map((href)
   {metadata.doi && <a href={metadata.doi} aria-label={`DOI for ${name}`}>DOI</a>}
   {licenses.map(({ href, label }) => <a href={href} aria-label={`${label} licence for ${name}`}>{label}</a>)}
 </p>}
+
+{citation && <details class="project-citation">
+  <summary>Cite this software<span class="visually-hidden"> ({name})</span></summary>
+  <p class="citation-text">{citation.apa}</p>
+  <p class="citation-downloads draft">
+    {formats.map(([key, label]) => <a href={citation.downloads[key]} download aria-label={`Download ${label} citation for ${name}`}>{label}</a>)}
+  </p>
+  {metadata?.sourceId && <SourceRecord sourceId={metadata.sourceId} label={`${name} CodeMeta`} />}
+</details>}
+
+<style>
+  .project-citation {
+    font-weight: normal;
+    text-align: start;
+  }
+  summary {
+    min-height: 44px;
+    padding-block: var(--space-xs);
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: var(--step--1);
+  }
+  .citation-text {
+    max-width: var(--measure);
+    overflow-wrap: anywhere;
+  }
+  .citation-downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    font-size: var(--step--1);
+  }
+  .citation-downloads a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

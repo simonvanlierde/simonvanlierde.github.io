@@ -15,7 +15,8 @@ links:
     url: https://doi.org/10.5281/zenodo.23727602
 tooling:
   - project-templates
-order: 2
+featured: true
+order: 1
 figures:
   slowdown:
     value: "five"

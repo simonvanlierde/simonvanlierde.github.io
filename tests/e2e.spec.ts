@@ -381,3 +381,14 @@ test("the sitemap lists every project site under this domain", async ({ request 
     "vuurtoren",
   ]);
 });
+
+test("published project fragments open the project page", async ({ page }) => {
+  for (const [from, to] of [
+    ["/archive/#project-brightway-benchmarks", "/projects/brightway-benchmarks/"],
+    ["/#project-brightway-benchmarks", "/projects/brightway-benchmarks/"],
+    ["/#relab", "/projects/r9lab/"],
+  ]) {
+    await page.goto(from);
+    await expect(page).toHaveURL(new RegExp(`${to}$`));
+  }
+});

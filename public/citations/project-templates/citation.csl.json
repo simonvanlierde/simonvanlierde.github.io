@@ -1,0 +1,15 @@
+[
+  {
+    "id": "project-templates",
+    "type": "software",
+    "title": "project-templates",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "DOI": "10.5281/zenodo.23701980",
+    "URL": "https://github.com/simonvanlierde/project-templates"
+  }
+]

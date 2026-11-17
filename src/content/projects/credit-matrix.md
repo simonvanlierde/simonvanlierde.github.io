@@ -16,7 +16,7 @@ links:
 tooling:
   - citesync
 featured: true
-order: 3
+order: 5
 figures:
   held_out:
     value: "27,874"

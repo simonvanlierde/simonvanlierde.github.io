@@ -1,0 +1,15 @@
+[
+  {
+    "id": "jsonvet",
+    "type": "software",
+    "title": "jsonvet",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "DOI": "10.5281/zenodo.23461825",
+    "URL": "https://github.com/simonvanlierde/jsonvet"
+  }
+]

@@ -10,7 +10,7 @@ tags:
   - SVG
   - computer vision
 featured: true
-order: 10
+order: 4
 figures:
   repair:
     value: "95.7%"

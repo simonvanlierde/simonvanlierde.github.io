@@ -1,4 +1,5 @@
 import { cv, profiles, sheetLead } from "./cv.ts";
+import { personName } from "./personName.ts";
 import { type ProjectCard, personId, projectNodes, site } from "./projectSchema.ts";
 import { listablePublications, type Publication } from "./publications.ts";
 
@@ -7,10 +8,7 @@ import { listablePublications, type Publication } from "./publications.ts";
 /** Profiles that identify the same person elsewhere. */
 const sameAs = [...profiles.map((p) => p.href), cv.basics.links.openalex, cv.basics.links.scholar].filter(Boolean);
 
-// shortcut: first word is the given name, which holds for "Simon van Lierde"; split
-// it in the export if a name ever needs more.
-const [givenName, ...family] = cv.basics.name.split(" ");
-const familyName = family.join(" ");
+const { givenName, familyName } = personName(cv.basics.name);
 // How an APA byline names the owner once publications.ts expands it: "S. van Lierde".
 const bylineName = `${givenName[0]}. ${familyName}`;
 
