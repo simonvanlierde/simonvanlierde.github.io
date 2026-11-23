@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-11-16",
-  "fetched_at": "2026-11-16",
+  "as_of": "2026-11-23",
+  "fetched_at": "2026-11-23",
   "prs": [
     {
       "repo": "ASSERT-KTH/awesome-open-science-software",
@@ -27,8 +27,50 @@
       "default_branch": "main"
     },
     {
+      "repo": "brightway-lca/brightway2-calc",
+      "number": 185,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-calc",
+      "number": 186,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
       "repo": "brightway-lca/brightway2-data",
       "number": 295,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-data",
+      "number": 308,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-data",
+      "number": 309,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/brightway2-io",
+      "number": 352,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/bw_processing",
+      "number": 113,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "brightway-lca/bw_processing",
+      "number": 115,
       "base": "main",
       "default_branch": "main"
     },
@@ -39,14 +81,38 @@
       "default_branch": "main"
     },
     {
+      "repo": "brightway-lca/matrix_utils",
+      "number": 48,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
       "repo": "brightway-lca/stats_arrays",
       "number": 43,
       "base": "main",
       "default_branch": "main"
     },
     {
+      "repo": "brightway-lca/stats_arrays",
+      "number": 45,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
       "repo": "codemeta/codemeta",
       "number": 505,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "electricitymaps/electricitymaps-contrib",
+      "number": 8930,
+      "base": "master",
+      "default_branch": "master"
+    },
+    {
+      "repo": "electricitymaps/electricitymaps-contrib",
+      "number": 8931,
       "base": "master",
       "default_branch": "master"
     },
@@ -115,6 +181,12 @@
       "number": 1766,
       "base": "major",
       "default_branch": "main"
+    },
+    {
+      "repo": "mlco2/codecarbon",
+      "number": 1492,
+      "base": "master",
+      "default_branch": "master"
     },
     {
       "repo": "NLeSC/python-template",
@@ -292,6 +364,12 @@
     },
     {
       "repo": "SALib/SALib",
+      "number": 714,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "SALib/SALib",
       "number": 715,
       "base": "main",
       "default_branch": "main"
@@ -335,6 +413,12 @@
     {
       "repo": "typst/packages",
       "number": 6377,
+      "base": "main",
+      "default_branch": "main"
+    },
+    {
+      "repo": "typst/packages",
+      "number": 6420,
       "base": "main",
       "default_branch": "main"
     }

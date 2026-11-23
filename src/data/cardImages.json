@@ -2,7 +2,7 @@
   "brightway-benchmarks": {
     "file": "brightway-benchmarks.png",
     "source": "https://simonvanlierde.com/brightway-benchmarks/ui/og.png?v=cbb5d8e3",
-    "fetched_at": "2026-11-16"
+    "fetched_at": "2026-11-23"
   },
   "credit-matrix": {
     "file": "credit-matrix.png",
@@ -19,11 +19,11 @@
   "jsonvet": {
     "file": "jsonvet.png",
     "source": "https://simonvanlierde.com/jsonvet/og.png?v=842ed52b",
-    "fetched_at": "2026-11-16"
+    "fetched_at": "2026-11-23"
   },
   "ramascene-explorer": {
     "file": "ramascene-explorer.png",
     "source": "https://simonvanlierde.com/ramascene-explorer/og.png?v=78037bf4",
-    "fetched_at": "2026-11-16"
+    "fetched_at": "2026-11-23"
   }
 }

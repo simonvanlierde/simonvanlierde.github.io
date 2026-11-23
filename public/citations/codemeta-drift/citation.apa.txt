@@ -1,1 +1,1 @@
-van Lierde, S. (n.d.). codemeta-drift [Computer software]. https://doi.org/10.5281/zenodo.23774728
+van Lierde, S. (2026). codemeta-drift (Version 0.9.0) [Computer software]. https://doi.org/10.5281/zenodo.23774728

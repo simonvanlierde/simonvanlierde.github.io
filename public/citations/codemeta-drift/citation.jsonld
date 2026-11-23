@@ -3,7 +3,9 @@
   "@type": "SoftwareSourceCode",
   "name": "codemeta-drift",
   "description": "Show where CodeMeta's crosswalks are wrong or missing, check CodeMeta consistency, export JSON crosswalk mappings and SSSOM, and preview schema drift for review",
+  "version": "0.9.0",
   "codeRepository": "https://github.com/simonvanlierde/codemeta-drift",
+  "datePublished": "2026-11-20",
   "identifier": "https://doi.org/10.5281/zenodo.23774728",
   "license": "https://spdx.org/licenses/Apache-2.0",
   "keywords": [

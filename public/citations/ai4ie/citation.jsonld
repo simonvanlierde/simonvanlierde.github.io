@@ -1,0 +1,22 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Awesome AI for Industrial Ecology",
+  "description": "A community-curated guide to using AI in industrial ecology: literature, tools, skills and in-browser demos, proposed to the AI4IE working group.",
+  "codeRepository": "https://github.com/simonvanlierde/awesome-ai4ie",
+  "license": "https://spdx.org/licenses/CC-BY-4.0",
+  "keywords": [
+    "ai",
+    "awesome-list",
+    "industrial-ecology"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0009-0006-6953-909X",
+      "givenName": "Simon",
+      "familyName": "van Lierde",
+      "name": "Simon van Lierde"
+    }
+  ]
+}

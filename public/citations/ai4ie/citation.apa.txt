@@ -1,0 +1,1 @@
+van Lierde, S. (n.d.). Awesome AI for Industrial Ecology [Computer software]. https://github.com/simonvanlierde/awesome-ai4ie

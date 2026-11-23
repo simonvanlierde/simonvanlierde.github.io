@@ -1,0 +1,14 @@
+[
+  {
+    "id": "awesome-ai-for-industrial-ecology",
+    "type": "software",
+    "title": "Awesome AI for Industrial Ecology",
+    "author": [
+      {
+        "family": "van Lierde",
+        "given": "Simon"
+      }
+    ],
+    "URL": "https://github.com/simonvanlierde/awesome-ai4ie"
+  }
+]
