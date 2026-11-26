@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import { isoDay } from "../components/cvPeriod.ts";
 import Figure from "../components/Figure.astro";
 import ProjectMetadata from "../components/ProjectMetadata.astro";
+import ProjectRedirect from "../components/ProjectRedirect.astro";
 import SheetNav from "../components/SheetNav.astro";
 import TitleBlock from "../components/TitleBlock.astro";
 import UpstreamList from "../components/UpstreamList.astro";
@@ -26,14 +27,7 @@ const destination = (id: string) =>
 ---
 <Base title="Project archive | Simon van Lierde" description="Research tools, personal apps and smaller projects by Simon van Lierde, with the complete list of merged upstream contributions." jsonLd={archiveJsonLd(archived)}>
   <SheetNav current="archive" />
-  <script define:vars={{ featuredFragments }}>
-    // Published archive links follow projects promoted to the index.
-    function followFeaturedProject() {
-      if (featuredFragments.includes(location.hash)) location.replace(`/${location.hash}`);
-    }
-    followFeaturedProject();
-    window.addEventListener("hashchange", followFeaturedProject);
-  </script>
+  <ProjectRedirect fragments={featuredFragments} destination="/" />
   <main id="main" class="container archive">
     <header>
       <h1>Project archive</h1>

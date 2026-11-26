@@ -7,6 +7,7 @@ import ExplodedView from "../components/ExplodedView.astro";
 import Figure from "../components/Figure.astro";
 import NoteList from "../components/NoteList.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import ProjectRedirect from "../components/ProjectRedirect.astro";
 import SheetHead from "../components/SheetHead.astro";
 import SheetNav from "../components/SheetNav.astro";
 import SourceRecord from "../components/SourceRecord.astro";
@@ -70,14 +71,7 @@ const name = basics.name;
   jsonLd={homeJsonLd(workProjects)}
 >
   <SheetNav current="index" />
-  <script define:vars={{ archivedFragments }}>
-    // Published homepage fragments follow projects that moved to the archive.
-    function followArchivedProject() {
-      if (archivedFragments.includes(location.hash)) location.replace(`/archive/${location.hash}`);
-    }
-    followArchivedProject();
-    window.addEventListener("hashchange", followArchivedProject);
-  </script>
+  <ProjectRedirect fragments={archivedFragments} destination="/archive/" />
 
   {/* Skip target. A div, not <main>: a header inside <main> loses its banner role. */}
   <div id="main">

@@ -1,0 +1,19 @@
+---
+import CspScript from "./CspScript.astro";
+
+interface Props {
+  fragments: string[];
+  destination: "/" | "/archive/";
+}
+
+const { fragments, destination } = Astro.props;
+const code = `{
+  const fragments = ${JSON.stringify(fragments).replaceAll("<", "\\u003c")};
+  const redirect = () => {
+    if (fragments.includes(location.hash)) location.replace(${JSON.stringify(destination)} + location.hash);
+  };
+  redirect();
+  window.addEventListener("hashchange", redirect);
+}`;
+---
+<CspScript code={code} />

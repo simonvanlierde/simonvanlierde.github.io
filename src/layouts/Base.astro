@@ -1,4 +1,7 @@
 ---
+import CspScript from "../components/CspScript.astro";
+import themeInit from "../scripts/themeInit.js?raw";
+import themeToggle from "../scripts/themeToggle.js?raw";
 import "../styles/global.css";
 
 interface Props {
@@ -41,16 +44,6 @@ const ogImageAlt =
     {/* Every heading uses osifont on first paint. */}
     <link rel="preload" href="/fonts/osifont.woff2" as="font" type="font/woff2" crossorigin />
 
-    {/* Apply the saved theme before paint to avoid a flash. */}
-    <script is:inline>
-      // Storage throws where blocked (sandboxed iframe, strict privacy modes);
-      // the default dark theme applies instead.
-      try {
-        const t = localStorage.getItem("theme");
-        if (t) document.documentElement.dataset.theme = t;
-      } catch {}
-    </script>
-
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -75,49 +68,11 @@ const ogImageAlt =
     }
   </head>
   <body>
+    {/* Apply the saved theme before paint to avoid a flash. */}
+    <CspScript code={themeInit} />
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
 
-    <script is:inline>
-      const btn = document.querySelector(".theme-toggle");
-      const meta = document.querySelector('meta[name="theme-color"]');
-
-      // Blocked storage stops the toggle remembering the theme, not applying it.
-      const remember = (v) => {
-        try {
-          localStorage.setItem("theme", v);
-        } catch {}
-      };
-
-      // Dark unless the visitor picked light; global.css sets the same default.
-      const isDark = () => document.documentElement.dataset.theme !== "light";
-
-      // Computed styles serialise --bg as oklch(), which theme-color parsers
-      // may not accept. A 1px canvas converts it to plain sRGB.
-      const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
-      const toRgb = (color) => {
-        if (!ctx) return color;
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, 1, 1);
-        const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-        return `rgb(${r}, ${g}, ${b})`;
-      };
-
-      // btn is optional: some pages have no toggle.
-      const sync = () => {
-        const dark = isDark();
-        meta.content = toRgb(getComputedStyle(document.body).backgroundColor);
-        btn?.setAttribute("aria-pressed", String(dark));
-      };
-
-      btn?.addEventListener("click", () => {
-        const next = isDark() ? "light" : "dark";
-        document.documentElement.dataset.theme = next;
-        remember(next);
-        sync();
-      });
-
-      sync();
-    </script>
+    <CspScript code={themeToggle} />
   </body>
 </html>

@@ -1,4 +1,7 @@
 ---
+import explodedView from "../scripts/explodedView.js?raw";
+import CspScript from "./CspScript.astro";
+
 // Fig. 1: R9lab as an exploded view. Each part links to its repo, app, or docs
 // and has a balloon keyed to the left register. On load the parts move apart
 // from the assembled stack.
@@ -342,21 +345,7 @@ const label = (id: string) => `${parts.indexOf(link(id)) + 1} ${link(id).name}: 
   </figcaption>
 </figure>
 
-<script is:inline>
-  // Start assembled, then explode. Inline, right after the figure, so the class
-  // is set before first paint: a deferred module could run later and make the
-  // parts jump. Removing it two frames later lets the transition run. Without
-  // JS or with reduced motion, the view stays exploded.
-  {
-    const fig = document.querySelector(".exploded");
-    if (fig && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      fig.classList.add("is-assembled");
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => fig.classList.remove("is-assembled"));
-      });
-    }
-  }
-</script>
+<CspScript code={explodedView} />
 
 <style>
   .exploded__instruction {
