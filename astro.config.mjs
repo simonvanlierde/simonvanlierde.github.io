@@ -26,6 +26,18 @@ const ogVersion = createHash("sha256").update(readFileSync("public/og.png")).dig
 export default defineConfig({
   site: "https://simonvanlierde.com",
   base: "/",
+  security: {
+    csp: {
+      directives: ["default-src 'self'", "object-src 'none'", "base-uri 'none'", "form-action 'none'"],
+      // Shiki supplies token colors through inline style attributes.
+      styleDirective: {
+        resources: [
+          { resource: "'self'", kind: "element" },
+          { resource: "'unsafe-inline'", kind: "attribute" },
+        ],
+      },
+    },
+  },
   // Preact, not React: the one island needs two hooks, not a 57KB runtime.
   integrations: [preact()],
   // Fenced code: both themes' colours land as CSS variables, and global.css picks one by colour-scheme.

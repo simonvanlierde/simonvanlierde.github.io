@@ -1,0 +1,12 @@
+---
+// biome-ignore lint/correctness/noNodejsModules: Astro frontmatter runs at build time.
+import { createHash } from "node:crypto";
+
+interface Props {
+  code: string;
+}
+
+const { code } = Astro.props;
+Astro.csp?.insertScriptHash(`sha256-${createHash("sha256").update(code).digest("base64")}`);
+---
+<script is:inline set:html={code}></script>

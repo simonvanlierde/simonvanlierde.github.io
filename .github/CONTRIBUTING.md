@@ -14,8 +14,9 @@ closed with a link to this section.
 ## Set up and check
 
 [Local development](../README.md#local-development) in the README has the commands.
-`pnpm check` runs the lint, type check and unit tests, and `pnpm test:e2e` the browser and
-axe tests, as CI does on every pull request.
+A change to site behavior comes with a test. Use Biome for formatting and linting,
+as configured in [biome.jsonc](../biome.jsonc). Run `pnpm check` for Biome, the type
+check and unit tests. Run `pnpm test:e2e` for the browser and axe tests.
 
 ## Write commits and pull requests
 
