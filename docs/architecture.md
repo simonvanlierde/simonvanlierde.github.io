@@ -15,9 +15,11 @@ flowchart LR
   refresh --> stats
   refresh --> upjson[upstream.json]
   demos[Demo pages' social cards] --> refresh
-  repos[Project repos' codemeta.json] --> refresh
+  repos[Project repos' codemeta.json and impact.jsonl] --> refresh
   refresh --> cards[cardImages.json and src/assets/cards]
   refresh --> codemeta[codemeta.json]
+  refresh --> impact[impact.json]
+  impact --> astro
   cards --> astro
   codemeta --> astro
   upjson --> astro
@@ -53,7 +55,9 @@ It also runs `scripts/fetch-cards.mjs` (`pnpm fetch:cards`). For each card marke
 
 When no part of a social card reads well that small, make the close-up by hand: a 480x360 PNG of the live app (a 240x180 CSS-pixel screenshot at 2x), saved as `src/assets/cards/<id>.png`, with `"manual": true` on its entry in `cardImages.json`. The script keeps such an entry and never fetches it. credit-matrix's heatmap is one.
 
-The workflow finishes with `scripts/fetch-codemeta.mjs` (`pnpm fetch:codemeta`). It reads each card repository's `codemeta.json` into committed `src/data/codemeta.json`. Each successful entry gets a `fetched_at` date; a failed or malformed response keeps that repository's last good entry. Missing files are skipped when there is no previous entry. The parser reads the software name, author names, publication date, version, DOI and licence without fetching JSON-LD contexts. These bibliographic fields support software citations; CodeMeta’s `citation` property lists related works and is not a recommended citation for the software. Author emails and other personal fields are not cached. Cards and structured data use this snapshot. A card that repeats its CodeMeta DOI in `links` fails validation during the build.
+Next it runs `scripts/fetch-codemeta.mjs` (`pnpm fetch:codemeta`). It reads each card repository's `codemeta.json` into committed `src/data/codemeta.json`. Each successful entry gets a `fetched_at` date; a failed or malformed response keeps that repository's last good entry. Missing files are skipped when there is no previous entry. The parser reads the software name, author names, publication date, version, DOI and licence without fetching JSON-LD contexts. These bibliographic fields support software citations; CodeMeta’s `citation` property lists related works and is not a recommended citation for the software. Author emails and other personal fields are not cached. Cards and structured data use this snapshot. A card that repeats its CodeMeta DOI in `links` fails validation during the build.
+
+Then `scripts/fetch-impact.mjs` (`pnpm fetch:impact`) reads `impact.jsonl` from each card repository's orphan `impact` branch into `src/data/impact.json`: the latest run record per `run.kind`, in the draft run record schema v0. A 404 means the repository has no records. A line without a valid `method` and `uncertainty` on every measure is skipped with a warning, and a failed fetch keeps that repository's last records. A card shows one line per record whose CO₂e measure has a low and a high bound, with the method and the record's month; a record without bounds shows nothing.
 
 The ranking, grouping and wording of "Merged upstream" stay hand-kept in `src/data/upstream.ts`, which lists each project's PR numbers. The page names the branch when a PR went into one that is not the repo's default (lca_algebraic's `dev`, for example), since that work is not on the default branch yet.
 

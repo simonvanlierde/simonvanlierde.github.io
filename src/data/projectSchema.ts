@@ -2,6 +2,7 @@
 // unit tests can import it: that file reads the CV export through a Vite-only
 // `?raw` import.
 import codemeta from "./codemeta.json" with { type: "json" };
+import impact from "./impact.json" with { type: "json" };
 
 export interface ProjectMetadata {
   name?: string;
@@ -20,6 +21,57 @@ export interface ProjectMetadata {
 
 export const projectMetadata = (repo: string): ProjectMetadata | undefined =>
   (codemeta as Record<string, ProjectMetadata>)[repo];
+
+/** The fields of a run record (schema v0) the site reads; scripts/impact.mjs validates them. */
+export interface RunRecord {
+  run: { kind: string; start_time: string; functional_unit?: string };
+  measures: Record<
+    string,
+    {
+      value: number;
+      unit: string;
+      method: { kind: string; tool: string; version: string; model?: string };
+      uncertainty: { low?: number; high?: number };
+    }
+  >;
+}
+
+const gramsPerUnit: Record<string, number> = { "mg{CO2-eq}": 1e-3, "g{CO2-eq}": 1, "kg{CO2-eq}": 1e3 };
+const twoDigits = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 2 });
+
+/**
+ * One line per run record that has a CO₂e measure with a low and high bound, such as
+ * "24–29 mg CO₂e per page view, modelled (Sustainable Web Design v4)". A measure with
+ * no range gives no line, so the site never shows a bare point value.
+ */
+export function projectImpact(
+  repo: string,
+  records = (impact as Record<string, Record<string, RunRecord>>)[repo] ?? {},
+) {
+  return Object.values(records).flatMap(({ run, measures }) => {
+    const found = Object.values(measures).find(
+      (m) => m.unit in gramsPerUnit && m.uncertainty.low !== undefined && m.uncertainty.high !== undefined,
+    );
+    if (!found) return [];
+    const grams = gramsPerUnit[found.unit];
+    const [low, high] = [found.uncertainty.low ?? 0, found.uncertainty.high ?? 0].map((v) => v * grams);
+    const [scale, unit] = high >= 1000 ? [1e3, "kg"] : high >= 1 ? [1, "g"] : [1e-3, "mg"];
+    const { kind, tool, version, model } = found.method;
+    const swd = model?.match(/^swd v(\d+)/i);
+    const per = run.functional_unit?.replace(/^(one|a|an) /i, "") ?? run.kind.replaceAll("-", " ");
+    return [
+      {
+        text: `${twoDigits.format(low / scale)}–${twoDigits.format(high / scale)} ${unit} CO₂e per ${per}, ${kind} (${swd ? `Sustainable Web Design v${swd[1]}` : `${tool} ${version}`})`,
+        at: run.start_time,
+        atLabel: new Date(run.start_time).toLocaleDateString("en-US", {
+          month: "short",
+          year: "numeric",
+          timeZone: "UTC",
+        }),
+      },
+    ];
+  });
+}
 
 export const site = "https://simonvanlierde.com";
 export const personId = `${site}/#person`;

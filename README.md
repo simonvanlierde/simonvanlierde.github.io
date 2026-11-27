@@ -22,6 +22,7 @@ pnpm build        # type-check (astro check) and build to dist/
 pnpm gen:og       # regenerate public/og.png (the social-card image)
 pnpm fetch:cards  # copy each featured card's demo og:image into src/assets/cards/
 pnpm fetch:codemeta # refresh project metadata, citation downloads and source records
+pnpm fetch:impact  # refresh each project's latest run records from its impact branch
 pnpm fetch:stats  # refresh R9lab figures and source records
 pnpm gen:citation # regenerate CITATION.cff from the package and public CV
 pnpm fetch:evidence # refresh merged upstream PRs in src/data/upstream.json
