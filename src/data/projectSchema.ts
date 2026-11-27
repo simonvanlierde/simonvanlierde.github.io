@@ -24,7 +24,8 @@ export const projectMetadata = (repo: string): ProjectMetadata | undefined =>
 
 /** The fields of a run record (schema v0) the site reads; scripts/impact.mjs validates them. */
 export interface RunRecord {
-  run: { kind: string; start_time: string; functional_unit?: string };
+  schema_version: string;
+  run: { kind: string; name: string; start_time: string; functional_unit?: string };
   measures: Record<
     string,
     {
@@ -40,9 +41,10 @@ const gramsPerUnit: Record<string, number> = { "mg{CO2-eq}": 1e-3, "g{CO2-eq}": 
 const twoDigits = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 2 });
 
 /**
- * One line per run record that has a CO₂e measure with a low and high bound, such as
- * "24–29 mg CO₂e per page view, modelled (Sustainable Web Design v4)". A measure with
- * no range gives no line, so the site never shows a bare point value.
+ * One line per run record that has a CO2e measure with a low and high bound, such as
+ * "24–29 mg CO2e per page view, modelled (Sustainable Web Design v4)". A measure with
+ * no range, or a range too narrow to show at two significant digits, gives no line,
+ * so the site never shows a bare point value. CO2e, not CO₂e: osifont has no subscript two.
  */
 export function projectImpact(
   repo: string,
@@ -55,13 +57,16 @@ export function projectImpact(
     if (!found) return [];
     const grams = gramsPerUnit[found.unit];
     const [low, high] = [found.uncertainty.low ?? 0, found.uncertainty.high ?? 0].map((v) => v * grams);
-    const [scale, unit] = high >= 1000 ? [1e3, "kg"] : high >= 1 ? [1, "g"] : [1e-3, "mg"];
+    // Scale on the rounded high, so 999.7 g reads "1 kg", not "1,000 g".
+    const [scale, unit] = high >= 999.5 ? [1e3, "kg"] : high >= 0.9995 ? [1, "g"] : [1e-3, "mg"];
+    const [lo, hi] = [low, high].map((v) => twoDigits.format(v / scale));
+    if (lo === hi) return [];
     const { kind, tool, version, model } = found.method;
     const swd = model?.match(/^swd v(\d+)/i);
     const per = run.functional_unit?.replace(/^(one|a|an) /i, "") ?? run.kind.replaceAll("-", " ");
     return [
       {
-        text: `${twoDigits.format(low / scale)}–${twoDigits.format(high / scale)} ${unit} CO₂e per ${per}, ${kind} (${swd ? `Sustainable Web Design v${swd[1]}` : `${tool} ${version}`})`,
+        text: `${lo}–${hi} ${unit} CO2e per ${per}, ${kind} (${swd ? `Sustainable Web Design v${swd[1]}` : `${tool} ${version}`})`,
         at: run.start_time,
         atLabel: new Date(run.start_time).toLocaleDateString("en-US", {
           month: "short",

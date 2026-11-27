@@ -39,7 +39,8 @@ export function recordProblem(record) {
 
 /**
  * The latest valid record per run.kind, by start_time (a tie goes to the later line).
- * Each invalid line is passed to `warn` and skipped.
+ * Each invalid line is passed to `warn` and skipped. A kept record holds only schema_version,
+ * run.kind, run.name, run.start_time, run.functional_unit and the measures.
  * @param {string} text
  * @param {(problem: string) => void} [warn]
  * @returns {Record<string, import("../src/data/projectSchema.ts").RunRecord>}
@@ -61,7 +62,14 @@ export function latestRecords(text, warn = () => undefined) {
       continue;
     }
     const kept = latest[record.run.kind];
-    if (!kept || Date.parse(record.run.start_time) >= Date.parse(kept.run.start_time)) latest[record.run.kind] = record;
+    if (kept && Date.parse(record.run.start_time) < Date.parse(kept.run.start_time)) continue;
+    // Only the fields the site reads, so other fields a repository logs are not committed here.
+    const { kind, name, start_time, functional_unit } = record.run;
+    latest[kind] = {
+      schema_version: record.schema_version,
+      run: { kind, name, start_time, ...(functional_unit !== undefined && { functional_unit }) },
+      measures: record.measures,
+    };
   }
   return latest;
 }

@@ -45,7 +45,7 @@ test("shows a CO₂e range with its method and date, never a bare point value", 
   const records = latestRecords(fixture);
   assert.deepEqual(projectImpact("https://github.com/example/site", records), [
     {
-      text: "24–29 mg CO₂e per page view, modelled (Sustainable Web Design v4)",
+      text: "24–29 mg CO2e per page view, modelled (Sustainable Web Design v4)",
       at: "2026-11-23T06:00:00Z",
       atLabel: "Nov 2026",
     },
@@ -53,6 +53,10 @@ test("shows a CO₂e range with its method and date, never a bare point value", 
   // The ci-job record has no bounds, so it gives no line.
   assert.deepEqual(projectImpact("https://github.com/example/site", { "ci-job": records["ci-job"] }), []);
   assert.deepEqual(projectImpact("https://github.com/example/no-records"), []);
+  // 1,210–1,240 g rounds to "1.2–1.2 kg", a point value in disguise.
+  const narrow = structuredClone(records["page-view"]);
+  narrow.measures["impact.swd.carbon_operational"].uncertainty = { low: 1210, high: 1240 };
+  assert.deepEqual(projectImpact("https://github.com/example/site", { "page-view": narrow }), []);
 });
 
 test("refresh writes records, drops a 404 and keeps the last records of a failed fetch", async () => {
@@ -67,11 +71,11 @@ test("refresh writes records, drops a 404 and keeps the last records of a failed
     await symlink(join(root, "node_modules"), join(dir, "node_modules"));
     for (const script of ["impact.mjs", "fetch-impact.mjs", "projectCards.mjs"])
       await cp(join(root, "scripts", script), join(dir, "scripts", script));
-    for (const id of ["records", "missing", "unavailable", "new-unavailable", "all-invalid"])
+    for (const id of ["records", "missing", "unavailable", "new-unavailable", "all-invalid", "stale-invalid"])
       await writeFile(join(dir, `src/content/projects/${id}.md`), `---\nrepo: ${repo(id)}\n---\n`);
     await writeFile(
       join(dir, "src/data/impact.json"),
-      JSON.stringify({ [repo("missing")]: old, [repo("unavailable")]: old }),
+      JSON.stringify({ [repo("missing")]: old, [repo("unavailable")]: old, [repo("stale-invalid")]: old }),
     );
     await writeFile(join(dir, "records.jsonl"), fixture);
     await writeFile(
@@ -80,7 +84,7 @@ test("refresh writes records, drops a 404 and keeps the last records of a failed
     globalThis.fetch = async (url) => {
       if (!url.endsWith('/impact/impact.jsonl')) throw new Error('unexpected URL ' + url);
       if (url.includes('/example/records/')) return new Response(readFileSync('records.jsonl', 'utf8'));
-      if (url.includes('/example/all-invalid/')) return new Response('not json\\n');
+      if (url.includes('-invalid/')) return new Response('not json\\n');
       if (url.includes('unavailable/')) return new Response('', {status: 503});
       return new Response('', {status: 404});
     };`,
@@ -89,9 +93,11 @@ test("refresh writes records, drops a 404 and keeps the last records of a failed
       cwd: dir,
     });
     const next = JSON.parse(await readFile(join(dir, "src/data/impact.json"), "utf8"));
-    assert.deepEqual(Object.keys(next).sort(), [repo("records"), repo("unavailable")], stdout);
+    assert.deepEqual(Object.keys(next).sort(), [repo("records"), repo("stale-invalid"), repo("unavailable")], stdout);
     assert.deepEqual(next[repo("records")], latestRecords(fixture));
+    assert.equal(next[repo("records")]["page-view"].run.duration_s, undefined, "a field the site does not read");
     assert.deepEqual(next[repo("unavailable")], old);
+    assert.deepEqual(next[repo("stale-invalid")], old);
     assert.match(stdout, /::warning::fetch-impact: records\.md: skipped line 2: not JSON/);
   } finally {
     await rm(dir, { recursive: true, force: true });

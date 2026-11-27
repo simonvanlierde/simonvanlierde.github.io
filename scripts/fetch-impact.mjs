@@ -1,5 +1,6 @@
 // Each card repository's latest run record per kind, from impact.jsonl on its orphan `impact` branch.
-// A 404 means the repository has no records; any other failure keeps its last good entry.
+// A 404 means the repository has no records; any other failure, or a file with no valid line,
+// keeps its last good entry.
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { latestRecords } from "./impact.mjs";
@@ -17,10 +18,13 @@ const refreshed = await Promise.all(
       const response = await fetch(url, { signal: AbortSignal.timeout(30_000) });
       if (response.status === 404) return;
       if (!response.ok) throw new Error(`GET impact.jsonl returned ${response.status}`);
-      const records = latestRecords(await response.text(), (problem) =>
+      const text = await response.text();
+      const records = latestRecords(text, (problem) =>
         console.log(`::warning::fetch-impact: ${name}: skipped ${problem}`),
       );
       if (Object.keys(records).length) return [card.repo, records];
+      // A body with no valid line is more likely a schema change than a wiped history.
+      if (text.trim() && previous[card.repo]) return [card.repo, previous[card.repo]];
     } catch (error) {
       console.log(`::warning::fetch-impact: ${name}: ${error.message}. Keeping its last records.`);
       if (previous[card.repo]) return [card.repo, previous[card.repo]];
