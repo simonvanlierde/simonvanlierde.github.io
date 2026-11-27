@@ -3,3 +3,4 @@ Allow: /
 Disallow: /ramascene-explorer/data/
 
 Sitemap: https://simonvanlierde.com/sitemap.xml
+Sitemap: https://simonvanlierde.com/brightway-benchmarks/sitemap.xml
