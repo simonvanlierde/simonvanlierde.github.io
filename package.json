@@ -26,6 +26,7 @@
     "fetch:evidence": "node scripts/fetch-evidence.mjs",
     "fetch:cards": "node scripts/fetch-cards.mjs",
     "fetch:codemeta": "node scripts/fetch-codemeta.mjs",
+    "fetch:impact": "node scripts/fetch-impact.mjs",
     "gen:citation": "node scripts/gen-citation.mjs"
   },
   "dependencies": {

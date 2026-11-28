@@ -2,6 +2,7 @@
 // unit tests can import it: that file reads the CV export through a Vite-only
 // `?raw` import.
 import codemeta from "./codemeta.json" with { type: "json" };
+import impact from "./impact.json" with { type: "json" };
 
 export interface ProjectMetadata {
   name?: string;
@@ -20,6 +21,62 @@ export interface ProjectMetadata {
 
 export const projectMetadata = (repo: string): ProjectMetadata | undefined =>
   (codemeta as Record<string, ProjectMetadata>)[repo];
+
+/** The fields of a run record (schema v0) the site reads; scripts/impact.mjs validates them. */
+export interface RunRecord {
+  schema_version: string;
+  run: { kind: string; name: string; start_time: string; functional_unit?: string };
+  measures: Record<
+    string,
+    {
+      value: number;
+      unit: string;
+      method: { kind: string; tool: string; version: string; model?: string };
+      uncertainty: { low?: number; high?: number };
+    }
+  >;
+}
+
+const gramsPerUnit: Record<string, number> = { "mg{CO2-eq}": 1e-3, "g{CO2-eq}": 1, "kg{CO2-eq}": 1e3 };
+const twoDigits = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 2 });
+
+/**
+ * One line per run record that has a CO2e measure with a low and high bound, such as
+ * "24–29 mg CO2e per page view, modelled (Sustainable Web Design v4)". A measure with
+ * no range, or a range too narrow to show at two significant digits, gives no line,
+ * so the site never shows a bare point value. CO2e, not CO₂e: osifont has no subscript two.
+ */
+export function projectImpact(
+  repo: string,
+  records = (impact as Record<string, Record<string, RunRecord>>)[repo] ?? {},
+) {
+  return Object.values(records).flatMap(({ run, measures }) => {
+    const found = Object.values(measures).find(
+      (m) => m.unit in gramsPerUnit && m.uncertainty.low !== undefined && m.uncertainty.high !== undefined,
+    );
+    if (!found) return [];
+    const grams = gramsPerUnit[found.unit];
+    const [low, high] = [found.uncertainty.low ?? 0, found.uncertainty.high ?? 0].map((v) => v * grams);
+    // Scale on the rounded high, so 999.7 g reads "1 kg", not "1,000 g".
+    const [scale, unit] = high >= 999.5 ? [1e3, "kg"] : high >= 0.9995 ? [1, "g"] : [1e-3, "mg"];
+    const [lo, hi] = [low, high].map((v) => twoDigits.format(v / scale));
+    if (lo === hi) return [];
+    const { kind, tool, version, model } = found.method;
+    const swd = model?.match(/^swd v(\d+)/i);
+    const per = run.functional_unit?.replace(/^(one|a|an) /i, "") ?? run.kind.replaceAll("-", " ");
+    return [
+      {
+        text: `${lo}–${hi} ${unit} CO2e per ${per}, ${kind} (${swd ? `Sustainable Web Design v${swd[1]}` : `${tool} ${version}`})`,
+        at: new Date(run.start_time).toISOString(),
+        atLabel: new Date(run.start_time).toLocaleDateString("en-US", {
+          month: "short",
+          year: "numeric",
+          timeZone: "UTC",
+        }),
+      },
+    ];
+  });
+}
 
 export const site = "https://simonvanlierde.com";
 export const personId = `${site}/#person`;

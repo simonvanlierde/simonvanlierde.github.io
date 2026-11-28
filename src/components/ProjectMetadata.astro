@@ -1,5 +1,5 @@
 ---
-import { projectMetadata } from "../data/projectSchema.ts";
+import { projectImpact, projectMetadata } from "../data/projectSchema.ts";
 import SourceRecord from "./SourceRecord.astro";
 
 interface Props {
@@ -7,6 +7,7 @@ interface Props {
 }
 const metadata = projectMetadata(Astro.props.repo);
 const name = Astro.props.repo.split("/").filter(Boolean).at(-1);
+const impact = projectImpact(Astro.props.repo);
 const citation = metadata?.citation;
 const formats = [
   ["apa", "APA"],
@@ -31,6 +32,8 @@ const licenses = (metadata?.license ? [metadata.license].flat() : []).map((href)
   {licenses.map(({ href, label }) => <a href={href} aria-label={`${label} licence for ${name}`}>{label}</a>)}
 </p>}
 
+{impact.map(({ text, at, atLabel }) => <p class="project-impact draft">{text}, <time datetime={at}>{atLabel}</time></p>)}
+
 {citation && <details class="project-citation">
   <summary>Cite this software<span class="visually-hidden"> ({name})</span></summary>
   <p class="citation-text">{citation.apa}</p>
@@ -41,6 +44,10 @@ const licenses = (metadata?.license ? [metadata.license].flat() : []).map((href)
 </details>}
 
 <style>
+  .project-impact {
+    max-width: var(--measure);
+    font-size: var(--step--1);
+  }
   .project-citation {
     font-weight: normal;
     text-align: start;

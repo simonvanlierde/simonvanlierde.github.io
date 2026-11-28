@@ -180,7 +180,12 @@ test("Astro rejects a manual DOI supplied by CodeMeta but accepts a different DO
     await mkdir(join(dir, "src/pages"));
     await symlink(join(root, "node_modules"), join(dir, "node_modules"));
     await writeFile(join(dir, "package.json"), '{"type":"module"}');
-    for (const path of ["src/content.config.ts", "src/data/projectSchema.ts", "src/data/codemeta.json"])
+    for (const path of [
+      "src/content.config.ts",
+      "src/data/projectSchema.ts",
+      "src/data/codemeta.json",
+      "src/data/impact.json",
+    ])
       await cp(join(root, path), join(dir, path));
     await writeFile(
       join(dir, "src/pages/index.astro"),
