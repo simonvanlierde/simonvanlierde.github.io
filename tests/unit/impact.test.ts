@@ -41,18 +41,56 @@ test("rejects bounds without an interval, reversed bounds and bounds next to unk
     assert.deepEqual(latestRecords(record(uncertainty)), {}, JSON.stringify(uncertainty));
 });
 
+test("rejects a start_time that is not an RFC 3339 date-time with an offset", () => {
+  const record = (start_time: string) =>
+    JSON.stringify({
+      schema_version: "0",
+      run: { name: "x", kind: "page-view", start_time },
+      measures: {
+        co2: {
+          value: 1,
+          unit: "g{CO2-eq}",
+          method: { kind: "modelled", tool: "t", version: "1" },
+          uncertainty: { unknown: true },
+        },
+      },
+    });
+  for (const start_time of [
+    "2026",
+    "Nov 5 2026",
+    "2026-11-23",
+    "2026-11-23T06:00:00",
+    "2026-11-23 06:00:00Z",
+    "2026-11-23T06:00Z",
+    "2026-02-29T06:00:00Z",
+    "2026-02-30T06:00:00Z",
+    "2026-11-23T24:00:00Z",
+    "2026-11-23T06:00:00+0100",
+  ])
+    assert.deepEqual(latestRecords(record(start_time)), {}, start_time);
+  for (const start_time of ["2028-02-29T06:00:00Z", "2026-11-23t06:00:00.123456+01:00", "2026-11-23T06:00:00-00:00"])
+    assert.ok(latestRecords(record(start_time))["page-view"], start_time);
+});
+
 test("shows a CO₂e range with its method and date, never a bare point value", () => {
   const records = latestRecords(fixture);
   assert.deepEqual(projectImpact("https://github.com/example/site", records), [
     {
       text: "24–29 mg CO2e per page view, modelled (Sustainable Web Design v4)",
-      at: "2026-11-23T06:00:00Z",
+      at: "2026-11-23T06:00:00.000Z",
       atLabel: "Nov 2026",
     },
   ]);
   // The ci-job record has no bounds, so it gives no line.
   assert.deepEqual(projectImpact("https://github.com/example/site", { "ci-job": records["ci-job"] }), []);
   assert.deepEqual(projectImpact("https://github.com/example/no-records"), []);
+  // HTML's datetime allows at most three fraction digits, so the instant is written out in UTC.
+  const offset = structuredClone(records["page-view"]);
+  offset.run.start_time = "2026-12-01T00:30:00.123456+01:00";
+  assert.deepEqual(
+    projectImpact("https://github.com/example/site", { "page-view": offset }).map(({ at, atLabel }) => [at, atLabel]),
+    [["2026-11-30T23:30:00.123Z", "Nov 2026"]],
+  );
   // 1,210–1,240 g rounds to "1.2–1.2 kg", a point value in disguise.
   const narrow = structuredClone(records["page-view"]);
   narrow.measures["impact.swd.carbon_operational"].uncertainty = { low: 1210, high: 1240 };

@@ -67,7 +67,7 @@ export function projectImpact(
     return [
       {
         text: `${lo}–${hi} ${unit} CO2e per ${per}, ${kind} (${swd ? `Sustainable Web Design v${swd[1]}` : `${tool} ${version}`})`,
-        at: run.start_time,
+        at: new Date(run.start_time).toISOString(),
         atLabel: new Date(run.start_time).toLocaleDateString("en-US", {
           month: "short",
           year: "numeric",

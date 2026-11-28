@@ -4,6 +4,17 @@ const methodKinds = new Set(["measured", "modelled", "estimated"]);
 const isObject = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
 const isText = (value) => typeof value === "string" && value.trim() !== "";
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
+// RFC 3339 date-time, the schema's `format: "date-time"`: a full date and time with a Z or ±hh:mm offset.
+// Leap seconds (:60) are rejected, since Date cannot hold them.
+const rfc3339 =
+  /^(\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(\.\d+)?(Z|[+-]([01]\d|2[0-3]):[0-5]\d)$/i;
+/** Date.parse alone takes "2026" or "Nov 5 2026" and rolls Feb 30 over to March, so the date must also round-trip. */
+function isDateTime(value) {
+  const date = typeof value === "string" && value.match(rfc3339)?.[1];
+  return (
+    Boolean(date) && !Number.isNaN(Date.parse(value)) && new Date(`${date}T00:00:00Z`).toISOString().startsWith(date)
+  );
+}
 
 /** Why a measure breaks the schema's required fields, or undefined when it holds. */
 function measureProblem(slug, measure) {
@@ -28,8 +39,8 @@ export function recordProblem(record) {
   if (!isObject(record)) return "not a JSON object";
   if (record.schema_version !== "0") return `unsupported schema_version ${JSON.stringify(record.schema_version)}`;
   const { run, measures } = record;
-  if (!isObject(run) || !isText(run.kind) || !isText(run.name) || Number.isNaN(Date.parse(run.start_time)))
-    return "run needs a name, a kind and a start_time";
+  if (!isObject(run) || !isText(run.kind) || !isText(run.name) || !isDateTime(run.start_time))
+    return "run needs a name, a kind and an RFC 3339 start_time";
   if (!isObject(measures) || Object.keys(measures).length === 0) return "no measures";
   for (const [slug, measure] of Object.entries(measures)) {
     const problem = measureProblem(slug, measure);
